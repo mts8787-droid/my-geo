@@ -184,6 +184,16 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
 
     score = await _calculate_score(context, robots, csr_ratio)
 
+    # 페이지 fetch 실패 시 응답 최상단에 에러 표면화 — 룰들이 모두 "HTML 파싱 실패"로 보이는 혼란 방지
+    page_error = None
+    if page_data.get("status") != "ok" or page_data.get("soup") is None:
+        page_error = {
+            "kind":        page_data.get("status", "error"),
+            "http_status": page_data.get("http_status"),
+            "message":     page_data.get("error") or "페이지 응답에 HTML 본문이 없거나 너무 짧습니다 (500자 미만).",
+            "hint":        "봇 차단(Cloudflare/CAPTCHA), 타임아웃, 또는 비-HTML 응답일 수 있습니다. 브라우저에서 해당 URL이 정상 열리는지 확인하세요.",
+        }
+
     # soup 참조 해제 — 메모리 즉시 회수
     page_data["soup"] = None
 
@@ -196,6 +206,7 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
         "json_ld":           jsonld,
         "csr_ratio":         csr_ratio,
         "score":             score,
+        "page_error":        page_error,
     }
 
 
@@ -203,9 +214,23 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
 
 async def _fetch_page(url: str) -> dict:
     try:
+        # 실제 Chrome으로 위장 — Cloudflare/봇 차단 회피.
+        # User-Agent를 GEOAudit처럼 명시적으로 두면 LG.com 등이 거부함.
         headers = {
-            "User-Agent": "Mozilla/5.0 (compatible; GEOAudit/1.0; +https://geoaudit.dev)",
-            "Accept":     "text/html,application/xhtml+xml",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Cache-Control":   "no-cache",
+            "Pragma":          "no-cache",
+            "Sec-Ch-Ua":       '"Google Chrome";v="124", "Chromium";v="124", "Not-A.Brand";v="99"',
+            "Sec-Ch-Ua-Mobile":   "?0",
+            "Sec-Ch-Ua-Platform": '"macOS"',
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-User": "?1",
+            "Upgrade-Insecure-Requests": "1",
         }
         t0 = time.perf_counter()
         async with httpx.AsyncClient(timeout=15, follow_redirects=True, max_redirects=10, http2=True) as client:

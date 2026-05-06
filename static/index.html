@@ -794,11 +794,41 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // ── Main render ────────────────────────────────────────────────────────────
   function renderResults(data) {
     document.getElementById('scoreCard').style.display = '';
+    renderPageError(data.page_error);
     renderScore(data.score);
     renderPdp(data.pdp, data.score?.breakdown?.ai_readiness);
     renderCategoryCards(data.score?.breakdown || {});
     document.getElementById('results').classList.remove('hidden');
     filterResultCards();
+  }
+
+  function renderPageError(err) {
+    let banner = document.getElementById('pageErrorBanner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'pageErrorBanner';
+      banner.className = 'mb-5';
+      const results = document.getElementById('results');
+      results.insertBefore(banner, results.firstChild);
+    }
+    if (!err) { banner.innerHTML = ''; return; }
+    const httpStatus = err.http_status ? `HTTP ${err.http_status}` : '';
+    banner.innerHTML = `
+      <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="text-2xl">⚠️</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <h3 class="font-bold text-red-700">페이지를 가져오지 못했습니다</h3>
+              ${httpStatus ? `<span class="text-xs font-mono px-2 py-0.5 bg-red-100 text-red-700 rounded">${escHtml(httpStatus)}</span>` : ''}
+              <span class="text-xs text-red-500">kind=${escHtml(err.kind || 'error')}</span>
+            </div>
+            <p class="text-sm text-red-600 break-words">${escHtml(err.message || '')}</p>
+            ${err.hint ? `<p class="text-xs text-red-500 mt-1">💡 ${escHtml(err.hint)}</p>` : ''}
+            <p class="text-xs text-red-400 mt-2">아래 항목들이 모두 "HTML 파싱 실패"로 표시되는 이유입니다.</p>
+          </div>
+        </div>
+      </div>`;
   }
 
   // ── Category Cards (4 categories × N items) ──────────────────────────────
