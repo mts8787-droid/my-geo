@@ -233,8 +233,15 @@ async def _fetch_page(url: str) -> dict:
             "Upgrade-Insecure-Requests": "1",
         }
         t0 = time.perf_counter()
-        async with httpx.AsyncClient(timeout=15, follow_redirects=True, max_redirects=10, http2=True) as client:
-            r = await client.get(url, headers=headers)
+        # http2=True는 'h2' 패키지가 있을 때만 활성. 미설치 환경에서 ImportError 회피
+        try:
+            client_kwargs = dict(timeout=15, follow_redirects=True, max_redirects=10, http2=True)
+            async with httpx.AsyncClient(**client_kwargs) as client:
+                r = await client.get(url, headers=headers)
+        except ImportError:
+            # h2 미설치 → HTTP/1.1 fallback (HTTP 프로토콜 룰 #3은 false-negative 발생 가능)
+            async with httpx.AsyncClient(timeout=15, follow_redirects=True, max_redirects=10, http2=False) as client:
+                r = await client.get(url, headers=headers)
         ttfb_ms = int((time.perf_counter() - t0) * 1000)
 
         redirect_count = len(r.history)
