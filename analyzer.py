@@ -212,26 +212,54 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
 
 # ── Page Fetch ────────────────────────────────────────────────────────────────
 
-async def _fetch_page(url: str) -> dict:
-    try:
-        # 실제 Chrome으로 위장 — Cloudflare/봇 차단 회피.
-        # User-Agent를 GEOAudit처럼 명시적으로 두면 LG.com 등이 거부함.
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Cache-Control":   "no-cache",
-            "Pragma":          "no-cache",
-            "Sec-Ch-Ua":       '"Google Chrome";v="124", "Chromium";v="124", "Not-A.Brand";v="99"',
+# 전용 UA (Akamai 화이트리스트 대상). LG D2C 디지털마케팅팀 운영 식별자.
+_DEDICATED_UA = "MyGEOAudit/1.0 (Audit agent operated by D2C Digital Marketing Team, LG Electronics)"
+
+# 화이트리스트 승인 전 로컬 개발/테스트용 Chrome UA fallback.
+# 운영 환경에서는 위 _DEDICATED_UA를 사용해야 함.
+_FALLBACK_CHROME_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+
+
+def _build_request_headers() -> dict:
+    """오디트 요청 헤더 생성.
+
+    UA 우선순위:
+      1. AUDIT_USER_AGENT 환경변수 (명시적 override)
+      2. _DEDICATED_UA (기본값 — Akamai 화이트리스트 등록 대상)
+
+    운영팀 화이트리스트 승인 전 로컬에서 봇 차단을 회피하려면
+    AUDIT_USER_AGENT 환경변수에 _FALLBACK_CHROME_UA 값을 설정.
+    """
+    ua = os.getenv("AUDIT_USER_AGENT") or _DEDICATED_UA
+    is_chrome_ua = "Chrome/" in ua and "Mozilla/" in ua
+
+    headers = {
+        "User-Agent":     ua,
+        "Accept":         "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Cache-Control":   "no-cache",
+        "Pragma":          "no-cache",
+        "Upgrade-Insecure-Requests": "1",
+    }
+    # Chrome UA일 때만 Chrome 시그니처 헤더 추가 (UA와 일관성 유지).
+    # 전용 UA(MyGEOAudit)는 Akamai 화이트리스트로 통과하므로 위장 헤더 불필요.
+    if is_chrome_ua:
+        headers.update({
+            "Sec-Ch-Ua":          '"Google Chrome";v="124", "Chromium";v="124", "Not-A.Brand";v="99"',
             "Sec-Ch-Ua-Mobile":   "?0",
             "Sec-Ch-Ua-Platform": '"macOS"',
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "none",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-        }
+            "Sec-Fetch-Dest":     "document",
+            "Sec-Fetch-Mode":     "navigate",
+            "Sec-Fetch-Site":     "none",
+            "Sec-Fetch-User":     "?1",
+        })
+    return headers
+
+
+async def _fetch_page(url: str) -> dict:
+    try:
+        headers = _build_request_headers()
         # http2=True는 'h2' 패키지가 있을 때만 활성. 미설치 환경에서 ImportError 회피
         try:
             httpx.AsyncClient(http2=True).aclose  # 빠른 import 검증
@@ -326,7 +354,7 @@ async def _fetch_page(url: str) -> dict:
 async def _check_robots_txt(base_url: str) -> dict:
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}/robots.txt")
+            r = await client.get(f"{base_url}/robots.txt", headers=_build_request_headers())
         if r.status_code != 200:
             return {"status": "not_found", "bots": {}, "raw": ""}
         content = r.text
@@ -379,7 +407,7 @@ def _parse_robots_for_ai_bots(content: str) -> dict:
 async def _check_llms_txt(base_url: str) -> dict:
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}/llms.txt")
+            r = await client.get(f"{base_url}/llms.txt", headers=_build_request_headers())
         if r.status_code == 200:
             content = r.text
             return {
@@ -572,7 +600,7 @@ async def _check_csr_chars(url: str) -> dict:
 
                 context = await browser.new_context(
                     viewport={"width": 1280, "height": 720},
-                    user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+                    user_agent=os.getenv("AUDIT_USER_AGENT") or _DEDICATED_UA,
                     locale="ko-KR",
                     timezone_id="Asia/Seoul",
                     extra_http_headers={
