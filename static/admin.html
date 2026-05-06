@@ -87,6 +87,13 @@
             </svg>
             <span class="nav-label">정기 Audit 관리</span>
           </button>
+          <button onclick="switchPage('doc')" id="nav-doc"
+            class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
+            <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="nav-label">Audit 기준 문서</span>
+          </button>
         </div>
         <div class="px-3 pt-3 border-t border-slate-100">
           <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
@@ -153,6 +160,16 @@
             </button>
           </div>
           <div id="groups-container" class="space-y-4"></div>
+        </div>
+
+        <!-- Page 4: Audit 기준 문서 (audit-criteria.md) -->
+        <div id="page-doc" class="max-w-5xl mx-auto px-6 py-8 hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h1 class="text-xl font-bold text-slate-800">Audit 기준 문서</h1>
+            <button onclick="loadCriteriaDoc()" class="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium">새로고침</button>
+          </div>
+          <p class="text-xs text-slate-500 mb-4">Google Sheets에서 가져온 48개 항목 PASS/FAIL 기준. 모든 룰의 source of truth.</p>
+          <div id="doc-content" class="card p-8 prose prose-slate max-w-none text-sm">로딩 중...</div>
         </div>
 
         <!-- Page 3: 정기 Audit 관리 -->
@@ -262,10 +279,9 @@ let auditData = { groups: [], schedules: [] };
 let currentPage = 'criteria';
 let urlModalGroupIdx = -1;
 
-const CAT_KEYS = ['seo_tags','robots_txt','json_ld','llms_txt','faq','summary_box','heading_structure','stats_density','reviews_ssr','csr_ratio'];
+const CAT_KEYS = ['performance','accessibility','seo','ai_readiness'];
 const CAT_COLORS = [
-  'bg-indigo-500','bg-purple-500','bg-blue-500','bg-cyan-500','bg-teal-500',
-  'bg-emerald-500','bg-amber-500','bg-orange-500','bg-rose-500','bg-pink-500'
+  'bg-indigo-500','bg-emerald-500','bg-blue-500','bg-rose-500'
 ];
 
 function escHtml(s) {
@@ -278,14 +294,105 @@ function escHtml(s) {
 function switchPage(page) {
   currentPage = page;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById(`nav-${page}`).classList.add('active');
+  const navEl = document.getElementById(`nav-${page}`);
+  if (navEl) navEl.classList.add('active');
 
   document.getElementById('page-criteria').classList.toggle('hidden', page !== 'criteria');
   document.getElementById('page-list').classList.toggle('hidden', page !== 'list');
   document.getElementById('page-schedule').classList.toggle('hidden', page !== 'schedule');
+  document.getElementById('page-doc').classList.toggle('hidden', page !== 'doc');
 
   if (page === 'list') renderGroups();
   if (page === 'schedule') renderSchedules();
+  if (page === 'doc') loadCriteriaDoc();
+}
+
+// ── Audit 기준 문서 (markdown viewer) ──
+function renderMarkdown(md) {
+  // 간단한 마크다운 → HTML 변환 (의도적으로 가벼움)
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const lines = md.split('\n');
+  let html = '';
+  let inCode = false, inTable = false, tableHeader = false, tableRows = '';
+  let inList = null;  // 'ul' or 'ol'
+
+  const flushList = () => { if (inList) { html += `</${inList}>`; inList = null; } };
+  const flushTable = () => {
+    if (inTable) {
+      html += `<table class="border-collapse my-3 text-xs"><thead>${tableHeader}</thead><tbody>${tableRows}</tbody></table>`;
+      inTable = false; tableHeader = ''; tableRows = '';
+    }
+  };
+  const inline = s => esc(s)
+    .replace(/`([^`]+)`/g, '<code class="bg-slate-100 px-1 rounded text-xs">$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-indigo-600 underline" target="_blank">$1</a>');
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('```')) { flushList(); flushTable(); inCode = !inCode; html += inCode ? '<pre class="bg-slate-100 p-2 rounded my-2 text-xs overflow-x-auto"><code>' : '</code></pre>'; continue; }
+    if (inCode) { html += esc(line) + '\n'; continue; }
+
+    // table row
+    if (line.match(/^\|.*\|\s*$/)) {
+      const cells = line.split('|').slice(1, -1).map(c => c.trim());
+      if (line.match(/^\|\s*[:\-]+\s*(\|\s*[:\-]+\s*)*\|\s*$/)) {
+        // separator row → previous row was header
+        continue;
+      }
+      const tag = !inTable ? 'th' : 'td';
+      const row = `<tr>${cells.map(c => `<${tag} class="border border-slate-200 px-2 py-1">${inline(c)}</${tag}>`).join('')}</tr>`;
+      if (!inTable) { tableHeader = row; inTable = true; }
+      else tableRows += row;
+      continue;
+    } else if (inTable) flushTable();
+
+    // headings
+    let m;
+    if ((m = line.match(/^(#{1,6})\s+(.+)$/))) {
+      flushList();
+      const lv = m[1].length;
+      const sizes = ['text-2xl','text-xl','text-lg','text-base','text-sm','text-xs'];
+      html += `<h${lv} class="${sizes[lv-1]} font-bold mt-4 mb-2 text-slate-800">${inline(m[2])}</h${lv}>`;
+      continue;
+    }
+    // hr
+    if (line.match(/^-{3,}$/)) { flushList(); html += '<hr class="my-4 border-slate-200">'; continue; }
+    // unordered list
+    if ((m = line.match(/^\s*[-*]\s+(.+)$/))) {
+      if (inList !== 'ul') { flushList(); html += '<ul class="list-disc ml-5 my-2 space-y-1">'; inList = 'ul'; }
+      html += `<li>${inline(m[1])}</li>`;
+      continue;
+    }
+    // blockquote
+    if ((m = line.match(/^>\s*(.*)$/))) {
+      flushList();
+      html += `<blockquote class="border-l-4 border-indigo-200 pl-3 my-2 text-slate-600">${inline(m[1])}</blockquote>`;
+      continue;
+    }
+    flushList();
+    if (line.trim() === '') html += '<div class="h-2"></div>';
+    else html += `<p class="my-1 leading-relaxed">${inline(line)}</p>`;
+  }
+  flushList(); flushTable();
+  return html;
+}
+
+async function loadCriteriaDoc() {
+  const el = document.getElementById('doc-content');
+  el.innerHTML = '로딩 중...';
+  try {
+    const res = await fetch('/admin/audit-criteria-doc', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      el.innerHTML = `<p class="text-red-500">불러오기 실패: ${escHtml(d.detail || res.status)}</p>`;
+      return;
+    }
+    const data = await res.json();
+    el.innerHTML = renderMarkdown(data.content || '');
+  } catch (e) {
+    el.innerHTML = `<p class="text-red-500">네트워크 오류: ${escHtml(e.message)}</p>`;
+  }
 }
 
 // ── Login ──

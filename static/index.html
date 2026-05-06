@@ -184,9 +184,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div id="scopeSelector" class="flex flex-wrap items-center justify-center gap-2 mb-8">
     <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mr-1">검사 항목</span>
     <button onclick="setScope('all')" data-scope="all" class="scope-pill active">전체</button>
-    <button onclick="setScope('schema')" data-scope="schema" class="scope-pill">스키마</button>
-    <button onclick="setScope('seo')" data-scope="seo" class="scope-pill">SEO Basic</button>
-    <button onclick="setScope('faq')" data-scope="faq" class="scope-pill">FAQ</button>
+    <button onclick="setScope('performance')" data-scope="performance" class="scope-pill">Performance</button>
+    <button onclick="setScope('accessibility')" data-scope="accessibility" class="scope-pill">Accessibility</button>
+    <button onclick="setScope('seo')" data-scope="seo" class="scope-pill">SEO</button>
+    <button onclick="setScope('ai_readiness')" data-scope="ai_readiness" class="scope-pill">AI Readiness</button>
   </div>
   <div id="schemaSub" class="hidden flex flex-wrap items-center justify-center gap-2 mb-8 -mt-4">
     <span class="text-xs text-slate-400 mr-1">스키마 종류:</span>
@@ -235,12 +236,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="card bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden">
       <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
         <h2 class="font-bold text-slate-800">페이지별 분석 결과</h2>
-        <button onclick="exportBulkCSV()" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          CSV 내보내기
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="exportBulkCSV()" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            요약 CSV
+          </button>
+          <button onclick="exportBulkDetailCSV()" class="text-xs text-purple-600 hover:text-purple-800 font-semibold flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            상세 CSV (49항목)
+          </button>
+        </div>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -301,223 +310,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- ② PDP Banner (conditional) -->
     <div id="pdpBanner" class="hidden fade-up fade-up-2 opacity-0"></div>
 
-    <!-- ③ Basic SEO Tags -->
-    <div id="seoTagsCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-2 opacity-0">
-      <div class="flex items-center gap-3 mb-1">
-        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-slate-800 text-lg">기본 SEO 태그</h2>
-            <span id="seoTagsBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-          </div>
-          <p class="text-slate-500 text-sm">10개 항목 × 2점 = 최대 20점. AI 및 검색 엔진 가시성 기반 요소입니다.</p>
-        </div>
-      </div>
-      <div id="seoTagsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4"></div>
-    </div>
-
-    <!-- ④ JSON-LD -->
-    <div id="jsonldCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-3 opacity-0">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-slate-800 text-lg">JSON-LD 구조화 데이터</h2>
-            <span id="jsonldBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-          </div>
-          <p class="text-slate-500 text-sm">필수 스키마(8점) + 보조 스키마(7점) = 최대 15점</p>
-        </div>
-      </div>
-
-      <!-- 필수 요건 -->
-      <div class="mb-4">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="section-label">핵심 필수 요건</span>
-          <span class="text-xs text-slate-400">— 8점 만점 (Product + FAQPage 모두 필요)</span>
-        </div>
-        <div id="jsonldRequired" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
-
-      <!-- 보조 요건 -->
-      <div class="mb-4">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="section-label">보조 신뢰도 요건</span>
-          <span class="text-xs text-slate-400">— 7점 만점 (하나라도 있으면 획득)</span>
-        </div>
-        <div id="jsonldSupporting" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
-
-      <!-- 발견된 스키마 -->
-      <div id="jsonldFoundSchemas"></div>
-    </div>
-
-    <!-- ⑤ llms.txt -->
-    <div id="llmsCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-4 opacity-0">
-      <div class="flex items-start gap-4">
-        <div id="llmsIcon" class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"></div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">/llms.txt</h2>
-            <span id="llmsBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 5점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-3">AI 모델이 사이트 구조를 이해하도록 돕는 지침 파일입니다.</p>
-          <div id="llmsDetail" class="text-sm"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑥ robots.txt -->
-    <div id="robotsCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-5 opacity-0">
-      <div class="flex items-start gap-4">
-        <div id="robotsIcon" class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"></div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">robots.txt — AI 봇 접근</h2>
-            <span id="robotsBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 10점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-4">주요 AI 크롤러 10종의 허용/차단 여부를 확인합니다. 최대 10점</p>
-          <div id="botsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑦ FAQ -->
-    <div id="faqCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-6 opacity-0">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 mt-0.5">
-          <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">FAQ 섹션</h2>
-            <span id="faqBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 15점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-4">FAQPage JSON-LD 스키마(8점) + HTML FAQ 섹션(7점)</p>
-          <div id="faqDetail" class="space-y-2"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑧ Summary Box -->
-    <div id="summaryCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-7 opacity-0">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0 mt-0.5">
-          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">서머리 박스</h2>
-            <span id="summaryBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 5점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-3">요약·핵심·TL;DR 영역 존재 여부. AI는 요약 콘텐츠를 인용에 활용합니다.</p>
-          <div id="summaryDetail"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑨ Heading Structure -->
-    <div id="headingsCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-8 opacity-0">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0 mt-0.5">
-          <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 10h12M4 14h8M4 18h6"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">Heading 구조</h2>
-            <span id="headingsBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 5점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-4">H1 고유성(2점) · H2 복수(2점) · 논리적 순서(1점). 명확한 헤딩 계층은 AI의 콘텐츠 구조 파악을 돕습니다.</p>
-          <div id="headingsDetail"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑩ Stats Density -->
-    <div id="statsCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-9 opacity-0">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0 mt-0.5">
-          <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">통계 데이터</h2>
-            <span id="statsBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 5점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-3">본문에 숫자·단위를 포함한 데이터가 존재하면 5점. AI는 수치 근거가 있는 콘텐츠를 선호합니다.</p>
-          <div id="statsDetail"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑪ Reviews SSR -->
-    <div id="reviewsCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-9 opacity-0">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center shrink-0 mt-0.5">
-          <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">리뷰 SSR</h2>
-            <span id="reviewsBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 10점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-3">#reviews_container 요소가 서버사이드 렌더링으로 존재하는지 확인합니다.</p>
-          <div id="reviewsDetail"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑫ CSR Ratio -->
-    <div id="csrCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-9 opacity-0">
-      <div class="flex items-start gap-4">
-        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5">
-          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <h2 class="font-bold text-slate-800 text-lg">SSR / CSR 렌더링 비중</h2>
-            <span id="csrBadge" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
-            <span class="text-xs text-slate-400 ml-auto">최대 10점</span>
-          </div>
-          <p class="text-slate-500 text-sm mb-3">서버 렌더링 글자수 ÷ JS 실행 후 글자수. 비율이 높을수록 AI가 JS 없이도 콘텐츠를 읽을 수 있습니다.</p>
-          <div id="csrDetail"></div>
-        </div>
-      </div>
-    </div>
+    <!-- ③ Category Cards (Performance / Accessibility / SEO / AI Readiness) -->
+    <div id="categoryCards" class="space-y-5"></div>
 
   </div><!-- /results -->
 </main>
@@ -532,6 +326,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>
   // ── Category metadata ──────────────────────────────────────────────────────
   const CATEGORY_META = {
+    performance:   { label: 'Performance',   color: '#6366f1', icon: '⚡' },
+    accessibility: { label: 'Accessibility', color: '#10b981', icon: '♿' },
+    seo:           { label: 'SEO',           color: '#3b82f6', icon: '🔍' },
+    ai_readiness:  { label: 'AI Readiness',  color: '#f43f5e', icon: '🤖' },
+    // legacy 호환 (구조에 남아 있어도 무시되지 않도록)
     seo_tags:          { label: '기본 SEO 태그',  color: '#15803d' },
     robots_txt:        { label: 'robots.txt',     color: '#16a34a' },
     json_ld:           { label: 'JSON-LD',        color: '#22c55e' },
@@ -550,11 +349,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   let currentScope = 'all';
   let selectedSchemaTypes = new Set(['Product', 'FAQPage', 'BreadcrumbList', 'Organization']);
 
-  const SCOPE_CARD_MAP = {
-    all:    ['scoreCard','pdpBanner','seoTagsCard','jsonldCard','llmsCard','robotsCard','faqCard','summaryCard','headingsCard','statsCard','reviewsCard','csrCard'],
-    schema: ['jsonldCard'],
-    seo:    ['seoTagsCard'],
-    faq:    ['faqCard'],
+  // 새 카테고리 카드는 모두 #categoryCards 안에서 동적 렌더되므로 카드 ID 매핑 불필요.
+  // 스코프 필터링은 categoryCards 내부 자식 카드에 data-cat 속성으로 적용.
+  const SCOPE_TO_CATS = {
+    all:           ['performance','accessibility','seo','ai_readiness'],
+    performance:   ['performance'],
+    accessibility: ['accessibility'],
+    seo:           ['seo'],
+    ai_readiness:  ['ai_readiness'],
+    // 레거시 alias (백엔드 scope 호환)
+    schema:        ['ai_readiness'],
+    faq:           ['ai_readiness'],
   };
 
   function setScope(scope) {
@@ -562,7 +367,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.querySelectorAll('.scope-pill').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.scope === scope);
     });
-    document.getElementById('schemaSub').classList.toggle('hidden', scope !== 'schema');
+    document.getElementById('schemaSub').classList.add('hidden');
     filterResultCards();
   }
 
@@ -585,16 +390,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   };
 
   function filterResultCards() {
-    // Single result cards
-    const visible = new Set(SCOPE_CARD_MAP[currentScope] || SCOPE_CARD_MAP.all);
-    for (const id of SCOPE_CARD_MAP.all) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = visible.has(id) ? '' : 'none';
-    }
-    // Bulk average card: hide when specific scope selected
+    const allowedCats = new Set(SCOPE_TO_CATS[currentScope] || SCOPE_TO_CATS.all);
+    document.querySelectorAll('#categoryCards [data-cat]').forEach(el => {
+      el.style.display = allowedCats.has(el.dataset.cat) ? '' : 'none';
+    });
     const bulkAvg = document.getElementById('bulkAvgCard');
     if (bulkAvg) bulkAvg.style.display = currentScope === 'all' ? '' : 'none';
-    // Bulk table columns
     filterBulkColumns();
   }
 
@@ -800,36 +601,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <th class="px-4 py-3 font-semibold text-slate-600">URL</th>
         <th data-col="score" class="px-4 py-3 font-semibold text-slate-600 text-center w-20">점수</th>
         <th data-col="score" class="px-4 py-3 font-semibold text-slate-600 text-center w-24">등급</th>
-        <th data-col="seo" class="px-4 py-3 font-semibold text-slate-600 text-center w-20">SEO</th>
-        <th data-col="robots" class="px-4 py-3 font-semibold text-slate-600 text-center w-20">robots</th>
-        <th data-col="schema" class="px-4 py-3 font-semibold text-slate-600 text-center w-20">JSON-LD</th>
-        <th data-col="llms" class="px-4 py-3 font-semibold text-slate-600 text-center w-20">llms.txt</th>
-        <th data-col="faq" class="px-4 py-3 font-semibold text-slate-600 text-center w-20">FAQ</th>
-        <th data-col="csr" class="px-4 py-3 font-semibold text-slate-600 text-center w-20">SSR/CSR</th>
+        <th data-col="performance" class="px-4 py-3 font-semibold text-slate-600 text-center w-24">Perf</th>
+        <th data-col="accessibility" class="px-4 py-3 font-semibold text-slate-600 text-center w-24">A11y</th>
+        <th data-col="seo" class="px-4 py-3 font-semibold text-slate-600 text-center w-24">SEO</th>
+        <th data-col="ai_readiness" class="px-4 py-3 font-semibold text-slate-600 text-center w-24">AI</th>
         <th class="px-4 py-3 font-semibold text-slate-600 w-24">상세</th>
       </tr>`;
     }
 
-    // Scoped 결과용 셀 생성 헬퍼
+    // Scoped 결과용 셀 생성 헬퍼 — 새 카테고리 구조 사용
     const scopedCell = (r) => {
-      if (data.scope === 'seo') {
-        const p = r.seo_tags?.passed ?? 0;
-        const t = r.seo_tags?.total ?? 10;
-        const color = p >= 8 ? 'text-emerald-600' : p >= 5 ? 'text-amber-600' : 'text-red-500';
-        return `<td class="px-4 py-3 text-center"><span class="font-semibold ${color}">${p}</span><span class="text-slate-300">/${t}</span></td>`;
-      }
-      if (data.scope === 'schema') {
-        const types = r.json_ld?.all_types || [];
-        const count = types.length;
-        const color = count > 0 ? 'text-emerald-600' : 'text-red-500';
-        return `<td class="px-4 py-3 text-center"><span class="font-semibold ${color}">${count}개</span> <span class="text-xs text-slate-400">${types.slice(0,3).join(', ')}</span></td>`;
-      }
-      if (data.scope === 'faq') {
-        const schema = r.faq?.has_faq_schema ? '✅' : '❌';
-        const html = r.faq?.has_faq_html ? '✅' : '❌';
-        return `<td class="px-4 py-3 text-center text-sm">스키마 ${schema} / HTML ${html}</td>`;
-      }
-      return '';
+      const bd = r.score?.breakdown || {};
+      const catKey = (data.scope in (CATEGORY_META || {})) ? data.scope
+                   : (data.scope === 'schema' || data.scope === 'faq') ? 'ai_readiness'
+                   : data.scope;
+      const c = bd[catKey];
+      if (!c) return `<td class="px-4 py-3 text-center text-slate-400">—</td>`;
+      const passed = c.passed ?? 0;
+      const total = c.total ?? Object.keys(c.items || {}).length;
+      const pct = c.max ? (c.points / c.max) : 0;
+      const color = pct >= 0.7 ? 'text-emerald-600' : pct >= 0.4 ? 'text-amber-600' : 'text-red-500';
+      return `<td class="px-4 py-3 text-center"><span class="font-semibold ${color}">${passed}</span><span class="text-slate-300">/${total}</span> <span class="text-xs text-slate-400">(${c.points}/${c.max}점)</span></td>`;
     };
 
     // Table rows
@@ -884,12 +676,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </td>
           <td data-col="score" class="px-4 py-3 text-center font-black text-lg text-slate-800">${sc}</td>
           <td data-col="score" class="px-4 py-3 text-center"><span class="text-xs font-bold px-2 py-0.5 rounded-full ${gc[g] || gc['Poor']}">${g}</span></td>
-          ${cell('seo', bd.seo_tags?.points ?? 0, bd.seo_tags?.max ?? 20)}
-          ${cell('robots', bd.robots_txt?.points ?? 0, bd.robots_txt?.max ?? 10)}
-          ${cell('schema', bd.json_ld?.points ?? 0, bd.json_ld?.max ?? 15)}
-          ${cell('llms', bd.llms_txt?.points ?? 0, bd.llms_txt?.max ?? 15)}
-          ${cell('faq', bd.faq?.points ?? 0, bd.faq?.max ?? 15)}
-          ${cell('csr', bd.csr_ratio?.points ?? 0, bd.csr_ratio?.max ?? 10)}
+          ${cell('performance',   bd.performance?.points ?? 0,   bd.performance?.max ?? 25)}
+          ${cell('accessibility', bd.accessibility?.points ?? 0, bd.accessibility?.max ?? 15)}
+          ${cell('seo',           bd.seo?.points ?? 0,           bd.seo?.max ?? 20)}
+          ${cell('ai_readiness',  bd.ai_readiness?.points ?? 0,  bd.ai_readiness?.max ?? 40)}
           <td class="px-4 py-3">
             <button onclick="showSingleFromBulk(${idx})"
               class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold">상세 보기</button>
@@ -917,17 +707,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function exportBulkCSV() {
     if (!bulkData.length) return;
-    const header = ['#', 'URL', '점수', '등급', 'SEO', 'robots.txt', 'JSON-LD', 'llms.txt', 'FAQ', 'SSR/CSR', 'SSR비중(%)', '오류'];
+    const header = ['#', 'URL', '점수', '등급', 'Performance', 'Accessibility', 'SEO', 'AI Readiness', '오류'];
     const rows = bulkData.map((item, i) => {
-      if (item.error) return [i + 1, item.url, '', '', '', '', '', '', '', '', '', item.error];
+      if (item.error) return [i + 1, item.url, '', '', '', '', '', '', item.error];
       const bd = item.result.score.breakdown;
-      const ratio = bd.csr_ratio?.ratio != null ? Math.round(bd.csr_ratio.ratio * 100) : '';
       return [
         i + 1, item.url,
         item.result.score.total, item.result.score.grade,
-        bd.seo_tags?.points ?? '', bd.robots_txt?.points ?? '',
-        bd.json_ld?.points ?? '', bd.llms_txt?.points ?? '',
-        bd.faq?.points ?? '', bd.csr_ratio?.points ?? '', ratio, ''
+        bd.performance?.points ?? '', bd.accessibility?.points ?? '',
+        bd.seo?.points ?? '', bd.ai_readiness?.points ?? '', ''
       ];
     });
     const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -938,6 +726,53 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     a.click();
   }
 
+  // 49\uAC1C \uD56D\uBAA9 \uC0C1\uC138 PASS/FAIL\uC744 wide-format CSV\uB85C \uB0B4\uBCF4\uB0B4\uAE30
+  function exportBulkDetailCSV() {
+    if (!bulkData.length) return;
+
+    // \uCCAB \uC131\uACF5 \uACB0\uACFC\uC5D0\uC11C \uBAA8\uB4E0 \uD56D\uBAA9 ID/\uB77C\uBCA8 \uC218\uC9D1 (\uBAA8\uB4E0 URL\uC774 \uB3D9\uC77C \uB8F0\uC14B\uC774\uBBC0\uB85C)
+    let firstOK = bulkData.find(d => !d.error && d.result?.score?.breakdown);
+    if (!firstOK) {
+      alert('\uC0C1\uC138 \uB370\uC774\uD130\uAC00 \uC788\uB294 \uACB0\uACFC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.');
+      return;
+    }
+    const breakdown = firstOK.result.score.breakdown;
+    const cols = [];  // {key, label}
+    const order = ['performance','accessibility','seo','ai_readiness'];
+    for (const cat of order) {
+      const c = breakdown[cat];
+      if (!c?.items) continue;
+      for (const [id, item] of Object.entries(c.items)) {
+        cols.push({ cat, id, label: item.label || id });
+      }
+    }
+
+    const header = ['#', 'URL', '\uC810\uC218', '\uB4F1\uAE09', ...cols.map(c => c.label), '\uC624\uB958'];
+    const rows = bulkData.map((item, i) => {
+      if (item.error) {
+        return [i + 1, item.url, '', '', ...cols.map(() => ''), item.error];
+      }
+      const bd = item.result.score.breakdown;
+      const itemCells = cols.map(c => {
+        const it = bd[c.cat]?.items?.[c.id];
+        if (!it) return '';
+        return it.pass ? 'PASS' : 'FAIL';
+      });
+      return [
+        i + 1, item.url,
+        item.result.score.total, item.result.score.grade,
+        ...itemCells, ''
+      ];
+    });
+
+    const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `geo-audit-detail-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  }
+
   function showError(msg) {
     document.getElementById('errorMsg').textContent = msg;
     document.getElementById('errorBox').classList.remove('hidden');
@@ -945,16 +780,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   // ── Scoped render (특정 항목만) ──────────────────────────────────────────────
   function renderScopedResults(data) {
-    // scoreCard 숨기기
-    document.getElementById('scoreCard').style.display = 'none';
+    // scope 응답에는 score만 포함 — score 카드 + 카테고리 카드 표시 후 필터
+    document.getElementById('scoreCard').style.display = '';
     document.getElementById('pdpBanner').classList.add('hidden');
-
-    if (data.scope === 'schema') {
-      renderJsonLd(data.json_ld, null);
-    } else if (data.scope === 'seo') {
-      renderSeoTags(data.seo_tags);
-    } else if (data.scope === 'faq') {
-      renderFaq(data.faq, null);
+    if (data.score) {
+      renderScore(data.score);
+      renderCategoryCards(data.score.breakdown);
     }
     document.getElementById('results').classList.remove('hidden');
     filterResultCards();
@@ -962,20 +793,76 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   // ── Main render ────────────────────────────────────────────────────────────
   function renderResults(data) {
+    document.getElementById('scoreCard').style.display = '';
     renderScore(data.score);
-    renderPdp(data.pdp, data.score.breakdown.json_ld);
-    renderSeoTags(data.seo_tags);
-    renderJsonLd(data.json_ld, data.score.breakdown.json_ld);
-    renderLlms(data.llms_txt);
-    renderRobots(data.robots_txt);
-    renderFaq(data.faq, data.score.breakdown.faq);
-    renderSummaryBox(data.summary_box);
-    renderHeadings(data.heading_structure, data.score.breakdown.heading_structure);
-    renderStats(data.stats_density);
-    renderReviews(data.reviews_ssr, data.score.breakdown.reviews_ssr);
-    renderCsrRatio(data.csr_ratio, data.score.breakdown.csr_ratio);
+    renderPdp(data.pdp, data.score?.breakdown?.ai_readiness);
+    renderCategoryCards(data.score?.breakdown || {});
     document.getElementById('results').classList.remove('hidden');
     filterResultCards();
+  }
+
+  // ── Category Cards (4 categories × N items) ──────────────────────────────
+  function renderCategoryCards(breakdown) {
+    const container = document.getElementById('categoryCards');
+    container.innerHTML = '';
+    const order = ['performance','accessibility','seo','ai_readiness'];
+
+    for (const catKey of order) {
+      const cat = breakdown[catKey];
+      if (!cat) continue;
+      const meta = CATEGORY_META[catKey] || { label: catKey, color: '#64748b', icon: '•' };
+      const items = cat.items || {};
+      const passed = cat.passed ?? Object.values(items).filter(i => i.pass).length;
+      const total = cat.total ?? Object.keys(items).length;
+      const pct = cat.max ? Math.round((cat.points / cat.max) * 100) : 0;
+
+      const badgeColor = pct >= 80 ? 'bg-emerald-100 text-emerald-700'
+                        : pct >= 50 ? 'bg-amber-100 text-amber-700'
+                        : 'bg-red-100 text-red-700';
+
+      const itemsHtml = Object.entries(items).map(([id, it]) => {
+        const passClass = it.pass ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100';
+        const textClass = it.pass ? 'text-emerald-800' : 'text-red-800';
+        const valueLine = it.value ? `<p class="text-xs text-slate-500 mt-0.5 truncate" title="${escHtml(it.value)}">${escHtml(it.value)}</p>` : '';
+        const hintLine  = it.hint  ? `<p class="text-xs text-red-500 mt-0.5">${escHtml(it.hint)}</p>` : '';
+        return `
+          <div class="flex items-start gap-2.5 p-3 rounded-xl border ${passClass}">
+            <span class="text-lg shrink-0 mt-0.5">${it.pass ? '✅' : '❌'}</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold ${textClass}">${escHtml(it.label || id)}</p>
+              ${valueLine}
+              ${hintLine}
+            </div>
+          </div>`;
+      }).join('');
+
+      container.innerHTML += `
+        <div data-cat="${catKey}" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-2 opacity-0" style="animation-delay:0s">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-xl"
+                 style="background:${meta.color}15;color:${meta.color}">${meta.icon || '•'}</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="font-bold text-slate-800 text-lg">${meta.label}</h2>
+                <span class="text-xs px-2 py-0.5 rounded-full font-medium ${badgeColor}">${passed}/${total} 통과</span>
+                <span class="text-xs text-slate-400 ml-auto">${cat.points}/${cat.max}점</span>
+              </div>
+              <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-2">
+                <div class="h-full rounded-full transition-all duration-500" style="width:${pct}%;background:${meta.color}"></div>
+              </div>
+            </div>
+          </div>
+          ${Object.keys(items).length
+            ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">${itemsHtml}</div>`
+            : `<p class="text-xs text-slate-400 mt-2">활성 점검 항목이 없습니다.</p>`}
+        </div>`;
+
+      // animate-in
+      setTimeout(() => {
+        const el = container.querySelector(`[data-cat="${catKey}"]`);
+        if (el) el.style.opacity = '1';
+      }, 100);
+    }
   }
 
   // ── ① Score ────────────────────────────────────────────────────────────────
@@ -1043,7 +930,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   // ── ② PDP Banner ───────────────────────────────────────────────────────────
-  function renderPdp(pdp, jsonBreakdown) {
+  function renderPdp(pdp, aiBreakdown) {
     const el = document.getElementById('pdpBanner');
     if (!pdp || !pdp.is_pdp) {
       el.classList.add('hidden');
@@ -1051,8 +938,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
     el.classList.remove('hidden');
 
-    const hasProduct = jsonBreakdown?.has_product;
-    const hasFaqPage = jsonBreakdown?.has_faqpage;
+    const items = aiBreakdown?.items || {};
+    const hasProduct = items.ai_schema_product?.pass;
+    const hasFaqPage = items.ai_schema_faq?.pass;
 
     let warnings = '';
     if (!hasProduct)
@@ -1076,587 +964,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           : `<p class="text-emerald-700 text-sm font-medium flex items-center gap-1.5"><span>✅</span> Product · FAQPage 스키마 모두 확인됨</p>`
         }
       </div>`;
-  }
-
-  // ── ③ SEO Tags ─────────────────────────────────────────────────────────────
-  function renderSeoTags(seoTags) {
-    const passed = seoTags.passed ?? 0;
-    const total  = seoTags.total  ?? 10;
-    const pct    = Math.round(passed / total * 100);
-
-    setBadge('seoTagsBadge',
-      `${passed}/${total} 통과 (${passed * 2}/20점)`,
-      passed >= 8 ? 'bg-emerald-100 text-emerald-700'
-      : passed >= 5 ? 'bg-amber-100 text-amber-700'
-      : 'bg-red-100 text-red-700'
-    );
-
-    const el = document.getElementById('seoTagsList');
-    el.innerHTML = '';
-    for (const [, item] of Object.entries(seoTags.items || {})) {
-      el.innerHTML += `
-        <div class="flex items-start gap-2.5 p-3 rounded-xl border ${item.pass
-          ? 'bg-emerald-50 border-emerald-100'
-          : 'bg-red-50 border-red-100'}">
-          <span class="text-lg shrink-0 mt-0.5">${item.pass ? '✅' : '❌'}</span>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold ${item.pass ? 'text-emerald-800' : 'text-red-800'}">${item.label}</p>
-            ${item.value
-              ? `<p class="text-xs text-slate-500 mt-0.5 truncate" title="${escHtml(item.value)}">${escHtml(item.value)}</p>`
-              : ''}
-            ${item.hint
-              ? `<p class="text-xs text-red-500 mt-0.5">${escHtml(item.hint)}</p>`
-              : ''}
-          </div>
-          <span class="text-xs font-bold shrink-0 mt-0.5 ${item.pass ? 'text-emerald-600' : 'text-slate-300'}">
-            ${item.pass ? '2pt' : '0pt'}
-          </span>
-        </div>`;
-    }
-  }
-
-  // ── ④ JSON-LD (두 그룹) ────────────────────────────────────────────────────
-  function renderJsonLd(jsonld, bd) {
-    if (!bd) bd = {};
-    const total = (bd.required_score || 0) + (bd.supporting_score || 0);
-    setBadge('jsonldBadge',
-      `${total}/15점`,
-      total >= 13 ? 'bg-emerald-100 text-emerald-700'
-      : total >= 7  ? 'bg-amber-100 text-amber-700'
-      : 'bg-red-100 text-red-700'
-    );
-
-    // 핵심 필수 요건 (Product + FAQPage)
-    const reqEl = document.getElementById('jsonldRequired');
-    reqEl.innerHTML = '';
-    const required = [
-      { key: 'has_product', label: 'Product',  desc: 'PDP 필수 스키마' },
-      { key: 'has_faqpage', label: 'FAQPage',  desc: 'FAQ 스키마' },
-    ];
-    for (const item of required) {
-      const pass = bd[item.key] || false;
-      reqEl.innerHTML += schemaCheckItem(pass, item.label, item.desc, pass ? '획득' : '누락');
-    }
-
-    // 보조 신뢰도 요건 (BreadcrumbList or Organization)
-    const supEl = document.getElementById('jsonldSupporting');
-    supEl.innerHTML = '';
-    const supporting = [
-      { key: 'has_breadcrumb', label: 'BreadcrumbList', desc: '탐색 경로 스키마' },
-      { key: 'has_org',        label: 'Organization',   desc: '기관/브랜드 스키마' },
-    ];
-    for (const item of supporting) {
-      const pass = bd[item.key] || false;
-      supEl.innerHTML += schemaCheckItem(pass, item.label, item.desc, pass ? '획득' : '없음');
-    }
-
-    // 기타 발견된 스키마
-    const allTypes   = bd.all_types   || [];
-    const rawSources = jsonld.raw_sources || [];
-    const knownLower = new Set(['product','faqpage','breadcrumblist','organization']);
-
-    const foundEl = document.getElementById('jsonldFoundSchemas');
-    if (allTypes.length > 0) {
-      const rawSourcesBlock = rawSources.length > 0 ? `
-        <div class="mt-3 pt-3 border-t border-slate-100">
-          <button onclick="this.nextElementSibling.classList.toggle('hidden')"
-            class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1.5 mb-2">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-            </svg>
-            원본 JSON-LD 소스 보기 / 숨기기 (${rawSources.length}개)
-          </button>
-          <div class="hidden space-y-3">
-            ${rawSources.map((src, i) => `
-              <div>
-                <p class="section-label mb-1">스키마 #${i + 1}</p>
-                <pre class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-3 overflow-auto max-h-72 font-mono whitespace-pre-wrap break-all">${escHtml(src)}</pre>
-              </div>`).join('')}
-          </div>
-        </div>` : '';
-
-      foundEl.innerHTML = `
-        <div class="mt-3 pt-3 border-t border-slate-100">
-          <p class="section-label mb-2">발견된 전체 스키마</p>
-          <div class="flex flex-wrap gap-1.5">
-            ${allTypes.map(t => {
-              const isCore = knownLower.has(t.toLowerCase());
-              return `<span class="text-xs px-2.5 py-1 rounded-lg font-semibold border ${
-                isCore ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
-                       : 'bg-slate-50 border-slate-200 text-slate-600'
-              }">${escHtml(t)}</span>`;
-            }).join('')}
-          </div>
-          ${rawSourcesBlock}
-        </div>`;
-    } else {
-      foundEl.innerHTML = `
-        <div class="mt-3 bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800">
-          <strong>JSON-LD 스키마가 없습니다.</strong><br/>
-          Article, Organization, Product 등의 스키마를 추가하면 AI 이해도가 높아집니다.
-        </div>`;
-    }
-  }
-
-  function schemaCheckItem(pass, label, desc, status) {
-    return `
-      <div class="flex items-center gap-2.5 p-3 rounded-xl border ${
-        pass ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'}">
-        <span class="text-lg shrink-0">${pass ? '✅' : '❌'}</span>
-        <div class="min-w-0">
-          <p class="text-sm font-semibold ${pass ? 'text-emerald-800' : 'text-red-800'}">${label}</p>
-          <p class="text-xs text-slate-400">${desc}</p>
-        </div>
-        <span class="ml-auto text-xs font-bold ${pass ? 'text-emerald-600' : 'text-red-400'} shrink-0">${status}</span>
-      </div>`;
-  }
-
-  // ── ⑤ llms.txt ─────────────────────────────────────────────────────────────
-  function renderLlms(llms) {
-    const found = llms.status === 'found';
-    setCardIcon('llmsIcon',
-      found
-        ? '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
-        : '<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>',
-      found ? 'bg-emerald-50' : 'bg-red-50'
-    );
-    setBadge('llmsBadge',
-      found ? `파일 있음 (+5점)` : '파일 없음 (0점)',
-      found ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-    );
-    const detail = document.getElementById('llmsDetail');
-    if (found) {
-      detail.innerHTML = `
-        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-slate-500 text-xs">파일 크기:</span>
-            <span class="font-medium text-slate-700 text-xs">${llms.size_bytes} bytes</span>
-          </div>
-          <pre class="text-xs text-slate-600 whitespace-pre-wrap font-mono overflow-auto max-h-40">${escHtml(llms.content_preview)}</pre>
-        </div>`;
-    } else if (llms.status === 'error') {
-      detail.innerHTML = `<p class="text-red-500 text-sm">오류: ${escHtml(llms.error || '불명')}</p>`;
-    } else {
-      detail.innerHTML = `
-        <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800">
-          <strong>/llms.txt 파일이 없습니다.</strong><br/>
-          이 파일을 추가하면 AI 모델이 사이트를 더 잘 이해할 수 있습니다.
-          <a href="https://llmstxt.org" target="_blank" class="underline ml-1">llmstxt.org 참고 →</a>
-        </div>`;
-    }
-  }
-
-  // ── ⑥ robots.txt ───────────────────────────────────────────────────────────
-  function renderRobots(robots) {
-    const found        = robots.status === 'found';
-    const bots         = robots.bots || {};
-    const blockedCount = Object.values(bots).filter(b => b.blocked).length;
-    const totalBots    = Object.keys(bots).length;
-    const allAllowed   = blockedCount === 0;
-
-    setCardIcon('robotsIcon',
-      allAllowed
-        ? '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
-        : '<svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',
-      allAllowed ? 'bg-emerald-50' : 'bg-amber-50'
-    );
-
-    if (!found) {
-      setBadge('robotsBadge', 'robots.txt 없음 (전체 허용)', 'bg-slate-100 text-slate-500');
-    } else {
-      setBadge('robotsBadge',
-        `${blockedCount}개 차단 / ${totalBots}개 검사`,
-        allAllowed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-      );
-    }
-
-    const grid = document.getElementById('botsGrid');
-    if (!found || totalBots === 0) {
-      grid.innerHTML = `<p class="text-slate-400 text-sm col-span-3">${found ? 'AI 봇 규칙 없음' : 'robots.txt 없음 — 모든 봇이 허용됩니다.'}</p>`;
-      return;
-    }
-    grid.innerHTML = '';
-    for (const [key, bot] of Object.entries(bots)) {
-      const isBlocked = bot.blocked;
-      grid.innerHTML += `
-        <div class="flex items-center gap-2 p-2.5 rounded-lg border ${isBlocked
-          ? 'bg-red-50 border-red-100' : 'bg-emerald-50 border-emerald-100'}"
-          title="${isBlocked ? escHtml(bot.rule || '차단됨') : '허용됨'}">
-          <span class="text-base">${isBlocked ? '🚫' : '✅'}</span>
-          <div class="min-w-0">
-            <p class="text-xs font-semibold ${isBlocked ? 'text-red-700' : 'text-emerald-700'} truncate">${escHtml(key)}</p>
-            <p class="text-xs text-slate-400 truncate">${escHtml(bot.name)}</p>
-          </div>
-        </div>`;
-    }
-  }
-
-  // ── ⑦ FAQ ─────────────────────────────────────────────────────────────────
-  function renderFaq(faq, bd) {
-    if (!bd) bd = {};
-    const total = bd.points || 0;
-    setBadge('faqBadge',
-      `${total}/15점`,
-      total >= 13 ? 'bg-emerald-100 text-emerald-700'
-      : total >= 7  ? 'bg-amber-100 text-amber-700'
-      : 'bg-red-100 text-red-700'
-    );
-
-    const el = document.getElementById('faqDetail');
-    const schema_pass = faq.has_faq_schema || false;
-    const html_pass   = faq.has_faq_html   || false;
-
-    el.innerHTML = `
-      <div class="flex items-center gap-2.5 p-3 rounded-xl border ${schema_pass
-        ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'}">
-        <span class="text-lg">${schema_pass ? '✅' : '❌'}</span>
-        <div class="flex-1">
-          <p class="text-sm font-semibold ${schema_pass ? 'text-emerald-800' : 'text-red-800'}">
-            FAQPage JSON-LD 스키마
-          </p>
-          <p class="text-xs text-slate-400">${schema_pass ? '스키마 감지됨' : '스키마 없음 — 8점 손실'}</p>
-        </div>
-        <span class="text-sm font-bold ${schema_pass ? 'text-emerald-600' : 'text-slate-300'}">${schema_pass ? '+8점' : '+0점'}</span>
-      </div>
-      <div class="flex items-center gap-2.5 p-3 rounded-xl border ${html_pass
-        ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'}">
-        <span class="text-lg">${html_pass ? '✅' : '❌'}</span>
-        <div class="flex-1">
-          <p class="text-sm font-semibold ${html_pass ? 'text-emerald-800' : 'text-red-800'}">
-            HTML FAQ 섹션
-          </p>
-          <p class="text-xs text-slate-400">${html_pass ? 'FAQ 섹션 감지됨' : 'FAQ 섹션 없음 — 7점 손실'}</p>
-        </div>
-        <span class="text-sm font-bold ${html_pass ? 'text-emerald-600' : 'text-slate-300'}">${html_pass ? '+7점' : '+0점'}</span>
-      </div>
-      ${!schema_pass || !html_pass ? `
-        <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800">
-          💡 FAQPage 스키마와 HTML FAQ 섹션을 함께 추가하면 AI 답변 인용 가능성이 높아집니다.
-        </div>` : ''}`;
-  }
-
-  // ── ⑧ Summary Box ──────────────────────────────────────────────────────────
-  function renderSummaryBox(summary) {
-    const found      = summary.found      || false;
-    const method     = summary.method     || null;
-    const sourceHtml = summary.source_html || null;
-
-    setBadge('summaryBadge',
-      found ? '감지됨 (+10점)' : '없음 (0점)',
-      found ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-    );
-
-    const methodLabel = {
-      'class/id':      'class 또는 id 속성으로 감지',
-      'heading':       '요약 관련 제목(heading)으로 감지',
-      'html5-summary': '<details>/<summary> HTML5 태그로 감지',
-    };
-
-    const srcBlock = (found && sourceHtml) ? `
-      <div class="mt-3">
-        <button onclick="this.nextElementSibling.classList.toggle('hidden')"
-          class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-          </svg>
-          감지된 HTML 소스 보기 / 숨기기
-        </button>
-        <div class="hidden mt-2">
-          <pre class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-3 overflow-auto max-h-64 font-mono whitespace-pre-wrap break-all">${escHtml(sourceHtml)}</pre>
-        </div>
-      </div>` : '';
-
-    document.getElementById('summaryDetail').innerHTML = found
-      ? `<div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
-           <div class="flex items-center gap-3">
-             <span class="text-2xl">✅</span>
-             <div>
-               <p class="text-sm font-semibold text-emerald-800">서머리 박스 감지됨 (+10점)</p>
-               <p class="text-xs text-emerald-600 mt-0.5">${methodLabel[method] || '감지됨'}</p>
-             </div>
-           </div>
-           ${srcBlock}
-         </div>`
-      : `<div class="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800">
-           <strong>서머리 박스가 감지되지 않았습니다.</strong><br/>
-           <span class="text-xs mt-1 block">요약·핵심·TL;DR·highlight 등의 class/id/heading을 가진 섹션을 추가하세요. AI는 요약 영역을 답변에 직접 인용합니다.</span>
-         </div>`;
-  }
-
-  // ── ⑨ Heading Structure ────────────────────────────────────────────────────
-  function renderHeadings(h, bd) {
-    if (!h || h.status === 'error') {
-      setBadge('headingsBadge', '분석 불가', 'bg-slate-100 text-slate-500');
-      document.getElementById('headingsDetail').innerHTML =
-        '<p class="text-slate-400 text-sm">페이지를 불러오지 못했습니다.</p>';
-      return;
-    }
-    const pts = bd ? bd.points : 0;
-    setBadge('headingsBadge',
-      `${pts}/5점`,
-      pts >= 4 ? 'bg-emerald-100 text-emerald-700'
-      : pts >= 2 ? 'bg-amber-100 text-amber-700'
-      : 'bg-red-100 text-red-700'
-    );
-
-    const checks = [
-      {
-        pass:   h.has_single_h1,
-        pts:    2,
-        label:  'H1 고유성 — 정확히 1개',
-        detail: h.h1_count === 0 ? 'H1 태그가 없습니다'
-               : h.h1_count > 1  ? `H1이 ${h.h1_count}개 (중복)`
-               :                   `H1 1개 확인`,
-      },
-      {
-        pass:   h.has_multiple_h2,
-        pts:    2,
-        label:  'H2 복수 존재 — 2개 이상',
-        detail: h.h2_count === 0 ? 'H2 태그가 없습니다'
-               : h.h2_count === 1 ? 'H2가 1개 (2개 이상 권장)'
-               :                    `H2 ${h.h2_count}개 확인`,
-      },
-      {
-        pass:   h.logical_order,
-        pts:    1,
-        label:  '논리적 순서 — H1 → H2 → H3',
-        detail: h.logical_order ? '헤딩 계층 순서가 올바릅니다'
-                                : 'H1보다 하위 헤딩이 먼저 등장합니다',
-      },
-    ];
-
-    // 헤딩 카운트 요약
-    const countRow = [
-      ['H1', h.h1_count, 'text-violet-600'],
-      ['H2', h.h2_count, 'text-indigo-500'],
-      ['H3', h.h3_count, 'text-blue-400'],
-      ['H4', h.h4_count, 'text-slate-400'],
-    ].map(([tag, n, color]) => `
-      <div class="text-center px-3">
-        <p class="text-2xl font-extrabold ${color}">${n}</p>
-        <p class="text-xs text-slate-400 mt-0.5">${tag}</p>
-      </div>`).join('');
-
-    // H2 목록
-    const h2List = h.h2_texts && h.h2_texts.length
-      ? `<div class="mt-3">
-           <p class="section-label mb-1.5">H2 목록</p>
-           <div class="space-y-1">
-             ${h.h2_texts.map(t => `
-               <div class="flex items-center gap-2 text-xs text-slate-600 bg-violet-50 rounded-lg px-3 py-1.5 border border-violet-100">
-                 <span class="font-bold text-violet-400 shrink-0">H2</span>
-                 <span class="truncate">${escHtml(t)}</span>
-               </div>`).join('')}
-           </div>
-         </div>`
-      : '';
-
-    document.getElementById('headingsDetail').innerHTML = `
-      <div class="space-y-3">
-        <div class="flex border border-slate-100 rounded-xl divide-x divide-slate-100 bg-slate-50 py-3">
-          ${countRow}
-        </div>
-        <div class="space-y-2">
-          ${checks.map(c => `
-            <div class="flex items-center gap-3 p-3 rounded-xl border ${c.pass
-              ? 'bg-emerald-50 border-emerald-100'
-              : 'bg-red-50 border-red-100'}">
-              <span class="text-lg shrink-0">${c.pass ? '✅' : '❌'}</span>
-              <div class="flex-1">
-                <p class="text-sm font-semibold ${c.pass ? 'text-emerald-800' : 'text-red-800'}">${c.label}</p>
-                <p class="text-xs text-slate-400">${escHtml(c.detail)}</p>
-              </div>
-              <span class="text-sm font-bold shrink-0 ${c.pass ? 'text-emerald-600' : 'text-slate-300'}">+${c.pts}pt</span>
-            </div>`).join('')}
-        </div>
-        ${h2List}
-      </div>`;
-  }
-
-  // ── ⑩ Stats Density ────────────────────────────────────────────────────────
-  function renderStats(stats) {
-    if (stats.status === 'error') {
-      setBadge('statsBadge', '분석 불가', 'bg-slate-100 text-slate-500');
-      document.getElementById('statsDetail').innerHTML =
-        '<p class="text-slate-400 text-sm">페이지를 불러오지 못했습니다.</p>';
-      return;
-    }
-    const has   = stats.has_stats || false;
-    const ratio = stats.ratio     || 0;
-    setBadge('statsBadge',
-      has ? `있음 (+5점, ${ratio}%)` : '없음 (0점)',
-      has ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-    );
-    document.getElementById('statsDetail').innerHTML = has
-      ? `<div class="flex items-center gap-5 bg-emerald-50 border border-emerald-100 rounded-xl p-4">
-           <span class="text-2xl">✅</span>
-           <div>
-             <p class="text-sm font-semibold text-emerald-800">통계 데이터 존재 (+5점)</p>
-             <p class="text-xs text-emerald-600 mt-0.5">
-               전체 ${(stats.total_words||0).toLocaleString()}단어 중
-               ${(stats.stat_words||0).toLocaleString()}개(${ratio}%)가 숫자·단위를 포함합니다.
-             </p>
-           </div>
-         </div>`
-      : `<div class="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800">
-           <strong>본문에 숫자·통계 데이터가 없습니다.</strong><br/>
-           <span class="text-xs mt-1 block">퍼센트(%), 수치, 연구 결과 등을 포함하면 AI 신뢰도가 높아집니다.</span>
-         </div>`;
-  }
-
-  // ── ⑪ Reviews SSR ──────────────────────────────────────────────────────────
-  function renderReviews(reviews, bd) {
-    if (!reviews || reviews.status === 'error') {
-      setBadge('reviewsBadge', '분석 불가', 'bg-slate-100 text-slate-500');
-      document.getElementById('reviewsDetail').innerHTML =
-        '<p class="text-slate-400 text-sm">페이지를 불러오지 못했습니다.</p>';
-      return;
-    }
-    const found      = reviews.found       || false;
-    const hasContent = reviews.has_content || false;
-    const pts        = bd ? bd.points : 0;
-
-    setBadge('reviewsBadge',
-      found ? `SSR 확인 (+${pts}점)` : '없음 (0점)',
-      found ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-    );
-
-    document.getElementById('reviewsDetail').innerHTML = found
-      ? `<div class="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl p-4">
-           <span class="text-2xl">✅</span>
-           <div>
-             <p class="text-sm font-semibold text-emerald-800">#reviews_container SSR 렌더링 확인 (+${pts}점)</p>
-             <p class="text-xs text-emerald-600 mt-0.5">
-               ${hasContent ? '리뷰 컨테이너에 콘텐츠가 존재합니다. AI가 리뷰 데이터를 직접 읽을 수 있습니다.'
-                            : '리뷰 컨테이너가 존재하지만 내용이 비어있습니다.'}
-             </p>
-           </div>
-         </div>`
-      : `<div class="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800">
-           <strong>#reviews_container 요소가 감지되지 않았습니다.</strong><br/>
-           <span class="text-xs mt-1 block">서버사이드 렌더링으로 <code class="bg-amber-100 px-1 rounded">id="reviews_container"</code> 요소를 포함하면 AI가 리뷰 데이터를 직접 읽을 수 있습니다.</span>
-         </div>`;
-  }
-
-  // ── ⑫ CSR Ratio ────────────────────────────────────────────────────────────
-  function renderCsrRatio(csr, bd) {
-    if (!bd) bd = {};
-    const status = csr?.status || 'unavailable';
-    const ratio  = csr?.ratio  ?? null;
-    const pts    = bd.points   ?? 0;
-
-    const tierLabel = {
-      excellent:   { text: '우수 — 대부분 SSR',     cls: 'bg-emerald-100 text-emerald-700' },
-      good:        { text: '양호 — 절반 이상 SSR',   cls: 'bg-teal-100 text-teal-700' },
-      partial:     { text: '부분 — JS 의존 다수',    cls: 'bg-amber-100 text-amber-700' },
-      poor:        { text: '미흡 — JS 의존 심각',    cls: 'bg-red-100 text-red-700' },
-      blocked:     { text: '측정 불가 — 사이트 봇 차단', cls: 'bg-orange-100 text-orange-700' },
-      unavailable: { text: 'Playwright 미설치',      cls: 'bg-slate-100 text-slate-500' },
-      error:       { text: '분석 오류',              cls: 'bg-red-100 text-red-500' },
-    };
-    const tier = bd.tier || (ratio === null ? 'unavailable' : 'poor');
-    const tl   = tierLabel[tier] || tierLabel.unavailable;
-
-    setBadge('csrBadge', `${pts}/10점  ${tl.text}`, tl.cls);
-
-    const el = document.getElementById('csrDetail');
-
-    if (status === 'unavailable' || status === 'blocked' || status === 'error') {
-      el.innerHTML = `
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-600">
-          <strong>이 사이트는 SSR/CSR 비중 측정이 불가합니다.</strong>
-          <p class="text-xs mt-2 text-slate-500">일부 사이트는 자동화된 브라우저 접근을 차단합니다. 해당 항목은 점수에서 제외됩니다.</p>
-        </div>`;
-      return;
-    }
-
-    const ssrChars = (csr?.ssr_chars || 0).toLocaleString();
-    const csrChars = (csr?.csr_chars || 0).toLocaleString();
-    const pct      = ratio !== null ? Math.round(ratio * 100) : 0;
-    const barColor = tier === 'excellent' ? '#15803d'
-                   : tier === 'good'      ? '#0d9488'
-                   : tier === 'partial'   ? '#b45309'
-                   :                        '#b91c1c';
-    const barId = 'csrRatioBar';
-
-    el.innerHTML = `
-      <div class="space-y-4">
-        <!-- 글자수 비교 -->
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-center">
-            <p class="section-label mb-1">SSR 글자수</p>
-            <p class="text-2xl font-extrabold text-blue-700">${ssrChars}</p>
-            <p class="text-xs text-blue-500 mt-0.5">서버 렌더링 텍스트</p>
-          </div>
-          <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 text-center">
-            <p class="section-label mb-1">CSR 글자수</p>
-            <p class="text-2xl font-extrabold text-indigo-700">${csrChars}</p>
-            <p class="text-xs text-indigo-500 mt-0.5">JS 실행 후 텍스트</p>
-          </div>
-        </div>
-        ${csr?.debug ? `
-        <!-- CSR 디버그 정보 -->
-        <details class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-          <summary class="text-xs font-semibold text-slate-500 cursor-pointer">CSR 디버그 정보</summary>
-          <div class="mt-2 text-xs text-slate-600 space-y-1 font-mono">
-            <p><strong>Final URL:</strong> ${escHtml(csr.debug.final_url || '')}</p>
-            <p><strong>HTTP Status:</strong> ${csr.debug.http_status || ''}</p>
-            <p><strong>Page Title:</strong> ${escHtml(csr.debug.page_title || '')}</p>
-            <p><strong>Main Chars:</strong> ${(csr.debug.main_chars || 0).toLocaleString()}</p>
-            <p><strong>Iframe Count:</strong> ${csr.debug.iframe_count || 0}</p>
-            <p><strong>Iframe Chars:</strong> ${(csr.debug.iframe_chars || 0).toLocaleString()}</p>
-            <p><strong>HTML Length:</strong> ${(csr.debug.html_length || 0).toLocaleString()}</p>
-            <p><strong>Text Preview:</strong></p>
-            <p class="bg-white p-2 rounded border border-slate-200 break-all whitespace-pre-wrap">${escHtml(csr.debug.text_preview || '')}</p>
-          </div>
-        </details>
-        ` : ''}
-        <!-- 비율 바 -->
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-sm font-semibold text-slate-700">SSR 비중</span>
-            <span class="text-lg font-extrabold" style="color:${barColor}">${pct}%</span>
-          </div>
-          <div class="h-4 bg-slate-100 rounded-full overflow-hidden">
-            <div id="${barId}" class="progress-bar h-full rounded-full" style="background:${barColor}"></div>
-          </div>
-          <div class="flex justify-between text-xs text-slate-400 mt-1">
-            <span>0% (완전 CSR)</span><span>100% (완전 SSR)</span>
-          </div>
-        </div>
-        <!-- 등급 안내 -->
-        <div class="grid grid-cols-4 gap-2 text-center text-xs">
-          ${[['≥80%','10점','우수','bg-emerald-50 border-emerald-200 text-emerald-700'],
-             ['≥50%','7점','양호','bg-teal-50 border-teal-200 text-teal-700'],
-             ['≥30%','4점','부분','bg-amber-50 border-amber-200 text-amber-700'],
-             ['<30%','0점','미흡','bg-red-50 border-red-200 text-red-700']]
-            .map(([range,score,label,cls]) => `
-              <div class="border rounded-lg py-2 px-1 ${cls}">
-                <p class="font-bold">${range}</p>
-                <p class="font-extrabold text-sm">${score}</p>
-                <p>${label}</p>
-              </div>`).join('')}
-        </div>
-      </div>`;
-
-    setTimeout(() => {
-      const b = document.getElementById(barId);
-      if (b) b.style.width = pct + '%';
-    }, 150);
-
-  }
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
-  function setCardIcon(id, svgHtml, bgClass) {
-    const el = document.getElementById(id);
-    el.innerHTML = svgHtml;
-    el.className = `w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${bgClass}`;
-  }
-
-  function setBadge(id, text, colorClass) {
-    const el = document.getElementById(id);
-    el.textContent = text;
-    el.className   = `text-xs px-2 py-0.5 rounded-full font-medium ${colorClass}`;
   }
 
   function escHtml(str) {

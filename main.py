@@ -303,6 +303,22 @@ async def get_rule_types(request: Request):
     return RULE_TYPES
 
 
+_AUDIT_CRITERIA_DOC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "audit-criteria.md")
+
+
+@app.get("/admin/audit-criteria-doc")
+async def get_audit_criteria_doc(request: Request):
+    """audit-criteria.md를 어드민에 노출 (룰 기준 reference)."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    try:
+        with open(_AUDIT_CRITERIA_DOC_PATH, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {"status": "ok", "content": content}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="audit-criteria.md 파일이 없습니다.")
+
+
 # ── Audit Groups & Schedules ─────────────────────────────────────────────────
 
 _AUDIT_DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "audit_data.json")

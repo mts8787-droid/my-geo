@@ -1,4 +1,5 @@
 import re
+import time
 import asyncio
 import httpx
 from bs4 import BeautifulSoup
@@ -18,57 +19,19 @@ _bulk_sem = asyncio.Semaphore(5)
 # ── 채점 설정 관리 ──────────────────────────────────────────────────────────────
 
 _CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scoring_config.json")
+_DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scoring_config.default.json")
 
 _DEFAULT_CONFIG = None  # scoring_config.json에서 로드, 없으면 파일 기본값 사용
 
 def _load_default_config():
-    """소스 코드에 하드코딩하지 않고, scoring_config.json의 초기 상태를 기본값으로 사용."""
-    return {
-        "seo_tags": {"max": 20, "label": "SEO Tags", "description": "기본 SEO 태그 검사", "criteria": [
-            {"id": "title", "name": "Title 태그", "points": 2, "enabled": True, "rule": {"type": "css_text_min_length", "params": {"selector": "title", "min_length": 10}}},
-            {"id": "desc", "name": "Meta Description", "points": 2, "enabled": True, "rule": {"type": "css_attr_exists", "params": {"selector": "meta[name='description' i]", "attr": "content", "min_length": 50}}},
-            {"id": "canonical", "name": "Canonical 태그", "points": 2, "enabled": True, "rule": {"type": "css_attr_exists", "params": {"selector": "link[rel~='canonical']", "attr": "href"}}},
-            {"id": "h1", "name": "H1 고유성", "points": 2, "enabled": True, "rule": {"type": "css_count", "params": {"selector": "h1", "operator": "==", "value": 1}}},
-            {"id": "img_alt", "name": "이미지 Alt", "points": 2, "enabled": True, "rule": {"type": "css_all_have_attr", "params": {"selector": "img", "attr": "alt"}}},
-            {"id": "redirect", "name": "리다이렉트 체인", "points": 2, "enabled": True, "rule": {"type": "redirect_max", "params": {"max_count": 3}}},
-            {"id": "og_title", "name": "og:title", "points": 2, "enabled": True, "rule": {"type": "css_attr_exists", "params": {"selector": "meta[property='og:title']", "attr": "content"}}},
-            {"id": "og_desc", "name": "og:description", "points": 2, "enabled": True, "rule": {"type": "css_attr_exists", "params": {"selector": "meta[property='og:description']", "attr": "content"}}},
-            {"id": "og_image", "name": "og:image", "points": 2, "enabled": True, "rule": {"type": "css_attr_exists", "params": {"selector": "meta[property='og:image']", "attr": "content"}}},
-            {"id": "robots", "name": "Meta Robots (noindex 아님)", "points": 2, "enabled": True, "rule": {"type": "css_attr_not_contains", "params": {"selector": "meta[name='robots' i]", "attr": "content", "value": "noindex"}}},
-        ]},
-        "robots_txt": {"max": 10, "label": "robots.txt AI 봇 허용", "description": "AI 크롤러 봇 허용 비율 (특수 로직)", "criteria": [], "special": "robots_ratio"},
-        "json_ld": {"max": 15, "label": "JSON-LD 구조화 데이터", "description": "필수 스키마 + 보조 스키마", "criteria": [
-            {"id": "product", "name": "필수: Product 스키마", "points": 8, "enabled": True, "rule": {"type": "schema_type_exists", "params": {"type": "product,individualproduct"}}},
-            {"id": "breadcrumb", "name": "보조: BreadcrumbList/Organization", "points": 7, "enabled": True, "rule": {"type": "schema_type_exists", "params": {"type": "breadcrumblist,organization"}}},
-        ]},
-        "llms_txt": {"max": 5, "label": "llms.txt", "description": "llms.txt 파일 존재 여부", "criteria": [
-            {"id": "exists", "name": "llms.txt 파일", "points": 5, "enabled": True, "rule": {"type": "http_status", "params": {"path": "/llms.txt", "status": 200}}},
-        ]},
-        "faq": {"max": 15, "label": "FAQ 섹션", "description": "FAQPage 스키마 + HTML FAQ 섹션", "criteria": [
-            {"id": "schema", "name": "FAQPage 스키마", "points": 8, "enabled": True, "rule": {"type": "schema_type_exists", "params": {"type": "faqpage"}}},
-            {"id": "html", "name": "HTML FAQ 섹션", "points": 7, "enabled": True, "rule": {"type": "class_id_contains", "params": {"keywords": "faq,자주 묻는,자주묻는,frequently asked,q&a,qna,questions,질문,answer,accordion", "tags": "div,section,aside,article"}}},
-        ]},
-        "summary_box": {"max": 5, "label": "서머리 박스", "description": "요약 박스 존재 여부", "criteria": [
-            {"id": "found", "name": "요약 박스 감지", "points": 5, "enabled": True, "rule": {"type": "class_id_contains", "params": {"keywords": "summary,요약,tldr,tl;dr,abstract,핵심,정리,key-point,keypoint,highlight,takeaway,key feature,key-feature,주요 기능,주요기능,주요 특징,주요특징,핵심 기능,핵심기능,제품 특징,제품특징,특장점,benefit,overview,product overview", "tags": "div,section,aside,article,blockquote,p"}}},
-        ]},
-        "heading_structure": {"max": 5, "label": "Heading 구조", "description": "제목 태그 구조 분석", "criteria": [
-            {"id": "single_h1", "name": "H1 단일", "points": 2, "enabled": True, "rule": {"type": "css_count", "params": {"selector": "h1", "operator": "==", "value": 1}}},
-            {"id": "multiple_h2", "name": "H2 복수", "points": 2, "enabled": True, "rule": {"type": "css_count", "params": {"selector": "h2", "operator": ">=", "value": 2}}},
-            {"id": "logical_order", "name": "논리적 순서", "points": 1, "enabled": True, "rule": {"type": "heading_order", "params": {}}},
-        ]},
-        "stats_density": {"max": 5, "label": "통계 데이터", "description": "수치/통계 데이터 존재 여부", "criteria": [
-            {"id": "has_stats", "name": "통계 데이터 존재", "points": 5, "enabled": True, "rule": {"type": "text_has_pattern", "params": {"pattern": "\\d", "tags": "p,li,td,h1,h2,h3,h4,h5,h6"}}},
-        ]},
-        "reviews_ssr": {"max": 10, "label": "리뷰 SSR", "description": "리뷰 컨테이너 서버사이드 렌더링", "criteria": [
-            {"id": "found", "name": "리뷰 컨테이너 SSR", "points": 10, "enabled": True, "rule": {"type": "css_exists", "params": {"selector": "#reviews_container"}}},
-        ]},
-        "csr_ratio": {"max": 10, "label": "CSR 비중", "description": "SSR/CSR 비율 (특수 로직)", "criteria": [
-            {"id": "excellent", "name": "Excellent", "points": 10, "enabled": True, "rule": {"type": "csr_tier", "params": {"min_ratio": 0.8}}},
-            {"id": "good", "name": "Good", "points": 7, "enabled": True, "rule": {"type": "csr_tier", "params": {"min_ratio": 0.5}}},
-            {"id": "partial", "name": "Partial", "points": 4, "enabled": True, "rule": {"type": "csr_tier", "params": {"min_ratio": 0.3}}},
-        ], "special": "csr_tiers"},
-        "grade": {"good": 90, "need_improvement": 70},
-    }
+    """팩토리 기본 설정 = scoring_config.default.json (리셋용 스냅샷)."""
+    for path in (_DEFAULT_CONFIG_PATH, _CONFIG_PATH):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            continue
+    return {"grade": {"good": 90, "need_improvement": 70}}
 
 _scoring_config: Optional[dict] = None
 
@@ -157,14 +120,25 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
             return {"url": url, "base_url": base_url, "scope": scope, "json_ld": jsonld}
 
         if scope == "seo":
-            context = {"soup": page_data.get("soup"), "page_data": page_data, "jsonld_types": set(), "base_url": base_url}
+            context = {
+                "soup": page_data.get("soup"), "page_data": page_data,
+                "jsonld_types": set(), "jsonld_raw": [],
+                "base_url": base_url, "current_url": page_data.get("final_url") or url,
+                "csr_ratio_dict": {"status": "skipped"},
+            }
             score = await _calculate_score(context, {"bots": {}}, {"status": "skipped"})
             page_data["soup"] = None
             return {"url": url, "base_url": base_url, "scope": scope, "score": score}
 
         if scope == "faq":
             jsonld = _extract_json_ld(page_data)
-            context = {"soup": page_data.get("soup"), "page_data": page_data, "jsonld_types": {t.lower() for t in jsonld.get("all_types", [])}, "base_url": base_url}
+            context = {
+                "soup": page_data.get("soup"), "page_data": page_data,
+                "jsonld_types": {t.lower() for t in jsonld.get("all_types", [])},
+                "jsonld_raw": jsonld.get("raw", []),
+                "base_url": base_url, "current_url": page_data.get("final_url") or url,
+                "csr_ratio_dict": {"status": "skipped"},
+            }
             score = await _calculate_score(context, {"bots": {}}, {"status": "skipped"})
             page_data["soup"] = None
             return {"url": url, "base_url": base_url, "scope": scope, "score": score}
@@ -199,10 +173,13 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
     # 룰 엔진 context 구성
     all_types = set(jsonld.get("all_types", []))
     context = {
-        "soup":         page_data.get("soup"),
-        "page_data":    page_data,
-        "jsonld_types": {t.lower() for t in all_types},
-        "base_url":     base_url,
+        "soup":            page_data.get("soup"),
+        "page_data":       page_data,
+        "jsonld_types":    {t.lower() for t in all_types},
+        "jsonld_raw":      jsonld.get("raw", []),
+        "base_url":        base_url,
+        "current_url":     page_data.get("final_url") or url,
+        "csr_ratio_dict":  csr_ratio,
     }
 
     score = await _calculate_score(context, robots, csr_ratio)
@@ -230,11 +207,28 @@ async def _fetch_page(url: str) -> dict:
             "User-Agent": "Mozilla/5.0 (compatible; GEOAudit/1.0; +https://geoaudit.dev)",
             "Accept":     "text/html,application/xhtml+xml",
         }
-        async with httpx.AsyncClient(timeout=15, follow_redirects=True, max_redirects=10) as client:
+        t0 = time.perf_counter()
+        async with httpx.AsyncClient(timeout=15, follow_redirects=True, max_redirects=10, http2=True) as client:
             r = await client.get(url, headers=headers)
+        ttfb_ms = int((time.perf_counter() - t0) * 1000)
 
         redirect_count = len(r.history)
         content_type = r.headers.get("content-type", "")
+        resp_headers = {k: v for k, v in r.headers.items()}
+        # raw bytes (압축 해제 후) 길이 — utf-8 기준
+        try:
+            html_bytes = len(r.content)
+        except Exception:
+            html_bytes = len(r.text.encode("utf-8"))
+        http_version = getattr(r, "http_version", "") or ""
+
+        common = {
+            "headers":       resp_headers,
+            "http_version":  http_version,
+            "html_bytes":    html_bytes,
+            "ttfb_ms":       ttfb_ms,
+            "raw_html":      r.text if "text/html" in content_type else "",
+        }
 
         # HTML 본문이 있으면 상태코드와 관계없이 파싱 (일부 사이트는 404/403이지만 콘텐츠 정상)
         if "text/html" in content_type and len(r.text) > 500:
@@ -245,18 +239,21 @@ async def _fetch_page(url: str) -> dict:
                 "http_status":    r.status_code,
                 "final_url":      str(r.url),
                 "redirect_count": redirect_count,
+                **common,
             }
 
         if r.status_code != 200:
             return {"status": "error", "http_status": r.status_code,
-                    "soup": None, "redirect_count": redirect_count}
+                    "soup": None, "redirect_count": redirect_count, **common}
 
         soup = BeautifulSoup(r.text, "html.parser")
         return {
             "status":         "ok",
             "soup":           soup,
+            "http_status":    r.status_code,
             "final_url":      str(r.url),
             "redirect_count": redirect_count,
+            **common,
         }
     except httpx.TimeoutException:
         return {"status": "error", "error": "요청 시간 초과 (15초)", "soup": None, "redirect_count": 0}
@@ -379,6 +376,7 @@ def _extract_json_ld(page_data: dict) -> dict:
         "schemas":     schemas,
         "all_types":   list(all_types),
         "raw_sources": raw_sources,
+        "raw":         raw_datas,
     }
 
 
@@ -664,8 +662,11 @@ async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict
     score     = 0
     breakdown = {}
 
-    cat_keys = ["seo_tags", "robots_txt", "json_ld", "llms_txt", "faq",
-                "summary_box", "heading_structure", "stats_density", "reviews_ssr", "csr_ratio"]
+    # 새 4개 카테고리 + 레거시 카테고리 호환 (설정에 존재하는 것만 평가)
+    new_cat_keys = ["performance", "accessibility", "seo", "ai_readiness"]
+    legacy_cat_keys = ["seo_tags", "robots_txt", "json_ld", "llms_txt", "faq",
+                       "summary_box", "heading_structure", "stats_density", "reviews_ssr", "csr_ratio"]
+    cat_keys = [k for k in new_cat_keys + legacy_cat_keys if k in cfg]
 
     for cat_key in cat_keys:
         c = cfg.get(cat_key, {})
