@@ -232,17 +232,41 @@ async def _fetch_page(url: str) -> dict:
             "Sec-Fetch-User": "?1",
             "Upgrade-Insecure-Requests": "1",
         }
-        t0 = time.perf_counter()
         # http2=True는 'h2' 패키지가 있을 때만 활성. 미설치 환경에서 ImportError 회피
         try:
-            client_kwargs = dict(timeout=15, follow_redirects=True, max_redirects=10, http2=True)
-            async with httpx.AsyncClient(**client_kwargs) as client:
-                r = await client.get(url, headers=headers)
+            httpx.AsyncClient(http2=True).aclose  # 빠른 import 검증
+            use_http2 = True
         except ImportError:
-            # h2 미설치 → HTTP/1.1 fallback (HTTP 프로토콜 룰 #3은 false-negative 발생 가능)
-            async with httpx.AsyncClient(timeout=15, follow_redirects=True, max_redirects=10, http2=False) as client:
-                r = await client.get(url, headers=headers)
-        ttfb_ms = int((time.perf_counter() - t0) * 1000)
+            use_http2 = False
+
+        # 봇 보호(Akamai/Cloudflare) 간헐적 403/429 회피용 재시도 (백오프 0.5s, 1.5s)
+        BACKOFFS = [0, 0.5, 1.5]
+        last_error = None
+        r = None
+        ttfb_ms = 0
+        for attempt, delay in enumerate(BACKOFFS):
+            if delay:
+                await asyncio.sleep(delay)
+            t0 = time.perf_counter()
+            try:
+                async with httpx.AsyncClient(
+                    timeout=15, follow_redirects=True, max_redirects=10, http2=use_http2
+                ) as client:
+                    r = await client.get(url, headers=headers)
+                ttfb_ms = int((time.perf_counter() - t0) * 1000)
+                # 403/429는 봇 보호 의심 → 재시도. 그 외는 즉시 사용 (200/3xx/4xx 정상 응답)
+                if r.status_code in (403, 429) and attempt < len(BACKOFFS) - 1:
+                    last_error = f"HTTP {r.status_code} 후 재시도 #{attempt + 1}"
+                    continue
+                break
+            except httpx.HTTPError as e:
+                last_error = f"{type(e).__name__}: {str(e)[:100]}"
+                if attempt < len(BACKOFFS) - 1:
+                    continue
+                raise
+
+        if r is None:
+            raise RuntimeError(last_error or "fetch 실패")
 
         redirect_count = len(r.history)
         content_type = r.headers.get("content-type", "")
