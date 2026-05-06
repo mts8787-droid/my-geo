@@ -64,7 +64,19 @@ async def _install_chromium_on_startup():
 async def lifespan(app: FastAPI):
     """FastAPI lifespan 이벤트 핸들러."""
     await _install_chromium_on_startup()
+    # 정기 Audit 스케줄러 시작
+    try:
+        from scheduler import start_scheduler, shutdown_scheduler
+        start_scheduler()
+    except Exception as e:
+        print(f"[startup] scheduler 시작 실패: {e}")
+        shutdown_scheduler = None  # type: ignore[assignment]
     yield
+    if shutdown_scheduler:
+        try:
+            shutdown_scheduler()
+        except Exception:
+            pass
 
 
 app = FastAPI(title="GEO Audit Tool", version="2.23.0", lifespan=lifespan)
@@ -352,7 +364,40 @@ async def update_audit_data(request: Request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
     body = await request.json()
     await _save_audit_data(body)
-    return {"status": "ok", "data": body}
+    # 스케줄 변경이 있을 수 있으므로 스케줄러 재로드
+    try:
+        from scheduler import reload_schedules
+        n = reload_schedules()
+    except Exception as e:
+        print(f"[admin] reload_schedules 실패: {e}")
+        n = 0
+    return {"status": "ok", "data": body, "active_schedules": n}
+
+
+@app.post("/admin/schedules/{schedule_id}/run")
+async def run_schedule_now(schedule_id: str, request: Request):
+    """스케줄을 즉시 1회 실행."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    try:
+        from scheduler import trigger_now
+        result = await trigger_now(schedule_id)
+        return {"status": "ok", "run": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"실행 실패: {e}")
+
+
+@app.get("/admin/schedules/runs")
+async def get_schedule_runs(request: Request, schedule_id: str = None, limit: int = 20):
+    """최근 정기 Audit 실행 결과 조회."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    try:
+        from scheduler import get_recent_runs
+        runs = get_recent_runs(schedule_id=schedule_id, limit=limit)
+        return {"runs": runs}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"조회 실패: {e}")
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

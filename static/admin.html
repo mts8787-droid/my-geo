@@ -809,27 +809,91 @@ function renderSchedules() {
     return g ? g.name : '(삭제된 그룹)';
   };
 
-  container.innerHTML = schedules.map((s, i) => `
-    <div class="card p-5 flex items-center gap-4 fade-in">
-      <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
-        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+  container.innerHTML = schedules.map((s, i) => {
+    const sid = s.id || '';
+    return `
+    <div class="card p-5 fade-in" data-sched-id="${escHtml(sid)}">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-slate-700">${escHtml(s.name)}</p>
+          <p class="text-xs text-slate-400">${freqLabel[s.freq || s.frequency] || s.freq || s.frequency} ${s.time} · <span class="font-medium text-indigo-500">${escHtml(groupName(s.groupIdx))}</span></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="runScheduleNow('${escHtml(sid)}')"
+            class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium"
+            ${sid ? '' : 'disabled title="ID 부여 후 실행 가능 (한 번 새로고침)"'}>지금 실행</button>
+          <button onclick="loadScheduleRuns('${escHtml(sid)}')"
+            class="text-xs px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition font-medium"
+            ${sid ? '' : 'disabled'}>실행 이력</button>
+          <button onclick="toggleSchedule(${i})" class="flex-shrink-0">
+            <div class="toggle-track w-9 h-5 rounded-full ${s.enabled !== false ? 'bg-indigo-500' : 'bg-slate-200'} relative">
+              <div class="toggle-thumb w-4 h-4 bg-white rounded-full absolute top-0.5 shadow ${s.enabled !== false ? 'transform translate-x-4' : 'translate-x-0.5'}"></div>
+            </div>
+          </button>
+          <button onclick="removeSchedule(${i})" class="text-slate-300 hover:text-red-400 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
       </div>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-slate-700">${escHtml(s.name)}</p>
-        <p class="text-xs text-slate-400">${freqLabel[s.freq] || s.freq} ${s.time} · <span class="font-medium text-indigo-500">${escHtml(groupName(s.groupIdx))}</span></p>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="toggleSchedule(${i})" class="flex-shrink-0">
-          <div class="toggle-track w-9 h-5 rounded-full ${s.enabled !== false ? 'bg-indigo-500' : 'bg-slate-200'} relative">
-            <div class="toggle-thumb w-4 h-4 bg-white rounded-full absolute top-0.5 shadow ${s.enabled !== false ? 'transform translate-x-4' : 'translate-x-0.5'}"></div>
-          </div>
-        </button>
-        <button onclick="removeSchedule(${i})" class="text-slate-300 hover:text-red-400 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-    </div>
-  `).join('');
+      <div id="runs-${escHtml(sid)}" class="mt-3 hidden border-t border-slate-100 pt-3"></div>
+    </div>`;
+  }).join('');
+}
+
+async function runScheduleNow(sid) {
+  if (!sid) return;
+  showToast('실행 중...');
+  try {
+    const res = await fetch(`/admin/schedules/${encodeURIComponent(sid)}/run`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!res.ok) { const d = await res.json().catch(() => ({})); showToast('실패: ' + (d.detail || res.status)); return; }
+    const data = await res.json();
+    const r = data.run || {};
+    showToast(`완료: ${r.status || '?'} (${r.success_count || 0}/${r.url_count || 0})`);
+    loadScheduleRuns(sid);
+  } catch (e) {
+    showToast('네트워크 오류: ' + e.message);
+  }
+}
+
+async function loadScheduleRuns(sid) {
+  if (!sid) return;
+  const container = document.getElementById(`runs-${sid}`);
+  if (!container) return;
+  container.classList.remove('hidden');
+  container.innerHTML = '<p class="text-xs text-slate-400">불러오는 중...</p>';
+  try {
+    const res = await fetch(`/admin/schedules/runs?schedule_id=${encodeURIComponent(sid)}&limit=5`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!res.ok) { container.innerHTML = '<p class="text-xs text-red-500">조회 실패</p>'; return; }
+    const data = await res.json();
+    const runs = data.runs || [];
+    if (!runs.length) { container.innerHTML = '<p class="text-xs text-slate-400">실행 이력 없음</p>'; return; }
+    container.innerHTML = `
+      <p class="text-xs font-semibold text-slate-600 mb-2">최근 실행 이력 (${runs.length}건)</p>
+      <div class="space-y-1.5">
+        ${runs.map(r => {
+          const dt = r.started_at ? new Date(r.started_at).toLocaleString('ko-KR') : '-';
+          const statusColor = r.status === 'ok' ? 'text-emerald-600 bg-emerald-50'
+                            : r.status === 'partial' ? 'text-amber-600 bg-amber-50'
+                            : 'text-red-600 bg-red-50';
+          return `
+            <div class="flex items-center gap-3 text-xs">
+              <span class="text-slate-400 font-mono w-32">${escHtml(dt)}</span>
+              <span class="px-2 py-0.5 rounded-full font-medium ${statusColor}">${escHtml(r.status || '?')}</span>
+              <span class="text-slate-600">${r.success_count || 0}/${r.url_count || 0} 성공</span>
+              ${r.error ? `<span class="text-red-400 truncate" title="${escHtml(r.error)}">${escHtml(r.error)}</span>` : ''}
+            </div>`;
+        }).join('')}
+      </div>`;
+  } catch (e) {
+    container.innerHTML = `<p class="text-xs text-red-500">${escHtml(e.message)}</p>`;
+  }
 }
 
 function openAddScheduleModal() {

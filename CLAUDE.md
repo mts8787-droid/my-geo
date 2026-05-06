@@ -231,9 +231,24 @@ POST /analyze { "url": "...", "scope": "all" }
 
 - **PSI API**: LCP/CLS/INP는 enabled:false 상태. 활성화 시 `psi_metric` 룰 타입 신규 + Google API 키 + 분당 25회 rate limit 핸들링 필요.
 - **PDP 핵심 element (#39)**: 임시 placeholder selector 사용 중. LG팀 정의 후 어드민에서 교체.
-- **정기 Audit 실행기**: 어드민 UI는 있으나 cron 트리거는 미구현. APScheduler 등 도입 검토.
-- **다국가 sitemap (#19, #45)**: 현재는 `/sitemap.xml` 단일 경로. 국가 디렉토리별(예: `/kr/sitemap.xml`) 분기 로직 필요.
 - **Soft 404 (#43)**: 본문 길이 임계값(200자)은 도메인별 튜닝 필요할 수 있음.
+
+## 정기 Audit 실행기 (구현됨)
+
+- 모듈: `scheduler.py` (APScheduler `AsyncIOScheduler`)
+- 트리거: `daily` (매일 HH:MM) · `weekly` (매주 월요일) · `monthly` (매월 1일)
+- 결과: `audit_data.json::runs[]`에 누적, 최근 50개 보관
+- 마이그레이션: 기존 index 기반 스키마(`groupIdx`, `freq`) 자동 변환 + 안정 ID 부여
+- 어드민: 스케줄별 **"지금 실행"** + **"실행 이력"** 버튼 제공
+- API:
+  - `POST /admin/schedules/{id}/run` — 즉시 1회 실행
+  - `GET  /admin/schedules/runs?schedule_id=...&limit=20` — 실행 이력 조회
+
+## 다국가 sitemap (구현됨)
+
+- `rule_engine.py::_detect_country_dir`: URL에서 국가 디렉토리(`/kr/`, `/us/`, `/en-us/` 등) 자동 감지
+- `sitemap_recent` 룰: 국가 디렉토리 우선(`/<country>/sitemap.xml`, `/<country>/sitemap_index.xml`) → 도메인 루트 fallback(`/sitemap.xml`, `/sitemap_index.xml`)
+- 어드민에서 룰 파라미터 `auto_country: yes/no`로 토글 가능
 
 ## 작업 시 주의사항
 

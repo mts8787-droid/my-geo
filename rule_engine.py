@@ -15,6 +15,7 @@ import re
 import operator as op
 import httpx
 from datetime import datetime, timezone, timedelta
+from typing import List, Optional
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 
@@ -219,11 +220,12 @@ RULE_TYPES = {
         },
     },
     "sitemap_recent": {
-        "label": "Sitemap 최신성",
-        "description": "/sitemap.xml의 lastmod 또는 Last-Modified 헤더가 N일 이내인지 확인",
+        "label": "Sitemap 최신성 (다국가 자동 감지)",
+        "description": "Sitemap의 lastmod/Last-Modified 헤더가 N일 이내인지 확인. URL의 국가 디렉토리(/kr/, /us/ 등)를 자동 감지해 우선 시도, 실패 시 도메인 루트로 fallback",
         "params": {
-            "path":     {"label": "Sitemap 경로", "type": "text", "placeholder": "/sitemap.xml"},
+            "path":     {"label": "Sitemap 경로 (기본 fallback)", "type": "text", "placeholder": "/sitemap.xml"},
             "max_days": {"label": "최대 일수", "type": "number", "placeholder": "30"},
+            "auto_country": {"label": "국가 디렉토리 자동 감지", "type": "select", "options": ["yes", "no"]},
         },
     },
 
@@ -1085,53 +1087,103 @@ def _eval_ssr_text_ratio_min(params: dict, ctx: dict) -> dict:
 
 # ── 신규 ASYNC 핸들러: Sitemap ─────────────────────────────────────────────
 
+# 일반적으로 사용되는 국가/언어 디렉토리 패턴 (LG.com 기준 + 국제 표준)
+_COUNTRY_DIR_PATTERN = re.compile(
+    r"^/((?:[a-z]{2}(?:[-_][a-z]{2,4})?))(?:/|$)",
+    re.IGNORECASE,
+)
+
+
+def _detect_country_dir(url: str) -> Optional[str]:
+    """URL의 첫 path segment가 국가/언어 코드면 반환 (예: '/kr/foo' → 'kr')."""
+    try:
+        path = urlparse(url).path or "/"
+    except Exception:
+        return None
+    m = _COUNTRY_DIR_PATTERN.match(path)
+    if not m:
+        return None
+    code = m.group(1).lower()
+    # 흔한 false-positive 제외 (예: /js/, /css/는 2글자지만 국가 아님)
+    if code in {"js", "css", "img", "api", "v1", "v2", "ws"}:
+        return None
+    return code
+
+
+def _parse_sitemap_lastmod(text: str, last_mod_header: Optional[str]) -> Optional[datetime]:
+    """Last-Modified 헤더 또는 XML 본문에서 가장 최근 lastmod 추출."""
+    # 1) Last-Modified 헤더
+    if last_mod_header:
+        try:
+            from email.utils import parsedate_to_datetime
+            dt = parsedate_to_datetime(last_mod_header)
+            if dt:
+                return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        except Exception:
+            pass
+    # 2) XML 본문의 <lastmod>
+    last_mods = re.findall(r"<lastmod[^>]*>([^<]+)</lastmod>", text or "")
+    latest = None
+    for lm in last_mods:
+        try:
+            dt = datetime.fromisoformat(lm.strip().replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            if latest is None or dt > latest:
+                latest = dt
+        except Exception:
+            continue
+    return latest
+
+
 async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
     base_url = ctx.get("base_url", "")
     if not base_url:
         return {"pass": False, "value": None, "hint": "base_url 없음"}
-    path = params.get("path", "/sitemap.xml")
+    fallback_path = params.get("path", "/sitemap.xml")
     max_days = int(params.get("max_days", 30))
+    auto_country = (params.get("auto_country", "yes") or "yes").lower() == "yes"
     threshold = datetime.now(timezone.utc) - timedelta(days=max_days)
 
+    # 시도할 경로 목록 — 국가 디렉토리 우선 → 도메인 루트 fallback
+    paths_to_try: List[str] = []
+    country = _detect_country_dir(ctx.get("current_url", "")) if auto_country else None
+    if country:
+        paths_to_try.append(f"/{country}{fallback_path}")
+        paths_to_try.append(f"/{country}/sitemap_index.xml")
+    if fallback_path not in paths_to_try:
+        paths_to_try.append(fallback_path)
+    if "/sitemap_index.xml" not in paths_to_try:
+        paths_to_try.append("/sitemap_index.xml")
+
+    tried_results = []
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}{path}")
-        if r.status_code != 200:
-            return {"pass": False, "value": f"HTTP {r.status_code}", "hint": f"sitemap 부재 (HTTP {r.status_code})"}
-
-        # 1) Last-Modified 헤더 우선
-        last_mod_header = r.headers.get("Last-Modified")
-        if last_mod_header:
-            try:
-                from email.utils import parsedate_to_datetime
-                dt = parsedate_to_datetime(last_mod_header)
-                if dt and dt >= threshold:
-                    return {"pass": True, "value": f"Last-Modified={last_mod_header}", "hint": None}
-            except Exception:
-                pass
-
-        # 2) XML 본문의 lastmod 태그 (최대값 사용)
-        text = r.text
-        last_mods = re.findall(r"<lastmod[^>]*>([^<]+)</lastmod>", text)
-        latest = None
-        for lm in last_mods:
-            try:
-                dt = datetime.fromisoformat(lm.strip().replace("Z", "+00:00"))
-                if dt.tzinfo is None:
-                    dt = dt.replace(tzinfo=timezone.utc)
-                if latest is None or dt > latest:
-                    latest = dt
-            except Exception:
-                continue
-
-        if latest is None:
-            return {"pass": False, "value": "날짜 정보 없음", "hint": "Last-Modified 헤더와 <lastmod> 태그 모두 없음"}
-
-        passed = latest >= threshold
+            for path in paths_to_try:
+                try:
+                    r = await client.get(f"{base_url}{path}")
+                except Exception as e:
+                    tried_results.append(f"{path}: 오류({type(e).__name__})")
+                    continue
+                if r.status_code != 200:
+                    tried_results.append(f"{path}: HTTP {r.status_code}")
+                    continue
+                # 200 발견 — lastmod 파싱
+                latest = _parse_sitemap_lastmod(r.text, r.headers.get("Last-Modified"))
+                if latest is None:
+                    tried_results.append(f"{path}: 날짜 정보 없음")
+                    continue
+                passed = latest >= threshold
+                origin = "국가 디렉토리" if country and path.startswith(f"/{country}") else "도메인 루트"
+                return {
+                    "pass": passed,
+                    "value": f"{origin}({path}) lastmod={latest.date().isoformat()}",
+                    "hint": None if passed else f"마지막 갱신 {latest.date().isoformat()} — {max_days}일 이내 필요",
+                }
         return {
-            "pass": passed,
-            "value": f"최신 lastmod={latest.date().isoformat()}",
-            "hint": None if passed else f"마지막 갱신 {latest.date().isoformat()} — {max_days}일 이내 필요",
+            "pass": False,
+            "value": f"{len(paths_to_try)}개 경로 시도",
+            "hint": "; ".join(tried_results[:3]) if tried_results else "sitemap 부재",
         }
     except Exception as e:
         return {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}

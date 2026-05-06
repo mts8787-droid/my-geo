@@ -16,7 +16,10 @@ from bs4 import BeautifulSoup
 # 프로젝트 루트를 path에 추가
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from rule_engine import evaluate_rule, evaluate_rule_async, _HANDLERS, _ASYNC_HANDLERS, RULE_TYPES  # noqa: E402
+from rule_engine import (  # noqa: E402
+    evaluate_rule, evaluate_rule_async, _HANDLERS, _ASYNC_HANDLERS, RULE_TYPES,
+    _detect_country_dir,
+)
 
 
 def _ctx(html="<html><head></head><body></body></html>", **page_data_overrides):
@@ -405,6 +408,30 @@ class TestContentRules(unittest.TestCase):
         ctx["csr_ratio_dict"] = {"status": "unavailable", "ratio": None}
         r = _eval("ssr_text_ratio_min", {"min_ratio": 0.6}, ctx)
         self.assertFalse(r["pass"])
+
+
+# ── Sitemap 국가 디렉토리 감지 ────────────────────────────────────────────────
+
+class TestSitemapCountryDetection(unittest.TestCase):
+    def test_country_kr(self):
+        self.assertEqual(_detect_country_dir("https://www.lg.com/kr/products/oled"), "kr")
+
+    def test_country_us(self):
+        self.assertEqual(_detect_country_dir("https://www.lg.com/us/tvs/123"), "us")
+
+    def test_locale_en_us(self):
+        self.assertEqual(_detect_country_dir("https://www.lg.com/en-us/about"), "en-us")
+
+    def test_no_country_root_path(self):
+        self.assertIsNone(_detect_country_dir("https://www.lg.com/products"))
+
+    def test_no_country_for_static_paths(self):
+        self.assertIsNone(_detect_country_dir("https://example.com/js/app.js"))
+        self.assertIsNone(_detect_country_dir("https://example.com/css/main.css"))
+        self.assertIsNone(_detect_country_dir("https://example.com/api/v1/x"))
+
+    def test_no_country_for_long_first_segment(self):
+        self.assertIsNone(_detect_country_dir("https://example.com/products"))
 
 
 # ── 핸들러 / RULE_TYPES 일관성 ────────────────────────────────────────────────
