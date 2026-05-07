@@ -94,19 +94,12 @@
             </svg>
             <span class="nav-label">Audit 기준 문서</span>
           </button>
-          <button onclick="switchPage('roadmap')" id="nav-roadmap"
+          <button onclick="switchPage('deck')" id="nav-deck"
             class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
             <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
-            <span class="nav-label">GEO Agent 로드맵</span>
-          </button>
-          <button onclick="switchPage('checklist')" id="nav-checklist"
-            class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
-            <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-            </svg>
-            <span class="nav-label">Readability 체크리스트</span>
+            <span class="nav-label">GEO Agent 슬라이드</span>
           </button>
         </div>
         <div class="px-3 pt-3 border-t border-slate-100">
@@ -176,37 +169,19 @@
           <div id="groups-container" class="space-y-4"></div>
         </div>
 
-        <!-- Page 6: Readability 체크리스트 (44개 항목) -->
-        <div id="page-checklist" class="max-w-7xl mx-auto px-6 py-8 hidden">
+        <!-- Page 5: GEO Agent 통합 슬라이드 (3장 deck) -->
+        <div id="page-deck" class="max-w-7xl mx-auto px-6 py-8 hidden">
           <div class="flex items-center justify-between mb-4">
-            <h1 class="text-xl font-bold text-slate-800">GEO Agent Readability 체크리스트 (44개 항목)</h1>
-            <a href="/static/geo-agent-checklist.html" target="_blank"
+            <h1 class="text-xl font-bold text-slate-800">GEO Agent 통합 슬라이드</h1>
+            <a href="/static/geo-agent-deck.html" target="_blank"
                class="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
               새 창에서 열기
             </a>
           </div>
-          <p class="text-xs text-slate-500 mb-4">4개 카테고리 — Performance(8) · Accessibility(4) · SEO(7) · AI Readiness(25). PPT 원본 (1/2)+(2/2) 통합 뷰.</p>
+          <p class="text-xs text-slate-500 mb-4">3장 통합 — ① 개발 계획 & Workflow ② Readability 체크리스트 (1/2) ③ Readability 체크리스트 (2/2)</p>
           <div class="card overflow-hidden" style="height: calc(100vh - 220px); min-height: 800px;">
-            <iframe src="/static/geo-agent-checklist.html"
-                    class="w-full h-full border-0"
-                    style="border-radius: 8px;"></iframe>
-          </div>
-        </div>
-
-        <!-- Page 5: GEO Agent 로드맵 (PPT 슬라이드) -->
-        <div id="page-roadmap" class="max-w-7xl mx-auto px-6 py-8 hidden">
-          <div class="flex items-center justify-between mb-4">
-            <h1 class="text-xl font-bold text-slate-800">GEO Agent 개발 계획 및 Workflow (D2C)</h1>
-            <a href="/static/geo-agent-roadmap.html" target="_blank"
-               class="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-              새 창에서 열기
-            </a>
-          </div>
-          <p class="text-xs text-slate-500 mb-4">컨텐츠 수정/보강 및 구조화된 데이터 오류 수정을 자동 진단·개선하는 AI Agent 개발 계획.</p>
-          <div class="card p-2 overflow-hidden" style="aspect-ratio: 16 / 9;">
-            <iframe src="/static/geo-agent-roadmap.html"
+            <iframe src="/static/geo-agent-deck.html"
                     class="w-full h-full border-0"
                     style="border-radius: 8px;"></iframe>
           </div>
@@ -351,8 +326,7 @@ function switchPage(page) {
   document.getElementById('page-list').classList.toggle('hidden', page !== 'list');
   document.getElementById('page-schedule').classList.toggle('hidden', page !== 'schedule');
   document.getElementById('page-doc').classList.toggle('hidden', page !== 'doc');
-  document.getElementById('page-roadmap').classList.toggle('hidden', page !== 'roadmap');
-  document.getElementById('page-checklist').classList.toggle('hidden', page !== 'checklist');
+  document.getElementById('page-deck').classList.toggle('hidden', page !== 'deck');
 
   if (page === 'list') renderGroups();
   if (page === 'schedule') renderSchedules();
