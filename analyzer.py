@@ -112,12 +112,19 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
 
     # scope별 필요한 분석만 수행
     if scope != "all":
-        page_data = await _fetch_page(url)
-
         if scope == "schema":
+            # 스키마 단독 체크 시 스텔스 모드(Playwright) 강제 적용
+            csr_raw = await _check_csr_chars(url)
+            if csr_raw.get("status") == "ok":
+                soup = BeautifulSoup(csr_raw["debug"]["raw_html"], "html.parser")
+                page_data = {"status": "ok", "soup": soup}
+            else:
+                page_data = {"status": "error", "error": csr_raw.get("error") or "스텔스 모드(Playwright) 로딩 실패", "soup": None}
+                
             jsonld = _extract_json_ld(page_data)
-            page_data["soup"] = None
-            return {"url": url, "base_url": base_url, "scope": scope, "json_ld": jsonld}
+            return {"url": url, "base_url": base_url, "scope": scope, "json_ld": jsonld, "page_error": page_data.get("error")}
+
+        page_data = await _fetch_page(url)
 
         if scope == "seo":
             context = {
@@ -686,6 +693,7 @@ async def _check_csr_chars(url: str) -> dict:
                     "iframe_count": frame_count,
                     "iframe_chars": iframe_chars,
                     "html_length": len(main_html),
+                    "raw_html": main_html,
                 },
             }
         except asyncio.TimeoutError:

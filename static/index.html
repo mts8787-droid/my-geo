@@ -613,6 +613,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Scoped 결과용 셀 생성 헬퍼 — 새 카테고리 구조 사용
     const scopedCell = (r) => {
       if (data.scope === 'schema') {
+        if (r.page_error) return `<td class="px-4 py-3 text-center"><span class="text-xs text-red-500 bg-red-50 px-2 py-1 rounded" title="${escHtml(r.page_error)}">오류/차단됨</span></td>`;
         const j = r.json_ld || {};
         if (j.status !== 'found' || j.count === 0) return `<td class="px-4 py-3 text-center text-red-500 font-semibold">미발견</td>`;
         return `<td class="px-4 py-3 text-center"><span class="font-semibold text-emerald-600">${j.count}개 발견</span></td>`;
@@ -704,8 +705,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('urlInput').value = item.url;
     const r = item.result;
     if (r.scope === 'schema') {
-      const types = r.json_ld?.all_types?.join(', ') || '없음';
-      alert(`발견된 스키마 종류: ${types}\n총 ${r.json_ld?.count || 0}개 발견`);
+      if (r.page_error) {
+        alert(`접속 에러 또는 봇 차단이 발생했습니다:\n\n${r.page_error}`);
+      } else {
+        const types = r.json_ld?.all_types?.join(', ') || '없음';
+        alert(`발견된 스키마 종류: ${types}\n총 ${r.json_ld?.count || 0}개 발견`);
+      }
       return;
     }
     if (r.scope && r.scope !== 'all') {
