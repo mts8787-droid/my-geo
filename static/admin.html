@@ -101,6 +101,13 @@
             </svg>
             <span class="nav-label">GEO Agent 슬라이드</span>
           </button>
+          <button onclick="switchPage('ext-guide')" id="nav-ext-guide"
+            class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
+            <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            <span class="nav-label">확장 프로그램 등록 가이드</span>
+          </button>
         </div>
         <div class="px-3 pt-3 border-t border-slate-100">
           <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
@@ -195,6 +202,16 @@
           </div>
           <p class="text-xs text-slate-500 mb-4">Google Sheets에서 가져온 48개 항목 PASS/FAIL 기준. 모든 룰의 source of truth.</p>
           <div id="doc-content" class="card p-8 prose prose-slate max-w-none text-sm">로딩 중...</div>
+        </div>
+
+        <!-- Page 6: 확장 프로그램 등록 가이드 -->
+        <div id="page-ext-guide" class="max-w-5xl mx-auto px-6 py-8 hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h1 class="text-xl font-bold text-slate-800">확장 프로그램 등록 가이드</h1>
+            <button onclick="loadExtGuideDoc()" class="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium">새로고침</button>
+          </div>
+          <p class="text-xs text-slate-500 mb-4">로컬 확장 프로그램을 크롬 웹 스토어에 공식 업로드하여 쉽게 배포하는 방법 안내입니다.</p>
+          <div id="ext-guide-content" class="card p-8 prose prose-slate max-w-none text-sm">로딩 중...</div>
         </div>
 
         <!-- Page 3: 정기 Audit 관리 -->
@@ -327,10 +344,12 @@ function switchPage(page) {
   document.getElementById('page-schedule').classList.toggle('hidden', page !== 'schedule');
   document.getElementById('page-doc').classList.toggle('hidden', page !== 'doc');
   document.getElementById('page-deck').classList.toggle('hidden', page !== 'deck');
+  document.getElementById('page-ext-guide').classList.toggle('hidden', page !== 'ext-guide');
 
   if (page === 'list') renderGroups();
   if (page === 'schedule') renderSchedules();
   if (page === 'doc') loadCriteriaDoc();
+  if (page === 'ext-guide') loadExtGuideDoc();
 }
 
 // ── Audit 기준 문서 (markdown viewer) ──
@@ -409,6 +428,23 @@ async function loadCriteriaDoc() {
   el.innerHTML = '로딩 중...';
   try {
     const res = await fetch('/admin/audit-criteria-doc', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      el.innerHTML = `<p class="text-red-500">불러오기 실패: ${escHtml(d.detail || res.status)}</p>`;
+      return;
+    }
+    const data = await res.json();
+    el.innerHTML = renderMarkdown(data.content || '');
+  } catch (e) {
+    el.innerHTML = `<p class="text-red-500">네트워크 오류: ${escHtml(e.message)}</p>`;
+  }
+}
+
+async function loadExtGuideDoc() {
+  const el = document.getElementById('ext-guide-content');
+  el.innerHTML = '로딩 중...';
+  try {
+    const res = await fetch('/admin/extension-guide-doc', { headers: { 'Authorization': `Bearer ${token}` } });
     if (!res.ok) {
       const d = await res.json().catch(() => ({}));
       el.innerHTML = `<p class="text-red-500">불러오기 실패: ${escHtml(d.detail || res.status)}</p>`;

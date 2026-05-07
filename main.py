@@ -316,6 +316,7 @@ async def get_rule_types(request: Request):
 
 
 _AUDIT_CRITERIA_DOC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "audit-criteria.md")
+_EXTENSION_PUBLISH_GUIDE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "extension-publish-guide.md")
 
 
 @app.get("/admin/audit-criteria-doc")
@@ -329,6 +330,19 @@ async def get_audit_criteria_doc(request: Request):
         return {"status": "ok", "content": content}
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="audit-criteria.md 파일이 없습니다.")
+
+
+@app.get("/admin/extension-guide-doc")
+async def get_extension_publish_guide_doc(request: Request):
+    """extension-publish-guide.md를 어드민에 노출."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    try:
+        with open(_EXTENSION_PUBLISH_GUIDE_PATH, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {"status": "ok", "content": content}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="extension-publish-guide.md 파일이 없습니다.")
 
 
 # ── Audit Groups & Schedules ─────────────────────────────────────────────────
