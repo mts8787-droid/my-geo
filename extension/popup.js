@@ -422,3 +422,178 @@ function downloadFile(filename, content, type) {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+// ── 대량 분석 (스키마) ───────────────────────────────────────────────────────
+document.getElementById('bulkSchemaBtn').addEventListener('click', async () => {
+  if (bulkRunning) return;
+
+  const urlText = document.getElementById('urlList').value.trim();
+  if (!urlText) return;
+
+  const urls = urlText.split('\n')
+    .map(u => u.trim())
+    .filter(u => u && !u.startsWith('#'))
+    .map(u => u.startsWith('http') ? u : 'https://' + u);
+
+  if (urls.length === 0) return;
+  if (urls.length > 100) {
+    document.getElementById('bulkResult').innerHTML =
+      '<p class="status-msg error">최대 100개까지 분석할 수 있습니다.</p>';
+    return;
+  }
+
+  bulkRunning = true;
+  const btn = document.getElementById('bulkSchemaBtn');
+  const progress = document.getElementById('bulkProgress');
+  const statusEl = document.getElementById('bulkStatus');
+  const fillEl = document.getElementById('bulkFill');
+  const resultEl = document.getElementById('bulkResult');
+
+  btn.disabled = true;
+  btn.textContent = '분석 중...';
+  progress.style.display = 'block';
+  resultEl.innerHTML = '';
+
+  const results = [];
+
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i];
+    const pct = Math.round(((i) / urls.length) * 100);
+    statusEl.textContent = `${i + 1}/${urls.length} 스키마 체크 중... ${url}`;
+    fillEl.style.width = pct + '%';
+
+    try {
+      const tab = await chrome.tabs.create({ url, active: false });
+      await waitForTabLoad(tab.id);
+      await sleep(1500);
+
+      const scriptRes = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+          if (scripts.length === 0) return { exists: false, items: [] };
+          let items = [];
+          scripts.forEach((script) => {
+            const content = script.innerText.trim();
+            if (!content) return;
+            try {
+              const parsed = JSON.parse(content);
+              let type = 'Unknown';
+              if (Array.isArray(parsed)) {
+                 type = parsed.map(p => p['@type']).filter(Boolean).join(', ');
+              } else if (parsed['@graph']) {
+                 type = parsed['@graph'].map(p => p['@type']).filter(Boolean).join(', ');
+              } else {
+                 type = parsed['@type'] || 'Unknown';
+              }
+              items.push({ valid: true, type });
+            } catch (e) {
+              items.push({ valid: false, error: e.message });
+            }
+          });
+          return { exists: true, items };
+        }
+      });
+      await chrome.tabs.remove(tab.id);
+
+      const data = scriptRes[0]?.result;
+      if (!data) throw new Error("결과 없음");
+      
+      let validCount = 0;
+      let allTypes = [];
+      if (data.exists) {
+        validCount = data.items.filter(it => it.valid).length;
+        allTypes = data.items.map(it => it.type).filter(Boolean);
+      }
+      
+      results.push({
+         url, 
+         exists: data.exists, 
+         count: data.items?.length || 0,
+         validCount,
+         types: [...new Set(allTypes)].join(', ')
+      });
+
+    } catch (err) {
+      results.push({ url, exists: false, count: 0, validCount: 0, types: '', error: err.message });
+    }
+  }
+
+  fillEl.style.width = '100%';
+  statusEl.textContent = `완료! ${results.length}개 URL 분석됨`;
+
+  renderBulkSchemaResults(resultEl, results);
+
+  btn.disabled = false;
+  btn.textContent = '스키마 일괄 체크 (Stealth)';
+  bulkRunning = false;
+});
+
+function renderBulkSchemaResults(container, results) {
+  const success = results.filter(r => !r.error);
+  const found = results.filter(r => r.exists);
+  
+  let html = \`
+    <div class="result-card">
+      <div class="result-row">
+        <span class="label">분석 완료</span>
+        <span class="value">\${success.length}/\${results.length}개 성공</span>
+      </div>
+      <div class="result-row">
+        <span class="label">스키마 발견</span>
+        <span class="value">\${found.length}개 페이지에서 발견됨</span>
+      </div>
+    </div>
+    <table class="bulk-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>URL</th>
+          <th>발견 개수</th>
+          <th>상태</th>
+          <th>타입 / 에러</th>
+        </tr>
+      </thead>
+      <tbody>\`;
+
+  results.forEach((r, i) => {
+    let statusHtml = '';
+    if (r.error) {
+      statusHtml = \`<span class="tier-badge tier-poor">오류</span>\`;
+    } else if (!r.exists) {
+      statusHtml = \`<span class="tier-badge tier-poor">미발견</span>\`;
+    } else if (r.validCount === r.count) {
+      statusHtml = \`<span class="tier-badge tier-excellent">Pass</span>\`;
+    } else {
+      statusHtml = \`<span class="tier-badge tier-partial">일부 에러</span>\`;
+    }
+    
+    let detail = r.error ? escHtml(r.error) : escHtml(r.types);
+    if (!detail && r.exists) detail = 'Unknown';
+    if (!r.exists && !r.error) detail = '-';
+    
+    html += \`
+        <tr>
+          <td>\${i + 1}</td>
+          <td class="url-cell" title="\${escHtml(r.url)}">\${escHtml(r.url)}</td>
+          <td>\${r.exists ? r.count : '-'}</td>
+          <td>\${statusHtml}</td>
+          <td style="font-size:10px; word-break:break-all;">\${detail}</td>
+        </tr>\`;
+  });
+
+  html += \`</tbody></table>
+    <div class="bulk-actions">
+      <button class="export-btn" id="exportSchemaCsv">CSV 내보내기</button>
+    </div>\`;
+
+  container.innerHTML = html;
+
+  document.getElementById('exportSchemaCsv').addEventListener('click', () => {
+    const header = 'URL,발견개수,정상개수,타입,오류\\n';
+    const rows = results.map(r => {
+      return \`"\${r.url}",\${r.count},\${r.validCount},"\${r.types || ''}","\${r.error || ''}"\`;
+    }).join('\\n');
+    downloadFile('geo-audit-schema-bulk.csv', header + rows, 'text/csv');
+  });
+}

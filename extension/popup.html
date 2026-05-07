@@ -75,7 +75,10 @@
     <div class="info">
       브라우저 탭에서 각 URL을 열고 측정합니다. 실제 브라우저이므로 봇 차단이 없습니다.
     </div>
-    <button id="bulkBtn" class="primary" style="margin-top:10px;">일괄 측정 시작</button>
+    <div style="display: flex; gap: 8px; margin-top:10px;">
+      <button id="bulkBtn" class="primary">SSR/CSR 측정</button>
+      <button id="bulkSchemaBtn" class="primary" style="background:#10b981;">스키마 일괄 체크 (Stealth)</button>
+    </div>
     <div id="bulkProgress" class="progress" style="display:none;">
       <div class="progress-text"><span id="bulkStatus">준비 중...</span></div>
       <div class="progress-bar"><div id="bulkFill" class="progress-fill" style="width:0%"></div></div>
