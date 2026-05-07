@@ -368,10 +368,13 @@ function renderMarkdown(md) {
       inTable = false; tableHeader = ''; tableRows = '';
     }
   };
+  // 안전한 href만 허용 (http/https/상대 경로/앵커). javascript:, data: 등은 #으로 폴백 (#8/N3)
+  const safeHref = h => /^(https?:\/\/|\/|#)/i.test(h) ? h : '#';
   const inline = s => esc(s)
     .replace(/`([^`]+)`/g, '<code class="bg-slate-100 px-1 rounded text-xs">$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-indigo-600 underline" target="_blank">$1</a>');
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) =>
+      `<a href="${safeHref(href)}" class="text-indigo-600 underline" target="_blank" rel="noopener noreferrer">${label}</a>`);
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -458,6 +461,7 @@ async function loadExtGuideDoc() {
 }
 
 // ── Login ──
+// 비밀번호와 분리된 short-lived 토큰을 사용 (#19). 비밀번호 자체는 메모리에 보관하지 않는다.
 async function doLogin() {
   const pw = document.getElementById('pw-input').value;
   const errEl = document.getElementById('login-error');
@@ -468,14 +472,20 @@ async function doLogin() {
       body: JSON.stringify({ password: pw }),
     });
     if (!res.ok) { const d = await res.json(); errEl.textContent = d.detail||'실패'; errEl.classList.remove('hidden'); return; }
-    token = pw;
+    const data = await res.json();
+    // 신규 응답엔 token 필드 — 없으면 하위호환 fallback (비밀번호 그대로 사용)
+    token = data.token || pw;
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-layout').style.display = 'flex';
     await Promise.all([loadConfig(), loadRuleTypes(), loadAuditData()]);
   } catch { errEl.textContent = '서버 연결 실패'; errEl.classList.remove('hidden'); }
 }
 
-function logout() {
+async function logout() {
+  // 서버 측 토큰 무효화 (best-effort)
+  try {
+    await fetch('/admin/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+  } catch {}
   token = ''; config = {};
   document.getElementById('main-layout').style.display = 'none';
   document.getElementById('login-screen').classList.remove('hidden');

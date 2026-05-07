@@ -533,15 +533,15 @@ function renderBulkSchemaResults(container, results) {
   const success = results.filter(r => !r.error);
   const found = results.filter(r => r.exists);
   
-  let html = \`
+  let html = `
     <div class="result-card">
       <div class="result-row">
         <span class="label">분석 완료</span>
-        <span class="value">\${success.length}/\${results.length}개 성공</span>
+        <span class="value">${success.length}/${results.length}개 성공</span>
       </div>
       <div class="result-row">
         <span class="label">스키마 발견</span>
-        <span class="value">\${found.length}개 페이지에서 발견됨</span>
+        <span class="value">${found.length}개 페이지에서 발견됨</span>
       </div>
     </div>
     <table class="bulk-table">
@@ -554,46 +554,46 @@ function renderBulkSchemaResults(container, results) {
           <th>타입 / 에러</th>
         </tr>
       </thead>
-      <tbody>\`;
+      <tbody>`;
 
   results.forEach((r, i) => {
     let statusHtml = '';
     if (r.error) {
-      statusHtml = \`<span class="tier-badge tier-poor">오류</span>\`;
+      statusHtml = `<span class="tier-badge tier-poor">오류</span>`;
     } else if (!r.exists) {
-      statusHtml = \`<span class="tier-badge tier-poor">미발견</span>\`;
+      statusHtml = `<span class="tier-badge tier-poor">미발견</span>`;
     } else if (r.validCount === r.count) {
-      statusHtml = \`<span class="tier-badge tier-excellent">Pass</span>\`;
+      statusHtml = `<span class="tier-badge tier-excellent">Pass</span>`;
     } else {
-      statusHtml = \`<span class="tier-badge tier-partial">일부 에러</span>\`;
+      statusHtml = `<span class="tier-badge tier-partial">일부 에러</span>`;
     }
-    
+
     let detail = r.error ? escHtml(r.error) : escHtml(r.types);
     if (!detail && r.exists) detail = 'Unknown';
     if (!r.exists && !r.error) detail = '-';
-    
-    html += \`
+
+    html += `
         <tr>
-          <td>\${i + 1}</td>
-          <td class="url-cell" title="\${escHtml(r.url)}">\${escHtml(r.url)}</td>
-          <td>\${r.exists ? r.count : '-'}</td>
-          <td>\${statusHtml}</td>
-          <td style="font-size:10px; word-break:break-all;">\${detail}</td>
-        </tr>\`;
+          <td>${i + 1}</td>
+          <td class="url-cell" title="${escHtml(r.url)}">${escHtml(r.url)}</td>
+          <td>${r.exists ? r.count : '-'}</td>
+          <td>${statusHtml}</td>
+          <td style="font-size:10px; word-break:break-all;">${detail}</td>
+        </tr>`;
   });
 
-  html += \`</tbody></table>
+  html += `</tbody></table>
     <div class="bulk-actions">
       <button class="export-btn" id="exportSchemaCsv">CSV 내보내기</button>
-    </div>\`;
+    </div>`;
 
   container.innerHTML = html;
 
   document.getElementById('exportSchemaCsv').addEventListener('click', () => {
-    const header = 'URL,발견개수,정상개수,타입,오류\\n';
+    const header = 'URL,발견개수,정상개수,타입,오류\n';
     const rows = results.map(r => {
-      return \`"\${r.url}",\${r.count},\${r.validCount},"\${r.types || ''}","\${r.error || ''}"\`;
-    }).join('\\n');
+      return `"${r.url}",${r.count},${r.validCount},"${r.types || ''}","${r.error || ''}"`;
+    }).join('\n');
     downloadFile('geo-audit-schema-bulk.csv', header + rows, 'text/csv');
   });
 }

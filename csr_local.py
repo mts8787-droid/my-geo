@@ -29,12 +29,7 @@ from bs4 import BeautifulSoup
 
 
 def _visible_text(soup: BeautifulSoup) -> int:
-    for tag in soup(["script", "style", "noscript", "svg", "path"]):
-        tag.decompose()
-    return len(re.sub(r"\s+", "", soup.get_text()))
-
-
-def _safe_visible_text(soup: BeautifulSoup) -> int:
+    """script/style 등 비가시 태그를 제외한 본문 글자수 (soup 변조 없음, #11)."""
     parts = []
     for el in soup.find_all(string=True):
         if el.parent and el.parent.name in ("script", "style", "noscript", "svg", "path"):
@@ -53,7 +48,7 @@ async def fetch_ssr_chars(url: str) -> int:
     if "text/html" not in r.headers.get("content-type", ""):
         return 0
     soup = BeautifulSoup(r.text, "html.parser")
-    return _safe_visible_text(soup)
+    return _visible_text(soup)
 
 
 _STEALTH_JS = """

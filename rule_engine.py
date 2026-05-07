@@ -516,9 +516,11 @@ async def _eval_http_status(params: dict, ctx: dict) -> dict:
     if not base_url:
         return {"pass": False, "value": None, "hint": "base_url이 없습니다."}
 
+    # dedicated UA를 사용해야 Akamai 등 봇 보호에 차단되지 않는다 — lazy import로 순환 회피 (#13)
+    from analyzer import build_request_headers
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}{path}")
+            r = await client.get(f"{base_url}{path}", headers=build_request_headers())
         passed = r.status_code == expected
         return {
             "pass": passed,
@@ -763,7 +765,14 @@ def _eval_aria_missing_ratio_max(params: dict, ctx: dict) -> dict:
         return {"pass": False, "value": None, "hint": "HTML 파싱 실패"}
     max_ratio = float(params.get("max_ratio", 0.1))
 
-    interactive = soup.find_all(["button", "input", "a"])
+    # hidden input, href 없는 anchor는 인터랙티브 요소가 아님 (#10)
+    interactive = []
+    for el in soup.find_all(["button", "input", "a"]):
+        if el.name == "input" and (el.get("type") or "").lower() == "hidden":
+            continue
+        if el.name == "a" and not el.get("href"):
+            continue
+        interactive.append(el)
     if not interactive:
         return {"pass": True, "value": "인터랙티브 요소 없음", "hint": None}
 
@@ -771,10 +780,8 @@ def _eval_aria_missing_ratio_max(params: dict, ctx: dict) -> dict:
     for el in interactive:
         if el.get("aria-label") or el.get("aria-labelledby") or el.get("title"):
             continue
-        # input[type=submit] 등은 value 속성을 라벨로 사용
         if el.name == "input" and (el.get("value") or "").strip():
             continue
-        # alt가 라벨 역할 (img button/anchor 내부 등)
         if el.find("img", alt=True):
             continue
         if el.get_text(strip=True):
@@ -956,6 +963,19 @@ _DEF_PATTERN = re.compile(
     r"(?:[가-힣A-Za-z0-9_]+(?:는|은|란|이란|이라는)\s+[가-힣A-Za-z0-9_,\s]+(?:이다|입니다|를 말한다|을 말한다))"
 )
 
+_NON_VISIBLE_TAGS = ("script", "style", "noscript", "svg", "path")
+
+
+def _visible_text(soup) -> str:
+    """script/style 등 비가시 태그를 제외한 본문 텍스트 (#12)."""
+    parts = []
+    for s in soup.find_all(string=True):
+        if s.parent and s.parent.name in _NON_VISIBLE_TAGS:
+            continue
+        parts.append(str(s))
+    return " ".join(p.strip() for p in parts if p.strip())
+
+
 def _eval_definition_pattern_min(params: dict, ctx: dict) -> dict:
     soup = ctx.get("soup")
     if not soup:
@@ -963,7 +983,7 @@ def _eval_definition_pattern_min(params: dict, ctx: dict) -> dict:
     min_count = int(params.get("min_count", 1))
 
     dfn_count = len(soup.find_all(["dfn", "abbr"]))
-    text = soup.get_text(" ", strip=True)
+    text = _visible_text(soup)
     pattern_count = len(_DEF_PATTERN.findall(text))
     total = dfn_count + pattern_count
     passed = total >= min_count
@@ -990,7 +1010,7 @@ def _eval_citable_density_min(params: dict, ctx: dict) -> dict:
         return {"pass": False, "value": None, "hint": "HTML 파싱 실패"}
     min_ratio = float(params.get("min_ratio", 0.1))
 
-    text = soup.get_text(" ", strip=True)
+    text = _visible_text(soup)
     sentences = [s for s in re.split(r"(?<=[.!?。\n])\s+", text) if len(s.strip()) > 5]
     if not sentences:
         return {"pass": False, "value": "문장 없음", "hint": "분석할 문장이 없습니다."}
@@ -1157,11 +1177,14 @@ async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
         paths_to_try.append("/sitemap_index.xml")
 
     tried_results = []
+    # dedicated UA — Akamai 등 봇 보호 우회 (#14)
+    from analyzer import build_request_headers
+    headers = build_request_headers()
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
             for path in paths_to_try:
                 try:
-                    r = await client.get(f"{base_url}{path}")
+                    r = await client.get(f"{base_url}{path}", headers=headers)
                 except Exception as e:
                     tried_results.append(f"{path}: 오류({type(e).__name__})")
                     continue

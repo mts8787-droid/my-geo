@@ -8,9 +8,8 @@
 import asyncio
 import hmac
 import ipaddress
-import json as _json
+import logging
 import os
-import re
 import socket
 from contextlib import asynccontextmanager
 from typing import List
@@ -26,8 +25,12 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
+import audit_store
+import bulk_jobs
 from analyzer import analyze_url, get_scoring_config, save_scoring_config, get_default_config, load_scoring_config
 from rule_engine import RULE_TYPES
+
+log = logging.getLogger("geo_audit")
 
 
 
@@ -63,16 +66,17 @@ async def _install_chromium_on_startup():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI lifespan 이벤트 핸들러."""
-    await _install_chromium_on_startup()
-    # 정기 Audit 스케줄러 시작
+    # Chromium 설치는 백그라운드로 — 헬스체크 timeout 방지 (#5)
+    asyncio.create_task(_install_chromium_on_startup())
+
+    from scheduler import start_scheduler, shutdown_scheduler
     try:
-        from scheduler import start_scheduler, shutdown_scheduler
         start_scheduler()
     except Exception as e:
-        print(f"[startup] scheduler 시작 실패: {e}")
-        shutdown_scheduler = None  # type: ignore[assignment]
-    yield
-    if shutdown_scheduler:
+        log.exception("scheduler 시작 실패: %s", e)
+    try:
+        yield
+    finally:
         try:
             shutdown_scheduler()
         except Exception:
@@ -102,7 +106,8 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요."},
     )
 
-# CORS — 기본값은 자기 자신만 허용
+# CORS — ALLOWED_ORIGINS 미설정 시 "*"로 폴백 (운영에서는 명시적 origin 권장).
+# allow_credentials는 사용하지 않으므로 "*"여도 자격 증명이 노출되진 않음 (#23).
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "").split(",")
 ALLOWED_ORIGINS = [o.strip() for o in ALLOWED_ORIGINS if o.strip()]
 
@@ -133,28 +138,49 @@ async def add_security_headers(request: Request, call_next):
     return response
 
 
-URL_PATTERN = re.compile(r"^(https?://)?[\w\-.]+(\.[\w\-]+)+([\w\-._~:/?#\[\]@!$&'()*+,;=%]*)?$")
+def _is_valid_url(url: str) -> bool:
+    """간단한 URL 유효성 검사. 실제 SSRF 차단은 _is_private_url이 담당 (#17).
+
+    - scheme 없으면 https로 보정한 뒤 urlparse가 hostname을 뽑을 수 있는지 확인
+    - hostname에 점(.) 이 1개 이상 있어야 함 (TLD 요구)
+    - whitespace, control char, scheme이 http/https가 아니면 거절
+    """
+    if not url or any(c.isspace() for c in url) or "\x00" in url:
+        return False
+    candidate = url if url.startswith(("http://", "https://")) else f"https://{url}"
+    try:
+        p = urlparse(candidate)
+    except ValueError:
+        return False
+    if p.scheme not in ("http", "https"):
+        return False
+    host = (p.hostname or "").strip()
+    if not host or "." not in host:
+        return False
+    return True
 
 
-def _is_private_url(url: str) -> bool:
-    """SSRF 방지: 내부/프라이빗 IP 주소 접근을 차단합니다."""
+async def _is_private_url(url: str) -> bool:
+    """SSRF 방지: 내부/프라이빗 IP 주소 접근을 차단합니다.
+
+    DNS resolve는 동기 호출이라 to_thread로 분리해 이벤트 루프 블로킹을 막는다 (#4).
+    """
     try:
         parsed = urlparse(url if url.startswith(("http://", "https://")) else f"https://{url}")
         hostname = parsed.hostname
         if not hostname:
             return True
-        # localhost 차단
         if hostname in ("localhost", "127.0.0.1", "::1", "0.0.0.0"):
             return True
-        # IP 주소인 경우 private 범위 체크
         try:
             addr = ipaddress.ip_address(hostname)
             return addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_reserved
         except ValueError:
             pass
-        # 도메인인 경우 DNS resolve 후 체크
         try:
-            resolved = socket.getaddrinfo(hostname, None, socket.AF_UNSPEC, socket.SOCK_STREAM)
+            resolved = await asyncio.to_thread(
+                socket.getaddrinfo, hostname, None, socket.AF_UNSPEC, socket.SOCK_STREAM
+            )
             for _, _, _, _, sockaddr in resolved:
                 addr = ipaddress.ip_address(sockaddr[0])
                 if addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_reserved:
@@ -190,15 +216,16 @@ async def analyze(request: Request, body: AnalyzeRequest):
     url = body.url.strip()
     if not url:
         raise HTTPException(status_code=400, detail="URL을 입력해주세요.")
-    if not URL_PATTERN.match(url):
+    if not _is_valid_url(url):
         raise HTTPException(status_code=400, detail="유효하지 않은 URL입니다.")
-    if _is_private_url(url):
+    if await _is_private_url(url):
         raise HTTPException(status_code=400, detail="내부 네트워크 주소는 분석할 수 없습니다.")
     scope = body.scope if body.scope in VALID_SCOPES else "all"
     try:
         result = await analyze_url(url, scope=scope)
         return result
-    except Exception:
+    except Exception as e:
+        log.exception("/analyze 실패: url=%s err=%s", url, e)
         raise HTTPException(status_code=500, detail="분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
 
 
@@ -211,11 +238,12 @@ async def analyze_bulk(request: Request, body: AnalyzeBulkRequest):
     if len(urls) > 1000:
         raise HTTPException(status_code=400, detail="한 번에 최대 1000개 URL까지 분석할 수 있습니다.")
 
-    invalid = [u for u in urls if not URL_PATTERN.match(u)]
+    invalid = [u for u in urls if not _is_valid_url(u)]
     if invalid:
         raise HTTPException(status_code=400, detail=f"유효하지 않은 URL: {invalid[0]}")
 
-    private = [u for u in urls if _is_private_url(u)]
+    private_flags = await asyncio.gather(*(_is_private_url(u) for u in urls))
+    private = [u for u, p in zip(urls, private_flags) if p]
     if private:
         raise HTTPException(status_code=400, detail=f"내부 네트워크 주소는 분석할 수 없습니다: {private[0]}")
 
@@ -226,7 +254,8 @@ async def analyze_bulk(request: Request, body: AnalyzeBulkRequest):
     async def safe_analyze(url: str):
         try:
             return {"url": url, "result": await analyze_url(url, lightweight=True, scope=scope), "error": None}
-        except Exception:
+        except Exception as e:
+            log.warning("/analyze-bulk 실패: url=%s %s: %s", url, type(e).__name__, e)
             return {"url": url, "result": None, "error": "분석 중 오류가 발생했습니다."}
 
     # 배치 단위로 순차 처리 — 메모리 누적 방지
@@ -247,19 +276,84 @@ async def analyze_bulk(request: Request, body: AnalyzeBulkRequest):
     return {"items": items, "average": average, "total": len(items), "success": success_count, "scope": scope}
 
 
+# ── Bulk async job (#18) ─────────────────────────────────────────────────────
+# 동기 /analyze-bulk는 1000개 처리 시 클라이언트 timeout 가능성. 이 엔드포인트는 즉시
+# job_id를 반환하고 클라이언트가 /analyze-bulk-status/{job_id}로 polling하도록 한다.
+
+@app.post("/analyze-bulk-async")
+@limiter.limit("5/minute")
+async def analyze_bulk_async(request: Request, body: AnalyzeBulkRequest):
+    urls = [u.strip() for u in body.urls if u.strip()]
+    if not urls:
+        raise HTTPException(status_code=400, detail="URL을 하나 이상 입력해주세요.")
+    if len(urls) > 1000:
+        raise HTTPException(status_code=400, detail="한 번에 최대 1000개 URL까지 분석할 수 있습니다.")
+
+    invalid = [u for u in urls if not _is_valid_url(u)]
+    if invalid:
+        raise HTTPException(status_code=400, detail=f"유효하지 않은 URL: {invalid[0]}")
+
+    private_flags = await asyncio.gather(*(_is_private_url(u) for u in urls))
+    private = [u for u, p in zip(urls, private_flags) if p]
+    if private:
+        raise HTTPException(status_code=400, detail=f"내부 네트워크 주소는 분석할 수 없습니다: {private[0]}")
+
+    scope = body.scope if body.scope in VALID_SCOPES else "all"
+    job_id = bulk_jobs.submit(urls, scope=scope, lightweight=True)
+    return {"job_id": job_id, "status": "submitted", "total": len(urls)}
+
+
+@app.get("/analyze-bulk-status/{job_id}")
+async def analyze_bulk_status(job_id: str):
+    job = bulk_jobs.get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="job을 찾을 수 없습니다.")
+    return job
+
+
+@app.post("/analyze-bulk-cancel/{job_id}")
+async def analyze_bulk_cancel(job_id: str):
+    ok = bulk_jobs.cancel(job_id)
+    return {"cancelled": ok}
+
+
 # ── Admin API ────────────────────────────────────────────────────────────────
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
+_ADMIN_TOKEN_TTL_SEC = 8 * 3600  # 8시간
+
+# 발급된 어드민 토큰 → 만료 epoch. 비밀번호와 분리하여 토큰 노출 면적을 줄인다 (#19).
+import secrets
+import time as _time
+_admin_tokens: dict = {}
+
+
+def _issue_admin_token() -> str:
+    token = secrets.token_urlsafe(32)
+    _admin_tokens[token] = _time.time() + _ADMIN_TOKEN_TTL_SEC
+    return token
 
 
 def _verify_admin(request: Request) -> bool:
-    """Authorization 헤더에서 Bearer 토큰을 검증합니다."""
+    """Authorization Bearer 토큰을 검증합니다.
+
+    하위 호환: ADMIN_PASSWORD 그 자체를 토큰으로 보내도 통과 (기존 클라이언트 호환).
+    신규 클라이언트는 /admin/login에서 발급받은 short-lived 토큰을 사용.
+    """
     if not ADMIN_PASSWORD:
         return False
     auth = request.headers.get("authorization", "")
     if not auth.startswith("Bearer "):
         return False
     token = auth[7:]
+    # 1) 발급된 토큰
+    exp = _admin_tokens.get(token)
+    if exp is not None:
+        if exp >= _time.time():
+            return True
+        _admin_tokens.pop(token, None)
+        return False
+    # 2) 하위 호환: 비밀번호 직접 사용 (기존 admin.html이 token=pw로 보냄)
     return hmac.compare_digest(token, ADMIN_PASSWORD)
 
 
@@ -279,8 +373,17 @@ async def admin_login(request: Request):
     if not password:
         raise HTTPException(status_code=401, detail="비밀번호를 입력해주세요.")
     if hmac.compare_digest(password, ADMIN_PASSWORD):
-        return {"status": "ok"}
+        # 신규 토큰 발급 — 클라이언트가 token을 사용하면 비밀번호 노출 면적이 줄어든다
+        return {"status": "ok", "token": _issue_admin_token(), "expires_in": _ADMIN_TOKEN_TTL_SEC}
     raise HTTPException(status_code=401, detail="비밀번호가 올바르지 않습니다.")
+
+
+@app.post("/admin/logout")
+async def admin_logout(request: Request):
+    auth = request.headers.get("authorization", "")
+    if auth.startswith("Bearer "):
+        _admin_tokens.pop(auth[7:], None)
+    return {"status": "ok"}
 
 
 @app.get("/admin/config")
@@ -347,29 +450,11 @@ async def get_extension_publish_guide_doc(request: Request):
 
 # ── Audit Groups & Schedules ─────────────────────────────────────────────────
 
-_AUDIT_DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "audit_data.json")
-_audit_data_lock = asyncio.Lock()
-
-
-def _load_audit_data() -> dict:
-    try:
-        with open(_AUDIT_DATA_PATH, "r", encoding="utf-8") as f:
-            return _json.load(f)
-    except (FileNotFoundError, _json.JSONDecodeError):
-        return {"groups": [], "schedules": []}
-
-
-async def _save_audit_data(data: dict):
-    async with _audit_data_lock:
-        with open(_AUDIT_DATA_PATH, "w", encoding="utf-8") as f:
-            _json.dump(data, f, ensure_ascii=False, indent=2)
-
-
 @app.get("/admin/audit-data")
 async def get_audit_data(request: Request):
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
-    return _load_audit_data()
+    return audit_store.load()
 
 
 @app.put("/admin/audit-data")
@@ -377,13 +462,12 @@ async def update_audit_data(request: Request):
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
     body = await request.json()
-    await _save_audit_data(body)
-    # 스케줄 변경이 있을 수 있으므로 스케줄러 재로드
+    await audit_store.save(body)
     try:
         from scheduler import reload_schedules
         n = reload_schedules()
     except Exception as e:
-        print(f"[admin] reload_schedules 실패: {e}")
+        log.exception("reload_schedules 실패: %s", e)
         n = 0
     return {"status": "ok", "data": body, "active_schedules": n}
 

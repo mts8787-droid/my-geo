@@ -118,11 +118,14 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
             if csr_raw.get("status") == "ok":
                 soup = BeautifulSoup(csr_raw["debug"]["raw_html"], "html.parser")
                 page_data = {"status": "ok", "soup": soup}
+                page_error = None
             else:
-                page_data = {"status": "error", "error": csr_raw.get("error") or "스텔스 모드(Playwright) 로딩 실패", "soup": None}
-                
+                page_data = {"status": "error", "soup": None}
+                page_error = csr_raw.get("error") or "스텔스 모드(Playwright) 로딩 실패"
+
             jsonld = _extract_json_ld(page_data)
-            return {"url": url, "base_url": base_url, "scope": scope, "json_ld": jsonld, "page_error": page_data.get("error")}
+            page_data["soup"] = None  # BS 메모리 즉시 회수 (N2)
+            return {"url": url, "base_url": base_url, "scope": scope, "json_ld": jsonld, "page_error": page_error}
 
         page_data = await _fetch_page(url)
 
@@ -227,8 +230,8 @@ _DEDICATED_UA = "MyGEOAudit/1.0 (Audit agent operated by D2C Digital Marketing T
 _FALLBACK_CHROME_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
 
-def _build_request_headers() -> dict:
-    """오디트 요청 헤더 생성.
+def build_request_headers() -> dict:
+    """오디트 요청 헤더 생성. rule_engine 등 외부 모듈에서도 import해 사용한다 (#20).
 
     UA 우선순위:
       1. AUDIT_USER_AGENT 환경변수 (명시적 override)
@@ -266,13 +269,7 @@ def _build_request_headers() -> dict:
 
 async def _fetch_page(url: str) -> dict:
     try:
-        headers = _build_request_headers()
-        # http2=True는 'h2' 패키지가 있을 때만 활성. 미설치 환경에서 ImportError 회피
-        try:
-            httpx.AsyncClient(http2=True).aclose  # 빠른 import 검증
-            use_http2 = True
-        except ImportError:
-            use_http2 = False
+        headers = build_request_headers()
 
         # 봇 보호(Akamai/Cloudflare) 간헐적 403/429 회피용 재시도 (백오프 0.5s, 1.5s)
         BACKOFFS = [0, 0.5, 1.5]
@@ -285,11 +282,10 @@ async def _fetch_page(url: str) -> dict:
             t0 = time.perf_counter()
             try:
                 async with httpx.AsyncClient(
-                    timeout=15, follow_redirects=True, max_redirects=10, http2=use_http2
+                    timeout=15, follow_redirects=True, max_redirects=10, http2=True
                 ) as client:
                     r = await client.get(url, headers=headers)
                 ttfb_ms = int((time.perf_counter() - t0) * 1000)
-                # 403/429는 봇 보호 의심 → 재시도. 그 외는 즉시 사용 (200/3xx/4xx 정상 응답)
                 if r.status_code in (403, 429) and attempt < len(BACKOFFS) - 1:
                     last_error = f"HTTP {r.status_code} 후 재시도 #{attempt + 1}"
                     continue
@@ -306,7 +302,6 @@ async def _fetch_page(url: str) -> dict:
         redirect_count = len(r.history)
         content_type = r.headers.get("content-type", "")
         resp_headers = {k: v for k, v in r.headers.items()}
-        # raw bytes (압축 해제 후) 길이 — utf-8 기준
         try:
             html_bytes = len(r.content)
         except Exception:
@@ -321,31 +316,20 @@ async def _fetch_page(url: str) -> dict:
             "raw_html":      r.text if "text/html" in content_type else "",
         }
 
-        # HTML 본문이 있으면 상태코드와 관계없이 파싱 (일부 사이트는 404/403이지만 콘텐츠 정상)
-        if "text/html" in content_type and len(r.text) > 500:
-            soup = BeautifulSoup(r.text, "html.parser")
+        # HTML 본문이 충분하거나 status 200이면 파싱 시도. 일부 사이트는 4xx에도 정상 콘텐츠 (#21)
+        is_html = "text/html" in content_type
+        if is_html and (len(r.text) > 500 or r.status_code == 200):
             return {
                 "status":         "ok",
-                "soup":           soup,
+                "soup":           BeautifulSoup(r.text, "html.parser"),
                 "http_status":    r.status_code,
                 "final_url":      str(r.url),
                 "redirect_count": redirect_count,
                 **common,
             }
 
-        if r.status_code != 200:
-            return {"status": "error", "http_status": r.status_code,
-                    "soup": None, "redirect_count": redirect_count, **common}
-
-        soup = BeautifulSoup(r.text, "html.parser")
-        return {
-            "status":         "ok",
-            "soup":           soup,
-            "http_status":    r.status_code,
-            "final_url":      str(r.url),
-            "redirect_count": redirect_count,
-            **common,
-        }
+        return {"status": "error", "http_status": r.status_code,
+                "soup": None, "redirect_count": redirect_count, **common}
     except httpx.TimeoutException:
         return {"status": "error", "error": "요청 시간 초과 (15초)", "soup": None, "redirect_count": 0}
     except httpx.ConnectError:
@@ -361,7 +345,7 @@ async def _fetch_page(url: str) -> dict:
 async def _check_robots_txt(base_url: str) -> dict:
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}/robots.txt", headers=_build_request_headers())
+            r = await client.get(f"{base_url}/robots.txt", headers=build_request_headers())
         if r.status_code != 200:
             return {"status": "not_found", "bots": {}, "raw": ""}
         content = r.text
@@ -414,7 +398,7 @@ def _parse_robots_for_ai_bots(content: str) -> dict:
 async def _check_llms_txt(base_url: str) -> dict:
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}/llms.txt", headers=_build_request_headers())
+            r = await client.get(f"{base_url}/llms.txt", headers=build_request_headers())
         if r.status_code == 200:
             content = r.text
             return {
@@ -445,8 +429,12 @@ def _extract_json_ld(page_data: dict) -> dict:
     raw_sources = []
 
     for script in scripts:
+        # script.string은 자식이 여럿이면 None을 반환하므로 get_text를 사용 (#9)
+        raw = (script.get_text() or "").strip()
+        if not raw:
+            continue
         try:
-            data = json.loads(script.string or "")
+            data = json.loads(raw)
             schemas.append(_parse_schema(data))
             raw_datas.append(data)
             raw_sources.append(json.dumps(data, ensure_ascii=False, indent=2)[:5000])

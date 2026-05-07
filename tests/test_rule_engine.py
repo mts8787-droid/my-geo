@@ -11,6 +11,7 @@ import os
 import sys
 import asyncio
 import unittest
+import httpx
 from bs4 import BeautifulSoup
 
 # 프로젝트 루트를 path에 추가
@@ -432,6 +433,170 @@ class TestSitemapCountryDetection(unittest.TestCase):
 
     def test_no_country_for_long_first_segment(self):
         self.assertIsNone(_detect_country_dir("https://example.com/products"))
+
+
+# ── 기존 sync 룰 (css_*, schema_type_exists 등) ───────────────────────────────
+
+class TestLegacyRules(unittest.TestCase):
+    def test_css_exists_pass(self):
+        r = _eval("css_exists", {"selector": "h1"}, _ctx("<h1>t</h1>"))
+        self.assertTrue(r["pass"])
+
+    def test_css_exists_fail(self):
+        r = _eval("css_exists", {"selector": "h1"}, _ctx("<p>t</p>"))
+        self.assertFalse(r["pass"])
+
+    def test_css_count_eq_pass(self):
+        r = _eval("css_count", {"selector": "h1", "operator": "==", "value": 1}, _ctx("<h1>a</h1>"))
+        self.assertTrue(r["pass"])
+
+    def test_css_count_eq_fail(self):
+        r = _eval("css_count", {"selector": "h1", "operator": "==", "value": 1}, _ctx("<h1>a</h1><h1>b</h1>"))
+        self.assertFalse(r["pass"])
+
+    def test_css_text_min_length(self):
+        r = _eval("css_text_min_length", {"selector": "title", "min_length": 1},
+                  _ctx("<title>Hello</title>"))
+        self.assertTrue(r["pass"])
+
+    def test_css_attr_exists_pass(self):
+        html = '<meta name="description" content="some content">'
+        r = _eval("css_attr_exists",
+                  {"selector": "meta[name='description' i]", "attr": "content", "min_length": 1},
+                  _ctx(html))
+        self.assertTrue(r["pass"])
+
+    def test_css_attr_not_contains_pass(self):
+        html = '<meta name="robots" content="all">'
+        r = _eval("css_attr_not_contains",
+                  {"selector": "meta[name='robots' i]", "attr": "content", "value": "noindex"},
+                  _ctx(html))
+        self.assertTrue(r["pass"])
+
+    def test_css_attr_not_contains_fail(self):
+        html = '<meta name="robots" content="noindex">'
+        r = _eval("css_attr_not_contains",
+                  {"selector": "meta[name='robots' i]", "attr": "content", "value": "noindex"},
+                  _ctx(html))
+        self.assertFalse(r["pass"])
+
+    def test_css_all_have_attr_pass(self):
+        html = '<img src="a" alt="a"><img src="b" alt="b">'
+        r = _eval("css_all_have_attr", {"selector": "img", "attr": "alt"}, _ctx(html))
+        self.assertTrue(r["pass"])
+
+    def test_css_all_have_attr_fail(self):
+        html = '<img src="a" alt="a"><img src="b">'
+        r = _eval("css_all_have_attr", {"selector": "img", "attr": "alt"}, _ctx(html))
+        self.assertFalse(r["pass"])
+
+    def test_class_id_contains(self):
+        html = '<div class="faq-section">…</div>'
+        r = _eval("class_id_contains", {"keywords": "faq", "tags": "div"}, _ctx(html))
+        self.assertTrue(r["pass"])
+
+    def test_text_has_pattern(self):
+        html = "<p>매출 500억원 달성</p>"
+        r = _eval("text_has_pattern", {"pattern": "\\d", "tags": "p"}, _ctx(html))
+        self.assertTrue(r["pass"])
+
+    def test_schema_type_exists_or(self):
+        ctx = _ctx()
+        ctx["jsonld_types"] = {"individualproduct"}
+        r = _eval("schema_type_exists", {"type": "Product, IndividualProduct"}, ctx)
+        self.assertTrue(r["pass"])
+
+    def test_schema_type_exists_fail(self):
+        ctx = _ctx()
+        ctx["jsonld_types"] = {"article"}
+        r = _eval("schema_type_exists", {"type": "Product"}, ctx)
+        self.assertFalse(r["pass"])
+
+    def test_heading_order_pass(self):
+        r = _eval("heading_order", {}, _ctx("<h1>a</h1><h2>b</h2>"))
+        self.assertTrue(r["pass"])
+
+    def test_heading_order_fail(self):
+        r = _eval("heading_order", {}, _ctx("<h2>b</h2><h1>a</h1>"))
+        self.assertFalse(r["pass"])
+
+    def test_redirect_max_pass(self):
+        ctx = _ctx(redirect_count=1)
+        r = _eval("redirect_max", {"max_count": 1}, ctx)
+        self.assertTrue(r["pass"])
+
+    def test_redirect_max_fail(self):
+        ctx = _ctx(redirect_count=3)
+        r = _eval("redirect_max", {"max_count": 1}, ctx)
+        self.assertFalse(r["pass"])
+
+    def test_aria_excludes_hidden_input_and_anchor_target(self):
+        # type=hidden 과 href 없는 a는 인터랙티브 카운트에서 제외 (#10)
+        html = '<input type="hidden" name="csrf"><a name="anchor"></a>'
+        r = _eval("aria_missing_ratio_max", {"max_ratio": 0.1}, _ctx(html))
+        self.assertTrue(r["pass"])
+
+
+# ── async 룰: sitemap_recent (httpx MockTransport) ────────────────────────────
+
+class TestSitemapRecent(unittest.TestCase):
+    """httpx MockTransport로 외부 호출 없이 sitemap_recent 동작을 검증."""
+
+    def _run(self, params, ctx, transport):
+        import rule_engine as re_mod
+        original = httpx.AsyncClient
+        def patched(*a, **kw):
+            kw["transport"] = transport
+            return original(*a, **kw)
+        re_mod.httpx.AsyncClient = patched
+        try:
+            return asyncio.run(evaluate_rule_async(
+                {"type": "sitemap_recent", "params": params}, ctx))
+        finally:
+            re_mod.httpx.AsyncClient = original
+
+    def test_recent_lastmod_pass(self):
+        from datetime import datetime, timezone
+        recent = datetime.now(timezone.utc).date().isoformat()
+        body = f"<urlset><url><loc>x</loc><lastmod>{recent}</lastmod></url></urlset>"
+        def handler(req):
+            return httpx.Response(200, text=body)
+        ctx = _ctx()
+        ctx["base_url"] = "https://example.com"
+        ctx["current_url"] = "https://example.com/"
+        r = self._run({"path": "/sitemap.xml", "max_days": 30, "auto_country": "no"}, ctx,
+                      httpx.MockTransport(handler))
+        self.assertTrue(r["pass"])
+
+    def test_old_lastmod_fail(self):
+        body = "<urlset><url><loc>x</loc><lastmod>2020-01-01</lastmod></url></urlset>"
+        def handler(req):
+            return httpx.Response(200, text=body)
+        ctx = _ctx()
+        ctx["base_url"] = "https://example.com"
+        ctx["current_url"] = "https://example.com/"
+        r = self._run({"path": "/sitemap.xml", "max_days": 30, "auto_country": "no"}, ctx,
+                      httpx.MockTransport(handler))
+        self.assertFalse(r["pass"])
+
+    def test_country_dir_priority(self):
+        """국가 디렉토리(/kr/sitemap.xml)를 우선 시도하는지 확인."""
+        from datetime import datetime, timezone
+        recent = datetime.now(timezone.utc).date().isoformat()
+        seen_paths = []
+        def handler(req):
+            seen_paths.append(req.url.path)
+            if req.url.path == "/kr/sitemap.xml":
+                return httpx.Response(200, text=f"<urlset><url><lastmod>{recent}</lastmod></url></urlset>")
+            return httpx.Response(404)
+        ctx = _ctx()
+        ctx["base_url"] = "https://example.com"
+        ctx["current_url"] = "https://example.com/kr/products/x"
+        r = self._run({"path": "/sitemap.xml", "max_days": 30, "auto_country": "yes"}, ctx,
+                      httpx.MockTransport(handler))
+        self.assertTrue(r["pass"])
+        self.assertEqual(seen_paths[0], "/kr/sitemap.xml")
+        self.assertIn("국가 디렉토리", r["value"])
 
 
 # ── 핸들러 / RULE_TYPES 일관성 ────────────────────────────────────────────────
