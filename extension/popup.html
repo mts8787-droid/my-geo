@@ -61,8 +61,11 @@
 
   <!-- 단일 페이지 분석 -->
   <div id="singlePanel" class="panel active">
-    <p style="font-size:12px; color:#64748b; margin-bottom:10px;">현재 열려있는 페이지의 SSR/CSR 비중을 측정합니다.</p>
-    <button id="analyzeBtn" class="primary">이 페이지 측정하기</button>
+    <p style="font-size:12px; color:#64748b; margin-bottom:10px;">현재 열려있는 페이지의 측정 방식을 선택하세요.</p>
+    <div style="display: flex; gap: 8px;">
+      <button id="analyzeBtn" class="primary">SSR/CSR 측정</button>
+      <button id="schemaBtn" class="primary" style="background:#10b981;">스키마 정합성 체크 (Stealth)</button>
+    </div>
     <div id="singleResult"></div>
   </div>
 

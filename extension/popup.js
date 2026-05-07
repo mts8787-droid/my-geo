@@ -119,7 +119,118 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
     container.innerHTML = `<p class="status-msg error">오류: ${escHtml(err.message)}</p>`;
   } finally {
     btn.disabled = false;
-    btn.textContent = '이 페이지 측정하기';
+    btn.textContent = 'SSR/CSR 측정';
+  }
+});
+
+// ── 스키마 체크 (단일 페이지 스텔스 모드) ────────────────────────────────────
+document.getElementById('schemaBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('schemaBtn');
+  const container = document.getElementById('singleResult');
+
+  btn.disabled = true;
+  btn.textContent = '체크 중...';
+  container.innerHTML = '<p class="status-msg">스키마 존재유무 및 정합성을 분석하고 있습니다...</p>';
+
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.url || tab.url.startsWith('chrome://')) {
+      container.innerHTML = '<p class="status-msg error">일반 웹페이지에서 사용해주세요.</p>';
+      return;
+    }
+
+    const results = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => {
+        const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+        if (scripts.length === 0) return { exists: false, items: [] };
+        
+        let items = [];
+        scripts.forEach((script, idx) => {
+          const content = script.innerText.trim();
+          let valid = false;
+          let type = 'Unknown';
+          let error = null;
+          
+          if (!content) {
+            items.push({ index: idx + 1, valid: false, type: 'Empty', error: '내용이 없습니다.' });
+            return;
+          }
+          
+          try {
+            const parsed = JSON.parse(content);
+            valid = true;
+            // 리스트 형태일 경우 첫 번째 요소의 type, 혹은 graph 안에 있을 수도 있음
+            if (Array.isArray(parsed)) {
+               type = parsed.map(p => p['@type']).filter(Boolean).join(', ');
+            } else if (parsed['@graph']) {
+               type = parsed['@graph'].map(p => p['@type']).filter(Boolean).join(', ');
+            } else {
+               type = parsed['@type'] || 'Unknown';
+            }
+          } catch (e) {
+            error = e.message;
+          }
+          
+          items.push({ index: idx + 1, valid, type, error });
+        });
+        
+        return { exists: true, items };
+      }
+    });
+
+    const data = results[0]?.result;
+    if (!data) throw new Error("결과를 가져올 수 없습니다.");
+
+    let html = `<div class="result-card">`;
+    if (!data.exists) {
+      html += `
+        <div class="result-row">
+          <span class="label">스키마 상태</span>
+          <span class="tier-badge tier-poor">미발견 (Fail)</span>
+        </div>
+        <p style="font-size:11px; color:#64748b; margin-top:8px;">이 페이지에는 JSON-LD 스키마가 존재하지 않습니다.</p>
+      `;
+    } else {
+      const validCount = data.items.filter(i => i.valid).length;
+      const totalCount = data.items.length;
+      const allValid = validCount === totalCount;
+      
+      html += `
+        <div class="result-row">
+          <span class="label">스키마 상태</span>
+          <span class="tier-badge ${allValid ? 'tier-excellent' : (validCount > 0 ? 'tier-partial' : 'tier-poor')}">
+            ${allValid ? '정합성 통과 (Pass)' : (validCount > 0 ? '일부 오류' : '오류 발생')}
+          </span>
+        </div>
+        <div class="result-row">
+          <span class="label">발견된 개수</span>
+          <span class="value">${totalCount}개 (정상 ${validCount}개)</span>
+        </div>
+      `;
+      
+      data.items.forEach(item => {
+        const color = item.valid ? '#166534' : '#ef4444';
+        const typeStr = item.type ? escHtml(String(item.type)) : 'Unknown';
+        html += `
+          <div style="margin-top: 8px; padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:11px; font-weight:700;">#${item.index} 타입: <span style="color:#4f46e5">${typeStr}</span></span>
+              <span style="font-size:10px; font-weight:700; color:${color};">${item.valid ? '유효함' : '에러'}</span>
+            </div>
+            ${item.error ? `<div style="font-size:10px; color:#ef4444; word-break:break-all;">Error: ${escHtml(item.error)}</div>` : ''}
+          </div>
+        `;
+      });
+    }
+    html += `</div>`;
+    container.innerHTML = html;
+
+  } catch (err) {
+    container.innerHTML = `<p class="status-msg error">오류: ${escHtml(err.message)}</p>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '스키마 정합성 체크 (Stealth)';
   }
 });
 
