@@ -3,25 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GEO Agent 개발 계획 — 통합 슬라이드</title>
+<title>GEO Agent — 통합 슬라이드</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
-  * { font-family: 'Inter', 'Noto Sans KR', -apple-system, sans-serif; }
-  body { background: #f1f5f9; padding: 32px 0; }
+  * { font-family: 'Inter', 'Noto Sans KR', -apple-system, sans-serif; box-sizing: border-box; }
+  body { background: #f1f5f9; padding: 32px 0; margin: 0; }
 
-  /* 슬라이드 공통 */
+  /* 슬라이드를 감싸는 frame — viewport 폭에 맞춰 슬라이드 자동 축소 */
+  .slide-frame {
+    width: min(calc(100% - 32px), 1280px);
+    aspect-ratio: 16 / 9;
+    margin: 0 auto 32px;
+    background: white;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    overflow: hidden;
+    position: relative;
+    border-radius: 6px;
+  }
   .slide {
     width: 1280px;
     height: 720px;
-    background: white;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    margin: 0 auto 36px;
+    position: absolute;
+    top: 0; left: 0;
+    transform-origin: top left;
     padding: 32px 44px;
-    position: relative;
-    box-sizing: border-box;
-    overflow: hidden;
+    background: white;
   }
+
   .slide-num {
     position: absolute; right: 24px; bottom: 14px;
     font-size: 11px; color: #94a3b8;
@@ -37,7 +46,7 @@
     line-height: 1.4;
   }
 
-  /* ─── Slide 1: Road Map + Work Flow ───────────────────────────────── */
+  /* ─── Slide 1 — Road Map ─────────────────────────────────────────── */
 
   .timeline {
     position: absolute;
@@ -67,43 +76,33 @@
     text-align: center; width: 280px;
     top: 100px;
   }
-  .phase-head .title {
-    font-size: 14px; font-weight: 800; color: #1e293b;
-  }
-  .phase-head .month {
-    font-size: 13px; font-weight: 800; color: #16a34a; margin-left: 6px;
-  }
-  .phase-head .scope {
-    font-size: 11px; color: #475569; margin-top: 2px;
-  }
+  .phase-head .title { font-size: 14px; font-weight: 800; color: #1e293b; }
+  .phase-head .month { font-size: 13px; font-weight: 800; color: #16a34a; margin-left: 6px; }
+  .phase-head .scope { font-size: 11px; color: #475569; margin-top: 2px; }
 
   .phase-body {
     position: absolute; transform: translateX(-50%);
     text-align: center; width: 320px;
     top: 200px;
   }
-  .phase-body .desc {
-    font-size: 11px; color: #1e293b; line-height: 1.6;
-  }
-  .phase-body .conclusion {
-    font-size: 12px; font-weight: 800; color: #1e293b; margin-top: 14px;
-  }
+  .phase-body .desc { font-size: 11px; color: #1e293b; line-height: 1.6; }
+  .phase-body .conclusion { font-size: 12px; font-weight: 800; color: #1e293b; margin-top: 14px; }
 
-  /* 점선 구분선 */
   .divider-dashed {
     position: absolute;
     left: 100px; right: 44px;
     border-top: 1.5px dashed #cbd5e1;
   }
 
-  /* 워크플로우 영역 */
+  /* ─── Slide 1 — Work Flow (박스 명확화) ──────────────────────────── */
+
   .workflow-area {
     position: absolute;
-    left: 100px; right: 44px; top: 380px; bottom: 44px;
+    left: 100px; right: 44px; top: 385px; bottom: 36px;
   }
 
   .legend-row {
-    display: flex; gap: 28px; margin-bottom: 8px;
+    display: flex; gap: 28px; margin-bottom: 12px;
     justify-content: center;
   }
   .legend-row .item {
@@ -114,62 +113,76 @@
     width: 22px; height: 22px; border-radius: 50%;
     background: linear-gradient(135deg, #fcd34d, #f59e0b);
     display: inline-flex; align-items: center; justify-content: center;
-    font-size: 12px;
+    font-size: 12px; flex-shrink: 0;
   }
   .icon-human {
-    width: 22px; height: 22px;
+    width: 22px; height: 22px; flex-shrink: 0;
     display: inline-flex; align-items: center; justify-content: center;
     font-size: 16px;
   }
 
-  /* 워크플로우 박스 */
-  .wf-box {
-    position: absolute;
+  /* 워크플로우 박스 — 명확한 보더 */
+  .wf-step {
+    background: white;
+    border: 1.5px solid #1e293b;
+    border-radius: 6px;
+    padding: 8px 10px;
     display: flex; gap: 6px; align-items: flex-start;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-  .wf-text {
-    font-size: 12px; font-weight: 700; color: #1e293b;
+  .wf-step .label {
+    flex: 1; min-width: 0;
+    font-size: 11px; font-weight: 700; color: #1e293b;
     line-height: 1.4;
-    border-bottom: 1.5px solid #1e293b;
-    padding-bottom: 3px;
   }
-  .wf-text .sub { font-size: 10px; font-weight: 500; color: #64748b; }
+  .wf-step .label .sub {
+    font-size: 10px; font-weight: 500; color: #64748b;
+    display: block; margin-top: 2px;
+  }
+  .wf-step.user-step { border-color: #475569; background: #f8fafc; }
+  .wf-step.agent-step { border-color: #f59e0b; background: #fffbeb; }
+  .wf-step.cdn-step { border-color: #6366f1; background: #eef2ff; }
 
-  /* 화살표 — 우향 */
-  .arrow-right {
+  /* 화살표 — 굵고 명확하게 */
+  .arrow-right-strong {
     position: absolute;
-    width: 0; height: 0;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    border-left: 10px solid #16a34a;
+    height: 14px;
+    background: transparent;
+    display: flex; align-items: center;
   }
-  .arrow-right::before {
+  .arrow-right-strong::before {
     content: '';
-    position: absolute;
-    left: -36px; top: -1px;
-    width: 36px; height: 2px;
-    background: #16a34a;
+    flex: 1; height: 2.5px; background: #16a34a;
   }
-  .arrow-down {
-    position: absolute;
-    width: 0; height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 10px solid #16a34a;
-    transform: translateX(-50%);
-  }
-  .arrow-down::before {
+  .arrow-right-strong::after {
     content: '';
-    position: absolute;
-    left: -1px; top: -28px;
-    width: 2px; height: 28px;
-    background: #16a34a;
+    width: 0; height: 0;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 11px solid #16a34a;
   }
 
-  /* 점선 화살표 — CDN → 예시 */
+  .arrow-down-strong {
+    position: absolute;
+    width: 14px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .arrow-down-strong::before {
+    content: '';
+    flex: 1; width: 2.5px; background: #16a34a;
+  }
+  .arrow-down-strong::after {
+    content: '';
+    width: 0; height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 11px solid #16a34a;
+  }
+
+  /* 점선 (CDN → 예시) */
   .dashed-line {
     position: absolute;
-    border-top: 1.5px dashed #16a34a;
+    border-top: 2px dashed #16a34a;
   }
 
   /* 페이지 목업 */
@@ -186,16 +199,11 @@
   .page-mockup .menu-bar {
     height: 5px; background: #e2e8f0; border-radius: 1px; margin-bottom: 4px;
   }
-  .page-mockup .title-line {
-    height: 6px; width: 60%; background: #475569; border-radius: 1px; margin-bottom: 4px;
-  }
   .page-mockup .grid-row {
     display: grid; gap: 3px; margin-bottom: 3px;
   }
   .page-mockup .grid-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
-  .page-mockup .grid-row > div {
-    background: #e2e8f0; border-radius: 1px;
-  }
+  .page-mockup .grid-row > div { background: #e2e8f0; border-radius: 1px; }
   .page-mockup .grid-row > div.tall { height: 22px; }
   .page-mockup .grid-row > div.short { height: 4px; }
 
@@ -205,7 +213,7 @@
     background: white;
     border: 1px solid #cbd5e1;
     border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     padding: 6px;
     width: 86px;
   }
@@ -215,7 +223,6 @@
   }
   .llm-checker .sub-text {
     font-size: 4px; color: #64748b; text-align: center; margin-top: 1px;
-    line-height: 1.2;
   }
   .llm-checker .gauge {
     width: 44px; height: 44px; border-radius: 50%;
@@ -224,20 +231,12 @@
     font-weight: 800; font-size: 11px; color: #1e293b;
     border: 5px solid #e2e8f0;
   }
-  .llm-checker .gauge.bad {
-    border-top-color: #ef4444; border-right-color: #ef4444;
-    color: #ef4444;
-  }
-  .llm-checker .gauge.good {
-    border-top-color: #10b981; border-right-color: #10b981; border-bottom-color: #10b981;
-    color: #10b981;
-  }
-  .llm-checker .label {
+  .llm-checker .gauge.bad { border-top-color: #ef4444; border-right-color: #ef4444; color: #ef4444; }
+  .llm-checker .gauge.good { border-top-color: #10b981; border-right-color: #10b981; border-bottom-color: #10b981; color: #10b981; }
+  .llm-checker .gauge-label {
     font-size: 5px; color: #64748b; text-align: center; margin-bottom: 2px;
   }
-  .llm-checker .stats-row {
-    font-size: 4px; color: #94a3b8; text-align: center; margin-bottom: 2px;
-  }
+  .llm-checker .stats-row { font-size: 4px; color: #94a3b8; text-align: center; margin-bottom: 2px; }
   .llm-checker .cta {
     background: #4f46e5; color: white; font-size: 5px; font-weight: 700;
     text-align: center; padding: 2px; border-radius: 2px; margin-top: 2px;
@@ -248,8 +247,9 @@
     background: #1a1a1a; color: #e5e7eb;
     font-family: 'Menlo','Monaco',monospace;
     font-size: 8px; line-height: 1.45;
-    padding: 8px 10px; border-radius: 4px;
+    padding: 10px 12px; border-radius: 4px;
     white-space: pre;
+    border: 1.5px solid #334155;
   }
   .jsonld-code .yellow { color: #fbbf24; }
   .jsonld-code .label-box {
@@ -260,39 +260,31 @@
     border-radius: 2px;
   }
 
-  /* 라벨 (질문/답변) */
   .qa-label {
     font-size: 10px; font-weight: 700; color: #1e293b;
-    border: 1px dashed #16a34a;
-    padding: 2px 8px; background: white;
-    text-align: center;
-    border-radius: 3px;
+    border: 1.5px dashed #16a34a;
+    padding: 3px 10px; background: white;
+    text-align: center; border-radius: 3px;
   }
 
-  /* 콜아웃 박스 (녹색 테두리) */
   .callout {
-    border: 1.5px solid #16a34a; border-radius: 4px;
-    padding: 6px 9px;
-    font-size: 10px; line-height: 1.45;
+    border: 1.5px solid #16a34a; border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 10px; line-height: 1.5;
     color: #1e293b; background: white;
   }
   .callout strong { color: #1e293b; font-weight: 700; }
 
-  /* Buying Guide 목업 */
   .buying-guide {
-    border: 1px solid #cbd5e1; border-radius: 4px;
-    background: white; padding: 6px;
+    border: 1.5px solid #cbd5e1; border-radius: 6px;
+    background: white; padding: 8px;
   }
 
-  /* ─── Slide 2/3: Checklist 테이블 ──────────────────────────────────── */
+  /* ─── Slide 2/3 — 체크리스트 ────────────────────────────────────── */
 
-  .slide-title {
-    font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 6px;
-  }
+  .slide-title { font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
   .slide-title .accent { color: #be123c; }
-  .slide-subtitle {
-    font-size: 12px; color: #475569; margin-bottom: 14px; line-height: 1.5;
-  }
+  .slide-subtitle { font-size: 12px; color: #475569; margin-bottom: 14px; line-height: 1.5; }
   .legend-text { font-size: 11px; color: #475569; margin-bottom: 10px; }
   .legend-text strong { color: #be123c; }
 
@@ -320,26 +312,25 @@
     font-size: 10px; font-weight: 500; color: #64748b;
     display: block; margin-top: 2px;
   }
-  .check-table tbody td.no-cell {
-    text-align: center; color: #475569; width: 36px; background: #fafafa;
-  }
+  .check-table tbody td.no-cell { text-align: center; color: #475569; width: 36px; background: #fafafa; }
   .check-table tbody td.item-cell { width: 235px; font-weight: 600; }
   .check-table tbody td.pass-cell { width: 240px; }
   .check-table tbody td.method-cell { color: #475569; font-size: 10px; }
-
   .check-table tbody tr.cat-divider td { border-top: 1.5px solid #be123c; }
   .content-check { color: #be123c !important; }
 
-  /* 슬라이드 간 네비게이션 (스크롤 인디케이터) */
+  /* Deck nav */
   .deck-header {
-    width: 1280px; margin: 0 auto 24px;
+    width: min(calc(100% - 32px), 1280px);
+    margin: 0 auto 24px;
     background: white; border-radius: 12px;
     padding: 14px 24px;
     display: flex; align-items: center; justify-content: space-between;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    flex-wrap: wrap; gap: 12px;
   }
   .deck-header h2 { font-size: 16px; font-weight: 800; color: #1e293b; }
-  .deck-header .nav-pills { display: flex; gap: 8px; }
+  .deck-header .nav-pills { display: flex; gap: 8px; flex-wrap: wrap; }
   .deck-header .pill {
     padding: 4px 12px; font-size: 11px; font-weight: 600;
     background: #f1f5f9; color: #475569;
@@ -355,17 +346,15 @@
   <h2>GEO Agent — 통합 슬라이드 (3장)</h2>
   <div class="nav-pills">
     <a href="#s1" class="pill">1. 개발 계획 & Workflow</a>
-    <a href="#s2" class="pill">2. Readability 체크리스트 (1/2)</a>
-    <a href="#s3" class="pill">3. Readability 체크리스트 (2/2)</a>
+    <a href="#s2" class="pill">2. 체크리스트 (1/2)</a>
+    <a href="#s3" class="pill">3. 체크리스트 (2/2)</a>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- ═══ SLIDE 1: GEO Agent 개발 계획 및 Workflow (D2C) ════════════════ -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<div class="slide" id="s1">
+<!-- ═════ SLIDE 1 ═════════════════════════════════════════════════════ -->
+<div class="slide-frame" id="s1">
+<div class="slide">
 
-  <!-- Title -->
   <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; line-height: 1.2;">
     GEO Agent 개발 계획 및 Workflow (D2C)
   </h1>
@@ -373,44 +362,41 @@
     컨텐츠 수정/보강 및 구조화된 데이터 오류 수정을 자동으로 진단하고, 자동 개선 할 수 있는 <strong>AI Agent 개발을 추진</strong>. 이를 통해 Quick-Win 개선사항의 진행 속도 가속화
   </p>
 
-  <!-- 좌측 라벨: Road Map -->
+  <!-- Road Map -->
   <div class="section-label" style="top: 130px;">Road<br>Map</div>
 
-  <!-- 타임라인 -->
   <div class="timeline">
     <div class="phase-dot" style="left: 16.7%;"></div>
     <div class="phase-dot" style="left: 50%;"></div>
     <div class="phase-dot" style="left: 83.3%;"></div>
   </div>
 
-  <!-- Phase 헤더 (위) -->
-  <div class="phase-head" style="left: calc(100px + (100% - 144px) * 0.167);">
+  <div class="phase-head" style="left: calc(100px + (1192px) * 0.167);">
     <div><span class="title">Phase 1. PoC</span><span class="month">5월</span></div>
     <div class="scope">(영국/캐나다/호주 - OLED/세탁기)</div>
   </div>
-  <div class="phase-head" style="left: calc(100px + (100% - 144px) * 0.500);">
+  <div class="phase-head" style="left: calc(100px + (1192px) * 0.500);">
     <div><span class="title">Phase 2. 전략 10국 확산</span><span class="month">6월</span></div>
   </div>
-  <div class="phase-head" style="left: calc(100px + (100% - 144px) * 0.833);">
+  <div class="phase-head" style="left: calc(100px + (1192px) * 0.833);">
     <div><span class="title">Phase 3. 전 국가 확산</span><span class="month">8월</span></div>
   </div>
 
-  <!-- Phase 본문 (아래) -->
-  <div class="phase-body" style="left: calc(100px + (100% - 144px) * 0.167);">
+  <div class="phase-body" style="left: calc(100px + (1192px) * 0.167);">
     <div class="desc">
       Technical / Contents 요소 자동 개선 Agent 개발<br>
       개선도 검증을 위한 사전/사후 분석 시행
     </div>
     <div class="conclusion">Quick-Win Point 검증 통한 개선도 파악 후, 확산 결정</div>
   </div>
-  <div class="phase-body" style="left: calc(100px + (100% - 144px) * 0.500);">
+  <div class="phase-body" style="left: calc(100px + (1192px) * 0.500);">
     <div class="desc">
       미국/인도/브라질/캐나다/영국/멕시코<br>
       독일/호주/스페인/베트남 확산
     </div>
     <div class="conclusion">자사 공통 KPI와 병행 추적 후, 전 국가 확산 결정</div>
   </div>
-  <div class="phase-body" style="left: calc(100px + (100% - 144px) * 0.833);">
+  <div class="phase-body" style="left: calc(100px + (1192px) * 0.833);">
     <div class="desc">
       국가별 Prompt 최적화 점검<br>
       컨텐츠 점검/생성 자동화 요소 추가 추적
@@ -418,41 +404,36 @@
     <div class="conclusion">Semrush 기준 KPI 추적</div>
   </div>
 
-  <!-- 점선 구분선 -->
-  <div class="divider-dashed" style="top: 360px;"></div>
+  <div class="divider-dashed" style="top: 365px;"></div>
 
-  <!-- 좌측 라벨: Work Flow -->
+  <!-- Work Flow -->
   <div class="section-label" style="top: 510px;">Work<br>Flow<br>(예시)</div>
 
-  <!-- Workflow 영역 -->
   <div class="workflow-area">
 
-    <!-- 범례 -->
     <div class="legend-row">
       <div class="item"><span class="icon-agent">🐶</span><span>GEO Agent 실행 단계</span></div>
       <div class="item"><span class="icon-human">👤</span><span>사용자 실행 단계 (Human In the Loop)</span></div>
     </div>
 
-    <!-- 컬럼 1 (시작 트리거): 수동 진단 + 자동 진단 -->
-    <!-- 수동 진단 요청 -->
-    <div class="wf-box" style="left: 0; top: 50px; width: 200px;">
+    <!-- 컬럼 1 — 시작 트리거 -->
+    <div class="wf-step user-step" style="position: absolute; left: 0; top: 36px; width: 230px;">
       <span class="icon-human">👤</span>
-      <div class="wf-text" style="flex: 1;">
+      <div class="label">
         수동 진단 요청
-        <div class="sub">(서비스용 분석 페이지 제공)</div>
+        <span class="sub">(서비스용 분석 페이지 제공)</span>
       </div>
     </div>
 
-    <!-- 자동 진단 + 페이지 목업 + Adobe checker overlay -->
-    <div class="wf-box" style="left: 0; top: 130px; width: 200px;">
+    <div class="wf-step agent-step" style="position: absolute; left: 0; top: 110px; width: 230px;">
       <span class="icon-agent">🐶</span>
-      <div class="wf-text" style="flex: 1;">
+      <div class="label">
         주요 페이지<br>정기적 자동 진단
       </div>
     </div>
 
-    <!-- LG Best Selling 페이지 목업 (자동 진단 결과) -->
-    <div style="position: absolute; left: 32px; top: 188px;">
+    <!-- 페이지 목업 + 12% checker -->
+    <div style="position: absolute; left: 30px; top: 175px;">
       <div class="page-mockup" style="width: 130px; height: 95px;">
         <div class="nav-rainbow"></div>
         <div class="menu-bar"></div>
@@ -462,87 +443,79 @@
         <div class="grid-row cols-4"><div class="short"></div><div class="short"></div><div class="short"></div><div class="short"></div></div>
         <div class="grid-row cols-4"><div class="short"></div><div class="short"></div><div class="short"></div><div class="short"></div></div>
       </div>
-      <!-- Adobe LLM checker overlay (12% — 진단 전) -->
       <div class="llm-checker" style="left: 80px; top: -8px;">
         <div class="header-text">Is your webpage citable?</div>
         <div class="sub-text">An LLM Visibility Checker by Adobe LLM Optimizer</div>
         <div class="gauge bad">12%</div>
-        <div class="label">Citation readability</div>
+        <div class="gauge-label">Citation readability</div>
         <div class="stats-row">5,280<br>MISSING WORDS</div>
         <div class="cta">Detailed analysis</div>
       </div>
     </div>
 
-    <!-- 우향 화살표 (컬럼1 → 컬럼2) -->
-    <div class="arrow-right" style="left: 245px; top: 60px;"></div>
-    <div class="arrow-right" style="left: 245px; top: 145px;"></div>
+    <!-- 화살표 컬럼1 → 컬럼2 -->
+    <div class="arrow-right-strong" style="left: 240px; top: 50px; width: 50px;"></div>
+    <div class="arrow-right-strong" style="left: 240px; top: 124px; width: 50px;"></div>
 
-    <!-- 컬럼 2 (Agent 파이프라인): 4단계 수직 흐름 -->
-    <div class="wf-box" style="left: 295px; top: 50px; width: 220px;">
+    <!-- 컬럼 2 — Agent 파이프라인 (4단계) -->
+    <div class="wf-step agent-step" style="position: absolute; left: 300px; top: 36px; width: 240px;">
       <span class="icon-agent">🐶</span>
-      <div class="wf-text" style="flex: 1;">
-        페이지별 AI Readability<br>미적용 요소 리스트업
-      </div>
+      <div class="label">페이지별 AI Readability<br>미적용 요소 리스트업</div>
     </div>
-    <div class="arrow-down" style="left: 405px; top: 100px;"></div>
+    <div class="arrow-down-strong" style="left: 413px; top: 92px; height: 28px;"></div>
 
-    <div class="wf-box" style="left: 295px; top: 130px; width: 220px;">
+    <div class="wf-step agent-step" style="position: absolute; left: 300px; top: 130px; width: 240px;">
       <span class="icon-agent">🐶</span>
-      <div class="wf-text" style="flex: 1;">컨텐츠 수정 대안 생성 및 제안</div>
+      <div class="label">컨텐츠 수정 대안 생성 및 제안</div>
     </div>
-    <div class="arrow-down" style="left: 405px; top: 175px;"></div>
+    <div class="arrow-down-strong" style="left: 413px; top: 172px; height: 28px;"></div>
 
-    <div class="wf-box" style="left: 295px; top: 200px; width: 220px;">
+    <div class="wf-step user-step" style="position: absolute; left: 300px; top: 210px; width: 240px;">
       <span class="icon-human">👤</span>
-      <div class="wf-text" style="flex: 1;">Agent Report 확인</div>
+      <div class="label">Agent Report 확인</div>
     </div>
-    <div class="arrow-down" style="left: 405px; top: 240px;"></div>
+    <div class="arrow-down-strong" style="left: 413px; top: 248px; height: 28px;"></div>
 
-    <div class="wf-box" style="left: 295px; top: 260px; width: 220px;">
+    <div class="wf-step user-step" style="position: absolute; left: 300px; top: 286px; width: 240px;">
       <span class="icon-human">👤</span>
-      <div class="wf-text" style="flex: 1;">대안 검수 및 컨펌</div>
+      <div class="label">대안 검수 및 컨펌</div>
     </div>
 
-    <!-- 우향 화살표 (컬럼2 마지막 → 컬럼3) -->
-    <div class="arrow-right" style="left: 545px; top: 75px;"></div>
+    <!-- 화살표 컬럼2 → 컬럼3 -->
+    <div class="arrow-right-strong" style="left: 550px; top: 50px; width: 56px;"></div>
 
-    <!-- 컬럼 3 (CDN 자동 업데이트) -->
-    <div class="wf-box" style="left: 595px; top: 50px; width: 200px;">
+    <!-- 컬럼 3 — CDN 자동 업데이트 -->
+    <div class="wf-step cdn-step" style="position: absolute; left: 615px; top: 36px; width: 200px;">
       <span class="icon-agent">🐶</span>
-      <div class="wf-text" style="flex: 1;">CDN 서버 내<br>자동 업데이트 실행</div>
+      <div class="label">CDN 서버 내<br>자동 업데이트 실행</div>
     </div>
 
-    <!-- LG 페이지 목업 (업데이트 후 89% 게이지) -->
-    <div style="position: absolute; left: 625px; top: 110px;">
-      <div class="page-mockup" style="width: 140px; height: 110px;">
+    <div style="position: absolute; left: 645px; top: 110px;">
+      <div class="page-mockup" style="width: 140px; height: 100px;">
         <div class="nav-rainbow"></div>
         <div class="menu-bar"></div>
         <div style="font-size: 6px; font-weight: 700; color: #1e293b;">Best selling Top 10</div>
         <div style="font-size: 5px; color: #64748b; margin-bottom: 3px;">Our most popular products based on purchases.</div>
         <div class="grid-row cols-4"><div class="tall"></div><div class="tall"></div><div class="tall"></div><div class="tall"></div></div>
         <div class="grid-row cols-4"><div class="short"></div><div class="short"></div><div class="short"></div><div class="short"></div></div>
-        <div class="grid-row cols-4"><div class="short"></div><div class="short"></div><div class="short"></div><div class="short"></div></div>
       </div>
-      <!-- 89% gauge -->
-      <div class="llm-checker" style="left: 84px; top: -8px;">
+      <div class="llm-checker" style="left: 90px; top: -10px;">
         <div class="header-text">Is your webpage citable?</div>
         <div class="sub-text">An LLM Visibility Checker by Adobe LLM Optimizer</div>
         <div class="gauge good">89%</div>
-        <div class="label">Citation readability</div>
-        <div class="stats-row" style="font-size: 4px; line-height: 1.4;">Good visibility with room for improvement<br>180 MISSING WORDS</div>
+        <div class="gauge-label">Citation readability</div>
+        <div class="stats-row" style="line-height: 1.3;">Good visibility with room for improvement<br>180 MISSING WORDS</div>
         <div class="cta" style="background: #94a3b8;">Ignore site nav and footer</div>
       </div>
     </div>
 
-    <!-- 점선 (컬럼3 → 컬럼4) -->
-    <div class="dashed-line" style="left: 770px; right: 290px; top: 60px;"></div>
-    <div class="dashed-line" style="left: 770px; right: 290px; top: 230px;"></div>
+    <!-- 점선 컬럼3 → 컬럼4 (예시) -->
+    <div class="dashed-line" style="left: 820px; width: 30px; top: 50px;"></div>
+    <div class="dashed-line" style="left: 820px; width: 30px; top: 220px;"></div>
 
-    <!-- 컬럼 4 (예시) -->
-    <!-- Technical 수정 예시 -->
-    <div style="position: absolute; left: 825px; right: 0; top: 30px; width: 360px;">
+    <!-- 컬럼 4 — 예시 -->
+    <div style="position: absolute; left: 855px; top: 0; width: 280px;">
       <div style="font-size: 12px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">Technical 수정 예시</div>
-
       <div style="display: flex; gap: 6px; align-items: stretch;">
         <div class="jsonld-code" style="flex: 1; min-width: 0;"><span class="yellow">&lt;script type="application/ld+json"&gt;</span>
 {
@@ -554,51 +527,47 @@
       <span class="yellow">"name"</span>: "Why is there no sound when my LG TV is connected via HDMI?",
       <span class="yellow">"acceptedAnswer"</span>: {
         <span class="yellow">"@type"</span>: <span class="label-box">"Answer"</span>,
-        <span class="yellow">"text"</span>: "This could be due to an incorrect audio output setting on your device, a faulty HDMI cable, or a missing sound driver."
+        <span class="yellow">"text"</span>: "This could be due to..."
       }
     }
   ]
 }
 <span class="yellow">&lt;/script&gt;</span></div>
-        <div style="display: flex; flex-direction: column; gap: 26px; padding-top: 32px;">
+        <div style="display: flex; flex-direction: column; gap: 30px; padding-top: 28px; flex-shrink: 0;">
           <div class="qa-label">질문</div>
           <div class="qa-label">답변</div>
         </div>
       </div>
-
       <div class="callout" style="margin-top: 6px;">
         AI가 이해하기 용이한 형태로 컨텐츠를 데이터화 하는 <strong>Schema Mark-up 진행</strong>
       </div>
     </div>
 
-    <!-- 컨텐츠 수정 예시 (Buying Guide) -->
-    <div style="position: absolute; left: 825px; top: 200px; width: 360px;">
+    <div style="position: absolute; left: 855px; top: 195px; width: 280px;">
       <div style="font-size: 12px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">컨텐츠 수정 예시 (Buying Guide)</div>
-
       <div style="display: flex; gap: 6px; align-items: flex-start;">
-        <div class="buying-guide" style="width: 200px;">
+        <div class="buying-guide" style="width: 130px; flex-shrink: 0;">
           <div style="font-size: 7px; font-weight: 700; color: #1e293b;">Display</div>
-          <div style="font-size: 7px; font-weight: 600; color: #475569; margin-top: 2px;">Display Type</div>
-          <div style="font-size: 6px; color: #64748b; line-height: 1.3; margin-top: 1px;">
-            OLED — OLED TVs feature self lighting pixels that turn on and off individually, delivering optimal contrast.
+          <div style="font-size: 7px; font-weight: 600; color: #475569; margin-top: 3px;">Display Type</div>
+          <div style="font-size: 6px; color: #64748b; line-height: 1.3; margin-top: 2px;">
+            OLED — OLED TVs feature self lighting pixels...
           </div>
-          <div style="display: inline-block; padding: 2px 8px; font-size: 7px; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 2px; margin-top: 4px;">Learn More</div>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 5px;">
-            <div style="border: 1px solid #e2e8f0; height: 18px; border-radius: 2px; font-size: 6px; text-align: center; padding-top: 5px; color: #64748b;">Self-Lit Display</div>
-            <div style="border: 1px solid #e2e8f0; height: 18px; border-radius: 2px; font-size: 6px; text-align: center; padding-top: 5px; color: #64748b;">Self-Lit Display</div>
-            <div style="border: 1px solid #e2e8f0; height: 18px; border-radius: 2px; font-size: 6px; text-align: center; padding-top: 5px; color: #64748b;">LCD</div>
+          <div style="display: inline-block; padding: 2px 6px; font-size: 7px; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 2px; margin-top: 4px;">Learn More</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 5px;">
+            <div style="border: 1px solid #e2e8f0; height: 16px; border-radius: 2px; font-size: 5px; text-align: center; padding-top: 4px; color: #64748b;">Self-Lit</div>
+            <div style="border: 1px solid #e2e8f0; height: 16px; border-radius: 2px; font-size: 5px; text-align: center; padding-top: 4px; color: #64748b;">Self-Lit</div>
+            <div style="border: 1px solid #e2e8f0; height: 16px; border-radius: 2px; font-size: 5px; text-align: center; padding-top: 4px; color: #64748b;">LCD</div>
           </div>
           <div style="font-size: 7px; font-weight: 700; color: #1e293b; margin-top: 5px;">Explore LG TV lineup</div>
-          <div style="font-size: 7px; font-weight: 700; color: #1e293b; margin-top: 1px; line-height: 1.3;">How to choose<br>the TV that fits your needs?</div>
-          <div style="display: inline-block; padding: 2px 8px; font-size: 7px; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 2px; margin-top: 3px;">Learn More</div>
+          <div style="font-size: 7px; font-weight: 700; color: #1e293b; margin-top: 1px; line-height: 1.3;">How to choose the TV<br>that fits your needs?</div>
+          <div style="display: inline-block; padding: 2px 6px; font-size: 7px; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 2px; margin-top: 3px;">Learn More</div>
         </div>
-
         <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
-          <div class="callout">
+          <div class="callout" style="font-size: 9px;">
             <strong>'Lean More' 컨텐츠 내용을 학습한 후, Summary / 관련 FAQ 내용을 Tool-tip 별로 보강</strong><br>
             테이블 기반 컨텐츠에 자연어 기반 컨텐츠 강화
           </div>
-          <div class="callout">
+          <div class="callout" style="font-size: 9px;">
             <strong>Summary / 관련 FAQ 내용 보강</strong><br>
             추가 Support Page Link 추가 및 Summary 추가<br>
             자동 컨텐츠 매칭 후 관련 제품 Link 삽입
@@ -611,12 +580,11 @@
 
   <div class="slide-num">1 / 3</div>
 </div>
+</div>
 
-
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- ═══ SLIDE 2: Readability 체크리스트 (1/2) ═════════════════════════ -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<div class="slide" id="s2">
+<!-- ═════ SLIDE 2 ═════════════════════════════════════════════════════ -->
+<div class="slide-frame" id="s2">
+<div class="slide">
   <h1 class="slide-title"><span class="accent">[유첨]</span> GEO Agent Readability 체크리스트 (1/2)</h1>
   <p class="slide-subtitle">
     4개 카테고리 기준 <strong>40개 체크리스트</strong>를 기준으로, 자체 개발한 Agent 기반 HTTP/HTML 분석 수행 (Pass, Fail 방식)
@@ -668,12 +636,11 @@
   <div style="font-size: 11px; color: #94a3b8; text-align: right; margin-top: 8px;">(뒷장 계속)</div>
   <div class="slide-num">2 / 3</div>
 </div>
+</div>
 
-
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- ═══ SLIDE 3: Readability 체크리스트 (2/2) ═════════════════════════ -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<div class="slide" id="s3">
+<!-- ═════ SLIDE 3 ═════════════════════════════════════════════════════ -->
+<div class="slide-frame" id="s3">
+<div class="slide">
   <h1 class="slide-title"><span class="accent">[유첨]</span> GEO Agent Readability 체크리스트 (2/2)</h1>
   <p class="legend-text"><strong>*붉은 색의 경우</strong>, Contents 체크 항목</p>
 
@@ -722,6 +689,24 @@
   </table>
   <div class="slide-num">3 / 3</div>
 </div>
+</div>
+
+<!-- 슬라이드 자동 축소 (frame 폭에 맞춰 1280px 슬라이드를 transform:scale) -->
+<script>
+  function fitSlides() {
+    document.querySelectorAll('.slide-frame').forEach(frame => {
+      const slide = frame.querySelector('.slide');
+      if (!slide) return;
+      const ratio = frame.clientWidth / 1280;
+      slide.style.transform = `scale(${ratio})`;
+    });
+  }
+  window.addEventListener('resize', fitSlides);
+  document.addEventListener('DOMContentLoaded', fitSlides);
+  // 폰트 로드 후에도 한 번 더
+  setTimeout(fitSlides, 100);
+  setTimeout(fitSlides, 500);
+</script>
 
 </body>
 </html>
