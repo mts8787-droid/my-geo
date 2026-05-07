@@ -3,6 +3,23 @@ set -e
 
 pip install -r requirements.txt
 
+# Chrome 확장 zip을 extension/ 현재 내용으로 재빌드 — 다운로드 링크와 소스가 어긋나는 사고 방지
+# Render의 Debian 이미지에는 zip 명령이 없을 수 있어 Python zipfile 사용
+if [ -d extension ]; then
+  python -c "
+import os, zipfile
+src = 'extension'; dst = 'static/geo-audit-extension.zip'
+os.makedirs('static', exist_ok=True)
+with zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED) as z:
+    for root, _, files in os.walk(src):
+        for f in files:
+            if f == '.DS_Store': continue
+            p = os.path.join(root, f)
+            z.write(p, os.path.relpath(p, src))
+print(f'[build] extension zip rebuilt: {dst}')
+"
+fi
+
 # Chromium 시스템 의존성 수동 설치 (Render 등 Debian 계열)
 if command -v apt-get &> /dev/null; then
   apt-get update -qq
