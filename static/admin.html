@@ -87,6 +87,13 @@
             </svg>
             <span class="nav-label">정기 Audit 관리</span>
           </button>
+          <button onclick="switchPage('sitemap-agent')" id="nav-sitemap-agent"
+            class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
+            <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <span class="nav-label">사이트맵 자동 감사</span>
+          </button>
           <button onclick="switchPage('doc')" id="nav-doc"
             class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
             <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,6 +240,62 @@
           </div>
         </div>
 
+        <!-- Page: Sitemap Agent -->
+        <div id="page-sitemap-agent" class="max-w-5xl mx-auto px-6 py-8 hidden">
+          <div class="flex items-center justify-between mb-6">
+            <h1 class="text-xl font-bold text-slate-800">사이트맵 자동 감사 (이메일 리포트)</h1>
+          </div>
+          
+          <div class="card p-6 mb-6 fade-in">
+            <p class="text-xs text-slate-500 mb-4">사이트맵의 모든 URL을 점검하고, 완료되면 상세 결과를 포함한 CSV 리포트를 이메일로 자동 발송합니다.</p>
+            
+            <div class="space-y-4 max-w-xl">
+              <div>
+                <label class="text-xs text-slate-500 mb-1 block">수신 이메일 주소</label>
+                <input id="sa-email" type="email" placeholder="report@example.com" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="text-xs text-slate-500 mb-1 block">사이트 이름</label>
+                <input id="sa-site-name" type="text" placeholder="예: 메인 블로그" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+              </div>
+              
+              <div>
+                <label class="text-xs text-slate-500 mb-1 block">사이트맵 URL</label>
+                <input id="sa-sitemap" type="url" placeholder="https://example.com/sitemap.xml" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+              </div>
+              
+              <div class="pt-2 border-t border-slate-100 mt-2">
+                <p class="text-xs font-semibold text-slate-600 mb-2">발신 이메일 (SMTP) 설정</p>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label class="text-[10px] text-slate-400 mb-1 block">SMTP 호스트</label>
+                    <input id="sa-smtp-host" type="text" value="smtp.gmail.com" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-slate-400 mb-1 block">SMTP 포트</label>
+                    <input id="sa-smtp-port" type="number" value="587" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label class="text-[10px] text-slate-400 mb-1 block">SMTP 사용자 (계정)</label>
+                    <input id="sa-smtp-user" type="text" placeholder="your-email@gmail.com" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-slate-400 mb-1 block">SMTP 비밀번호 (앱 비밀번호)</label>
+                    <input id="sa-smtp-pass" type="password" placeholder="••••••••" class="w-full px-2 py-1.5 rounded border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                  </div>
+                </div>
+              </div>
+              
+              <button onclick="runSitemapAgent()" class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl text-sm hover:opacity-90 transition mt-4">
+                자동 감사 시작
+              </button>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   </div>
@@ -342,6 +405,7 @@ function switchPage(page) {
   document.getElementById('page-criteria').classList.toggle('hidden', page !== 'criteria');
   document.getElementById('page-list').classList.toggle('hidden', page !== 'list');
   document.getElementById('page-schedule').classList.toggle('hidden', page !== 'schedule');
+  document.getElementById('page-sitemap-agent').classList.toggle('hidden', page !== 'sitemap-agent');
   document.getElementById('page-doc').classList.toggle('hidden', page !== 'doc');
   document.getElementById('page-deck').classList.toggle('hidden', page !== 'deck');
   document.getElementById('page-ext-guide').classList.toggle('hidden', page !== 'ext-guide');
@@ -1011,6 +1075,49 @@ async function removeSchedule(i) {
   if (!confirm('이 스케줄을 삭제하시겠습니까?')) return;
   auditData.schedules.splice(i, 1);
   await saveAuditData(); renderSchedules();
+}
+
+// ── Sitemap Agent ──
+async function runSitemapAgent() {
+  const email = document.getElementById('sa-email').value.trim();
+  const siteName = document.getElementById('sa-site-name').value.trim();
+  const sitemapUrl = document.getElementById('sa-sitemap').value.trim();
+  
+  if (!email || !siteName || !sitemapUrl) {
+    alert('이메일, 사이트 이름, 사이트맵 URL을 모두 입력해주세요.');
+    return;
+  }
+  
+  const body = {
+    email: email,
+    site_name: siteName,
+    sitemap_url: sitemapUrl,
+    smtp_host: document.getElementById('sa-smtp-host').value.trim() || 'smtp.gmail.com',
+    smtp_port: parseInt(document.getElementById('sa-smtp-port').value) || 587,
+    smtp_user: document.getElementById('sa-smtp-user').value.trim(),
+    smtp_pass: document.getElementById('sa-smtp-pass').value.trim(),
+    smtp_from: document.getElementById('sa-smtp-user').value.trim()
+  };
+  
+  showToast('사이트맵 에이전트 실행 중...');
+  try {
+    const res = await fetch('/admin/sitemap-agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      showToast('실패: ' + (d.detail || res.status));
+      return;
+    }
+    
+    const data = await res.json();
+    showToast(data.message || '감사 작업이 시작되었습니다.');
+  } catch (e) {
+    showToast('네트워크 오류: ' + e.message);
+  }
 }
 
 // ── Toast ──

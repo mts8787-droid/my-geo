@@ -27,6 +27,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 import audit_store
 import bulk_jobs
+import sitemap_agent
 from analyzer import analyze_url, get_scoring_config, save_scoring_config, get_default_config, load_scoring_config
 from rule_engine import RULE_TYPES
 
@@ -449,6 +450,39 @@ async def get_extension_publish_guide_doc(request: Request):
 
 
 # ── Audit Groups & Schedules ─────────────────────────────────────────────────
+
+class SitemapAgentRequest(BaseModel):
+    sitemap_url: str
+    site_name: str
+    email: str
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_pass: str = ""
+    smtp_from: str = ""
+
+@app.post("/admin/sitemap-agent")
+async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    
+    smtp_config = {
+        "SMTP_HOST": body.smtp_host,
+        "SMTP_PORT": body.smtp_port,
+        "SMTP_USER": body.smtp_user,
+        "SMTP_PASS": body.smtp_pass,
+        "SMTP_FROM": body.smtp_from
+    }
+    
+    # Send to background
+    asyncio.create_task(sitemap_agent.run_sitemap_audit_task(
+        sitemap_url=body.sitemap_url, 
+        email=body.email, 
+        site_name=body.site_name, 
+        smtp_config=smtp_config
+    ))
+    return {"status": "ok", "message": "사이트맵 자동 감사가 백그라운드에서 시작되었습니다. 완료 시 이메일로 발송됩니다."}
+
 
 @app.get("/admin/audit-data")
 async def get_audit_data(request: Request):
