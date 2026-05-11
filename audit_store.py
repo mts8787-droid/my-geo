@@ -50,7 +50,7 @@ def _migrate(data: dict) -> bool:
 
 def _read_sync() -> dict:
     try:
-        with open(_AUDIT_DATA_PATH, "r", encoding="utf-8") as f:
+        with open(_AUDIT_DATA_PATH, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
