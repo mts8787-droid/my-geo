@@ -56,8 +56,10 @@
       <div class="px-6 py-3 flex items-center gap-3">
         <a href="/" class="text-xl font-extrabold gradient-text">GEO Audit</a>
         <span class="text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">Admin</span>
-        <div class="flex-1"></div>
-        <button class="text-xs text-slate-400 hover:text-slate-600" onclick="logout()">Logout</button>
+        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
+        <button class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition" onclick="exportData()">⬇️ 환경 백업 (Export)</button>
+        <button class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition" onclick="document.getElementById('import-file').click()">⬆️ 환경 동기화 (Import)</button>
+        <button class="text-xs text-slate-400 hover:text-slate-600 ml-2" onclick="logout()">Logout</button>
       </div>
     </header>
 
@@ -612,6 +614,43 @@ async function saveAuditData() {
     method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify(auditData),
   });
+}
+
+// ── Sync (Export/Import) ──
+async function exportData() {
+  const syncData = { config: config, auditData: auditData };
+  const blob = new Blob([JSON.stringify(syncData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `geo-sync-data-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+}
+
+async function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.config && data.auditData) {
+         await fetch('/admin/config', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(data.config),
+         });
+         await fetch('/admin/audit-data', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(data.auditData),
+         });
+         alert('설정 및 데이터가 성공적으로 동기화(Import) 되었습니다! 페이지를 새로고침합니다.');
+         location.reload();
+      } else {
+         alert('올바른 동기화 파일이 아닙니다.');
+      }
+    } catch(err) { alert('파일 읽기 오류: ' + err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value = ''; // reset
 }
 
 // ═══════════════════════════════════════════════════════════════════════
