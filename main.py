@@ -494,6 +494,9 @@ async def admin_parse_sitemap(request: Request, body: ParseSitemapRequest):
     try:
         urls = await sitemap_agent.parse_sitemap(body.sitemap_url)
         return {"urls": urls}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @app.post("/admin/sitemap-draft")
 async def sitemap_draft(request: Request, body: ParseSitemapRequest):
     if not _verify_admin(request):
