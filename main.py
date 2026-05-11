@@ -484,6 +484,52 @@ async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
     return {"status": "ok", "message": "사이트맵 자동 감사가 백그라운드에서 시작되었습니다. 완료 시 이메일로 발송됩니다."}
 
 
+class ParseSitemapRequest(BaseModel):
+    sitemap_url: str
+
+@app.post("/admin/parse-sitemap")
+async def admin_parse_sitemap(request: Request, body: ParseSitemapRequest):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    try:
+        urls = await sitemap_agent.parse_sitemap(body.sitemap_url)
+        return {"urls": urls}
+@app.post("/admin/sitemap-draft")
+async def sitemap_draft(request: Request, body: ParseSitemapRequest):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    try:
+        urls = await sitemap_agent.parse_sitemap(body.sitemap_url)
+        preview_urls = urls[:3]
+        
+        from analyzer import analyze_url
+        sem = asyncio.Semaphore(3)
+        async def _audit(u: str):
+            async with sem:
+                try:
+                    res = await analyze_url(u, lightweight=True)
+                    return {"url": u, "result": res}
+                except Exception as e:
+                    return {"url": u, "error": str(e)}
+                    
+        tasks = [_audit(u) for u in preview_urls]
+        preview_results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        cleaned_results = []
+        for r in preview_results:
+            if isinstance(r, Exception):
+                continue
+            if "error" in r:
+                cleaned_results.append({"url": r["url"], "score": "Error", "grade": "-"})
+            else:
+                score = r["result"].get("score", {}).get("total", "")
+                grade = r["result"].get("score", {}).get("grade", "")
+                cleaned_results.append({"url": r["url"], "score": score, "grade": grade})
+                
+        return {"total_urls": len(urls), "preview": cleaned_results}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @app.get("/admin/audit-data")
 async def get_audit_data(request: Request):
     if not _verify_admin(request):

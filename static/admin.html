@@ -92,7 +92,7 @@
             <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
-            <span class="nav-label">사이트맵 자동 감사</span>
+            <span class="nav-label">감사 리포트 전송</span>
           </button>
           <button onclick="switchPage('doc')" id="nav-doc"
             class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
@@ -176,9 +176,14 @@
         <div id="page-list" class="max-w-5xl mx-auto px-6 py-8 hidden">
           <div class="flex items-center justify-between mb-6">
             <h1 class="text-xl font-bold text-slate-800">Audit List 관리</h1>
-            <button onclick="openAddGroupModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition">
-              + 그룹 추가
-            </button>
+            <div class="flex gap-2">
+              <button onclick="openSitemapGroupModal()" class="px-4 py-2 bg-slate-100 text-slate-600 text-sm font-semibold rounded-xl hover:bg-slate-200 transition">
+                사이트맵으로 URL 추가
+              </button>
+              <button onclick="openAddGroupModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition">
+                + 그룹 추가
+              </button>
+            </div>
           </div>
           <div id="groups-container" class="space-y-4"></div>
         </div>
@@ -243,7 +248,7 @@
         <!-- Page: Sitemap Agent -->
         <div id="page-sitemap-agent" class="max-w-5xl mx-auto px-6 py-8 hidden">
           <div class="flex items-center justify-between mb-6">
-            <h1 class="text-xl font-bold text-slate-800">사이트맵 자동 감사 (이메일 리포트)</h1>
+            <h1 class="text-xl font-bold text-slate-800">감사 리포트 전송 (이메일)</h1>
           </div>
           
           <div class="card p-6 mb-6 fade-in">
@@ -289,9 +294,20 @@
                 </div>
               </div>
               
-              <button onclick="runSitemapAgent()" class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl text-sm hover:opacity-90 transition mt-4">
-                자동 감사 시작
-              </button>
+              <div class="flex gap-3 mt-4">
+                <button onclick="viewSitemapDraft()" class="flex-1 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl text-sm hover:bg-slate-200 transition">
+                  리포트 초안 보기
+                </button>
+                <button onclick="runSitemapAgent()" class="flex-1 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl text-sm hover:opacity-90 transition">
+                  리포트 생성 및 전송
+                </button>
+              </div>
+              
+              <div id="draft-results" class="mt-6 hidden">
+                <h3 class="text-sm font-bold text-slate-700 mb-2">리포트 초안 미리보기</h3>
+                <div id="draft-content" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs">
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -346,6 +362,21 @@
       <div class="flex gap-3">
         <button onclick="confirmAddUrl()" class="flex-1 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl text-sm hover:opacity-90">추가</button>
         <button onclick="document.getElementById('url-modal').classList.add('hidden')" class="px-6 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl text-sm hover:bg-slate-200">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sitemap Group Modal -->
+  <div id="sitemap-group-modal" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 fade-in">
+      <h3 class="text-base font-bold text-slate-800 mb-4">사이트맵으로 그룹 추가</h3>
+      <input id="sg-name" type="text" placeholder="그룹 이름"
+        class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm mb-3 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+      <input id="sg-url" type="url" placeholder="https://example.com/sitemap.xml"
+        class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm mb-4 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+      <div class="flex gap-3">
+        <button onclick="confirmAddSitemapGroup()" class="flex-1 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl text-sm hover:opacity-90">불러오기 및 추가</button>
+        <button onclick="document.getElementById('sitemap-group-modal').classList.add('hidden')" class="px-6 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl text-sm hover:bg-slate-200">취소</button>
       </div>
     </div>
   </div>
@@ -1114,9 +1145,90 @@ async function runSitemapAgent() {
     }
     
     const data = await res.json();
-    showToast(data.message || '감사 작업이 시작되었습니다.');
+    showToast(data.message || '리포트 생성이 시작되었습니다.');
   } catch (e) {
     showToast('네트워크 오류: ' + e.message);
+  }
+}
+
+async function viewSitemapDraft() {
+  const sitemapUrl = document.getElementById('sa-sitemap').value.trim();
+  if (!sitemapUrl) {
+    alert('사이트맵 URL을 입력해주세요.');
+    return;
+  }
+  
+  const draftDiv = document.getElementById('draft-results');
+  const draftContent = document.getElementById('draft-content');
+  
+  draftDiv.classList.remove('hidden');
+  draftContent.innerHTML = '<p class="text-slate-500">사이트맵 분석 중... (약 10~20초 소요)</p>';
+  
+  try {
+    const res = await fetch('/admin/sitemap-draft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ sitemap_url: sitemapUrl })
+    });
+    
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      draftContent.innerHTML = `<p class="text-red-500">오류: ${escHtml(d.detail || res.status)}</p>`;
+      return;
+    }
+    
+    const data = await res.json();
+    let html = `<p class="mb-3">총 <strong>${data.total_urls}</strong>개의 URL이 발견되었습니다. (최대 3개 샘플링)</p>`;
+    html += '<div class="space-y-2">';
+    
+    data.preview.forEach(p => {
+      html += `
+        <div class="flex items-center justify-between p-2 bg-white rounded border border-slate-100">
+          <span class="truncate pr-4 flex-1 text-slate-600">${escHtml(p.url)}</span>
+          <span class="font-bold flex-shrink-0 ${p.score >= 90 ? 'text-emerald-600' : p.score >= 70 ? 'text-amber-600' : 'text-red-500'}">${p.score}점</span>
+        </div>
+      `;
+    });
+    html += '</div>';
+    html += '<p class="mt-3 text-slate-400 text-[10px]">실제 리포트는 전체 URL에 대해 진행되며, 각 검수항목별 합격/불합격 결과가 CSV로 첨부됩니다.</p>';
+    
+    draftContent.innerHTML = html;
+  } catch (e) {
+    draftContent.innerHTML = `<p class="text-red-500">네트워크 오류: ${escHtml(e.message)}</p>`;
+  }
+}
+
+function openSitemapGroupModal() {
+  document.getElementById('sg-name').value = '';
+  document.getElementById('sg-url').value = '';
+  document.getElementById('sitemap-group-modal').classList.remove('hidden');
+}
+
+async function confirmAddSitemapGroup() {
+  const name = document.getElementById('sg-name').value.trim();
+  const sitemapUrl = document.getElementById('sg-url').value.trim();
+  if (!name || !sitemapUrl) { alert('그룹 이름과 사이트맵 URL을 입력하세요.'); return; }
+  
+  showToast('사이트맵을 불러오는 중...');
+  try {
+    const res = await fetch('/admin/parse-sitemap', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ sitemap_url: sitemapUrl })
+    });
+    if (!res.ok) {
+      const d = await res.json().catch(()=>({}));
+      alert('불러오기 실패: ' + (d.detail || res.status));
+      return;
+    }
+    const data = await res.json();
+    const urls = data.urls.map(u => ({ url: u, lastScore: null, lastRun: null }));
+    auditData.groups.push({ name, urls });
+    await saveAuditData(); renderGroups();
+    document.getElementById('sitemap-group-modal').classList.add('hidden');
+    showToast(`"${name}" 그룹에 ${urls.length}개의 URL이 추가되었습니다.`);
+  } catch(e) {
+    alert('네트워크 오류: ' + e.message);
   }
 }
 
