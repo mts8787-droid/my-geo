@@ -1,0 +1,1165 @@
+﻿{
+    "groups":  [
+                   {
+                       "csv_file":  "reports/lg_urls_global.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - global",
+                       "id":  "grp_lg_global",
+                       "url_count":  199314
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_pl.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - pl",
+                       "id":  "grp_lg_pl",
+                       "url_count":  42894
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_uk.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - uk",
+                       "id":  "grp_lg_uk",
+                       "url_count":  41318
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_de.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - de",
+                       "id":  "grp_lg_de",
+                       "url_count":  32921
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ru.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ru",
+                       "id":  "grp_lg_ru",
+                       "url_count":  29902
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_es.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - es",
+                       "id":  "grp_lg_es",
+                       "url_count":  29224
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_in.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - in",
+                       "id":  "grp_lg_in",
+                       "url_count":  26334
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_id.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - id",
+                       "id":  "grp_lg_id",
+                       "url_count":  25133
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_fr.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - fr",
+                       "id":  "grp_lg_fr",
+                       "url_count":  24254
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_it.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - it",
+                       "id":  "grp_lg_it",
+                       "url_count":  23739
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_at.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - at",
+                       "id":  "grp_lg_at",
+                       "url_count":  22561
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_br.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - br",
+                       "id":  "grp_lg_br",
+                       "url_count":  22501
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_pa.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - pa",
+                       "id":  "grp_lg_pa",
+                       "url_count":  21264
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_kz.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - kz",
+                       "id":  "grp_lg_kz",
+                       "url_count":  20216
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_hu.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - hu",
+                       "id":  "grp_lg_hu",
+                       "url_count":  20075
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_cz.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - cz",
+                       "id":  "grp_lg_cz",
+                       "url_count":  19988
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ec.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ec",
+                       "id":  "grp_lg_ec",
+                       "url_count":  18494
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_au.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - au",
+                       "id":  "grp_lg_au",
+                       "url_count":  17908
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_se.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - se",
+                       "id":  "grp_lg_se",
+                       "url_count":  17526
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_mx.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - mx",
+                       "id":  "grp_lg_mx",
+                       "url_count":  17174
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_cac.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - cac",
+                       "id":  "grp_lg_cac",
+                       "url_count":  17153
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_pt.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - pt",
+                       "id":  "grp_lg_pt",
+                       "url_count":  16393
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_dk.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - dk",
+                       "id":  "grp_lg_dk",
+                       "url_count":  16362
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_gr.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - gr",
+                       "id":  "grp_lg_gr",
+                       "url_count":  15154
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_th.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - th",
+                       "id":  "grp_lg_th",
+                       "url_count":  14797
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_sg.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - sg",
+                       "id":  "grp_lg_sg",
+                       "url_count":  14548
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_tr.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - tr",
+                       "id":  "grp_lg_tr",
+                       "url_count":  14189
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ua.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ua",
+                       "id":  "grp_lg_ua",
+                       "url_count":  13813
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ae.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ae",
+                       "id":  "grp_lg_ae",
+                       "url_count":  13509
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_hr.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - hr",
+                       "id":  "grp_lg_hr",
+                       "url_count":  13365
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_vn.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - vn",
+                       "id":  "grp_lg_vn",
+                       "url_count":  13320
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_bg.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - bg",
+                       "id":  "grp_lg_bg",
+                       "url_count":  13172
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_rs.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - rs",
+                       "id":  "grp_lg_rs",
+                       "url_count":  13066
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_il.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - il",
+                       "id":  "grp_lg_il",
+                       "url_count":  12649
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ee.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ee",
+                       "id":  "grp_lg_ee",
+                       "url_count":  12546
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_co.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - co",
+                       "id":  "grp_lg_co",
+                       "url_count":  12508
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_lv.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - lv",
+                       "id":  "grp_lg_lv",
+                       "url_count":  12354
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_sk.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - sk",
+                       "id":  "grp_lg_sk",
+                       "url_count":  12312
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_fi.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - fi",
+                       "id":  "grp_lg_fi",
+                       "url_count":  12301
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_pe.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - pe",
+                       "id":  "grp_lg_pe",
+                       "url_count":  12293
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_cl.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - cl",
+                       "id":  "grp_lg_cl",
+                       "url_count":  12252
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_no.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - no",
+                       "id":  "grp_lg_no",
+                       "url_count":  12134
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_tw.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - tw",
+                       "id":  "grp_lg_tw",
+                       "url_count":  11368
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_lt.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - lt",
+                       "id":  "grp_lg_lt",
+                       "url_count":  11359
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_sa.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - sa",
+                       "id":  "grp_lg_sa",
+                       "url_count":  10929
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_nz.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - nz",
+                       "id":  "grp_lg_nz",
+                       "url_count":  10925
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ro.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ro",
+                       "id":  "grp_lg_ro",
+                       "url_count":  10855
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_my.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - my",
+                       "id":  "grp_lg_my",
+                       "url_count":  10130
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ph.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ph",
+                       "id":  "grp_lg_ph",
+                       "url_count":  9736
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_cn.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - cn",
+                       "id":  "grp_lg_cn",
+                       "url_count":  9645
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_hk.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - hk",
+                       "id":  "grp_lg_hk",
+                       "url_count":  9415
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_uz.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - uz",
+                       "id":  "grp_lg_uz",
+                       "url_count":  9318
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_jp.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - jp",
+                       "id":  "grp_lg_jp",
+                       "url_count":  8732
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_bd.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - bd",
+                       "id":  "grp_lg_bd",
+                       "url_count":  7907
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ir.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ir",
+                       "id":  "grp_lg_ir",
+                       "url_count":  7365
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ma.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ma",
+                       "id":  "grp_lg_ma",
+                       "url_count":  6695
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_tn.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - tn",
+                       "id":  "grp_lg_tn",
+                       "url_count":  6593
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_ar.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - ar",
+                       "id":  "grp_lg_ar",
+                       "url_count":  6472
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_lk.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - lk",
+                       "id":  "grp_lg_lk",
+                       "url_count":  5996
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_np.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - np",
+                       "id":  "grp_lg_np",
+                       "url_count":  5910
+                   },
+                   {
+                       "csv_file":  "reports/lg_urls_dz.csv",
+                       "urls":  [
+
+                                ],
+                       "name":  "LG Sitemap - dz",
+                       "id":  "grp_lg_dz",
+                       "url_count":  2706
+                   }
+               ],
+    "schedules":  [
+                      {
+                          "frequency":  "daily",
+                          "time":  "01:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_global",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - global (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_global"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "01:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_pl",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - pl (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_pl"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "01:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_uk",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - uk (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_uk"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "01:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_de",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - de (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_de"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "01:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ru",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ru (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ru"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "01:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_es",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - es (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_es"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "02:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_in",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - in (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_in"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "02:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_id",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - id (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_id"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "02:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_fr",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - fr (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_fr"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "02:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_it",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - it (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_it"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "02:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_at",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - at (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_at"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "02:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_br",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - br (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_br"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "03:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_pa",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - pa (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_pa"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "03:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_kz",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - kz (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_kz"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "03:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_hu",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - hu (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_hu"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "03:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_cz",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - cz (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_cz"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "03:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ec",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ec (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ec"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "03:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_au",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - au (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_au"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "04:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_se",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - se (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_se"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "04:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_mx",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - mx (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_mx"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "04:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_cac",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - cac (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_cac"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "04:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_pt",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - pt (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_pt"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "04:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_dk",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - dk (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_dk"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "04:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_gr",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - gr (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_gr"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "05:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_th",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - th (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_th"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "05:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_sg",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - sg (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_sg"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "05:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_tr",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - tr (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_tr"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "05:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ua",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ua (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ua"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "05:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ae",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ae (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ae"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "05:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_hr",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - hr (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_hr"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "06:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_vn",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - vn (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_vn"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "06:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_bg",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - bg (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_bg"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "06:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_rs",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - rs (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_rs"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "06:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_il",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - il (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_il"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "06:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ee",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ee (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ee"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "06:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_co",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - co (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_co"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "07:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_lv",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - lv (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_lv"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "07:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_sk",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - sk (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_sk"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "07:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_fi",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - fi (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_fi"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "07:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_pe",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - pe (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_pe"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "07:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_cl",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - cl (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_cl"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "07:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_no",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - no (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_no"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "08:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_tw",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - tw (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_tw"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "08:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_lt",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - lt (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_lt"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "08:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_sa",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - sa (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_sa"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "08:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_nz",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - nz (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_nz"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "08:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ro",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ro (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ro"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "08:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_my",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - my (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_my"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "09:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ph",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ph (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ph"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "09:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_cn",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - cn (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_cn"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "09:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_hk",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - hk (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_hk"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "09:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_uz",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - uz (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_uz"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "09:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_jp",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - jp (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_jp"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "09:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_bd",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - bd (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_bd"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "10:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ir",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ir (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ir"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "10:10",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ma",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ma (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ma"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "10:20",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_tn",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - tn (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_tn"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "10:30",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_ar",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - ar (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_ar"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "10:40",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_lk",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - lk (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_lk"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "10:50",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_np",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - np (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_np"
+                      },
+                      {
+                          "frequency":  "daily",
+                          "time":  "11:00",
+                          "chunk_size":  1000,
+                          "id":  "sch_lg_dz",
+                          "chunk_index":  0,
+                          "name":  "LG Sitemap - dz (??1000嫄?",
+                          "enabled":  true,
+                          "group_id":  "grp_lg_dz"
+                      }
+                  ]
+}
