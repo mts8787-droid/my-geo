@@ -871,8 +871,13 @@ function renderGroups() {
   }
 
   container.innerHTML = groups.map((g, gi) => {
+    const isCsv = g.csv_file;
+    const urlCount = isCsv ? (g.url_count || 0) : (g.urls ? g.urls.length : 0);
     const urls = g.urls || [];
-    const urlRows = urls.length ? urls.map((u, ui) => `
+    
+    const urlRows = isCsv ? 
+      `<tr><td colspan="4" class="px-4 py-6 text-center text-slate-500 text-xs bg-slate-50 border-t border-slate-100"><span class="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1">CSV 연동</span>이 그룹은 대용량 CSV 파일에 연동되어 있어 이곳에서 개별 URL을 직접 편집할 수 없습니다.</td></tr>` :
+      (urls.length ? urls.map((u, ui) => `
       <tr class="border-b border-slate-50 hover:bg-slate-50/50">
         <td class="px-4 py-2.5 text-sm text-slate-700 truncate max-w-md">${escHtml(u.url)}</td>
         <td class="px-4 py-2.5 text-center">
@@ -886,7 +891,7 @@ function renderGroups() {
           </div>
         </td>
       </tr>
-    `).join('') : `<tr><td colspan="4" class="px-4 py-6 text-center text-slate-300 text-xs">URL을 추가해주세요.</td></tr>`;
+    `).join('') : `<tr><td colspan="4" class="px-4 py-6 text-center text-slate-300 text-xs">URL을 추가해주세요.</td></tr>`);
 
     return `
       <div class="card fade-in overflow-hidden">
@@ -896,8 +901,8 @@ function renderGroups() {
               <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-slate-700">${escHtml(g.name)}</h3>
-              <p class="text-xs text-slate-400">${urls.length}개 URL</p>
+              <h3 class="text-sm font-bold text-slate-700">${escHtml(g.name)} ${isCsv ? '<span class="text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-sm ml-1 font-normal border border-amber-200">CSV</span>' : ''}</h3>
+              <p class="text-xs text-slate-400">${urlCount}개 URL</p>
             </div>
           </div>
           <div class="flex items-center gap-2">

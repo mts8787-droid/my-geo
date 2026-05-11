@@ -83,6 +83,23 @@ async def _run_schedule(schedule_id: str):
         return
     group = next((g for g in data["groups"] if g.get("id") == sch.get("group_id")), None)
     urls = (group or {}).get("urls", [])
+    csv_file = (group or {}).get("csv_file")
+    if csv_file and not urls:
+        try:
+            import csv
+            with open(csv_file, "r", encoding="utf-8-sig") as f:
+                reader = csv.DictReader(f)
+                urls = [row["URL"] for row in reader if "URL" in row]
+        except Exception as e:
+            log.error(f"Failed to load CSV for group {group.get('name')}: {e}")
+            urls = []
+            
+    chunk_size = sch.get("chunk_size", 0)
+    chunk_index = sch.get("chunk_index", 0)
+    if chunk_size > 0 and urls:
+        start = chunk_index * chunk_size
+        end = start + chunk_size
+        urls = urls[start:end]
 
     run = {
         "id":            f"run_{uuid.uuid4().hex[:12]}",
@@ -133,6 +150,17 @@ async def _run_schedule(schedule_id: str):
     fresh = audit_store.load()
     fresh.setdefault("runs", []).insert(0, run)
     fresh["runs"] = fresh["runs"][:_MAX_RUNS]
+    
+    # Update schedule chunk_index if chunking is used
+    if chunk_size > 0:
+        fresh_sch = next((s for s in fresh.get("schedules", []) if s.get("id") == schedule_id), None)
+        if fresh_sch:
+            if (chunk_index + 1) * chunk_size >= (group or {}).get("url_count", len(urls) if not csv_file else 99999999):
+                fresh_sch["chunk_index"] = 0
+                fresh_sch["enabled"] = False # Disable when done
+            else:
+                fresh_sch["chunk_index"] = chunk_index + 1
+
     await audit_store.save(fresh)
 
 
