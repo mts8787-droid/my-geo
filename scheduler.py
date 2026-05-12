@@ -73,13 +73,13 @@ def _cron_trigger_for_schedule(sch: dict):
     return CronTrigger(hour=hour, minute=minute)
 
 
-async def _run_schedule(schedule_id: str):
+async def _run_schedule(schedule_id: str, force: bool = False):
     """스케줄 실행 — 그룹의 URL을 일괄 분석 후 결과 저장."""
     from analyzer import analyze_url  # 순환 import 회피
 
     data = audit_store.load()
     sch = next((s for s in data["schedules"] if s.get("id") == schedule_id), None)
-    if not sch or not sch.get("enabled", True):
+    if not sch or (not force and not sch.get("enabled", True)):
         return
     group = next((g for g in data["groups"] if g.get("id") == sch.get("group_id")), None)
     urls = (group or {}).get("urls", [])
@@ -224,7 +224,7 @@ def shutdown_scheduler() -> None:
 
 async def trigger_now(schedule_id: str) -> dict:
     """수동 즉시 실행 — 어드민 UI '지금 실행' 버튼용."""
-    await _run_schedule(schedule_id)
+    await _run_schedule(schedule_id, force=True)
     fresh = audit_store.load()
     last = next((r for r in fresh.get("runs", []) if r.get("schedule_id") == schedule_id), None)
     return last or {"status": "error", "error": "결과 없음"}
