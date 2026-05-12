@@ -480,6 +480,13 @@ async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
     ))
     return {"status": "ok", "message": "사이트맵 자동 감사가 백그라운드에서 시작되었습니다. 완료 시 이메일로 발송됩니다."}
 
+@app.get("/admin/agent-logs")
+async def get_agent_logs(request: Request):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from sitemap_agent import agent_logs
+    return {"logs": agent_logs}
+
 
 class ParseSitemapRequest(BaseModel):
     sitemap_url: str

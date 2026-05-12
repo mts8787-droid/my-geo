@@ -11,6 +11,16 @@ import xml.etree.ElementTree as ET
 
 log = logging.getLogger("geo_audit.sitemap_agent")
 
+agent_logs: List[str] = []
+
+def add_log(msg: str):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    formatted = f"[{timestamp}] {msg}"
+    agent_logs.append(formatted)
+    if len(agent_logs) > 100:
+        agent_logs.pop(0)
+    log.info(msg)
+
 async def parse_sitemap(sitemap_url: str) -> List[str]:
     async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
         r = await client.get(sitemap_url)
@@ -34,10 +44,13 @@ async def run_sitemap_audit_task(sitemap_url: str, email: str, site_name: str, s
     from analyzer import analyze_url
     
     try:
+        add_log(f"[{site_name}] 사이트맵 파싱 시작: {sitemap_url}")
         urls = await parse_sitemap(sitemap_url)
-        log.info(f"Sitemap parsed. Found {len(urls)} URLs.")
+        add_log(f"[{site_name}] 사이트맵 파싱 완료. {len(urls)}개 URL 발견. Audit 시작...")
     except Exception as e:
-        log.error(f"Failed to parse sitemap {sitemap_url}: {e}")
+        err_msg = f"[{site_name}] 파싱 실패: {e}"
+        log.error(err_msg)
+        add_log(err_msg)
         return
 
     sem = asyncio.Semaphore(5)
@@ -122,6 +135,7 @@ async def run_sitemap_audit_task(sitemap_url: str, email: str, site_name: str, s
     msg.add_attachment(csv_bytes, maintype='text', subtype='csv', filename=f'geo_audit_report_{site_name}.csv')
 
     try:
+        add_log(f"[{site_name}] 이메일 발송 준비 중... ({email})")
         def _send():
             host = smtp_config.get("SMTP_HOST", "smtp.gmail.com")
             port = int(smtp_config.get("SMTP_PORT", 587))
@@ -134,6 +148,7 @@ async def run_sitemap_audit_task(sitemap_url: str, email: str, site_name: str, s
                     server.login(user, password)
                 server.send_message(msg)
         await asyncio.to_thread(_send)
-        log.info(f"Email sent successfully to {email}")
+        add_log(f"✅ [{site_name}] 이메일 전송 완료: {email}")
     except Exception as e:
         log.error(f"Failed to send email: {e}")
+        add_log(f"❌ [{site_name}] 이메일 전송 실패: {str(e)}")
