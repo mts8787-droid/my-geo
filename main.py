@@ -581,6 +581,31 @@ async def get_schedule_runs(request: Request, schedule_id: str = None, limit: in
         raise HTTPException(status_code=500, detail=f"조회 실패: {e}")
 
 
+@app.post("/admin/smtp-test")
+async def test_smtp(request: Request, body: dict):
+    """SMTP 연결 테스트."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import smtplib
+    try:
+        host = body.get("host", "smtp.gmail.com")
+        port = int(body.get("port", 587))
+        user = body.get("user", "")
+        passwd = body.get("pass", "")
+        if not user or not passwd:
+            raise HTTPException(status_code=400, detail="SMTP 사용자/비밀번호가 필요합니다.")
+        server = smtplib.SMTP(host, port, timeout=10)
+        server.ehlo()
+        server.starttls()
+        server.login(user, passwd)
+        server.quit()
+        return {"status": "ok", "message": "SMTP 연결 성공"}
+    except smtplib.SMTPAuthenticationError:
+        raise HTTPException(status_code=400, detail="인증 실패 — 계정 또는 앱 비밀번호를 확인하세요.")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"연결 실패: {str(e)}")
+
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
