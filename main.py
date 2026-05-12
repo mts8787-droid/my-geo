@@ -448,18 +448,12 @@ async def get_extension_publish_guide_doc(request: Request):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="extension-publish-guide.md 파일이 없습니다.")
 
-
 # ── Audit Groups & Schedules ─────────────────────────────────────────────────
 
 class SitemapAgentRequest(BaseModel):
     sitemap_url: str
-    site_name: str
     email: str
-    smtp_host: str = "smtp.gmail.com"
-    smtp_port: int = 587
-    smtp_user: str = ""
-    smtp_pass: str = ""
-    smtp_from: str = ""
+    site_name: str
 
 @app.post("/admin/sitemap-agent")
 async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
@@ -467,12 +461,15 @@ async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
     
     smtp_config = {
-        "SMTP_HOST": body.smtp_host,
-        "SMTP_PORT": body.smtp_port,
-        "SMTP_USER": body.smtp_user,
-        "SMTP_PASS": body.smtp_pass,
-        "SMTP_FROM": body.smtp_from
+        "SMTP_HOST": os.environ.get("SMTP_HOST", "smtp.gmail.com"),
+        "SMTP_PORT": int(os.environ.get("SMTP_PORT", 587)),
+        "SMTP_USER": os.environ.get("SMTP_USER", ""),
+        "SMTP_PASS": os.environ.get("SMTP_PASS", ""),
+        "SMTP_FROM": os.environ.get("SMTP_FROM", os.environ.get("SMTP_USER", ""))
     }
+    
+    if not smtp_config["SMTP_USER"] or not smtp_config["SMTP_PASS"]:
+        raise HTTPException(status_code=400, detail="서버 환경 변수(SMTP_USER, SMTP_PASS)가 설정되지 않았습니다.")
     
     # Send to background
     asyncio.create_task(sitemap_agent.run_sitemap_audit_task(
@@ -588,12 +585,12 @@ async def test_smtp(request: Request, body: dict):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
     import smtplib
     try:
-        host = body.get("host", "smtp.gmail.com")
-        port = int(body.get("port", 587))
-        user = body.get("user", "")
-        passwd = body.get("pass", "")
+        host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
+        port = int(os.environ.get("SMTP_PORT", 587))
+        user = os.environ.get("SMTP_USER", "")
+        passwd = os.environ.get("SMTP_PASS", "")
         if not user or not passwd:
-            raise HTTPException(status_code=400, detail="SMTP 사용자/비밀번호가 필요합니다.")
+            raise HTTPException(status_code=400, detail="서버 환경 변수(SMTP_USER, SMTP_PASS)가 설정되지 않았습니다.")
         server = smtplib.SMTP(host, port, timeout=10)
         server.ehlo()
         server.starttls()
