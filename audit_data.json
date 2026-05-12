@@ -558,7 +558,7 @@
                           "id":  "sch_lg_global",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - global (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_global"
                       },
                       {
@@ -568,7 +568,7 @@
                           "id":  "sch_lg_pl",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - pl (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_pl"
                       },
                       {
@@ -578,7 +578,7 @@
                           "id":  "sch_lg_uk",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - uk (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_uk"
                       },
                       {
@@ -588,7 +588,7 @@
                           "id":  "sch_lg_de",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - de (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_de"
                       },
                       {
@@ -598,7 +598,7 @@
                           "id":  "sch_lg_ru",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ru (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ru"
                       },
                       {
@@ -608,7 +608,7 @@
                           "id":  "sch_lg_es",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - es (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_es"
                       },
                       {
@@ -618,7 +618,7 @@
                           "id":  "sch_lg_in",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - in (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_in"
                       },
                       {
@@ -628,7 +628,7 @@
                           "id":  "sch_lg_id",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - id (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_id"
                       },
                       {
@@ -638,7 +638,7 @@
                           "id":  "sch_lg_fr",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - fr (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_fr"
                       },
                       {
@@ -648,7 +648,7 @@
                           "id":  "sch_lg_it",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - it (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_it"
                       },
                       {
@@ -658,7 +658,7 @@
                           "id":  "sch_lg_at",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - at (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_at"
                       },
                       {
@@ -668,7 +668,7 @@
                           "id":  "sch_lg_br",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - br (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_br"
                       },
                       {
@@ -678,7 +678,7 @@
                           "id":  "sch_lg_pa",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - pa (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_pa"
                       },
                       {
@@ -688,7 +688,7 @@
                           "id":  "sch_lg_kz",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - kz (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_kz"
                       },
                       {
@@ -698,7 +698,7 @@
                           "id":  "sch_lg_hu",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - hu (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_hu"
                       },
                       {
@@ -708,7 +708,7 @@
                           "id":  "sch_lg_cz",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - cz (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_cz"
                       },
                       {
@@ -718,7 +718,7 @@
                           "id":  "sch_lg_ec",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ec (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ec"
                       },
                       {
@@ -728,7 +728,7 @@
                           "id":  "sch_lg_au",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - au (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_au"
                       },
                       {
@@ -738,7 +738,7 @@
                           "id":  "sch_lg_se",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - se (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_se"
                       },
                       {
@@ -748,7 +748,7 @@
                           "id":  "sch_lg_mx",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - mx (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_mx"
                       },
                       {
@@ -758,7 +758,7 @@
                           "id":  "sch_lg_cac",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - cac (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_cac"
                       },
                       {
@@ -768,7 +768,7 @@
                           "id":  "sch_lg_pt",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - pt (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_pt"
                       },
                       {
@@ -778,7 +778,7 @@
                           "id":  "sch_lg_dk",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - dk (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_dk"
                       },
                       {
@@ -788,7 +788,7 @@
                           "id":  "sch_lg_gr",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - gr (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_gr"
                       },
                       {
@@ -798,7 +798,7 @@
                           "id":  "sch_lg_th",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - th (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_th"
                       },
                       {
@@ -808,7 +808,7 @@
                           "id":  "sch_lg_sg",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - sg (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_sg"
                       },
                       {
@@ -818,7 +818,7 @@
                           "id":  "sch_lg_tr",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - tr (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_tr"
                       },
                       {
@@ -828,7 +828,7 @@
                           "id":  "sch_lg_ua",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ua (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ua"
                       },
                       {
@@ -838,7 +838,7 @@
                           "id":  "sch_lg_ae",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ae (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ae"
                       },
                       {
@@ -848,7 +848,7 @@
                           "id":  "sch_lg_hr",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - hr (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_hr"
                       },
                       {
@@ -858,7 +858,7 @@
                           "id":  "sch_lg_vn",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - vn (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_vn"
                       },
                       {
@@ -868,7 +868,7 @@
                           "id":  "sch_lg_bg",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - bg (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_bg"
                       },
                       {
@@ -878,7 +878,7 @@
                           "id":  "sch_lg_rs",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - rs (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_rs"
                       },
                       {
@@ -888,7 +888,7 @@
                           "id":  "sch_lg_il",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - il (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_il"
                       },
                       {
@@ -898,7 +898,7 @@
                           "id":  "sch_lg_ee",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ee (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ee"
                       },
                       {
@@ -908,7 +908,7 @@
                           "id":  "sch_lg_co",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - co (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_co"
                       },
                       {
@@ -918,7 +918,7 @@
                           "id":  "sch_lg_lv",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - lv (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_lv"
                       },
                       {
@@ -928,7 +928,7 @@
                           "id":  "sch_lg_sk",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - sk (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_sk"
                       },
                       {
@@ -938,7 +938,7 @@
                           "id":  "sch_lg_fi",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - fi (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_fi"
                       },
                       {
@@ -948,7 +948,7 @@
                           "id":  "sch_lg_pe",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - pe (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_pe"
                       },
                       {
@@ -958,7 +958,7 @@
                           "id":  "sch_lg_cl",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - cl (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_cl"
                       },
                       {
@@ -968,7 +968,7 @@
                           "id":  "sch_lg_no",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - no (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_no"
                       },
                       {
@@ -978,7 +978,7 @@
                           "id":  "sch_lg_tw",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - tw (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_tw"
                       },
                       {
@@ -988,7 +988,7 @@
                           "id":  "sch_lg_lt",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - lt (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_lt"
                       },
                       {
@@ -998,7 +998,7 @@
                           "id":  "sch_lg_sa",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - sa (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_sa"
                       },
                       {
@@ -1008,7 +1008,7 @@
                           "id":  "sch_lg_nz",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - nz (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_nz"
                       },
                       {
@@ -1018,7 +1018,7 @@
                           "id":  "sch_lg_ro",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ro (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ro"
                       },
                       {
@@ -1028,7 +1028,7 @@
                           "id":  "sch_lg_my",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - my (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_my"
                       },
                       {
@@ -1038,7 +1038,7 @@
                           "id":  "sch_lg_ph",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ph (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ph"
                       },
                       {
@@ -1048,7 +1048,7 @@
                           "id":  "sch_lg_cn",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - cn (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_cn"
                       },
                       {
@@ -1058,7 +1058,7 @@
                           "id":  "sch_lg_hk",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - hk (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_hk"
                       },
                       {
@@ -1068,7 +1068,7 @@
                           "id":  "sch_lg_uz",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - uz (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_uz"
                       },
                       {
@@ -1078,7 +1078,7 @@
                           "id":  "sch_lg_jp",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - jp (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_jp"
                       },
                       {
@@ -1088,7 +1088,7 @@
                           "id":  "sch_lg_bd",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - bd (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_bd"
                       },
                       {
@@ -1098,7 +1098,7 @@
                           "id":  "sch_lg_ir",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ir (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ir"
                       },
                       {
@@ -1108,7 +1108,7 @@
                           "id":  "sch_lg_ma",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ma (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ma"
                       },
                       {
@@ -1118,7 +1118,7 @@
                           "id":  "sch_lg_tn",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - tn (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_tn"
                       },
                       {
@@ -1128,7 +1128,7 @@
                           "id":  "sch_lg_ar",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - ar (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_ar"
                       },
                       {
@@ -1138,7 +1138,7 @@
                           "id":  "sch_lg_lk",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - lk (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_lk"
                       },
                       {
@@ -1148,7 +1148,7 @@
                           "id":  "sch_lg_np",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - np (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_np"
                       },
                       {
@@ -1158,7 +1158,7 @@
                           "id":  "sch_lg_dz",
                           "chunk_index":  0,
                           "name":  "LG Sitemap - dz (??1000嫄?",
-                          "enabled":  true,
+                          "enabled": false,
                           "group_id":  "grp_lg_dz"
                       }
                   ]

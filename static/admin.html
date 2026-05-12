@@ -232,9 +232,13 @@
         <div id="page-schedule" class="max-w-5xl mx-auto px-6 py-8 hidden">
           <div class="flex items-center justify-between mb-6">
             <h1 class="text-xl font-bold text-slate-800">정기 Audit 관리</h1>
-            <button onclick="openAddScheduleModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition">
-              + 스케줄 추가
-            </button>
+            <div class="flex gap-2">
+              <button onclick="toggleAllSchedules(false)" class="px-3 py-2 bg-slate-100 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-200 transition">전체 끄기</button>
+              <button onclick="toggleAllSchedules(true)" class="px-3 py-2 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-xl hover:bg-indigo-100 transition">전체 켜기</button>
+              <button onclick="openAddScheduleModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition">
+                + 스케줄 추가
+              </button>
+            </div>
           </div>
           <div id="schedule-list" class="space-y-4 mb-6"></div>
           <div class="card p-6 fade-in">
@@ -1144,6 +1148,13 @@ async function confirmAddSchedule() {
 async function toggleSchedule(i) {
   auditData.schedules[i].enabled = !auditData.schedules[i].enabled;
   await saveAuditData(); renderSchedules();
+}
+
+async function toggleAllSchedules(state) {
+  if (!auditData.schedules || !auditData.schedules.length) return;
+  auditData.schedules.forEach(s => { s.enabled = state; });
+  await saveAuditData(); renderSchedules();
+  showToast(`모든 스케줄을 ${state ? '켰습니다' : '껐습니다'}.`);
 }
 
 async function removeSchedule(i) {
