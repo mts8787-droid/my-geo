@@ -1094,8 +1094,8 @@ async function runScheduleNow(sid) {
     });
     if (!res.ok) { const d = await res.json().catch(() => ({})); showToast('실패: ' + (d.detail || res.status)); return; }
     const data = await res.json();
-    const r = data.run || {};
-    showToast(`완료: ${r.status || '?'} (${r.success_count || 0}/${r.url_count || 0})`);
+    showToast(data.message || '백그라운드에서 실행을 시작했습니다.');
+    // 실행 이력 창을 띄워두면 폴링 없이 새로고침할 때 상태를 볼 수 있습니다.
     loadScheduleRuns(sid);
   } catch (e) {
     showToast('네트워크 오류: ' + e.message);

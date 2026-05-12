@@ -15,7 +15,7 @@ from contextlib import asynccontextmanager
 from typing import List
 from urllib.parse import urlparse
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -560,14 +560,15 @@ async def update_audit_data(request: Request):
 
 
 @app.post("/admin/schedules/{schedule_id}/run")
-async def run_schedule_now(schedule_id: str, request: Request):
-    """스케줄을 즉시 1회 실행."""
+async def run_schedule_now(schedule_id: str, request: Request, background_tasks: BackgroundTasks):
+    """스케줄을 즉시 1회 실행 (백그라운드)."""
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
     try:
         from scheduler import trigger_now
-        result = await trigger_now(schedule_id)
-        return {"status": "ok", "run": result}
+        # Send to background to avoid timeout
+        background_tasks.add_task(trigger_now, schedule_id)
+        return {"status": "ok", "message": "스케줄 분석이 백그라운드에서 시작되었습니다."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"실행 실패: {e}")
 
