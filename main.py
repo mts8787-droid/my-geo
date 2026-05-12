@@ -484,8 +484,9 @@ async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
 async def get_agent_logs(request: Request):
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
-    from sitemap_agent import agent_logs
-    return {"logs": agent_logs}
+    import db
+    logs = db.get_recent_system_logs(100)
+    return {"logs": logs}
 
 
 class ParseSitemapRequest(BaseModel):

@@ -9,16 +9,12 @@ import logging
 from typing import List
 import xml.etree.ElementTree as ET
 
+import db
+
 log = logging.getLogger("geo_audit.sitemap_agent")
 
-agent_logs: List[str] = []
-
 def add_log(msg: str):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    formatted = f"[{timestamp}] {msg}"
-    agent_logs.append(formatted)
-    if len(agent_logs) > 100:
-        agent_logs.pop(0)
+    db.add_system_log(msg)
     log.info(msg)
 
 async def parse_sitemap(sitemap_url: str) -> List[str]:

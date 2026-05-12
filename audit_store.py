@@ -12,7 +12,11 @@ import os
 import tempfile
 import uuid
 
-_AUDIT_DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "audit_data.json")
+DATA_DIR = os.environ.get("DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "data"))
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+_AUDIT_DATA_PATH = os.path.join(DATA_DIR, "audit_data.json")
 _lock = asyncio.Lock()
 
 
