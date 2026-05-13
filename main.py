@@ -456,10 +456,10 @@ class SitemapAgentRequest(BaseModel):
     site_name: str
 
 @app.post("/admin/sitemap-agent")
-async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
+async def run_sitemap_agent(request: Request, body: SitemapAgentRequest, background_tasks: BackgroundTasks):
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
-    
+
     smtp_config = {
         "SMTP_HOST": os.environ.get("SMTP_HOST", "smtp.gmail.com"),
         "SMTP_PORT": int(os.environ.get("SMTP_PORT", 587)),
@@ -467,17 +467,17 @@ async def run_sitemap_agent(request: Request, body: SitemapAgentRequest):
         "SMTP_PASS": os.environ.get("SMTP_PASS", ""),
         "SMTP_FROM": os.environ.get("SMTP_FROM", os.environ.get("SMTP_USER", ""))
     }
-    
+
     if not smtp_config["SMTP_USER"] or not smtp_config["SMTP_PASS"]:
         raise HTTPException(status_code=400, detail="서버 환경 변수(SMTP_USER, SMTP_PASS)가 설정되지 않았습니다.")
-    
-    # Send to background
-    asyncio.create_task(sitemap_agent.run_sitemap_audit_task(
-        sitemap_url=body.sitemap_url, 
-        email=body.email, 
-        site_name=body.site_name, 
-        smtp_config=smtp_config
-    ))
+
+    background_tasks.add_task(
+        sitemap_agent.run_sitemap_audit_task,
+        sitemap_url=body.sitemap_url,
+        email=body.email,
+        site_name=body.site_name,
+        smtp_config=smtp_config,
+    )
     return {"status": "ok", "message": "사이트맵 자동 감사가 백그라운드에서 시작되었습니다. 완료 시 이메일로 발송됩니다."}
 
 @app.get("/admin/agent-logs")

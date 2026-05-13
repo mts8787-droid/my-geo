@@ -96,6 +96,8 @@ async def _run_schedule(schedule_id: str, force: bool = False):
             
     chunk_size = sch.get("chunk_size", 0)
     chunk_index = sch.get("chunk_index", 0)
+    # 슬라이스 전 전체 URL 수 보관 (청크 종료 판단에 사용)
+    total_urls = (group or {}).get("url_count") or len(urls)
     if chunk_size > 0 and urls:
         start = chunk_index * chunk_size
         end = start + chunk_size
@@ -155,7 +157,7 @@ async def _run_schedule(schedule_id: str, force: bool = False):
     if chunk_size > 0:
         fresh_sch = next((s for s in fresh.get("schedules", []) if s.get("id") == schedule_id), None)
         if fresh_sch:
-            if (chunk_index + 1) * chunk_size >= (group or {}).get("url_count", len(urls) if not csv_file else 99999999):
+            if (chunk_index + 1) * chunk_size >= total_urls:
                 fresh_sch["chunk_index"] = 0
                 fresh_sch["enabled"] = False # Disable when done
             else:
