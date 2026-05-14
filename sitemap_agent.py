@@ -17,7 +17,7 @@ import db
 log = logging.getLogger("geo_audit.sitemap_agent")
 
 # 환경변수로 운영 중 튜닝 가능
-MAX_URLS = int(os.environ.get("SITEMAP_AGENT_MAX_URLS", 500))
+MAX_URLS = int(os.environ.get("SITEMAP_AGENT_MAX_URLS", 50))
 PER_URL_TIMEOUT = float(os.environ.get("SITEMAP_AGENT_URL_TIMEOUT", 60))
 SITEMAP_MAX_DEPTH = int(os.environ.get("SITEMAP_AGENT_MAX_DEPTH", 3))
 CONCURRENCY = int(os.environ.get("SITEMAP_AGENT_CONCURRENCY", 5))
