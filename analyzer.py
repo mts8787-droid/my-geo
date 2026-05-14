@@ -14,7 +14,7 @@ from rule_engine import evaluate_rule, evaluate_rule_async, RULE_TYPES
 _playwright_sem = asyncio.Semaphore(2)
 
 # 벌크 분석 시 동시 요청 제한
-_bulk_sem = asyncio.Semaphore(5)
+_bulk_sem = asyncio.Semaphore(50)
 
 # ── 채점 설정 관리 ──────────────────────────────────────────────────────────────
 
