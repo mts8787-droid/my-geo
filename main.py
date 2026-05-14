@@ -236,8 +236,8 @@ async def analyze_bulk(request: Request, body: AnalyzeBulkRequest):
     urls = [u.strip() for u in body.urls if u.strip()]
     if not urls:
         raise HTTPException(status_code=400, detail="URL을 하나 이상 입력해주세요.")
-    if len(urls) > 1000:
-        raise HTTPException(status_code=400, detail="한 번에 최대 1000개 URL까지 분석할 수 있습니다.")
+    if len(urls) > 50:
+        raise HTTPException(status_code=400, detail="한 번에 최대 50개 URL까지 분석할 수 있습니다.")
 
     invalid = [u for u in urls if not _is_valid_url(u)]
     if invalid:
@@ -287,8 +287,8 @@ async def analyze_bulk_async(request: Request, body: AnalyzeBulkRequest):
     urls = [u.strip() for u in body.urls if u.strip()]
     if not urls:
         raise HTTPException(status_code=400, detail="URL을 하나 이상 입력해주세요.")
-    if len(urls) > 1000:
-        raise HTTPException(status_code=400, detail="한 번에 최대 1000개 URL까지 분석할 수 있습니다.")
+    if len(urls) > 50:
+        raise HTTPException(status_code=400, detail="한 번에 최대 50개 URL까지 분석할 수 있습니다.")
 
     invalid = [u for u in urls if not _is_valid_url(u)]
     if invalid:
