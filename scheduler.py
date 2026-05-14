@@ -45,6 +45,7 @@ except Exception:
     APSCHEDULER_AVAILABLE = False
 
 import audit_store
+import db
 
 log = logging.getLogger("geo_audit.scheduler")
 _scheduler: Optional["AsyncIOScheduler"] = None
@@ -121,9 +122,7 @@ async def _run_schedule(schedule_id: str, force: bool = False):
         run["status"] = "error"
         run["error"]  = "그룹에 URL 없음"
         run["finished_at"] = datetime.now(timezone.utc).isoformat()
-        data["runs"].insert(0, run)
-        data["runs"] = data["runs"][:_MAX_RUNS]
-        await audit_store.save(data)
+        db.save_schedule_run(run)
         return
 
     sem = asyncio.Semaphore(5)
@@ -148,12 +147,11 @@ async def _run_schedule(schedule_id: str, force: bool = False):
     run["status"]        = "ok" if success_count == len(urls) else ("partial" if success_count else "error")
     run["finished_at"]   = datetime.now(timezone.utc).isoformat()
 
-    # 결과 저장 — audit_store의 단일 lock으로 admin 업데이트와의 race를 차단
-    fresh = audit_store.load()
-    fresh.setdefault("runs", []).insert(0, run)
-    fresh["runs"] = fresh["runs"][:_MAX_RUNS]
-    
+    # 결과 저장 — DB에 저장
+    db.save_schedule_run(run)
+
     # Update schedule chunk_index if chunking is used
+    fresh = audit_store.load()
     if chunk_size > 0:
         fresh_sch = next((s for s in fresh.get("schedules", []) if s.get("id") == schedule_id), None)
         if fresh_sch:
@@ -227,15 +225,10 @@ def shutdown_scheduler() -> None:
 async def trigger_now(schedule_id: str) -> dict:
     """수동 즉시 실행 — 어드민 UI '지금 실행' 버튼용."""
     await _run_schedule(schedule_id, force=True)
-    fresh = audit_store.load()
-    last = next((r for r in fresh.get("runs", []) if r.get("schedule_id") == schedule_id), None)
-    return last or {"status": "error", "error": "결과 없음"}
+    runs = db.get_recent_schedule_runs(schedule_id=schedule_id, limit=1)
+    return runs[0] if runs else {"status": "error", "error": "결과 없음"}
 
 
 def get_recent_runs(schedule_id: Optional[str] = None, limit: int = 20) -> List[dict]:
     """최근 실행 결과 조회 — 어드민 표시용."""
-    data = audit_store.load()
-    runs = data.get("runs", [])
-    if schedule_id:
-        runs = [r for r in runs if r.get("schedule_id") == schedule_id]
-    return runs[:limit]
+    return db.get_recent_schedule_runs(schedule_id=schedule_id, limit=limit)

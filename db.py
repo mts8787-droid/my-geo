@@ -1,6 +1,7 @@
 import sqlite3
 import os
 import logging
+import json
 from datetime import datetime
 
 log = logging.getLogger("geo_audit.db")
@@ -29,6 +30,23 @@ def init_db():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     timestamp TEXT NOT NULL,
                     message TEXT NOT NULL
+                )
+            """)
+            # 스케줄 실행 결과 테이블
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS schedule_runs (
+                    id TEXT PRIMARY KEY,
+                    schedule_id TEXT,
+                    schedule_name TEXT,
+                    group_id TEXT,
+                    group_name TEXT,
+                    started_at TEXT,
+                    finished_at TEXT,
+                    status TEXT,
+                    url_count INTEGER,
+                    success_count INTEGER,
+                    summary TEXT,
+                    error TEXT
                 )
             """)
             conn.commit()
@@ -62,6 +80,59 @@ def get_recent_system_logs(limit: int = 100) -> list:
             return [f"[{row['timestamp']}] {row['message']}" for row in rows]
     except Exception as e:
         log.error(f"Failed to fetch system logs: {e}")
+        return []
+
+def save_schedule_run(run: dict):
+    """스케줄 실행 결과를 DB에 저장합니다."""
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT OR REPLACE INTO schedule_runs
+                (id, schedule_id, schedule_name, group_id, group_name, started_at, finished_at, status, url_count, success_count, summary, error)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                run.get("id"),
+                run.get("schedule_id"),
+                run.get("schedule_name"),
+                run.get("group_id"),
+                run.get("group_name"),
+                run.get("started_at"),
+                run.get("finished_at"),
+                run.get("status"),
+                run.get("url_count", 0),
+                run.get("success_count", 0),
+                json.dumps(run.get("summary", []), ensure_ascii=False) if run.get("summary") else "[]",
+                run.get("error")
+            ))
+            conn.commit()
+    except Exception as e:
+        log.error(f"Failed to save schedule run: {e}")
+
+def get_recent_schedule_runs(schedule_id: str = None, limit: int = 20) -> list:
+    """최근 스케줄 실행 결과를 조회합니다."""
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            if schedule_id:
+                cursor.execute("SELECT * FROM schedule_runs WHERE schedule_id = ? ORDER BY started_at DESC LIMIT ?", (schedule_id, limit))
+            else:
+                cursor.execute("SELECT * FROM schedule_runs ORDER BY started_at DESC LIMIT ?", (limit,))
+            rows = cursor.fetchall()
+            runs = []
+            for row in rows:
+                run = dict(row)
+                if run.get("summary"):
+                    try:
+                        run["summary"] = json.loads(run["summary"])
+                    except Exception:
+                        run["summary"] = []
+                else:
+                    run["summary"] = []
+                runs.append(run)
+            return runs
+    except Exception as e:
+        log.error(f"Failed to fetch schedule runs: {e}")
         return []
 
 # 최초 모듈 로드 시 DB 초기화
