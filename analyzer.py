@@ -10,8 +10,8 @@ from typing import Optional
 from urllib.parse import urlparse
 from rule_engine import evaluate_rule, evaluate_rule_async, RULE_TYPES
 
-# Playwright 동시 실행 제한 (메모리 보호)
-_playwright_sem = asyncio.Semaphore(2)
+# Playwright 동시 실행 제한 (로컬 멀티코어 환경에 맞춰 15로 상향)
+_playwright_sem = asyncio.Semaphore(int(os.environ.get("PLAYWRIGHT_CONCURRENCY", 15)))
 
 # 벌크 분석 시 동시 요청 제한
 _bulk_sem = asyncio.Semaphore(50)

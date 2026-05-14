@@ -114,7 +114,7 @@ async def run_sitemap_audit_task(sitemap_url: str, email: str, site_name: str, s
         async with sem:
             try:
                 res = await asyncio.wait_for(
-                    analyze_url(u, lightweight=True), timeout=PER_URL_TIMEOUT
+                    analyze_url(u, lightweight=False), timeout=PER_URL_TIMEOUT
                 )
                 r = {"url": u, "result": res}
             except asyncio.TimeoutError:
