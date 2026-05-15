@@ -277,18 +277,14 @@ RULE_TYPES = {
 
 # ── 전역 캐시 (도메인 단위 네트워크 요청 방어용) ──────────────────────────────────
 import time
+import asyncio
 _DOMAIN_CACHE = {}
-_CACHE_TTL_SECONDS = 3600  # 1시간 동안 유지
 
 def _get_cache(key: str):
-    if key in _DOMAIN_CACHE:
-        ts, val = _DOMAIN_CACHE[key]
-        if time.time() - ts < _CACHE_TTL_SECONDS:
-            return val
-    return None
+    return _DOMAIN_CACHE.get(key)
 
-def _set_cache(key: str, val: dict):
-    _DOMAIN_CACHE[key] = (time.time(), val)
+def _set_cache(key: str, val):
+    _DOMAIN_CACHE[key] = val
 
 
 # ── 평가 함수 ─────────────────────────────────────────────────────────────────
@@ -535,23 +531,27 @@ async def _eval_http_status(params: dict, ctx: dict) -> dict:
     cache_key = f"http_status_{base_url}_{path}_{expected}"
     cached = _get_cache(cache_key)
     if cached:
-        return cached
+        return await cached
 
     # dedicated UA를 사용해야 Akamai 등 봇 보호에 차단되지 않는다 — lazy import로 순환 회피 (#13)
     from analyzer import build_request_headers
-    try:
-        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}{path}", headers=build_request_headers())
-        passed = r.status_code == expected
-        res = {
-            "pass": passed,
-            "value": f"HTTP {r.status_code}",
-            "hint": None if passed else f"HTTP {r.status_code} — {expected} 기대",
-        }
-        _set_cache(cache_key, res)
-        return res
-    except Exception as e:
-        return {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}
+
+    async def _fetch():
+        try:
+            async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
+                r = await client.get(f"{base_url}{path}", headers=build_request_headers())
+            passed = r.status_code == expected
+            return {
+                "pass": passed,
+                "value": f"HTTP {r.status_code}",
+                "hint": None if passed else f"HTTP {r.status_code} — {expected} 기대",
+            }
+        except Exception as e:
+            return {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}
+
+    task = asyncio.create_task(_fetch())
+    _set_cache(cache_key, task)
+    return await task
 
 
 def _eval_schema_type_exists(params: dict, ctx: dict) -> dict:
@@ -1190,7 +1190,7 @@ async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
     cache_key = f"sitemap_recent_{base_url}_{fallback_path}_{max_days}_{auto_country}"
     cached = _get_cache(cache_key)
     if cached:
-        return cached
+        return await cached
 
     threshold = datetime.now(timezone.utc) - timedelta(days=max_days)
 
@@ -1205,46 +1205,46 @@ async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
     if "/sitemap_index.xml" not in paths_to_try:
         paths_to_try.append("/sitemap_index.xml")
 
-    tried_results = []
     # dedicated UA — Akamai 등 봇 보호 우회 (#14)
     from analyzer import build_request_headers
-    headers = build_request_headers()
-    try:
-        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            for path in paths_to_try:
-                try:
-                    r = await client.get(f"{base_url}{path}", headers=headers)
-                except Exception as e:
-                    tried_results.append(f"{path}: 오류({type(e).__name__})")
-                    continue
-                if r.status_code != 200:
-                    tried_results.append(f"{path}: HTTP {r.status_code}")
-                    continue
-                # 200 발견 — lastmod 파싱
-                latest = _parse_sitemap_lastmod(r.text, r.headers.get("Last-Modified"))
-                if latest is None:
-                    tried_results.append(f"{path}: 날짜 정보 없음")
-                    continue
-                passed = latest >= threshold
-                origin = "국가 디렉토리" if country and path.startswith(f"/{country}") else "도메인 루트"
-                res = {
-                    "pass": passed,
-                    "value": f"{origin}({path}) lastmod={latest.date().isoformat()}",
-                    "hint": None if passed else f"마지막 갱신 {latest.date().isoformat()} — {max_days}일 이내 필요",
-                }
-                _set_cache(cache_key, res)
-                return res
-        res = {
-            "pass": False,
-            "value": f"{len(paths_to_try)}개 경로 시도",
-            "hint": "; ".join(tried_results[:3]) if tried_results else "sitemap 부재",
-        }
-        _set_cache(cache_key, res)
-        return res
-    except Exception as e:
-        res = {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}
-        _set_cache(cache_key, res)
-        return res
+
+    async def _fetch():
+        tried_results = []
+        headers = build_request_headers()
+        try:
+            async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
+                for path in paths_to_try:
+                    try:
+                        r = await client.get(f"{base_url}{path}", headers=headers)
+                    except Exception as e:
+                        tried_results.append(f"{path}: 오류({type(e).__name__})")
+                        continue
+                    if r.status_code != 200:
+                        tried_results.append(f"{path}: HTTP {r.status_code}")
+                        continue
+                    # 200 발견 — lastmod 파싱
+                    latest = _parse_sitemap_lastmod(r.text, r.headers.get("Last-Modified"))
+                    if latest is None:
+                        tried_results.append(f"{path}: 날짜 정보 없음")
+                        continue
+                    passed = latest >= threshold
+                    origin = "국가 디렉토리" if country and path.startswith(f"/{country}") else "도메인 루트"
+                    return {
+                        "pass": passed,
+                        "value": f"{origin}({path}) lastmod={latest.date().isoformat()}",
+                        "hint": None if passed else f"마지막 갱신 {latest.date().isoformat()} — {max_days}일 이내 필요",
+                    }
+            return {
+                "pass": False,
+                "value": f"{len(paths_to_try)}개 경로 시도",
+                "hint": "; ".join(tried_results[:3]) if tried_results else "sitemap 부재",
+            }
+        except Exception as e:
+            return {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}
+
+    task = asyncio.create_task(_fetch())
+    _set_cache(cache_key, task)
+    return await task
 
 
 # ── 핸들러 레지스트리 ─────────────────────────────────────────────────────────

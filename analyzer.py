@@ -340,18 +340,26 @@ async def _fetch_page(url: str) -> dict:
         return {"status": "error", "error": str(e), "soup": None, "redirect_count": 0}
 
 
+# ── 도메인 캐시 (Thundering Herd 방지) ──────────────────────────────────────────
+_DOMAIN_CACHE = {}
+
 # ── robots.txt ────────────────────────────────────────────────────────────────
 
 async def _check_robots_txt(base_url: str) -> dict:
-    try:
-        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}/robots.txt", headers=build_request_headers())
-        if r.status_code != 200:
-            return {"status": "not_found", "bots": {}, "raw": ""}
-        content = r.text
-        return {"status": "found", "bots": _parse_robots_for_ai_bots(content), "raw": content[:3000]}
-    except Exception as e:
-        return {"status": "error", "error": str(e), "bots": {}}
+    cache_key = f"robots_{base_url}"
+    if cache_key not in _DOMAIN_CACHE:
+        async def _fetch():
+            try:
+                async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
+                    r = await client.get(f"{base_url}/robots.txt", headers=build_request_headers())
+                if r.status_code != 200:
+                    return {"status": "not_found", "bots": {}, "raw": ""}
+                content = r.text
+                return {"status": "found", "bots": _parse_robots_for_ai_bots(content), "raw": content[:3000]}
+            except Exception as e:
+                return {"status": "error", "error": str(e), "bots": {}}
+        _DOMAIN_CACHE[cache_key] = asyncio.create_task(_fetch())
+    return await _DOMAIN_CACHE[cache_key]
 
 
 def _parse_robots_for_ai_bots(content: str) -> dict:
@@ -396,23 +404,28 @@ def _parse_robots_for_ai_bots(content: str) -> dict:
 # ── llms.txt ──────────────────────────────────────────────────────────────────
 
 async def _check_llms_txt(base_url: str) -> dict:
-    try:
-        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            r = await client.get(f"{base_url}/llms.txt", headers=build_request_headers())
-        if r.status_code == 200:
-            content = r.text
-            return {
-                "status":          "found",
-                "content_preview": content[:1200],
-                "size_bytes":      len(content.encode()),
-            }
-        return {"status": "not_found", "http_status": r.status_code}
-    except httpx.TimeoutException:
-        return {"status": "error", "error": "요청 시간 초과"}
-    except httpx.HTTPError as e:
-        return {"status": "error", "error": f"네트워크 오류: {type(e).__name__}"}
-    except Exception as e:
-        return {"status": "error", "error": str(e)}
+    cache_key = f"llms_{base_url}"
+    if cache_key not in _DOMAIN_CACHE:
+        async def _fetch():
+            try:
+                async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
+                    r = await client.get(f"{base_url}/llms.txt", headers=build_request_headers())
+                if r.status_code == 200:
+                    content = r.text
+                    return {
+                        "status":          "found",
+                        "content_preview": content[:1200],
+                        "size_bytes":      len(content.encode()),
+                    }
+                return {"status": "not_found", "http_status": r.status_code}
+            except httpx.TimeoutException:
+                return {"status": "error", "error": "요청 시간 초과"}
+            except httpx.HTTPError as e:
+                return {"status": "error", "error": f"네트워크 오류: {type(e).__name__}"}
+            except Exception as e:
+                return {"status": "error", "error": str(e)}
+        _DOMAIN_CACHE[cache_key] = asyncio.create_task(_fetch())
+    return await _DOMAIN_CACHE[cache_key]
 
 
 
