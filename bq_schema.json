@@ -1,0 +1,35 @@
+[
+  {"name": "url", "type": "STRING", "mode": "REQUIRED"},
+  {"name": "country", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "source_csv", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "inspected_at", "type": "TIMESTAMP", "mode": "REQUIRED"},
+  {"name": "total_score", "type": "INT64", "mode": "NULLABLE"},
+  {"name": "max_score", "type": "INT64", "mode": "NULLABLE"},
+  {"name": "grade", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "error", "type": "STRING", "mode": "NULLABLE"},
+  {
+    "name": "breakdown",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {"name": "category", "type": "STRING", "mode": "REQUIRED"},
+      {"name": "points", "type": "INT64", "mode": "NULLABLE"},
+      {"name": "max", "type": "INT64", "mode": "NULLABLE"},
+      {"name": "passed", "type": "INT64", "mode": "NULLABLE"},
+      {"name": "total", "type": "INT64", "mode": "NULLABLE"},
+      {
+        "name": "items",
+        "type": "RECORD",
+        "mode": "REPEATED",
+        "fields": [
+          {"name": "id", "type": "STRING", "mode": "REQUIRED"},
+          {"name": "label", "type": "STRING", "mode": "NULLABLE"},
+          {"name": "passed", "type": "BOOL", "mode": "NULLABLE"},
+          {"name": "value", "type": "STRING", "mode": "NULLABLE"},
+          {"name": "hint", "type": "STRING", "mode": "NULLABLE"},
+          {"name": "rule_type", "type": "STRING", "mode": "NULLABLE"}
+        ]
+      }
+    ]
+  }
+]
