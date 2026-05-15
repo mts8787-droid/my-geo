@@ -275,6 +275,22 @@ RULE_TYPES = {
 }
 
 
+# ── 전역 캐시 (도메인 단위 네트워크 요청 방어용) ──────────────────────────────────
+import time
+_DOMAIN_CACHE = {}
+_CACHE_TTL_SECONDS = 3600  # 1시간 동안 유지
+
+def _get_cache(key: str):
+    if key in _DOMAIN_CACHE:
+        ts, val = _DOMAIN_CACHE[key]
+        if time.time() - ts < _CACHE_TTL_SECONDS:
+            return val
+    return None
+
+def _set_cache(key: str, val: dict):
+    _DOMAIN_CACHE[key] = (time.time(), val)
+
+
 # ── 평가 함수 ─────────────────────────────────────────────────────────────────
 
 def evaluate_rule(rule: dict, context: dict) -> dict:
@@ -516,17 +532,24 @@ async def _eval_http_status(params: dict, ctx: dict) -> dict:
     if not base_url:
         return {"pass": False, "value": None, "hint": "base_url이 없습니다."}
 
+    cache_key = f"http_status_{base_url}_{path}_{expected}"
+    cached = _get_cache(cache_key)
+    if cached:
+        return cached
+
     # dedicated UA를 사용해야 Akamai 등 봇 보호에 차단되지 않는다 — lazy import로 순환 회피 (#13)
     from analyzer import build_request_headers
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
             r = await client.get(f"{base_url}{path}", headers=build_request_headers())
         passed = r.status_code == expected
-        return {
+        res = {
             "pass": passed,
             "value": f"HTTP {r.status_code}",
             "hint": None if passed else f"HTTP {r.status_code} — {expected} 기대",
         }
+        _set_cache(cache_key, res)
+        return res
     except Exception as e:
         return {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}
 
@@ -1163,6 +1186,12 @@ async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
     fallback_path = params.get("path", "/sitemap.xml")
     max_days = int(params.get("max_days", 30))
     auto_country = (params.get("auto_country", "yes") or "yes").lower() == "yes"
+
+    cache_key = f"sitemap_recent_{base_url}_{fallback_path}_{max_days}_{auto_country}"
+    cached = _get_cache(cache_key)
+    if cached:
+        return cached
+
     threshold = datetime.now(timezone.utc) - timedelta(days=max_days)
 
     # 시도할 경로 목록 — 국가 디렉토리 우선 → 도메인 루트 fallback
@@ -1198,18 +1227,24 @@ async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
                     continue
                 passed = latest >= threshold
                 origin = "국가 디렉토리" if country and path.startswith(f"/{country}") else "도메인 루트"
-                return {
+                res = {
                     "pass": passed,
                     "value": f"{origin}({path}) lastmod={latest.date().isoformat()}",
                     "hint": None if passed else f"마지막 갱신 {latest.date().isoformat()} — {max_days}일 이내 필요",
                 }
-        return {
+                _set_cache(cache_key, res)
+                return res
+        res = {
             "pass": False,
             "value": f"{len(paths_to_try)}개 경로 시도",
             "hint": "; ".join(tried_results[:3]) if tried_results else "sitemap 부재",
         }
+        _set_cache(cache_key, res)
+        return res
     except Exception as e:
-        return {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}
+        res = {"pass": False, "value": None, "hint": f"요청 실패: {str(e)}"}
+        _set_cache(cache_key, res)
+        return res
 
 
 # ── 핸들러 레지스트리 ─────────────────────────────────────────────────────────
