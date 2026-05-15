@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 REM ============================================================================
 REM JP 전체 점검 (Full CSR, concurrency 5)
 REM 다른 국가는 이 파일을 복사해서 reports\lg_urls_<country>.csv 로 바꿔 사용.
