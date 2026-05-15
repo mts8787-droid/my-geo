@@ -12,7 +12,11 @@ setlocal enableextensions
 cd /d "%~dp0"
 
 REM === BigQuery 환경변수 ===
-set "GOOGLE_APPLICATION_CREDENTIALS=%USERPROFILE%\.gcp\geo-audit-batch.json"
+REM 키 파일은 프로젝트 루트의 .gcp\ 폴더 안의 첫 .json 파일을 자동 사용.
+REM (파일명 그대로 유지 가능 — 폐기/재발급 시 파일만 교체)
+set "GOOGLE_APPLICATION_CREDENTIALS="
+for %%f in (".gcp\*.json") do set "GOOGLE_APPLICATION_CREDENTIALS=%%~ff"
+
 set "BQ_PROJECT=geo-dashboad-raw"
 set "BQ_DATASET=lg_geo_audit"
 set "BQ_TABLE=audit_results"
@@ -25,13 +29,11 @@ REM 만약 회사 IP에서도 403이 뜨면 아래 REM을 떼서 Chrome UA로 �
 REM set "AUDIT_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
 REM === 키 파일 존재 확인 ===
-if not exist "%GOOGLE_APPLICATION_CREDENTIALS%" (
+if not defined GOOGLE_APPLICATION_CREDENTIALS (
     echo.
-    echo [ERROR] 서비스 계정 키가 없습니다:
-    echo   %GOOGLE_APPLICATION_CREDENTIALS%
-    echo.
-    echo 맥미니의 ~/.gcp/geo-audit-batch.json 파일을 USB/클라우드로 옮겨
-    echo Windows의 %USERPROFILE%\.gcp\ 폴더에 같은 이름으로 복사하세요.
+    echo [ERROR] 서비스 계정 키를 찾을 수 없습니다.
+    echo 프로젝트 루트(%~dp0)에 .gcp\ 폴더를 만들고 서비스 계정 JSON 키를
+    echo 그 안에 넣어주세요. 파일명은 변경하지 않아도 됩니다.
     echo.
     pause
     exit /b 1
@@ -73,6 +75,7 @@ echo  CSV         : %1
 echo  Project     : %BQ_PROJECT%
 echo  Dataset     : %BQ_DATASET%.%BQ_TABLE%  (%BQ_LOCATION%)
 echo  Credentials : %GOOGLE_APPLICATION_CREDENTIALS%
+echo                ^(auto-detected from .gcp\^)
 if defined AUDIT_USER_AGENT (
     echo  User-Agent  : Chrome UA override
 ) else (
