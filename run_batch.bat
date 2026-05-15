@@ -32,7 +32,7 @@ REM === 키 파일 존재 확인 ===
 if not defined GOOGLE_APPLICATION_CREDENTIALS (
     echo.
     echo [ERROR] 서비스 계정 키를 찾을 수 없습니다.
-    echo 프로젝트 루트(%~dp0)에 .gcp\ 폴더를 만들고 서비스 계정 JSON 키를
+    echo 프로젝트 루트^(%~dp0^)에 .gcp\ 폴더를 만들고 서비스 계정 JSON 키를
     echo 그 안에 넣어주세요. 파일명은 변경하지 않아도 됩니다.
     echo.
     pause
