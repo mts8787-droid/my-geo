@@ -8,7 +8,7 @@ echo   (파이썬 스크립트를 실행합니다)
 echo ========================================================
 echo.
 
-python local_runner.py
+venv\Scripts\python.exe local_runner.py
 
 echo.
 pause
