@@ -81,32 +81,29 @@ async def parse_lg_sitemap_and_plan():
             print(f"- 전체 URL 리스트가 '{list_file}'에 저장되었습니다.")
             
             # 4. 예약 스케줄링 계획표 생성
-            # 간단한 계획: 하루 1000개 제한
+            # 스케줄 1000개 리미트 해제, 월 1회 1일~7일 분산 스케줄링
             plan_file = "reports/lg_scheduling_plan.csv"
-            schedule_date = datetime.now()
             
             with open(plan_file, "w", encoding="utf-8-sig", newline="") as f:
                 writer = csv.writer(f)
-                writer.writerow(["Country/Site", "Total URLs", "Days Required", "Suggested Start Date", "Suggested End Date"])
+                writer.writerow(["Country/Site", "Total URLs", "Assigned Day"])
                 
                 # 많은 URL을 가진 국가부터 정렬
                 sorted_groups = sorted(site_groups.items(), key=lambda x: len(x[1]), reverse=True)
                 
+                day_assign = 1
                 for c, urls in sorted_groups:
                     count = len(urls)
-                    days_needed = max(1, count // 1000 + (1 if count % 1000 != 0 else 0))
-                    
-                    end_date = schedule_date + timedelta(days=days_needed - 1)
                     
                     writer.writerow([
                         c, 
                         count, 
-                        days_needed, 
-                        schedule_date.strftime('%Y-%m-%d'), 
-                        end_date.strftime('%Y-%m-%d')
+                        day_assign
                     ])
                     
-                    schedule_date = end_date + timedelta(days=1)
+                    day_assign += 1
+                    if day_assign > 7:
+                        day_assign = 1
                     
             print(f"- 예약 스케줄링 계획표가 '{plan_file}'에 저장되었습니다.")
             print("작업이 성공적으로 완료되었습니다!")

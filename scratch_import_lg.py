@@ -53,6 +53,7 @@ with open(plan_file, "r", encoding="utf-8-sig") as f:
     for row in reader:
         c = row["Country/Site"]
         count = int(row["Total URLs"])
+        assigned_day = int(row.get("Assigned Day", 1))
         c_safe = "".join([x if x.isalnum() else "_" for x in c])
         
         group_id = f"grp_lg_{c_safe}"
@@ -74,12 +75,12 @@ with open(plan_file, "r", encoding="utf-8-sig") as f:
         
         audit_data["schedules"].append({
             "id": schedule_id,
-            "name": f"LG Sitemap - {c} (일 1000건)",
+            "name": f"LG Sitemap - {c} (매월 {assigned_day}일 점검)",
             "group_id": group_id,
-            "frequency": "daily",
+            "frequency": f"monthly_day_{assigned_day}",
             "time": time_str,
             "enabled": True,
-            "chunk_size": 1000,
+            "chunk_size": 0,
             "chunk_index": 0
         })
         

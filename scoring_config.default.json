@@ -4,139 +4,695 @@
     "label": "Performance",
     "description": "AI Readability — Performance (11개)",
     "criteria": [
-      { "id": "perf_ttfb",          "name": "#1 TTFB < 600ms",         "spec_id": "#1",  "points": 1, "enabled": true,
-        "rule": { "type": "ttfb_under_ms",     "params": { "max_ms": 600 } } },
-      { "id": "perf_compression",   "name": "#2 Compression",          "spec_id": "#2",  "points": 1, "enabled": true,
-        "rule": { "type": "header_value_in",   "params": { "header": "content-encoding", "values": "gzip,br,deflate" } } },
-      { "id": "perf_http_protocol", "name": "#3 HTTP/2+",              "spec_id": "#3",  "points": 1, "enabled": true,
-        "rule": { "type": "http_protocol_min", "params": { "min_version": "HTTP/2" } } },
-      { "id": "perf_cache_control", "name": "#4 Cache-Control max-age", "spec_id": "#4", "points": 1, "enabled": true,
-        "rule": { "type": "header_max_age_min","params": { "min_seconds": 1 } } },
-      { "id": "perf_html_size",     "name": "#5 HTML < 100KB",         "spec_id": "#5",  "points": 1, "enabled": true,
-        "rule": { "type": "html_size_under_kb","params": { "max_kb": 100 } } },
-      { "id": "perf_redirect",      "name": "#6 Redirect ≤ 1",         "spec_id": "#6",  "points": 1, "enabled": true,
-        "rule": { "type": "redirect_max",      "params": { "max_count": 1 } } },
-      { "id": "perf_mixed_content", "name": "#7 Mixed Content 0",      "spec_id": "#7",  "points": 1, "enabled": true,
-        "rule": { "type": "mixed_content_zero","params": {} } },
-      { "id": "perf_render_block",  "name": "#8 Render Blocking 0",    "spec_id": "#8",  "points": 1, "enabled": true,
-        "rule": { "type": "render_blocking_zero","params": {} } },
-      { "id": "perf_lcp",           "name": "#9 LCP ≤ 4000ms (PSI)",   "spec_id": "#9",  "points": 1, "enabled": false,
-        "rule": { "type": "css_exists", "params": { "selector": "_psi_placeholder_" } },
-        "note": "PSI API 의존 — PoC 제외" },
-      { "id": "perf_cls",           "name": "#10 CLS ≤ 0.25 (PSI)",    "spec_id": "#10", "points": 1, "enabled": false,
-        "rule": { "type": "css_exists", "params": { "selector": "_psi_placeholder_" } },
-        "note": "PSI API 의존 — PoC 제외" },
-      { "id": "perf_inp",           "name": "#11 INP ≤ 500ms (PSI)",   "spec_id": "#11", "points": 1, "enabled": false,
-        "rule": { "type": "css_exists", "params": { "selector": "_psi_placeholder_" } },
-        "note": "PSI API 의존 — PoC 제외" }
+      {
+        "id": "perf_ttfb",
+        "name": "#1 TTFB < 600ms",
+        "spec_id": "#1",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "ttfb_under_ms",
+          "params": {
+            "max_ms": 600
+          }
+        }
+      },
+      {
+        "id": "perf_compression",
+        "name": "#2 Compression",
+        "spec_id": "#2",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "header_value_in",
+          "params": {
+            "header": "content-encoding",
+            "values": "gzip,br,deflate"
+          }
+        }
+      },
+      {
+        "id": "perf_http_protocol",
+        "name": "#3 HTTP/2+",
+        "spec_id": "#3",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "http_protocol_min",
+          "params": {
+            "min_version": "HTTP/2"
+          }
+        }
+      },
+      {
+        "id": "perf_cache_control",
+        "name": "#4 Cache-Control max-age",
+        "spec_id": "#4",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "header_max_age_min",
+          "params": {
+            "min_seconds": 1
+          }
+        }
+      },
+      {
+        "id": "perf_html_size",
+        "name": "#5 HTML < 100KB",
+        "spec_id": "#5",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "html_size_under_kb",
+          "params": {
+            "max_kb": 100
+          }
+        }
+      },
+      {
+        "id": "perf_redirect",
+        "name": "#6 Redirect ≤ 1",
+        "spec_id": "#6",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "redirect_max",
+          "params": {
+            "max_count": 1
+          }
+        }
+      },
+      {
+        "id": "perf_mixed_content",
+        "name": "#7 Mixed Content 0",
+        "spec_id": "#7",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "mixed_content_zero",
+          "params": {}
+        }
+      },
+      {
+        "id": "perf_render_block",
+        "name": "#8 Render Blocking 0",
+        "spec_id": "#8",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "render_blocking_zero",
+          "params": {}
+        }
+      },
+      {
+        "id": "perf_lcp",
+        "name": "#9 LCP ≤ 4000ms (PSI)",
+        "spec_id": "#9",
+        "points": 1,
+        "enabled": false,
+        "rule": {
+          "type": "css_exists",
+          "params": {
+            "selector": "_psi_placeholder_"
+          }
+        },
+        "note": "PSI API 의존 — PoC 제외"
+      },
+      {
+        "id": "perf_cls",
+        "name": "#10 CLS ≤ 0.25 (PSI)",
+        "spec_id": "#10",
+        "points": 1,
+        "enabled": false,
+        "rule": {
+          "type": "css_exists",
+          "params": {
+            "selector": "_psi_placeholder_"
+          }
+        },
+        "note": "PSI API 의존 — PoC 제외"
+      },
+      {
+        "id": "perf_inp",
+        "name": "#11 INP ≤ 500ms (PSI)",
+        "spec_id": "#11",
+        "points": 1,
+        "enabled": false,
+        "rule": {
+          "type": "css_exists",
+          "params": {
+            "selector": "_psi_placeholder_"
+          }
+        },
+        "note": "PSI API 의존 — PoC 제외"
+      }
     ]
   },
-
   "accessibility": {
     "max": 4,
     "label": "Accessibility",
     "description": "AI Readability — Accessibility (4개)",
     "criteria": [
-      { "id": "a11y_image_alt",     "name": "#9 Image Alt 누락 0",     "spec_id": "a11y#9",  "points": 1, "enabled": true,
-        "rule": { "type": "css_all_have_attr",      "params": { "selector": "img", "attr": "alt" } } },
-      { "id": "a11y_semantic",      "name": "#10 Semantic HTML",        "spec_id": "a11y#10", "points": 1, "enabled": true,
-        "rule": { "type": "landmark_count_min",     "params": { "min_landmarks": 3, "require_main": "yes" } } },
-      { "id": "a11y_heading_hier",  "name": "#11 Heading Hierarchy",    "spec_id": "a11y#11", "points": 1, "enabled": true,
-        "rule": { "type": "heading_no_jump",        "params": {} } },
-      { "id": "a11y_aria_labels",   "name": "#12 ARIA 누락 < 10%",      "spec_id": "a11y#12", "points": 1, "enabled": true,
-        "rule": { "type": "aria_missing_ratio_max", "params": { "max_ratio": 0.1 } } }
+      {
+        "id": "a11y_image_alt",
+        "name": "#9 Image Alt 누락 0",
+        "spec_id": "a11y#9",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_all_have_attr",
+          "params": {
+            "selector": "img",
+            "attr": "alt"
+          }
+        }
+      },
+      {
+        "id": "a11y_semantic",
+        "name": "#10 Semantic HTML",
+        "spec_id": "a11y#10",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "landmark_count_min",
+          "params": {
+            "min_landmarks": 3,
+            "require_main": "yes"
+          }
+        }
+      },
+      {
+        "id": "a11y_heading_hier",
+        "name": "#11 Heading Hierarchy",
+        "spec_id": "a11y#11",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "heading_no_jump",
+          "params": {}
+        }
+      },
+      {
+        "id": "a11y_aria_labels",
+        "name": "#12 ARIA 누락 < 10%",
+        "spec_id": "a11y#12",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "aria_missing_ratio_max",
+          "params": {
+            "max_ratio": 0.1
+          }
+        }
+      }
     ]
   },
-
   "seo": {
     "max": 8,
     "label": "SEO",
     "description": "AI Readability — SEO (8개)",
     "criteria": [
-      { "id": "seo_title",       "name": "#13 Title 존재",           "spec_id": "#13", "points": 1, "enabled": true,
-        "rule": { "type": "css_text_min_length", "params": { "selector": "title", "min_length": 1 } } },
-      { "id": "seo_meta_desc",   "name": "#14 Meta Description",     "spec_id": "#14", "points": 1, "enabled": true,
-        "rule": { "type": "css_attr_exists",     "params": { "selector": "meta[name='description' i]", "attr": "content", "min_length": 1 } } },
-      { "id": "seo_canonical",   "name": "#15 Canonical self-ref",   "spec_id": "#15", "points": 1, "enabled": true,
-        "rule": { "type": "canonical_self",      "params": {} } },
-      { "id": "seo_h1",          "name": "#16 H1 정확히 1개",        "spec_id": "#16", "points": 1, "enabled": true,
-        "rule": { "type": "css_count",           "params": { "selector": "h1", "operator": "==", "value": 1 } } },
-      { "id": "seo_robots",      "name": "#17 indexing 허용",         "spec_id": "#17", "points": 1, "enabled": true,
-        "rule": { "type": "css_attr_not_contains","params": { "selector": "meta[name='robots' i]", "attr": "content", "value": "noindex" } } },
-      { "id": "seo_robots_hdr",  "name": "#17 X-Robots-Tag noindex 부재", "spec_id": "#17h", "points": 1, "enabled": true,
-        "rule": { "type": "header_no_value",     "params": { "header": "x-robots-tag", "token": "noindex" } } },
-      { "id": "seo_open_graph",  "name": "#18 Open Graph (title+image)", "spec_id": "#18", "points": 1, "enabled": true,
-        "rule": { "type": "og_required_pairs",   "params": { "required": "title,image" } } },
-      { "id": "seo_sitemap",     "name": "#19 Sitemap (1개월 내)",    "spec_id": "#19", "points": 1, "enabled": true,
-        "rule": { "type": "sitemap_recent",      "params": { "path": "/sitemap.xml", "max_days": 30 } } }
+      {
+        "id": "seo_title",
+        "name": "#13 Title 존재",
+        "spec_id": "#13",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_text_min_length",
+          "params": {
+            "selector": "title",
+            "min_length": 1
+          }
+        }
+      },
+      {
+        "id": "seo_meta_desc",
+        "name": "#14 Meta Description",
+        "spec_id": "#14",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_attr_exists",
+          "params": {
+            "selector": "meta[name='description' i]",
+            "attr": "content",
+            "min_length": 1
+          }
+        }
+      },
+      {
+        "id": "seo_canonical",
+        "name": "#15 Canonical self-ref",
+        "spec_id": "#15",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "canonical_self",
+          "params": {}
+        }
+      },
+      {
+        "id": "seo_h1",
+        "name": "#16 H1 정확히 1개",
+        "spec_id": "#16",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_count",
+          "params": {
+            "selector": "h1",
+            "operator": "==",
+            "value": 1
+          }
+        }
+      },
+      {
+        "id": "seo_robots",
+        "name": "#17 indexing 허용",
+        "spec_id": "#17",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_attr_not_contains",
+          "params": {
+            "selector": "meta[name='robots' i]",
+            "attr": "content",
+            "value": "noindex"
+          }
+        }
+      },
+      {
+        "id": "seo_robots_hdr",
+        "name": "#17 X-Robots-Tag noindex 부재",
+        "spec_id": "#17h",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "header_no_value",
+          "params": {
+            "header": "x-robots-tag",
+            "token": "noindex"
+          }
+        }
+      },
+      {
+        "id": "seo_open_graph",
+        "name": "#18 Open Graph (title+image)",
+        "spec_id": "#18",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "og_required_pairs",
+          "params": {
+            "required": "title,image"
+          }
+        }
+      },
+      {
+        "id": "seo_sitemap",
+        "name": "#19 Sitemap (1개월 내)",
+        "spec_id": "#19",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "sitemap_recent",
+          "params": {
+            "path": "/sitemap.xml",
+            "max_days": 30
+          }
+        }
+      }
     ]
   },
-
   "ai_readiness": {
     "max": 26,
     "label": "AI Readiness (GEO 핵심)",
     "description": "AI Readiness — GEO 핵심 (26개)",
     "criteria": [
-      { "id": "ai_schema_org",       "name": "#20 Schema: Organization",       "spec_id": "#20", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "Organization", "fields": "contactPoint,address,geo,hasMap" } } },
-      { "id": "ai_schema_breadcrumb","name": "#21 Schema: BreadcrumbList",     "spec_id": "#21", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "BreadcrumbList", "fields": "itemListElement" } } },
-      { "id": "ai_schema_speakable", "name": "#22 Schema: Speakable",          "spec_id": "#22", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "SpeakableSpecification", "fields": "cssSelector" } } },
-      { "id": "ai_schema_faq",       "name": "#23 Schema: FAQPage",            "spec_id": "#23", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "FAQPage", "fields": "mainEntity" } } },
-      { "id": "ai_schema_collection","name": "#24 Schema: CollectionPage (PLP)","spec_id": "#24", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "CollectionPage", "fields": "mainEntity" } } },
-      { "id": "ai_schema_product",   "name": "#25 Schema: Product 풀세트 (PDP)","spec_id": "#25", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "Product", "fields": "name,description,sku,brand,offers.price,offers.availability,aggregateRating.ratingValue,review" } } },
-      { "id": "ai_schema_image",     "name": "#26 Schema: ImageObject",        "spec_id": "#26", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "ImageObject", "fields": "url,name,description,uploadDate" } } },
-      { "id": "ai_schema_video",     "name": "#27 Schema: VideoObject",        "spec_id": "#27", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "VideoObject", "fields": "url,name,description,thumbnailUrl" } } },
-      { "id": "ai_schema_howto",     "name": "#28 Schema: HowTo",              "spec_id": "#28", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "HowTo", "fields": "step" } } },
-      { "id": "ai_schema_article",   "name": "#29 Schema: Article",            "spec_id": "#29", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "Article", "fields": "headline,author,publisher,articleBody" } } },
-      { "id": "ai_schema_digidoc",   "name": "#30 Schema: DigitalDocument",    "spec_id": "#30", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "DigitalDocument", "fields": "name,url,fileFormat,description" } } },
-      { "id": "ai_schema_recipe",    "name": "#31 Schema: Recipe",             "spec_id": "#31", "points": 1, "enabled": true,
-        "rule": { "type": "schema_required_fields", "params": { "type": "Recipe", "fields": "name,description,image,author,recipeIngredient,recipeInstructions" } } },
-      { "id": "ai_faq_block",        "name": "#32 FAQ Block (콘텐츠)",         "spec_id": "#32", "points": 1, "enabled": true,
-        "rule": { "type": "class_id_contains", "params": { "keywords": "faq,자주 묻는,자주묻는,frequently asked,q&a,qna,questions,질문,answer,accordion", "tags": "div,section,aside,article,details" } } },
-      { "id": "ai_definition",       "name": "#33 Definition Paragraph",       "spec_id": "#33", "points": 1, "enabled": true,
-        "rule": { "type": "definition_pattern_min", "params": { "min_count": 1 } } },
-      { "id": "ai_author_source",    "name": "#34 Author 또는 출처+날짜",      "spec_id": "#34", "points": 1, "enabled": true,
-        "rule": { "type": "author_or_source", "params": {} } },
-      { "id": "ai_summary_box",      "name": "#35 Summary Box (콘텐츠)",       "spec_id": "#35", "points": 1, "enabled": true,
-        "rule": { "type": "class_id_contains", "params": { "keywords": "summary,요약,tldr,tl;dr,abstract,highlight,key takeaway,핵심,주요 특징,주요특징,제품 특징,제품특징,overview", "tags": "div,section,aside,article,blockquote,p" } } },
-      { "id": "ai_citable",          "name": "#36 Citable Sentence ≥ 10%",     "spec_id": "#36", "points": 1, "enabled": true,
-        "rule": { "type": "citable_density_min", "params": { "min_ratio": 0.1 } } },
-      { "id": "ai_ssr_ratio",        "name": "#37 JS HTML Text Ratio ≥ 60%",   "spec_id": "#37", "points": 1, "enabled": true,
-        "rule": { "type": "ssr_text_ratio_min", "params": { "min_ratio": 0.6 } } },
-      { "id": "ai_pdp_thumbnails",   "name": "#38 PDP 썸네일 1-3 SSR",         "spec_id": "#38", "points": 1, "enabled": true,
-        "rule": { "type": "css_count", "params": { "selector": ".product-thumbnail img, .pdp-thumb img, [data-thumb] img", "operator": ">=", "value": 3 } } },
-      { "id": "ai_core_element",     "name": "#39 PDP 핵심 element SSR",       "spec_id": "#39", "points": 1, "enabled": true,
-        "rule": { "type": "css_count", "params": { "selector": "[itemprop='name'], [class*='product-name'], [class*='product-title'], [class*='price'], [data-price], [class*='buy-button'], [class*='add-to-cart'], [class*='product-spec'], [class*='spec-list']", "operator": ">=", "value": 2 } },
-        "note": "임시 placeholder — LG팀 selector 확정 시 교체. 어드민에서 직접 편집 가능" },
-      { "id": "ai_summary_ssr",      "name": "#40 Summary Content SSR",        "spec_id": "#40", "points": 1, "enabled": true,
-        "rule": { "type": "css_exists", "params": { "selector": "[class*='summary'], [id*='summary'], [class*='overview'], [class*='highlight']" } } },
-      { "id": "ai_image_filename",   "name": "#41 Image File Name 브랜드 포함", "spec_id": "#41", "points": 1, "enabled": true,
-        "rule": { "type": "image_filename_keyword", "params": { "keywords": "lg,oled,gram,thinq", "min_ratio": 0 } } },
-      { "id": "ai_status_200",       "name": "#42 Status Code 200",            "spec_id": "#42", "points": 1, "enabled": true,
-        "rule": { "type": "status_code_eq", "params": { "code": 200 } } },
-      { "id": "ai_soft_404",         "name": "#43 Soft 404 부재",              "spec_id": "#43", "points": 1, "enabled": true,
-        "rule": { "type": "soft_404_check", "params": { "min_text_length": 200 } } },
-      { "id": "ai_llms_txt",         "name": "#44 llms.txt 존재",              "spec_id": "#44", "points": 1, "enabled": true,
-        "rule": { "type": "http_status", "params": { "path": "/llms.txt", "status": 200 } } },
-      { "id": "ai_sitemap_domain",   "name": "#45 Sitemap (도메인, 1개월 내)", "spec_id": "#45", "points": 1, "enabled": true,
-        "rule": { "type": "sitemap_recent", "params": { "path": "/sitemap.xml", "max_days": 30 } } }
+      {
+        "id": "ai_schema_org",
+        "name": "#20 Schema: Organization",
+        "spec_id": "#20",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Organization",
+            "fields": "contactPoint,address,geo,hasMap"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_breadcrumb",
+        "name": "#21 Schema: BreadcrumbList",
+        "spec_id": "#21",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "BreadcrumbList",
+            "fields": "itemListElement"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_speakable",
+        "name": "#22 Schema: Speakable",
+        "spec_id": "#22",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "SpeakableSpecification",
+            "fields": "cssSelector"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_faq",
+        "name": "#23 Schema: FAQPage",
+        "spec_id": "#23",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "FAQPage",
+            "fields": "mainEntity"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_collection",
+        "name": "#24 Schema: CollectionPage (PLP)",
+        "spec_id": "#24",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "CollectionPage",
+            "fields": "mainEntity"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_product",
+        "name": "#25 Schema: Product 풀세트 (PDP)",
+        "spec_id": "#25",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Product",
+            "fields": "name,description,sku,brand,offers.price,offers.availability,aggregateRating.ratingValue,review"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_image",
+        "name": "#26 Schema: ImageObject",
+        "spec_id": "#26",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "ImageObject",
+            "fields": "url,name,description,uploadDate"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_video",
+        "name": "#27 Schema: VideoObject",
+        "spec_id": "#27",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "VideoObject",
+            "fields": "url,name,description,thumbnailUrl"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_howto",
+        "name": "#28 Schema: HowTo",
+        "spec_id": "#28",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "HowTo",
+            "fields": "step"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_article",
+        "name": "#29 Schema: Article",
+        "spec_id": "#29",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Article",
+            "fields": "headline,author,publisher,articleBody"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_digidoc",
+        "name": "#30 Schema: DigitalDocument",
+        "spec_id": "#30",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "DigitalDocument",
+            "fields": "name,url,fileFormat,description"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_recipe",
+        "name": "#31 Schema: Recipe",
+        "spec_id": "#31",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Recipe",
+            "fields": "name,description,image,author,recipeIngredient,recipeInstructions"
+          }
+        }
+      },
+      {
+        "id": "ai_faq_block",
+        "name": "#32 FAQ Block (콘텐츠)",
+        "spec_id": "#32",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "class_id_contains",
+          "params": {
+            "keywords": "faq,자주 묻는,자주묻는,frequently asked,q&a,qna,questions,질문,answer,accordion",
+            "tags": "div,section,aside,article,details"
+          }
+        }
+      },
+      {
+        "id": "ai_definition",
+        "name": "#33 Definition Paragraph",
+        "spec_id": "#33",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "definition_pattern_min",
+          "params": {
+            "min_count": 1
+          }
+        }
+      },
+      {
+        "id": "ai_author_source",
+        "name": "#34 Author 또는 출처+날짜",
+        "spec_id": "#34",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "author_or_source",
+          "params": {}
+        }
+      },
+      {
+        "id": "ai_summary_box",
+        "name": "#35 Summary Box (콘텐츠)",
+        "spec_id": "#35",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "class_id_contains",
+          "params": {
+            "keywords": "summary,요약,tldr,tl;dr,abstract,highlight,key takeaway,핵심,주요 특징,주요특징,제품 특징,제품특징,overview",
+            "tags": "div,section,aside,article,blockquote,p"
+          }
+        }
+      },
+      {
+        "id": "ai_citable",
+        "name": "#36 Citable Sentence ≥ 10%",
+        "spec_id": "#36",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "citable_density_min",
+          "params": {
+            "min_ratio": 0.1
+          }
+        }
+      },
+      {
+        "id": "ai_ssr_ratio",
+        "name": "#37 JS HTML Text Ratio ≥ 60%",
+        "spec_id": "#37",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "ssr_text_ratio_min",
+          "params": {
+            "min_ratio": 0.6
+          }
+        }
+      },
+      {
+        "id": "ai_pdp_thumbnails",
+        "name": "#38 PDP 썸네일 1-3 SSR",
+        "spec_id": "#38",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_count",
+          "params": {
+            "selector": ".product-thumbnail img, .pdp-thumb img, [data-thumb] img",
+            "operator": ">=",
+            "value": 3
+          }
+        }
+      },
+      {
+        "id": "ai_core_element",
+        "name": "#39 PDP 핵심 element SSR",
+        "spec_id": "#39",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_count",
+          "params": {
+            "selector": "[itemprop='name'], [class*='product-name'], [class*='product-title'], [class*='price'], [data-price], [class*='buy-button'], [class*='add-to-cart'], [class*='product-spec'], [class*='spec-list']",
+            "operator": ">=",
+            "value": 2
+          }
+        },
+        "note": "임시 placeholder — LG팀 selector 확정 시 교체. 어드민에서 직접 편집 가능"
+      },
+      {
+        "id": "ai_summary_ssr",
+        "name": "#40 Summary Content SSR",
+        "spec_id": "#40",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_exists",
+          "params": {
+            "selector": "[class*='summary'], [id*='summary'], [class*='overview'], [class*='highlight']"
+          }
+        }
+      },
+      {
+        "id": "ai_image_filename",
+        "name": "#41 Image File Name 브랜드 포함",
+        "spec_id": "#41",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "image_filename_keyword",
+          "params": {
+            "keywords": "lg,oled,gram,thinq",
+            "min_ratio": 0
+          }
+        }
+      },
+      {
+        "id": "ai_status_200",
+        "name": "#42 Status Code 200",
+        "spec_id": "#42",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "status_code_eq",
+          "params": {
+            "code": 200
+          }
+        }
+      },
+      {
+        "id": "ai_soft_404",
+        "name": "#43 Soft 404 부재",
+        "spec_id": "#43",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "soft_404_check",
+          "params": {
+            "min_text_length": 200
+          }
+        }
+      },
+      {
+        "id": "ai_llms_txt",
+        "name": "#44 llms.txt 존재",
+        "spec_id": "#44",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "http_status",
+          "params": {
+            "path": "/llms.txt",
+            "status": 200
+          }
+        }
+      },
+      {
+        "id": "ai_sitemap_domain",
+        "name": "#45 Sitemap (도메인, 1개월 내)",
+        "spec_id": "#45",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "sitemap_recent",
+          "params": {
+            "path": "/sitemap.xml",
+            "max_days": 30
+          }
+        }
+      }
     ]
   },
-
   "grade": {
     "good": 44,
-    "need_improvement": 34,
-    "label": "등급 기준",
-    "description": "Good ≥ 44, Need Improvement ≥ 34, Poor < 34"
+    "need_improvement": 34
   }
 }

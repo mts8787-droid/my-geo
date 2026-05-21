@@ -71,6 +71,12 @@ def _cron_trigger_for_schedule(sch: dict):
         return CronTrigger(day_of_week="mon", hour=hour, minute=minute)
     if freq == "monthly":
         return CronTrigger(day=1, hour=hour, minute=minute)
+    if freq.startswith("monthly_day_"):
+        try:
+            day = int(freq.split("_")[-1])
+            return CronTrigger(day=day, hour=hour, minute=minute)
+        except Exception:
+            return CronTrigger(day=1, hour=hour, minute=minute)
     return CronTrigger(hour=hour, minute=minute)
 
 

@@ -105,6 +105,29 @@ def save_schedule_run(run: dict):
                 json.dumps(run.get("summary", []), ensure_ascii=False) if run.get("summary") else "[]",
                 run.get("error")
             ))
+            
+            # 용량 관리: 각 schedule_id 별로 최신 2개만 유지하고 과거 이력 삭제 (500MB 서버 용량 제한 대응)
+            schedule_id = run.get("schedule_id")
+            if schedule_id:
+                cursor.execute("""
+                    DELETE FROM schedule_runs
+                    WHERE schedule_id = ? AND id NOT IN (
+                        SELECT id FROM schedule_runs
+                        WHERE schedule_id = ?
+                        ORDER BY started_at DESC
+                        LIMIT 2
+                    )
+                """, (schedule_id, schedule_id))
+            
+            # 용량 관리: system_logs도 최신 1000개만 유지
+            cursor.execute("""
+                DELETE FROM system_logs
+                WHERE id NOT IN (
+                    SELECT id FROM system_logs
+                    ORDER BY id DESC
+                    LIMIT 1000
+                )
+            """)
             conn.commit()
     except Exception as e:
         log.error(f"Failed to save schedule run: {e}")
