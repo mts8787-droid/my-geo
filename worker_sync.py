@@ -24,7 +24,7 @@ async def start_hub_sync(hub_url: str, secret: str) -> None:
 
     while True:
         try:
-            async with httpx.AsyncClient(timeout=30) as client:
+            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
                 resp = await client.get(
                     f"{hub_url}/admin/audit-data",
                     headers={"X-Worker-Secret": secret},

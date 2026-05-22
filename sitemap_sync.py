@@ -144,7 +144,7 @@ async def _push_to_hub(data: dict) -> None:
     if not hub_url or not secret:
         return
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
             resp = await client.put(
                 f"{hub_url}/admin/audit-data",
                 json=data,

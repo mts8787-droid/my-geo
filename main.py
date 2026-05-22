@@ -70,7 +70,7 @@ async def _startup_pull_audit_data() -> None:
     if not _AUDIT_DATA_PEER_URL or not _WORKER_SECRET:
         return
     try:
-        async with httpx.AsyncClient(timeout=10) as client:
+        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
             resp = await client.get(
                 f"{_AUDIT_DATA_PEER_URL}/admin/audit-data",
                 headers={"X-Worker-Secret": _WORKER_SECRET},
@@ -192,7 +192,7 @@ async def _proxy_to_worker(
     """
     headers = {"X-Worker-Secret": _WORKER_SECRET} if _WORKER_SECRET else {}
     url = f"{_WORKER_URL}{path}"
-    async with httpx.AsyncClient(timeout=_WORKER_TIMEOUT_SEC) as client:
+    async with httpx.AsyncClient(timeout=_WORKER_TIMEOUT_SEC, follow_redirects=True) as client:
         if method.upper() == "GET":
             resp = await client.get(url, params=params, headers=headers)
         else:
