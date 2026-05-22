@@ -21,6 +21,9 @@ from sitemap_agent import parse_sitemap
 
 log = logging.getLogger("geo_audit.sitemap_sync")
 
+# 그룹 간 사이트맵 fetch 간격 (Akamai bulk 패턴 회피)
+_INTER_GROUP_DELAY_SEC = float(os.environ.get("SITEMAP_SYNC_INTER_GROUP_DELAY", "0"))
+
 # Ollama 요약 프롬프트
 _SYS_PROMPT = (
     "너는 LG 웹사이트의 사이트맵 변경을 모니터링하는 분석가다. "
@@ -104,7 +107,7 @@ async def run_daily_sync() -> dict:
 
     db.add_system_log(f"[sitemap-sync] 시작 — {len(sync_targets)}개 그룹")
 
-    for group in sync_targets:
+    for idx, group in enumerate(sync_targets):
         try:
             stat = await sync_group(group)
             total["groups_synced"] += 1
@@ -116,6 +119,9 @@ async def run_daily_sync() -> dict:
             log.exception("sync_group 예외: %s", e)
             db.add_system_log(f"[sitemap-sync] {group.get('name')}: 예외 — {e}")
             total["errors"] += 1
+        # 마지막 그룹이 아니고 delay 설정돼 있으면 대기
+        if _INTER_GROUP_DELAY_SEC > 0 and idx < len(sync_targets) - 1:
+            await asyncio.sleep(_INTER_GROUP_DELAY_SEC)
 
     # 변경 사항 한 번에 저장 (그룹들 객체가 같은 data dict에 참조됨)
     await audit_store.save(data)

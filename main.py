@@ -203,15 +203,26 @@ async def _proxy_to_worker(
 
 @app.middleware("http")
 async def worker_auth_middleware(request: Request, call_next):
-    """X-Worker-Secret 헤더가 일치하면 request.state.worker_authorized = True.
+    """X-Worker-Secret 검증 + 워커 모드에선 /analyze 보호.
 
-    이 표식은 _verify_admin에서 통과 조건으로 활용된다 — Render→Mac Mini 프록시 호출,
-    또는 Mac Mini→Render 동기 호출이 어드민 세션 없이도 통과되도록.
+    - X-Worker-Secret 헤더가 일치하면 request.state.worker_authorized = True
+      → _verify_admin 통과 + 워커 모드 /analyze 통과
+    - 워커 모드(HUB_URL 설정된 머신 — Mac Mini): /analyze는 시크릿 없이는 401.
+      Funnel URL이 공개되어 있어도 외부에서 무단 /analyze DoS 방지.
     """
     if _WORKER_SECRET:
         provided = request.headers.get("x-worker-secret", "")
         if provided and hmac.compare_digest(provided, _WORKER_SECRET):
             request.state.worker_authorized = True
+
+    is_worker_mode = bool(_HUB_URL) and bool(_WORKER_SECRET)
+    if is_worker_mode and request.url.path.startswith("/analyze"):
+        if not getattr(request.state, "worker_authorized", False):
+            return JSONResponse(
+                {"detail": "Worker 모드 — X-Worker-Secret 헤더가 필요합니다."},
+                status_code=401,
+            )
+
     return await call_next(request)
 
 

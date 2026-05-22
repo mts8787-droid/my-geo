@@ -63,8 +63,9 @@ async def parse_sitemap(sitemap_url: str, max_depth: int = SITEMAP_MAX_DEPTH) ->
     seen_sitemaps = set()
     all_urls: set = set()
 
+    parse_concurrency = max(1, int(os.environ.get("SITEMAP_PARSE_CONCURRENCY", 10)))
     async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-        sem = asyncio.Semaphore(10)
+        sem = asyncio.Semaphore(parse_concurrency)
 
         async def _walk(url: str, depth: int):
             if url in seen_sitemaps or depth > max_depth:
