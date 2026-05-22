@@ -8,8 +8,11 @@ audit_data.json::groups 중 sitemap_url이 등록된 그룹들을 순회하면�
 """
 import asyncio
 import logging
+import os
 from datetime import datetime
 from typing import Dict, List
+
+import httpx
 
 import audit_store
 import db
@@ -117,9 +120,31 @@ async def run_daily_sync() -> dict:
     # 변경 사항 한 번에 저장 (그룹들 객체가 같은 data dict에 참조됨)
     await audit_store.save(data)
 
+    # HUB_URL 설정돼 있으면 Render에 push (Mac Mini → Render 단방향 동기)
+    await _push_to_hub(data)
+
     finished = datetime.utcnow().isoformat()
     db.add_system_log(
         f"[sitemap-sync] 완료 — 그룹 {total['groups_synced']}/{total['groups_total']}, "
         f"추가 {total['added']}, 제거 {total['removed']}, 에러 {total['errors']}"
     )
     return {**total, "started_at": started, "finished_at": finished}
+
+
+async def _push_to_hub(data: dict) -> None:
+    """sync 결과를 HUB(Render)에 PUT으로 푸시. HUB_URL+WORKER_SECRET 둘 다 있어야 동작."""
+    hub_url = os.environ.get("HUB_URL", "").rstrip("/")
+    secret = os.environ.get("WORKER_SECRET", "")
+    if not hub_url or not secret:
+        return
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.put(
+                f"{hub_url}/admin/audit-data",
+                json=data,
+                headers={"X-Worker-Secret": secret},
+            )
+            resp.raise_for_status()
+        db.add_system_log(f"[sitemap-sync] Render push 완료 → {hub_url}")
+    except Exception as e:
+        db.add_system_log(f"[sitemap-sync] Render push 실패: {e}")

@@ -65,11 +65,37 @@ async def _install_chromium_on_startup():
     print("[startup] WARNING: Chromium installation failed — CSR analysis will be unavailable")
 
 
+async def _startup_pull_audit_data() -> None:
+    """시작 시 AUDIT_DATA_PEER_URL에서 audit_data를 1회 pull. Render 재배포로 휘발된 데이터 복구용."""
+    if not _AUDIT_DATA_PEER_URL or not _WORKER_SECRET:
+        return
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(
+                f"{_AUDIT_DATA_PEER_URL}/admin/audit-data",
+                headers={"X-Worker-Secret": _WORKER_SECRET},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        await audit_store.save(data)
+        log.info(
+            "startup pull 완료 — peer=%s, groups=%d, schedules=%d",
+            _AUDIT_DATA_PEER_URL,
+            len(data.get("groups", [])),
+            len(data.get("schedules", [])),
+        )
+    except Exception as e:
+        log.warning("startup pull 실패 (peer=%s): %s", _AUDIT_DATA_PEER_URL, e)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI lifespan 이벤트 핸들러."""
     # Chromium 설치는 백그라운드로 — 헬스체크 timeout 방지 (#5)
     asyncio.create_task(_install_chromium_on_startup())
+
+    # AUDIT_DATA_PEER_URL 설정 시 peer(Mac Mini)에서 audit_data를 1회 pull
+    await _startup_pull_audit_data()
 
     # 프록시 모드(WORKER_URL 설정)에서는 스케줄러를 띄우지 않는다 — 워커가 담당.
     scheduler_started = False
@@ -149,6 +175,8 @@ app.add_middleware(
 _WORKER_URL = os.environ.get("WORKER_URL", "").rstrip("/")
 _WORKER_SECRET = os.environ.get("WORKER_SECRET", "")
 _HUB_URL = os.environ.get("HUB_URL", "").rstrip("/")
+# Render 등에서 시작 시 audit_data를 Mac Mini로부터 1회 pull. /analyze 프록시(WORKER_URL)와는 별개.
+_AUDIT_DATA_PEER_URL = os.environ.get("AUDIT_DATA_PEER_URL", "").rstrip("/")
 _WORKER_TIMEOUT_SEC = float(os.environ.get("WORKER_TIMEOUT_SEC", "180"))
 
 

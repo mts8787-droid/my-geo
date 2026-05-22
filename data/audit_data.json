@@ -112,427 +112,488 @@
       "urls": [],
       "name": "LG Sitemap - global",
       "id": "grp_lg_global",
-      "url_count": 199314
+      "url_count": 199314,
+      "sitemap_url": "https://www.lg.com/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_pl.csv",
       "urls": [],
       "name": "LG Sitemap - pl",
       "id": "grp_lg_pl",
-      "url_count": 42894
+      "url_count": 42894,
+      "sitemap_url": "https://www.lg.com/pl/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_uk.csv",
       "urls": [],
       "name": "LG Sitemap - uk",
       "id": "grp_lg_uk",
-      "url_count": 41318
+      "url_count": 41318,
+      "sitemap_url": "https://www.lg.com/uk/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_de.csv",
       "urls": [],
       "name": "LG Sitemap - de",
       "id": "grp_lg_de",
-      "url_count": 32921
+      "url_count": 32921,
+      "sitemap_url": "https://www.lg.com/de/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ru.csv",
       "urls": [],
       "name": "LG Sitemap - ru",
       "id": "grp_lg_ru",
-      "url_count": 29902
+      "url_count": 29902,
+      "sitemap_url": "https://www.lg.com/ru/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_es.csv",
       "urls": [],
       "name": "LG Sitemap - es",
       "id": "grp_lg_es",
-      "url_count": 29224
+      "url_count": 29224,
+      "sitemap_url": "https://www.lg.com/es/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_in.csv",
       "urls": [],
       "name": "LG Sitemap - in",
       "id": "grp_lg_in",
-      "url_count": 26334
+      "url_count": 26334,
+      "sitemap_url": "https://www.lg.com/in/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_id.csv",
       "urls": [],
       "name": "LG Sitemap - id",
       "id": "grp_lg_id",
-      "url_count": 25133
+      "url_count": 25133,
+      "sitemap_url": "https://www.lg.com/id/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_fr.csv",
       "urls": [],
       "name": "LG Sitemap - fr",
       "id": "grp_lg_fr",
-      "url_count": 24254
+      "url_count": 24254,
+      "sitemap_url": "https://www.lg.com/fr/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_it.csv",
       "urls": [],
       "name": "LG Sitemap - it",
       "id": "grp_lg_it",
-      "url_count": 23739
+      "url_count": 23739,
+      "sitemap_url": "https://www.lg.com/it/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_at.csv",
       "urls": [],
       "name": "LG Sitemap - at",
       "id": "grp_lg_at",
-      "url_count": 22561
+      "url_count": 22561,
+      "sitemap_url": "https://www.lg.com/at/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_br.csv",
       "urls": [],
       "name": "LG Sitemap - br",
       "id": "grp_lg_br",
-      "url_count": 22501
+      "url_count": 22501,
+      "sitemap_url": "https://www.lg.com/br/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_pa.csv",
       "urls": [],
       "name": "LG Sitemap - pa",
       "id": "grp_lg_pa",
-      "url_count": 21264
+      "url_count": 21264,
+      "sitemap_url": "https://www.lg.com/pa/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_kz.csv",
       "urls": [],
       "name": "LG Sitemap - kz",
       "id": "grp_lg_kz",
-      "url_count": 20216
+      "url_count": 20216,
+      "sitemap_url": "https://www.lg.com/kz/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_hu.csv",
       "urls": [],
       "name": "LG Sitemap - hu",
       "id": "grp_lg_hu",
-      "url_count": 20075
+      "url_count": 20075,
+      "sitemap_url": "https://www.lg.com/hu/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_cz.csv",
       "urls": [],
       "name": "LG Sitemap - cz",
       "id": "grp_lg_cz",
-      "url_count": 19988
+      "url_count": 19988,
+      "sitemap_url": "https://www.lg.com/cz/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ec.csv",
       "urls": [],
       "name": "LG Sitemap - ec",
       "id": "grp_lg_ec",
-      "url_count": 18494
+      "url_count": 18494,
+      "sitemap_url": "https://www.lg.com/ec/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_au.csv",
       "urls": [],
       "name": "LG Sitemap - au",
       "id": "grp_lg_au",
-      "url_count": 17908
+      "url_count": 17908,
+      "sitemap_url": "https://www.lg.com/au/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_se.csv",
       "urls": [],
       "name": "LG Sitemap - se",
       "id": "grp_lg_se",
-      "url_count": 17526
+      "url_count": 17526,
+      "sitemap_url": "https://www.lg.com/se/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_mx.csv",
       "urls": [],
       "name": "LG Sitemap - mx",
       "id": "grp_lg_mx",
-      "url_count": 17174
+      "url_count": 17174,
+      "sitemap_url": "https://www.lg.com/mx/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_cac.csv",
       "urls": [],
       "name": "LG Sitemap - cac",
       "id": "grp_lg_cac",
-      "url_count": 17153
+      "url_count": 17153,
+      "sitemap_url": "https://www.lg.com/cac/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_pt.csv",
       "urls": [],
       "name": "LG Sitemap - pt",
       "id": "grp_lg_pt",
-      "url_count": 16393
+      "url_count": 16393,
+      "sitemap_url": "https://www.lg.com/pt/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_dk.csv",
       "urls": [],
       "name": "LG Sitemap - dk",
       "id": "grp_lg_dk",
-      "url_count": 16362
+      "url_count": 16362,
+      "sitemap_url": "https://www.lg.com/dk/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_gr.csv",
       "urls": [],
       "name": "LG Sitemap - gr",
       "id": "grp_lg_gr",
-      "url_count": 15154
+      "url_count": 15154,
+      "sitemap_url": "https://www.lg.com/gr/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_th.csv",
       "urls": [],
       "name": "LG Sitemap - th",
       "id": "grp_lg_th",
-      "url_count": 14797
+      "url_count": 14797,
+      "sitemap_url": "https://www.lg.com/th/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_sg.csv",
       "urls": [],
       "name": "LG Sitemap - sg",
       "id": "grp_lg_sg",
-      "url_count": 14548
+      "url_count": 14548,
+      "sitemap_url": "https://www.lg.com/sg/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_tr.csv",
       "urls": [],
       "name": "LG Sitemap - tr",
       "id": "grp_lg_tr",
-      "url_count": 14189
+      "url_count": 14189,
+      "sitemap_url": "https://www.lg.com/tr/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ua.csv",
       "urls": [],
       "name": "LG Sitemap - ua",
       "id": "grp_lg_ua",
-      "url_count": 13813
+      "url_count": 13813,
+      "sitemap_url": "https://www.lg.com/ua/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ae.csv",
       "urls": [],
       "name": "LG Sitemap - ae",
       "id": "grp_lg_ae",
-      "url_count": 13509
+      "url_count": 13509,
+      "sitemap_url": "https://www.lg.com/ae/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_hr.csv",
       "urls": [],
       "name": "LG Sitemap - hr",
       "id": "grp_lg_hr",
-      "url_count": 13365
+      "url_count": 13365,
+      "sitemap_url": "https://www.lg.com/hr/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_vn.csv",
       "urls": [],
       "name": "LG Sitemap - vn",
       "id": "grp_lg_vn",
-      "url_count": 13320
+      "url_count": 13320,
+      "sitemap_url": "https://www.lg.com/vn/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_bg.csv",
       "urls": [],
       "name": "LG Sitemap - bg",
       "id": "grp_lg_bg",
-      "url_count": 13172
+      "url_count": 13172,
+      "sitemap_url": "https://www.lg.com/bg/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_rs.csv",
       "urls": [],
       "name": "LG Sitemap - rs",
       "id": "grp_lg_rs",
-      "url_count": 13066
+      "url_count": 13066,
+      "sitemap_url": "https://www.lg.com/rs/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_il.csv",
       "urls": [],
       "name": "LG Sitemap - il",
       "id": "grp_lg_il",
-      "url_count": 12649
+      "url_count": 12649,
+      "sitemap_url": "https://www.lg.com/il/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ee.csv",
       "urls": [],
       "name": "LG Sitemap - ee",
       "id": "grp_lg_ee",
-      "url_count": 12546
+      "url_count": 12546,
+      "sitemap_url": "https://www.lg.com/ee/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_co.csv",
       "urls": [],
       "name": "LG Sitemap - co",
       "id": "grp_lg_co",
-      "url_count": 12508
+      "url_count": 12508,
+      "sitemap_url": "https://www.lg.com/co/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_lv.csv",
       "urls": [],
       "name": "LG Sitemap - lv",
       "id": "grp_lg_lv",
-      "url_count": 12354
+      "url_count": 12354,
+      "sitemap_url": "https://www.lg.com/lv/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_sk.csv",
       "urls": [],
       "name": "LG Sitemap - sk",
       "id": "grp_lg_sk",
-      "url_count": 12312
+      "url_count": 12312,
+      "sitemap_url": "https://www.lg.com/sk/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_fi.csv",
       "urls": [],
       "name": "LG Sitemap - fi",
       "id": "grp_lg_fi",
-      "url_count": 12301
+      "url_count": 12301,
+      "sitemap_url": "https://www.lg.com/fi/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_pe.csv",
       "urls": [],
       "name": "LG Sitemap - pe",
       "id": "grp_lg_pe",
-      "url_count": 12293
+      "url_count": 12293,
+      "sitemap_url": "https://www.lg.com/pe/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_cl.csv",
       "urls": [],
       "name": "LG Sitemap - cl",
       "id": "grp_lg_cl",
-      "url_count": 12252
+      "url_count": 12252,
+      "sitemap_url": "https://www.lg.com/cl/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_no.csv",
       "urls": [],
       "name": "LG Sitemap - no",
       "id": "grp_lg_no",
-      "url_count": 12134
+      "url_count": 12134,
+      "sitemap_url": "https://www.lg.com/no/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_tw.csv",
       "urls": [],
       "name": "LG Sitemap - tw",
       "id": "grp_lg_tw",
-      "url_count": 11368
+      "url_count": 11368,
+      "sitemap_url": "https://www.lg.com/tw/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_lt.csv",
       "urls": [],
       "name": "LG Sitemap - lt",
       "id": "grp_lg_lt",
-      "url_count": 11359
+      "url_count": 11359,
+      "sitemap_url": "https://www.lg.com/lt/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_sa.csv",
       "urls": [],
       "name": "LG Sitemap - sa",
       "id": "grp_lg_sa",
-      "url_count": 10929
+      "url_count": 10929,
+      "sitemap_url": "https://www.lg.com/sa/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_nz.csv",
       "urls": [],
       "name": "LG Sitemap - nz",
       "id": "grp_lg_nz",
-      "url_count": 10925
+      "url_count": 10925,
+      "sitemap_url": "https://www.lg.com/nz/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ro.csv",
       "urls": [],
       "name": "LG Sitemap - ro",
       "id": "grp_lg_ro",
-      "url_count": 10855
+      "url_count": 10855,
+      "sitemap_url": "https://www.lg.com/ro/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_my.csv",
       "urls": [],
       "name": "LG Sitemap - my",
       "id": "grp_lg_my",
-      "url_count": 10130
+      "url_count": 10130,
+      "sitemap_url": "https://www.lg.com/my/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ph.csv",
       "urls": [],
       "name": "LG Sitemap - ph",
       "id": "grp_lg_ph",
-      "url_count": 9736
+      "url_count": 9736,
+      "sitemap_url": "https://www.lg.com/ph/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_cn.csv",
       "urls": [],
       "name": "LG Sitemap - cn",
       "id": "grp_lg_cn",
-      "url_count": 9645
+      "url_count": 9645,
+      "sitemap_url": "https://www.lg.com/cn/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_hk.csv",
       "urls": [],
       "name": "LG Sitemap - hk",
       "id": "grp_lg_hk",
-      "url_count": 9415
+      "url_count": 9415,
+      "sitemap_url": "https://www.lg.com/hk/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_uz.csv",
       "urls": [],
       "name": "LG Sitemap - uz",
       "id": "grp_lg_uz",
-      "url_count": 9318
+      "url_count": 9318,
+      "sitemap_url": "https://www.lg.com/uz/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_jp.csv",
       "urls": [],
       "name": "LG Sitemap - jp",
       "id": "grp_lg_jp",
-      "url_count": 8732
+      "url_count": 8732,
+      "sitemap_url": "https://www.lg.com/jp/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_bd.csv",
       "urls": [],
       "name": "LG Sitemap - bd",
       "id": "grp_lg_bd",
-      "url_count": 7907
+      "url_count": 7907,
+      "sitemap_url": "https://www.lg.com/bd/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ir.csv",
       "urls": [],
       "name": "LG Sitemap - ir",
       "id": "grp_lg_ir",
-      "url_count": 7365
+      "url_count": 7365,
+      "sitemap_url": "https://www.lg.com/ir/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ma.csv",
       "urls": [],
       "name": "LG Sitemap - ma",
       "id": "grp_lg_ma",
-      "url_count": 6695
+      "url_count": 6695,
+      "sitemap_url": "https://www.lg.com/ma/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_tn.csv",
       "urls": [],
       "name": "LG Sitemap - tn",
       "id": "grp_lg_tn",
-      "url_count": 6593
+      "url_count": 6593,
+      "sitemap_url": "https://www.lg.com/tn/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_ar.csv",
       "urls": [],
       "name": "LG Sitemap - ar",
       "id": "grp_lg_ar",
-      "url_count": 6472
+      "url_count": 6472,
+      "sitemap_url": "https://www.lg.com/ar/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_lk.csv",
       "urls": [],
       "name": "LG Sitemap - lk",
       "id": "grp_lg_lk",
-      "url_count": 5996
+      "url_count": 5996,
+      "sitemap_url": "https://www.lg.com/lk/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_np.csv",
       "urls": [],
       "name": "LG Sitemap - np",
       "id": "grp_lg_np",
-      "url_count": 5910
+      "url_count": 5910,
+      "sitemap_url": "https://www.lg.com/np/sitemap.xml"
     },
     {
       "csv_file": "reports/lg_urls_dz.csv",
       "urls": [],
       "name": "LG Sitemap - dz",
       "id": "grp_lg_dz",
-      "url_count": 2706
+      "url_count": 2706,
+      "sitemap_url": "https://www.lg.com/dz/sitemap.xml"
     }
   ],
   "schedules": [
