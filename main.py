@@ -7,12 +7,13 @@
 
 import asyncio
 import hmac
+import httpx
 import ipaddress
 import logging
 import os
 import socket
 from contextlib import asynccontextmanager
-from typing import List
+from typing import List, Optional
 from urllib.parse import urlparse
 
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
@@ -70,18 +71,39 @@ async def lifespan(app: FastAPI):
     # Chromium 설치는 백그라운드로 — 헬스체크 timeout 방지 (#5)
     asyncio.create_task(_install_chromium_on_startup())
 
-    from scheduler import start_scheduler, shutdown_scheduler
-    try:
-        start_scheduler()
-    except Exception as e:
-        log.exception("scheduler 시작 실패: %s", e)
+    # 프록시 모드(WORKER_URL 설정)에서는 스케줄러를 띄우지 않는다 — 워커가 담당.
+    scheduler_started = False
+    if not _WORKER_URL:
+        try:
+            from scheduler import start_scheduler
+            start_scheduler()
+            scheduler_started = True
+        except Exception as e:
+            log.exception("scheduler 시작 실패: %s", e)
+    else:
+        log.info("WORKER_URL 설정됨 — 로컬 스케줄러 비활성 (워커가 담당)")
+
+    # 워커 모드(WORKER_SECRET + HUB_URL): 허브에서 audit_data를 주기 동기.
+    sync_task = None
+    if _HUB_URL and _WORKER_SECRET and not _WORKER_URL:
+        try:
+            from worker_sync import start_hub_sync
+            sync_task = asyncio.create_task(start_hub_sync(_HUB_URL, _WORKER_SECRET))
+            log.info("Hub sync 시작 — HUB_URL=%s", _HUB_URL)
+        except Exception as e:
+            log.exception("Hub sync 시작 실패: %s", e)
+
     try:
         yield
     finally:
-        try:
-            shutdown_scheduler()
-        except Exception:
-            pass
+        if sync_task:
+            sync_task.cancel()
+        if scheduler_started:
+            try:
+                from scheduler import shutdown_scheduler
+                shutdown_scheduler()
+            except Exception:
+                pass
 
 
 app = FastAPI(title="GEO Audit Tool", version="2.23.0", lifespan=lifespan)
@@ -118,6 +140,51 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
+
+
+# ── 분산 모드 환경변수 ────────────────────────────────────────────────────────
+# WORKER_URL  : Render(프록시)에 설정. 무거운 요청을 위임할 Mac Mini Funnel URL.
+# WORKER_SECRET: 양쪽에 동일 값 설정. 프록시↔워커 통신에 X-Worker-Secret 헤더로 사용.
+# HUB_URL     : Mac Mini(워커)에 설정. audit_data.json을 pull해올 Render URL.
+_WORKER_URL = os.environ.get("WORKER_URL", "").rstrip("/")
+_WORKER_SECRET = os.environ.get("WORKER_SECRET", "")
+_HUB_URL = os.environ.get("HUB_URL", "").rstrip("/")
+_WORKER_TIMEOUT_SEC = float(os.environ.get("WORKER_TIMEOUT_SEC", "180"))
+
+
+async def _proxy_to_worker(
+    path: str,
+    body: Optional[dict] = None,
+    method: str = "POST",
+    params: Optional[dict] = None,
+) -> dict:
+    """WORKER_URL로 요청을 전달하고 JSON 응답을 반환.
+
+    호출자(/analyze 등)가 WORKER_URL 설정 여부를 확인한 뒤 사용.
+    """
+    headers = {"X-Worker-Secret": _WORKER_SECRET} if _WORKER_SECRET else {}
+    url = f"{_WORKER_URL}{path}"
+    async with httpx.AsyncClient(timeout=_WORKER_TIMEOUT_SEC) as client:
+        if method.upper() == "GET":
+            resp = await client.get(url, params=params, headers=headers)
+        else:
+            resp = await client.post(url, json=body, headers=headers)
+        resp.raise_for_status()
+        return resp.json()
+
+
+@app.middleware("http")
+async def worker_auth_middleware(request: Request, call_next):
+    """X-Worker-Secret 헤더가 일치하면 request.state.worker_authorized = True.
+
+    이 표식은 _verify_admin에서 통과 조건으로 활용된다 — Render→Mac Mini 프록시 호출,
+    또는 Mac Mini→Render 동기 호출이 어드민 세션 없이도 통과되도록.
+    """
+    if _WORKER_SECRET:
+        provided = request.headers.get("x-worker-secret", "")
+        if provided and hmac.compare_digest(provided, _WORKER_SECRET):
+            request.state.worker_authorized = True
+    return await call_next(request)
 
 
 @app.middleware("http")
@@ -222,6 +289,18 @@ async def analyze(request: Request, body: AnalyzeRequest):
     if await _is_private_url(url):
         raise HTTPException(status_code=400, detail="내부 네트워크 주소는 분석할 수 없습니다.")
     scope = body.scope if body.scope in VALID_SCOPES else "all"
+
+    # 프록시 모드: 워커(Mac Mini)에 위임
+    if _WORKER_URL:
+        try:
+            return await _proxy_to_worker("/analyze", {"url": url, "scope": scope})
+        except httpx.HTTPStatusError as e:
+            log.warning("worker /analyze HTTP %d: %s", e.response.status_code, e.response.text[:200])
+            raise HTTPException(status_code=502, detail="워커 호출 실패")
+        except Exception as e:
+            log.exception("worker /analyze 연결 실패: %s", e)
+            raise HTTPException(status_code=502, detail="워커 연결 실패")
+
     try:
         result = await analyze_url(url, scope=scope)
         return result
@@ -340,7 +419,10 @@ def _verify_admin(request: Request) -> bool:
 
     하위 호환: ADMIN_PASSWORD 그 자체를 토큰으로 보내도 통과 (기존 클라이언트 호환).
     신규 클라이언트는 /admin/login에서 발급받은 short-lived 토큰을 사용.
+    워커 통신: X-Worker-Secret 헤더가 일치하면 (worker_auth_middleware가 마킹) 통과.
     """
+    if getattr(request.state, "worker_authorized", False):
+        return True
     if not ADMIN_PASSWORD:
         return False
     auth = request.headers.get("authorization", "")
@@ -489,6 +571,16 @@ async def get_agent_logs(request: Request):
     return {"logs": logs}
 
 
+@app.post("/admin/sitemap-sync/run")
+async def run_sitemap_sync_now(request: Request, background_tasks: BackgroundTasks):
+    """매일 자동 실행되는 사이트맵 동기를 지금 1회 수동 실행 (백그라운드)."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from sitemap_sync import run_daily_sync
+    background_tasks.add_task(run_daily_sync)
+    return {"status": "ok", "message": "사이트맵 동기를 백그라운드에서 시작했습니다. 로그창에서 진행상황 확인."}
+
+
 class ParseSitemapRequest(BaseModel):
     sitemap_url: str
 
@@ -565,6 +657,15 @@ async def run_schedule_now(schedule_id: str, request: Request, background_tasks:
     """스케줄을 즉시 1회 실행 (백그라운드)."""
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+
+    # 프록시 모드: 워커가 실제 실행. 백그라운드 task도 워커 쪽에서 시작됨.
+    if _WORKER_URL:
+        try:
+            return await _proxy_to_worker(f"/admin/schedules/{schedule_id}/run", body={})
+        except Exception as e:
+            log.exception("worker schedule run 실패: %s", e)
+            raise HTTPException(status_code=502, detail="워커 호출 실패")
+
     try:
         from scheduler import trigger_now
         # Send to background to avoid timeout
@@ -579,6 +680,17 @@ async def get_schedule_runs(request: Request, schedule_id: str = None, limit: in
     """최근 정기 Audit 실행 결과 조회."""
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+
+    # 프록시 모드: 실행 이력은 워커가 보유 — 워커에서 가져온다.
+    if _WORKER_URL:
+        try:
+            params: dict = {"limit": limit}
+            if schedule_id:
+                params["schedule_id"] = schedule_id
+            return await _proxy_to_worker("/admin/schedules/runs", method="GET", params=params)
+        except Exception as e:
+            log.warning("worker /admin/schedules/runs 실패, 로컬로 fallback: %s", e)
+
     try:
         from scheduler import get_recent_runs
         runs = get_recent_runs(schedule_id=schedule_id, limit=limit)

@@ -205,6 +205,43 @@ def reload_schedules() -> int:
     return count
 
 
+_SITEMAP_SYNC_JOB_ID = "sitemap_sync_daily"
+
+
+def _register_sitemap_sync_job() -> None:
+    """매일 1회 사이트맵 동기 job 등록. SITEMAP_SYNC_CRON env로 시간 조정 가능 (기본 21:00 UTC = 06:00 KST)."""
+    import os
+    if _scheduler is None:
+        return
+    cron_spec = os.environ.get("SITEMAP_SYNC_CRON", "")
+    try:
+        if cron_spec:
+            # 형식: "minute hour" (예: "0 21")
+            parts = cron_spec.split()
+            minute = int(parts[0])
+            hour = int(parts[1])
+        else:
+            minute, hour = 0, 21
+        trigger = CronTrigger(hour=hour, minute=minute)
+    except Exception:
+        trigger = CronTrigger(hour=21, minute=0)
+
+    async def _job():
+        from sitemap_sync import run_daily_sync
+        try:
+            await run_daily_sync()
+        except Exception as e:
+            log.exception("sitemap_sync 실행 실패: %s", e)
+
+    _scheduler.add_job(
+        _job,
+        trigger=trigger,
+        id=_SITEMAP_SYNC_JOB_ID,
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+
 def start_scheduler() -> bool:
     """서버 startup에서 호출. APScheduler 시작 + 스케줄 로드."""
     global _scheduler
@@ -216,7 +253,8 @@ def start_scheduler() -> bool:
     _scheduler = AsyncIOScheduler(timezone="UTC")
     _scheduler.start()
     n = reload_schedules()
-    log.info("scheduler 시작 — 활성 스케줄 %d개", n)
+    _register_sitemap_sync_job()
+    log.info("scheduler 시작 — 활성 스케줄 %d개 + sitemap-sync daily", n)
     return True
 
 

@@ -230,25 +230,40 @@
 
         <!-- Page 3: 정기 Audit 관리 -->
         <div id="page-schedule" class="max-w-5xl mx-auto px-6 py-8 hidden">
-          <div class="flex items-center justify-between mb-6">
+          <!-- ─── 백그라운드 작업 로그 (실시간) ─── -->
+          <div class="card p-4 fade-in mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <h2 class="text-sm font-bold text-slate-700">실시간 작업 로그</h2>
+                <span id="sched-logs-status" class="text-[10px] text-slate-400">대기</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="runSitemapSyncNow()" class="text-xs px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition font-medium">사이트맵 동기 지금 실행</button>
+                <label class="text-[11px] text-slate-500 flex items-center gap-1 cursor-pointer">
+                  <input id="sched-logs-auto" type="checkbox" class="w-3 h-3"> 자동 새로고침
+                </label>
+                <button onclick="fetchScheduleLogs()" class="text-xs text-indigo-500 font-semibold hover:underline">새로고침</button>
+              </div>
+            </div>
+            <div class="bg-slate-900 rounded-lg p-3 h-44 overflow-y-auto">
+              <pre id="sched-logs-container" class="text-[11px] text-green-400 font-mono whitespace-pre-wrap leading-relaxed">로그를 불러오는 중...</pre>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mb-3">
             <h1 class="text-xl font-bold text-slate-800">정기 Audit 관리</h1>
             <div class="flex gap-2">
-              <button onclick="toggleAllSchedules(false)" class="px-3 py-2 bg-slate-100 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-200 transition">전체 끄기</button>
-              <button onclick="toggleAllSchedules(true)" class="px-3 py-2 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-xl hover:bg-indigo-100 transition">전체 켜기</button>
-              <button onclick="openAddScheduleModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition">
+              <button onclick="toggleAllSchedules(false)" class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-200 transition">전체 끄기</button>
+              <button onclick="toggleAllSchedules(true)" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-lg hover:bg-indigo-100 transition">전체 켜기</button>
+              <button onclick="openAddScheduleModal()" class="px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-semibold rounded-lg hover:opacity-90 transition">
                 + 스케줄 추가
               </button>
             </div>
           </div>
-          <div id="schedule-list" class="space-y-4 mb-6"></div>
-          <div class="card p-6 fade-in">
-            <h3 class="text-sm font-bold text-slate-700 mb-3">스케줄 설정 안내</h3>
-            <div class="space-y-2 text-xs text-slate-500">
-              <div class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold mt-0.5">1</span><p>Audit List에서 URL 그룹을 만들고 URL을 등록합니다.</p></div>
-              <div class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold mt-0.5">2</span><p>스케줄을 추가하고 실행 주기와 대상 그룹을 선택합니다.</p></div>
-              <div class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold mt-0.5">3</span><p>지정된 시간에 해당 그룹의 URL이 자동 분석됩니다.</p></div>
-            </div>
-          </div>
+          <div id="schedule-list" class="card divide-y divide-slate-100 overflow-hidden mb-4"></div>
         </div>
 
         <!-- Page: Sitemap Agent -->
@@ -464,7 +479,14 @@ function switchPage(page) {
   document.getElementById('page-ext-guide').classList.toggle('hidden', page !== 'ext-guide');
 
   if (page === 'list') renderGroups();
-  if (page === 'schedule') renderSchedules();
+  if (page === 'schedule') {
+    renderSchedules();
+    fetchScheduleLogs();
+  }
+  if (page !== 'schedule' && window.schedLogInterval) {
+    clearInterval(window.schedLogInterval);
+    window.schedLogInterval = null;
+  }
   if (page === 'sitemap-agent') {
     fetchAgentLogs();
     if (!window.agentLogInterval) {
@@ -1038,49 +1060,43 @@ function renderSchedules() {
   const container = document.getElementById('schedule-list');
   const schedules = auditData.schedules || [];
   if (!schedules.length) {
-    container.innerHTML = `<div class="card p-6 text-center">
-      <div class="text-3xl mb-3 opacity-30">🕐</div>
-      <p class="text-sm text-slate-400 mb-1">등록된 정기 Audit이 없습니다.</p>
-      <p class="text-xs text-slate-300">스케줄을 추가하면 지정된 주기로 자동 분석이 실행됩니다.</p>
+    container.innerHTML = `<div class="p-6 text-center">
+      <p class="text-xs text-slate-400">등록된 정기 Audit이 없습니다. 위의 [+ 스케줄 추가] 버튼으로 등록하세요.</p>
     </div>`;
     return;
   }
   const freqLabel = { daily: '매일', weekly: '매주', monthly: '매월' };
   const groupName = (id) => {
     const g = (auditData.groups || []).find((_, i) => String(i) === String(id));
-    return g ? g.name : '(삭제된 그룹)';
+    return g ? g.name : '(삭제됨)';
   };
 
   container.innerHTML = schedules.map((s, i) => {
     const sid = s.id || '';
+    const enabled = s.enabled !== false;
+    const freq = freqLabel[s.freq || s.frequency] || s.freq || s.frequency || '-';
     return `
-    <div class="card p-5 fade-in" data-sched-id="${escHtml(sid)}">
-      <div class="flex items-center gap-4">
-        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
-          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-semibold text-slate-700">${escHtml(s.name)}</p>
-          <p class="text-xs text-slate-400">${freqLabel[s.freq || s.frequency] || s.freq || s.frequency} ${s.time} · <span class="font-medium text-indigo-500">${escHtml(groupName(s.groupIdx))}</span></p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="runScheduleNow('${escHtml(sid)}')"
-            class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium"
-            ${sid ? '' : 'disabled title="ID 부여 후 실행 가능 (한 번 새로고침)"'}>지금 실행</button>
-          <button onclick="loadScheduleRuns('${escHtml(sid)}')"
-            class="text-xs px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition font-medium"
-            ${sid ? '' : 'disabled'}>실행 이력</button>
-          <button onclick="toggleSchedule(${i})" class="flex-shrink-0">
-            <div class="toggle-track w-9 h-5 rounded-full ${s.enabled !== false ? 'bg-indigo-500' : 'bg-slate-200'} relative">
-              <div class="toggle-thumb w-4 h-4 bg-white rounded-full absolute top-0.5 shadow ${s.enabled !== false ? 'transform translate-x-4' : 'translate-x-0.5'}"></div>
-            </div>
-          </button>
-          <button onclick="removeSchedule(${i})" class="text-slate-300 hover:text-red-400 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-        </div>
+    <div class="hover:bg-slate-50 transition" data-sched-id="${escHtml(sid)}">
+      <div class="flex items-center gap-3 px-4 py-2">
+        <button onclick="toggleSchedule(${i})" class="flex-shrink-0" title="${enabled ? '활성' : '비활성'}">
+          <div class="w-8 h-4 rounded-full ${enabled ? 'bg-indigo-500' : 'bg-slate-200'} relative">
+            <div class="w-3 h-3 bg-white rounded-full absolute top-0.5 shadow ${enabled ? 'translate-x-4' : 'translate-x-0.5'}"></div>
+          </div>
+        </button>
+        <p class="text-sm font-medium text-slate-700 truncate flex-1 min-w-0">${escHtml(s.name)}</p>
+        <span class="text-[11px] text-slate-400 w-28 flex-shrink-0">${freq} ${s.time || ''}</span>
+        <span class="text-[11px] text-indigo-600 font-medium truncate w-40 flex-shrink-0" title="${escHtml(groupName(s.groupIdx))}">${escHtml(groupName(s.groupIdx))}</span>
+        <button onclick="runScheduleNow('${escHtml(sid)}')"
+          class="text-[11px] px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition font-medium flex-shrink-0"
+          ${sid ? '' : 'disabled'}>실행</button>
+        <button onclick="loadScheduleRuns('${escHtml(sid)}')"
+          class="text-[11px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded hover:bg-slate-200 transition font-medium flex-shrink-0"
+          ${sid ? '' : 'disabled'}>이력</button>
+        <button onclick="removeSchedule(${i})" class="text-slate-300 hover:text-red-400 transition flex-shrink-0" title="삭제">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
       </div>
-      <div id="runs-${escHtml(sid)}" class="mt-3 hidden border-t border-slate-100 pt-3"></div>
+      <div id="runs-${escHtml(sid)}" class="hidden bg-slate-50 px-4 py-2 border-t border-slate-100"></div>
     </div>`;
   }).join('');
 }
@@ -1249,6 +1265,60 @@ async function runSitemapAgent() {
   }
 }
 
+async function fetchScheduleLogs() {
+  if (currentPage !== 'schedule') return;
+  const statusEl = document.getElementById('sched-logs-status');
+  try {
+    const res = await fetch('/admin/agent-logs', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      if (statusEl) statusEl.textContent = '오류';
+      return;
+    }
+    const data = await res.json();
+    const container = document.getElementById('sched-logs-container');
+    if (container) {
+      container.textContent = (data.logs && data.logs.length)
+        ? data.logs.join('\n')
+        : '로그 없음.';
+      container.scrollTop = container.scrollHeight;
+    }
+    if (statusEl) statusEl.textContent = '최근 ' + new Date().toLocaleTimeString('ko-KR');
+  } catch (e) {
+    if (statusEl) statusEl.textContent = '네트워크 오류';
+  }
+}
+
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.id === 'sched-logs-auto') {
+    if (e.target.checked) {
+      fetchScheduleLogs();
+      if (!window.schedLogInterval) {
+        window.schedLogInterval = setInterval(fetchScheduleLogs, 5000);
+      }
+    } else if (window.schedLogInterval) {
+      clearInterval(window.schedLogInterval);
+      window.schedLogInterval = null;
+    }
+  }
+});
+
+async function runSitemapSyncNow() {
+  showToast('사이트맵 동기를 시작합니다...');
+  try {
+    const res = await fetch('/admin/sitemap-sync/run', {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!res.ok) { const d = await res.json().catch(() => ({})); showToast('실패: ' + (d.detail || res.status)); return; }
+    const data = await res.json();
+    showToast(data.message || '백그라운드에서 시작됨');
+    setTimeout(fetchScheduleLogs, 1500);
+  } catch (e) {
+    showToast('네트워크 오류: ' + e.message);
+  }
+}
+
 async function fetchAgentLogs() {
   if (currentPage !== 'sitemap-agent') return;
   try {
@@ -1341,7 +1411,7 @@ async function confirmAddSitemapGroup() {
     }
     const data = await res.json();
     const urls = data.urls.map(u => ({ url: u, lastScore: null, lastRun: null }));
-    auditData.groups.push({ name, urls });
+    auditData.groups.push({ name, urls, sitemap_url: sitemapUrl });
     await saveAuditData(); renderGroups();
     document.getElementById('sitemap-group-modal').classList.add('hidden');
     showToast(`"${name}" 그룹에 ${urls.length}개의 URL이 추가되었습니다.`);
