@@ -605,6 +605,20 @@ async def run_sitemap_agent(request: Request, body: SitemapAgentRequest, backgro
 async def get_agent_logs(request: Request):
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+
+    # AUDIT_DATA_PEER_URL 설정 시 워커(Mac Mini)의 로그를 가져온다 — sitemap-sync 진행상황 확인용
+    if _AUDIT_DATA_PEER_URL and _WORKER_SECRET:
+        try:
+            async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
+                resp = await client.get(
+                    f"{_AUDIT_DATA_PEER_URL}/admin/agent-logs",
+                    headers={"X-Worker-Secret": _WORKER_SECRET},
+                )
+                resp.raise_for_status()
+                return resp.json()
+        except Exception as e:
+            log.warning("agent-logs peer proxy 실패, 로컬 fallback: %s", e)
+
     import db
     logs = db.get_recent_system_logs(100)
     return {"logs": logs}
@@ -612,9 +626,27 @@ async def get_agent_logs(request: Request):
 
 @app.post("/admin/sitemap-sync/run")
 async def run_sitemap_sync_now(request: Request, background_tasks: BackgroundTasks):
-    """매일 자동 실행되는 사이트맵 동기를 지금 1회 수동 실행 (백그라운드)."""
+    """매일 자동 실행되는 사이트맵 동기를 지금 1회 수동 실행 (백그라운드).
+
+    AUDIT_DATA_PEER_URL 설정돼 있으면 워커(Mac Mini)에 위임 — Render IP는 Akamai에서
+    /XX/sitemap.xml이 403나는 경우가 있어 Mac Mini가 처리해야 안전.
+    """
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+
+    if _AUDIT_DATA_PEER_URL and _WORKER_SECRET:
+        try:
+            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
+                resp = await client.post(
+                    f"{_AUDIT_DATA_PEER_URL}/admin/sitemap-sync/run",
+                    headers={"X-Worker-Secret": _WORKER_SECRET},
+                )
+                resp.raise_for_status()
+                return resp.json()
+        except Exception as e:
+            log.exception("sitemap-sync peer proxy 실패: %s", e)
+            raise HTTPException(status_code=502, detail=f"워커 호출 실패: {e}")
+
     from sitemap_sync import run_daily_sync
     background_tasks.add_task(run_daily_sync)
     return {"status": "ok", "message": "사이트맵 동기를 백그라운드에서 시작했습니다. 로그창에서 진행상황 확인."}
