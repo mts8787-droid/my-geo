@@ -209,9 +209,16 @@ _SITEMAP_SYNC_JOB_ID = "sitemap_sync_daily"
 
 
 def _register_sitemap_sync_job() -> None:
-    """매일 1회 사이트맵 동기 job 등록. SITEMAP_SYNC_CRON env로 시간 조정 가능 (기본 21:00 UTC = 06:00 KST)."""
+    """매일 1회 사이트맵 동기 job 등록.
+
+    - SITEMAP_SYNC_ENABLED=false 면 등록 skip (Mac Mini와 Render에서 중복 실행 방지용)
+    - SITEMAP_SYNC_CRON env로 시간 조정 가능 (기본 21:00 UTC = 06:00 KST)
+    """
     import os
     if _scheduler is None:
+        return
+    if os.environ.get("SITEMAP_SYNC_ENABLED", "true").lower() in ("false", "0", "no"):
+        log.info("SITEMAP_SYNC_ENABLED=false — 사이트맵 sync job 미등록")
         return
     cron_spec = os.environ.get("SITEMAP_SYNC_CRON", "")
     try:
