@@ -179,6 +179,9 @@
           <div class="flex items-center justify-between mb-6">
             <h1 class="text-xl font-bold text-slate-800">Audit List 관리</h1>
             <div class="flex gap-2">
+              <button onclick="runSitemapSyncNow()" class="px-3 py-2 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-xl hover:bg-emerald-100 transition" title="등록된 그룹의 사이트맵에서 신규/삭제 URL 감지 + Ollama 요약 (매일 자동 실행). 결과는 정기 Audit 관리 페이지의 로그 패널에서 확인.">
+                사이트맵 최신성 동기
+              </button>
               <button onclick="openSitemapGroupModal()" class="px-4 py-2 bg-slate-100 text-slate-600 text-sm font-semibold rounded-xl hover:bg-slate-200 transition">
                 사이트맵으로 URL 추가
               </button>
@@ -241,7 +244,6 @@
                 <span id="sched-logs-status" class="text-[10px] text-slate-400">대기</span>
               </div>
               <div class="flex items-center gap-2">
-                <button onclick="runSitemapSyncNow()" class="text-xs px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition font-medium">사이트맵 동기 지금 실행</button>
                 <label class="text-[11px] text-slate-500 flex items-center gap-1 cursor-pointer">
                   <input id="sched-logs-auto" type="checkbox" class="w-3 h-3"> 자동 새로고침
                 </label>
