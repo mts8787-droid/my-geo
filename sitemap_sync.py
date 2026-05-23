@@ -24,6 +24,10 @@ log = logging.getLogger("geo_audit.sitemap_sync")
 # 그룹 간 사이트맵 fetch 간격 (Akamai bulk 패턴 회피)
 _INTER_GROUP_DELAY_SEC = float(os.environ.get("SITEMAP_SYNC_INTER_GROUP_DELAY", "0"))
 
+# 1회 실행당 처리할 그룹 수 — 나머지는 다음 실행으로 미룬다 (자연 순환)
+# 0 또는 음수면 전체 처리. 기본 5 → 61개 그룹이면 ~13일 주기로 1회 갱신
+_BATCH_SIZE = int(os.environ.get("SITEMAP_SYNC_BATCH_SIZE", "5"))
+
 # Ollama 요약 프롬프트
 _SYS_PROMPT = (
     "너는 LG 웹사이트의 사이트맵 변경을 모니터링하는 분석가다. "
@@ -66,6 +70,7 @@ async def sync_group(group: dict) -> Dict[str, int]:
         latest = await parse_sitemap(sitemap_url)
     except Exception as e:
         db.add_system_log(f"[sitemap-sync] {name}: 사이트맵 파싱 실패 — {e}")
+        group["last_synced_at"] = datetime.utcnow().isoformat()  # 에러도 시각 기록 — 다음 사이클로 밀려서 다른 그룹 차례 옴
         return {"error": 1, "added": 0, "removed": 0}
 
     raw_urls = group.get("urls") or []
@@ -77,6 +82,7 @@ async def sync_group(group: dict) -> Dict[str, int]:
     removed = sorted(current_set - latest_set)
 
     if not added and not removed:
+        group["last_synced_at"] = datetime.utcnow().isoformat()
         return {"unchanged": 1, "added": 0, "removed": 0}
 
     # 사이트맵을 source of truth로 갱신. 기존 데이터 포맷(문자열 vs 객체)을 보존한다.
@@ -86,6 +92,7 @@ async def sync_group(group: dict) -> Dict[str, int]:
     else:
         group["urls"] = new_urls
     group["url_count"] = len(new_urls)
+    group["last_synced_at"] = datetime.utcnow().isoformat()
 
     summary = await _summarize_change(name, added, removed)
     db.add_system_log(f"[sitemap-sync] {name}: {summary}")
@@ -99,13 +106,24 @@ async def run_daily_sync() -> dict:
     groups = data.get("groups") or []
 
     total = {"groups_total": len(groups), "groups_synced": 0, "added": 0, "removed": 0, "skipped": 0, "errors": 0}
-    sync_targets = [g for g in groups if g.get("sitemap_url")]
+    candidates = [g for g in groups if g.get("sitemap_url")]
 
-    if not sync_targets:
+    if not candidates:
         db.add_system_log("[sitemap-sync] 동기 대상 그룹 없음 (sitemap_url 등록된 그룹 없음)")
         return {**total, "started_at": started, "finished_at": datetime.utcnow().isoformat()}
 
-    db.add_system_log(f"[sitemap-sync] 시작 — {len(sync_targets)}개 그룹")
+    # 가장 오래된 sync부터 BATCH_SIZE만큼만 — 자연 순환으로 Akamai bulk 회피
+    # 빈 last_synced_at은 빈 문자열로 처리돼 가장 오래된 것으로 정렬됨 (한 번도 sync 안 한 그룹 우선)
+    candidates.sort(key=lambda g: g.get("last_synced_at") or "")
+    if _BATCH_SIZE > 0 and len(candidates) > _BATCH_SIZE:
+        sync_targets = candidates[:_BATCH_SIZE]
+        db.add_system_log(
+            f"[sitemap-sync] 시작 — 후보 {len(candidates)}개 중 가장 오래된 {len(sync_targets)}개 처리 "
+            f"(BATCH_SIZE={_BATCH_SIZE})"
+        )
+    else:
+        sync_targets = candidates
+        db.add_system_log(f"[sitemap-sync] 시작 — {len(sync_targets)}개 그룹 (전체 처리)")
 
     for idx, group in enumerate(sync_targets):
         try:
