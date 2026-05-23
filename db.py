@@ -119,13 +119,13 @@ def save_schedule_run(run: dict):
                     )
                 """, (schedule_id, schedule_id))
             
-            # 용량 관리: system_logs도 최신 1000개만 유지
+            # 용량 관리: system_logs는 최신 10000개 유지 (per-URL 로그가 많아져서 1000→10000 상향)
             cursor.execute("""
                 DELETE FROM system_logs
                 WHERE id NOT IN (
                     SELECT id FROM system_logs
                     ORDER BY id DESC
-                    LIMIT 1000
+                    LIMIT 10000
                 )
             """)
             conn.commit()

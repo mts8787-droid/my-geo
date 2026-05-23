@@ -56,9 +56,12 @@ def _cron_trigger_for_schedule(sch: dict):
     """schedule dict → CronTrigger.
 
     frequency:
-      - daily   → 매일 HH:MM
-      - weekly  → 매주 월요일 HH:MM
-      - monthly → 매월 1일 HH:MM
+      - daily         → 매일 HH:MM
+      - weekly        → 매주 월요일 HH:MM
+      - monthly       → 매월 1일 HH:MM
+      - hourly        → 매 시 정각 (HH:00)
+      - every_30_min  → 매 30분 (HH:00, HH:30) — time 무시
+      - every_15_min  → 매 15분 (HH:00, HH:15, HH:30, HH:45)
     """
     freq = (sch.get("frequency") or "daily").lower()
     time_str = sch.get("time") or "09:00"
@@ -67,6 +70,12 @@ def _cron_trigger_for_schedule(sch: dict):
     except Exception:
         hour, minute = 9, 0
 
+    if freq == "every_15_min" or freq == "15min":
+        return CronTrigger(minute="0,15,30,45")
+    if freq == "every_30_min" or freq == "30min":
+        return CronTrigger(minute="0,30")
+    if freq == "hourly":
+        return CronTrigger(minute="0")
     if freq == "weekly":
         return CronTrigger(day_of_week="mon", hour=hour, minute=minute)
     if freq == "monthly":
@@ -133,36 +142,37 @@ async def _run_schedule(schedule_id: str, force: bool = False):
         db.add_system_log(f"[audit] {sch.get('name')} ({group_name}): 그룹에 URL 없음 — skip")
         return
 
-    chunk_info = f" chunk {chunk_index+1} (size {chunk_size})" if chunk_size > 0 else ""
-    db.add_system_log(f"[audit] {sch.get('name')} ({group_name}): 시작 — URL {len(urls)}개{chunk_info}")
-
     sem = asyncio.Semaphore(5)
+    sch_label = sch.get("name", schedule_id)
 
     async def _run_one(url: str) -> dict:
         async with sem:
+            db.add_system_log(f"[audit] {sch_label}: 처리 중 {url}")
             try:
                 result = await analyze_url(url, lightweight=True)
                 score = (result.get("score") or {})
-                return {
-                    "url":   url,
-                    "score": score.get("total"),
-                    "grade": score.get("grade"),
-                }
+                total = score.get("total")
+                grade = score.get("grade")
+                db.add_system_log(f"[audit] {sch_label}: {url} → total={total} ({grade})")
+                # analyze_url의 전체 결과를 그대로 보존 (49 항목 breakdown 포함)
+                return {"url": url, "result": result}
             except Exception as e:
-                return {"url": url, "error": f"{type(e).__name__}: {str(e)[:120]}"}
+                err = f"{type(e).__name__}: {str(e)[:200]}"
+                db.add_system_log(f"[audit] {sch_label}: {url} → ERROR {err}")
+                return {"url": url, "error": err}
 
     results = await asyncio.gather(*(_run_one(u) for u in urls), return_exceptions=False)
-    success_count = sum(1 for r in results if "error" not in r and r.get("score") is not None)
-    run["summary"]       = results
+    success_count = sum(
+        1 for r in results
+        if "error" not in r and (r.get("result", {}).get("score") or {}).get("total") is not None
+    )
+    run["summary"]       = results  # 풀 결과 — 49항목 breakdown 포함
     run["success_count"] = success_count
     run["status"]        = "ok" if success_count == len(urls) else ("partial" if success_count else "error")
     run["finished_at"]   = datetime.now(timezone.utc).isoformat()
 
-    # 결과 저장 — DB에 저장
+    # 결과 저장 — DB에 저장 (chunk-level 시작/완료 로그는 더 이상 안 찍음 — per-URL 로그가 대신)
     db.save_schedule_run(run)
-    db.add_system_log(
-        f"[audit] {sch.get('name')} ({group_name}): 완료 — {success_count}/{len(urls)} 성공, status={run['status']}"
-    )
 
     # Update schedule chunk_index if chunking is used
     fresh = audit_store.load()
