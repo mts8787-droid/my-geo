@@ -89,6 +89,13 @@
             </svg>
             <span class="nav-label">정기 Audit 관리</span>
           </button>
+          <button onclick="switchPage('logs')" id="nav-logs"
+            class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
+            <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6m-6 0H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4"/>
+            </svg>
+            <span class="nav-label">실시간 로그 모니터링</span>
+          </button>
           <button onclick="switchPage('sitemap-agent')" id="nav-sitemap-agent"
             class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
             <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,28 +240,6 @@
 
         <!-- Page 3: 정기 Audit 관리 -->
         <div id="page-schedule" class="max-w-5xl mx-auto px-6 py-8 hidden">
-          <!-- ─── 백그라운드 작업 로그 (실시간) ─── -->
-          <div class="card p-4 fade-in mb-4">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center">
-                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                </div>
-                <h2 class="text-sm font-bold text-slate-700">실시간 작업 로그</h2>
-                <span id="sched-logs-status" class="text-[10px] text-slate-400">대기</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <label class="text-[11px] text-slate-500 flex items-center gap-1 cursor-pointer">
-                  <input id="sched-logs-auto" type="checkbox" class="w-3 h-3"> 자동 새로고침
-                </label>
-                <button onclick="fetchScheduleLogs()" class="text-xs text-indigo-500 font-semibold hover:underline">새로고침</button>
-              </div>
-            </div>
-            <div class="bg-slate-900 rounded-lg p-3 h-44 overflow-y-auto">
-              <pre id="sched-logs-container" class="text-[11px] text-green-400 font-mono whitespace-pre-wrap leading-relaxed">로그를 불러오는 중...</pre>
-            </div>
-          </div>
-
           <div class="flex items-center justify-between mb-3">
             <h1 class="text-xl font-bold text-slate-800">정기 Audit 관리</h1>
             <div class="flex gap-2">
@@ -266,6 +251,59 @@
             </div>
           </div>
           <div id="schedule-list" class="card divide-y divide-slate-100 overflow-hidden mb-4"></div>
+        </div>
+
+        <!-- Page: 실시간 로그 모니터링 -->
+        <div id="page-logs" class="max-w-6xl mx-auto px-6 py-8 hidden">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h1 class="text-xl font-bold text-slate-800">실시간 로그 모니터링</h1>
+              <p class="text-xs text-slate-400 mt-1">두 작업이 동시에 돌 수 있어 별도 패널로 표시. <span class="text-slate-500">사이트맵 로그는 Mac Mini 워커에서 가져옴.</span></p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="logs-status" class="text-[11px] text-slate-400">대기</span>
+              <label class="text-[11px] text-slate-500 flex items-center gap-1 cursor-pointer">
+                <input id="logs-auto" type="checkbox" class="w-3 h-3" checked> 자동 새로고침 (5초)
+              </label>
+              <button onclick="fetchAllLogs()" class="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium">지금 새로고침</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Audit 로그 -->
+            <div class="card p-4 fade-in">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                  </div>
+                  <h2 class="text-sm font-bold text-slate-700">정기 Audit 로그</h2>
+                  <span class="text-[10px] text-slate-400">[audit]</span>
+                </div>
+                <span id="audit-logs-count" class="text-[10px] text-slate-400">-</span>
+              </div>
+              <div class="bg-slate-900 rounded-lg p-3 h-[480px] overflow-y-auto">
+                <pre id="audit-logs-container" class="text-[11px] text-indigo-300 font-mono whitespace-pre-wrap leading-relaxed">로그를 불러오는 중...</pre>
+              </div>
+            </div>
+
+            <!-- Sitemap 로그 -->
+            <div class="card p-4 fade-in">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </div>
+                  <h2 class="text-sm font-bold text-slate-700">사이트맵 동기 로그</h2>
+                  <span class="text-[10px] text-slate-400">[sitemap-sync] (Mac Mini)</span>
+                </div>
+                <span id="sitemap-logs-count" class="text-[10px] text-slate-400">-</span>
+              </div>
+              <div class="bg-slate-900 rounded-lg p-3 h-[480px] overflow-y-auto">
+                <pre id="sitemap-logs-container" class="text-[11px] text-green-300 font-mono whitespace-pre-wrap leading-relaxed">로그를 불러오는 중...</pre>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Page: Sitemap Agent -->
@@ -475,19 +513,23 @@ function switchPage(page) {
   document.getElementById('page-criteria').classList.toggle('hidden', page !== 'criteria');
   document.getElementById('page-list').classList.toggle('hidden', page !== 'list');
   document.getElementById('page-schedule').classList.toggle('hidden', page !== 'schedule');
+  document.getElementById('page-logs').classList.toggle('hidden', page !== 'logs');
   document.getElementById('page-sitemap-agent').classList.toggle('hidden', page !== 'sitemap-agent');
   document.getElementById('page-doc').classList.toggle('hidden', page !== 'doc');
   document.getElementById('page-deck').classList.toggle('hidden', page !== 'deck');
   document.getElementById('page-ext-guide').classList.toggle('hidden', page !== 'ext-guide');
 
   if (page === 'list') renderGroups();
-  if (page === 'schedule') {
-    renderSchedules();
-    fetchScheduleLogs();
+  if (page === 'schedule') renderSchedules();
+  if (page === 'logs') {
+    fetchAllLogs();
+    if (!window.allLogsInterval && document.getElementById('logs-auto')?.checked) {
+      window.allLogsInterval = setInterval(fetchAllLogs, 5000);
+    }
   }
-  if (page !== 'schedule' && window.schedLogInterval) {
-    clearInterval(window.schedLogInterval);
-    window.schedLogInterval = null;
+  if (page !== 'logs' && window.allLogsInterval) {
+    clearInterval(window.allLogsInterval);
+    window.allLogsInterval = null;
   }
   if (page === 'sitemap-agent') {
     fetchAgentLogs();
@@ -1267,9 +1309,9 @@ async function runSitemapAgent() {
   }
 }
 
-async function fetchScheduleLogs() {
-  if (currentPage !== 'schedule') return;
-  const statusEl = document.getElementById('sched-logs-status');
+async function fetchAllLogs() {
+  if (currentPage !== 'logs') return;
+  const statusEl = document.getElementById('logs-status');
   try {
     const res = await fetch('/admin/agent-logs', {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -1279,13 +1321,28 @@ async function fetchScheduleLogs() {
       return;
     }
     const data = await res.json();
-    const container = document.getElementById('sched-logs-container');
-    if (container) {
-      container.textContent = (data.logs && data.logs.length)
-        ? data.logs.join('\n')
-        : '로그 없음.';
-      container.scrollTop = container.scrollHeight;
+    const all = data.logs || [];
+
+    // 태그별로 필터: [audit] vs [sitemap-...]
+    const auditLogs = all.filter(l => /\]\s*\[audit/.test(l));
+    const sitemapLogs = all.filter(l => /\]\s*\[sitemap-/.test(l));
+
+    const auditEl = document.getElementById('audit-logs-container');
+    const sitemapEl = document.getElementById('sitemap-logs-container');
+    if (auditEl) {
+      auditEl.textContent = auditLogs.length ? auditLogs.join('\n') : '아직 audit 로그가 없습니다.';
+      auditEl.scrollTop = auditEl.scrollHeight;
     }
+    if (sitemapEl) {
+      sitemapEl.textContent = sitemapLogs.length ? sitemapLogs.join('\n') : '아직 sitemap 로그가 없습니다.';
+      sitemapEl.scrollTop = sitemapEl.scrollHeight;
+    }
+
+    const auditCount = document.getElementById('audit-logs-count');
+    const sitemapCount = document.getElementById('sitemap-logs-count');
+    if (auditCount) auditCount.textContent = `${auditLogs.length}건`;
+    if (sitemapCount) sitemapCount.textContent = `${sitemapLogs.length}건`;
+
     if (statusEl) statusEl.textContent = '최근 ' + new Date().toLocaleTimeString('ko-KR');
   } catch (e) {
     if (statusEl) statusEl.textContent = '네트워크 오류';
@@ -1293,15 +1350,15 @@ async function fetchScheduleLogs() {
 }
 
 document.addEventListener('change', (e) => {
-  if (e.target && e.target.id === 'sched-logs-auto') {
+  if (e.target && e.target.id === 'logs-auto') {
     if (e.target.checked) {
-      fetchScheduleLogs();
-      if (!window.schedLogInterval) {
-        window.schedLogInterval = setInterval(fetchScheduleLogs, 5000);
+      fetchAllLogs();
+      if (!window.allLogsInterval) {
+        window.allLogsInterval = setInterval(fetchAllLogs, 5000);
       }
-    } else if (window.schedLogInterval) {
-      clearInterval(window.schedLogInterval);
-      window.schedLogInterval = null;
+    } else if (window.allLogsInterval) {
+      clearInterval(window.allLogsInterval);
+      window.allLogsInterval = null;
     }
   }
 });

@@ -124,12 +124,17 @@ async def _run_schedule(schedule_id: str, force: bool = False):
         "error":         None,
     }
 
+    group_name = (group or {}).get("name", "?")
     if not urls:
         run["status"] = "error"
         run["error"]  = "그룹에 URL 없음"
         run["finished_at"] = datetime.now(timezone.utc).isoformat()
         db.save_schedule_run(run)
+        db.add_system_log(f"[audit] {sch.get('name')} ({group_name}): 그룹에 URL 없음 — skip")
         return
+
+    chunk_info = f" chunk {chunk_index+1} (size {chunk_size})" if chunk_size > 0 else ""
+    db.add_system_log(f"[audit] {sch.get('name')} ({group_name}): 시작 — URL {len(urls)}개{chunk_info}")
 
     sem = asyncio.Semaphore(5)
 
@@ -155,6 +160,9 @@ async def _run_schedule(schedule_id: str, force: bool = False):
 
     # 결과 저장 — DB에 저장
     db.save_schedule_run(run)
+    db.add_system_log(
+        f"[audit] {sch.get('name')} ({group_name}): 완료 — {success_count}/{len(urls)} 성공, status={run['status']}"
+    )
 
     # Update schedule chunk_index if chunking is used
     fresh = audit_store.load()

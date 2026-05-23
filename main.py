@@ -603,10 +603,18 @@ async def run_sitemap_agent(request: Request, body: SitemapAgentRequest, backgro
 
 @app.get("/admin/agent-logs")
 async def get_agent_logs(request: Request):
+    """로컬 시스템 로그 + (있으면) peer 워커 로그 병합 반환.
+
+    Audit는 보통 Render에서 실행돼 Render db에 [audit] 로그가 쌓이고,
+    Sitemap sync는 Mac Mini(워커)에서 실행돼 Mac Mini db에 [sitemap-sync] 로그가
+    쌓인다. AUDIT_DATA_PEER_URL이 설정된 인스턴스(Render)는 양쪽을 합쳐서 반환.
+    """
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
 
-    # AUDIT_DATA_PEER_URL 설정 시 워커(Mac Mini)의 로그를 가져온다 — sitemap-sync 진행상황 확인용
+    import db
+    local_logs = db.get_recent_system_logs(100)
+
     if _AUDIT_DATA_PEER_URL and _WORKER_SECRET:
         try:
             async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
@@ -615,13 +623,14 @@ async def get_agent_logs(request: Request):
                     headers={"X-Worker-Secret": _WORKER_SECRET},
                 )
                 resp.raise_for_status()
-                return resp.json()
+                peer_logs = resp.json().get("logs", [])
+                # 중복 제거 + timestamp 기반 정렬 (로그 앞부분이 [YYYY-MM-DD HH:MM:SS]라 lexicographic 정렬 == 시간순)
+                merged = sorted(set(local_logs) | set(peer_logs))
+                return {"logs": merged[-200:]}  # 너무 많아지지 않게 최근 200건만
         except Exception as e:
-            log.warning("agent-logs peer proxy 실패, 로컬 fallback: %s", e)
+            log.warning("agent-logs peer fetch 실패, local만 반환: %s", e)
 
-    import db
-    logs = db.get_recent_system_logs(100)
-    return {"logs": logs}
+    return {"logs": local_logs}
 
 
 @app.post("/admin/sitemap-sync/run")
