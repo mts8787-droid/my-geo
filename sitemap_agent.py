@@ -64,7 +64,16 @@ async def parse_sitemap(sitemap_url: str, max_depth: int = SITEMAP_MAX_DEPTH) ->
     all_urls: set = set()
 
     parse_concurrency = max(1, int(os.environ.get("SITEMAP_PARSE_CONCURRENCY", 10)))
-    async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+    # Akamai 화이트리스트는 운영 UA(MyGEOAudit/1.0)에 등록 — analyzer와 동일 UA 사용해서 403 회피
+    ua = os.environ.get(
+        "AUDIT_USER_AGENT",
+        "MyGEOAudit/1.0 (Audit agent operated by D2C Digital Marketing Team, LG Electronics)",
+    )
+    async with httpx.AsyncClient(
+        timeout=30.0,
+        follow_redirects=True,
+        headers={"User-Agent": ua},
+    ) as client:
         sem = asyncio.Semaphore(parse_concurrency)
 
         async def _walk(url: str, depth: int):
