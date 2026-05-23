@@ -7,6 +7,7 @@ runs는 로컬(Mac Mini의 audit.db)에 그대로 유지한다.
 import asyncio
 import json
 import logging
+import os
 
 import httpx
 
@@ -15,7 +16,9 @@ from scheduler import reload_schedules
 
 log = logging.getLogger("geo_audit.worker_sync")
 
-SYNC_INTERVAL_SEC = 60
+# 허브(Render) 폴링 주기. 기본 12시간 — 스케줄 변경이 잦지 않다는 가정.
+# 더 빠른 반영이 필요하면 HUB_SYNC_INTERVAL_SEC 환경변수로 조정.
+SYNC_INTERVAL_SEC = int(os.environ.get("HUB_SYNC_INTERVAL_SEC", 12 * 3600))
 
 
 async def start_hub_sync(hub_url: str, secret: str) -> None:
