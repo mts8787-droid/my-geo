@@ -1,5 +1,5 @@
 {
-  "_comment": "LG.com 페이지 타입 정의. detection 우선순위: meta_template → body_class → url_pattern. 첫 매칭 타입이 결정. expected/recommended_schemas는 차후 schema_for_page_type 룰에서 사용.",
+  "_comment": "LG.com 페이지 타입 정의. 우선순위: meta_template → body_class → url_pattern. 첫 매칭 타입이 결정. 순서가 중요 — 특정도 높은 순으로 배치.",
   "page_types": [
     {
       "id": "home",
@@ -23,15 +23,72 @@
       "recommended_schemas": ["Offer", "AggregateRating", "Review"]
     },
     {
+      "id": "plp",
+      "label": "제품 카테고리 (PLP)",
+      "detection": {
+        "meta_template": ["plp-page", "category-page", "product-listing-page"],
+        "body_class":    ["plppage", "categorypage", "productlistingpage"]
+      },
+      "expected_schemas":    ["ItemList", "BreadcrumbList"],
+      "recommended_schemas": ["CollectionPage"]
+    },
+    {
       "id": "support",
       "label": "지원/Support",
       "detection": {
         "meta_template": ["support-page-template", "support-page"],
         "body_class":    ["support"],
-        "url_pattern":   ["/support/"]
+        "url_pattern":   ["/[a-z]{2}/support(/|$)"]
       },
       "expected_schemas":    ["BreadcrumbList"],
-      "recommended_schemas": []
+      "recommended_schemas": ["FAQPage"]
+    },
+    {
+      "id": "business",
+      "label": "B2B (사업자)",
+      "detection": {
+        "url_pattern": ["/[a-z]{2}/business(/|$)"]
+      },
+      "expected_schemas":    ["Product", "BreadcrumbList"],
+      "recommended_schemas": ["Offer"]
+    },
+    {
+      "id": "content",
+      "label": "콘텐츠/매거진",
+      "detection": {
+        "url_pattern": [
+          "/[a-z]{2}/lg-experience(/|$)",
+          "/[a-z]{2}/magazine(/|$)",
+          "/[a-z]{2}/lifesgood(/|$)",
+          "/[a-z]{2}/monthly-lg(/|$)"
+        ]
+      },
+      "expected_schemas":    ["Article"],
+      "recommended_schemas": ["BreadcrumbList", "Author"]
+    },
+    {
+      "id": "promotion",
+      "label": "프로모션/약관",
+      "detection": {
+        "url_pattern": [
+          "/[a-z]{2}/promotion(/|$)",
+          "/[a-z]{2}/tncs(/|$)"
+        ]
+      },
+      "expected_schemas":    ["WebPage"],
+      "recommended_schemas": ["BreadcrumbList"]
+    },
+    {
+      "id": "about",
+      "label": "회사/About",
+      "detection": {
+        "url_pattern": [
+          "/[a-z]{2}/about-lg(/|$)",
+          "/[a-z]{2}/about(/|$)"
+        ]
+      },
+      "expected_schemas":    ["Organization", "AboutPage"],
+      "recommended_schemas": ["BreadcrumbList"]
     },
     {
       "id": "newsroom",
@@ -39,7 +96,7 @@
       "detection": {
         "meta_template": ["newsroom-page", "press-page"],
         "body_class":    ["newsroom", "presspage"],
-        "url_pattern":   ["/newsroom/", "/press-media/", "/press-release/"]
+        "url_pattern":   ["/newsroom(/|$)", "/press-media(/|$)", "/press-release(/|$)"]
       },
       "expected_schemas":    ["NewsArticle", "Organization"],
       "recommended_schemas": ["BreadcrumbList"]
