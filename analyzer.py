@@ -93,10 +93,27 @@ def _normalize_url(url: str) -> tuple[str, str]:
 
 
 def _safe_visible_text(soup: BeautifulSoup) -> int:
-    """soup를 변조하지 않고 보이는 텍스트 글자수를 계산합니다."""
+    """JS·스크립트·iframe·noscript 등을 제외한 순수 가시 텍스트 글자수.
+
+    SSR 정의 ('JS / 어떤 스크립트도 구동하지 않은 + iframe 제외') 기준.
+    SSR/CSR 비교는 양쪽 모두 이 함수로 동일 기준 측정.
+    """
+    from bs4 import Comment
+    _HIDDEN = {"script", "style", "noscript", "svg", "path", "template", "iframe", "object", "embed"}
     text_parts = []
     for element in soup.find_all(string=True):
-        if element.parent and element.parent.name in ("script", "style", "noscript", "svg", "path"):
+        # HTML 주석 제외
+        if isinstance(element, Comment):
+            continue
+        # 직계 부모 + 모든 조상 중 하나라도 숨김/실행 태그 안이면 제외 (중첩 우회 방지)
+        node = element.parent
+        skip = False
+        while node is not None:
+            if getattr(node, "name", None) in _HIDDEN:
+                skip = True
+                break
+            node = getattr(node, "parent", None)
+        if skip:
             continue
         text_parts.append(element)
     return len(re.sub(r'\s+', '', ''.join(text_parts)))
@@ -175,10 +192,12 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
     from page_type import detect_page_type
     page_type = detect_page_type(page_data.get("soup"), page_data.get("final_url") or url)
 
-    # SSR 글자수 계산 (soup 변조 없이)
-    ssr_chars = 0
-    if page_data["status"] == "ok" and page_data["soup"]:
-        ssr_chars = _safe_visible_text(page_data["soup"])
+    # SSR 글자수: Playwright(JS off, CSS-aware) 결과 우선. 없으면 httpx soup 기반 폴백.
+    ssr_chars = csr_raw.get("ssr_chars")
+    if not isinstance(ssr_chars, int) or ssr_chars <= 0:
+        ssr_chars = 0
+        if page_data["status"] == "ok" and page_data["soup"]:
+            ssr_chars = _safe_visible_text(page_data["soup"])
 
     csr_ratio = _calc_csr_ratio(ssr_chars, csr_raw)
 
@@ -623,7 +642,7 @@ async def _check_csr_chars(url: str) -> dict:
                     else:
                         raise
 
-                context = await browser.new_context(
+                _context_kwargs = dict(
                     viewport={"width": 1280, "height": 720},
                     user_agent=os.getenv("AUDIT_USER_AGENT") or _DEDICATED_UA,
                     locale="ko-KR",
@@ -639,12 +658,31 @@ async def _check_csr_chars(url: str) -> dict:
                         "Upgrade-Insecure-Requests": "1",
                     },
                 )
+
+                # === SSR 측정: JS 비활성화 + body.inner_text (CSS-aware) ===
+                ssr_chars = 0
+                ssr_error = None
+                try:
+                    ssr_ctx = await browser.new_context(java_script_enabled=False, **_context_kwargs)
+                    ssr_page = await ssr_ctx.new_page()
+                    await ssr_page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                    try:
+                        ssr_text = await ssr_page.locator("body").inner_text(timeout=5000)
+                    except Exception:
+                        ssr_text = ""
+                    ssr_chars = len(re.sub(r"\s+", "", ssr_text))
+                    await ssr_ctx.close()
+                except Exception as e:
+                    ssr_error = str(e)[:200]
+
+                # === CSR 측정: JS 활성 (기본) ===
+                context = await browser.new_context(**_context_kwargs)
                 page = await context.new_page()
                 if _stealth_apply is not None:
                     try:
                         await _stealth_apply(page)
                     except Exception:
-                        pass  # stealth 실패해도 CSR 측정은 계속 (대개 navigator 인자만 영향)
+                        pass
 
                 # 광고·추적 스크립트가 끊임없이 폴링하면 networkidle이 영원히 안 옴 → domcontentloaded로 안정화
                 # JS 렌더 시간은 아래의 wait_for_timeout(3000)으로 확보
@@ -678,45 +716,37 @@ async def _check_csr_chars(url: str) -> dict:
                         }
                     # 본문이 200자 이상이면 계속 진행 (403이지만 콘텐츠 정상인 경우)
 
-                # JS 프레임워크 렌더링 완료 대기 — domcontentloaded는 DOM만 보장하므로 React/Next.js
-                # hydration이 끝나려면 추가 시간 필요. 5초로 늘림 (광고 등 폴링은 무시).
+                # JS 프레임워크 렌더링 완료 대기
                 await page.wait_for_timeout(5000)
 
-                # 메인 프레임 콘텐츠
+                # 메인 프레임 콘텐츠 + 실제 가시 텍스트 (CSS-aware: display:none 등 제외)
                 main_html = await page.content()
                 title = await page.title()
+                try:
+                    csr_visible_text = await page.locator("body").inner_text(timeout=10000)
+                except Exception:
+                    csr_visible_text = ""
+                main_chars = len(re.sub(r"\s+", "", csr_visible_text))
 
-                # iframe 내부 콘텐츠도 수집
+                # iframe은 SSR 정의상 제외 (사용자 의도). 카운트만 디버그용으로 보존.
                 frame_count = len(page.frames) - 1
-                frame_texts = []
-                for frame in page.frames:
-                    if frame == page.main_frame:
-                        continue
-                    try:
-                        fc = await frame.content()
-                        fs = BeautifulSoup(fc, "html.parser")
-                        frame_texts.append(_safe_visible_text(fs))
-                    except Exception:
-                        continue
 
                 await context.close()
                 await browser.close()
 
-            csr_soup  = BeautifulSoup(main_html, "html.parser")
-            main_chars = _safe_visible_text(csr_soup)
-            iframe_chars = sum(frame_texts)
-            csr_chars = main_chars + iframe_chars
+            csr_chars = main_chars  # iframe 미포함
 
             return {
                 "status": "ok",
                 "csr_chars": csr_chars,
+                "ssr_chars": ssr_chars,
+                "ssr_error": ssr_error,
                 "debug": {
                     "final_url": final_url,
                     "http_status": http_status,
                     "page_title": title,
                     "main_chars": main_chars,
                     "iframe_count": frame_count,
-                    "iframe_chars": iframe_chars,
                     "html_length": len(main_html),
                     "raw_html": main_html,
                 },
