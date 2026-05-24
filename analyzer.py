@@ -718,21 +718,39 @@ async def _check_csr_chars(url: str) -> dict:
 
                 # JS 프레임워크 렌더링 완료 대기
                 await page.wait_for_timeout(5000)
+                try:
+                    await page.wait_for_load_state("load", timeout=10000)
+                except Exception:
+                    pass  # load 미도달이어도 그대로 진행
 
-                # 메인 프레임 콘텐츠 + 실제 가시 텍스트 (CSS-aware: display:none 등 제외)
-                main_html = await page.content()
-                title = await page.title()
+                # CSS-aware 가시 텍스트 (inner_text는 display:none 등 자동 제외)
                 try:
                     csr_visible_text = await page.locator("body").inner_text(timeout=10000)
                 except Exception:
                     csr_visible_text = ""
                 main_chars = len(re.sub(r"\s+", "", csr_visible_text))
 
+                # page.content()는 SPA 페이지에서 'page is navigating' 에러 자주 발생 — 재시도
+                main_html = ""
+                title = ""
+                for _attempt in range(3):
+                    try:
+                        main_html = await page.content()
+                        title = await page.title()
+                        break
+                    except Exception:
+                        try:
+                            await page.wait_for_timeout(1500)
+                        except Exception:
+                            break
+
                 # iframe은 SSR 정의상 제외 (사용자 의도). 카운트만 디버그용으로 보존.
                 frame_count = len(page.frames) - 1
 
-                await context.close()
-                await browser.close()
+                try: await context.close()
+                except Exception: pass
+                try: await browser.close()
+                except Exception: pass
 
             csr_chars = main_chars  # iframe 미포함
 
@@ -752,9 +770,12 @@ async def _check_csr_chars(url: str) -> dict:
                 },
             }
         except asyncio.TimeoutError:
-            return {"status": "error", "error": "브라우저 렌더링 시간 초과", "csr_chars": 0}
+            # SSR 측정값은 이미 위에서 별도 try로 성공/실패 처리됨 — 로컬 변수면 보존
+            return {"status": "error", "error": "브라우저 렌더링 시간 초과", "csr_chars": 0,
+                    "ssr_chars": locals().get("ssr_chars", 0)}
         except Exception as e:
-            return {"status": "error", "error": str(e), "csr_chars": 0}
+            return {"status": "error", "error": str(e), "csr_chars": 0,
+                    "ssr_chars": locals().get("ssr_chars", 0)}
 
 
 def _calc_csr_ratio(ssr_chars: int, csr_raw: dict) -> dict:
