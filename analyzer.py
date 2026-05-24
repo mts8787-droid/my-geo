@@ -646,7 +646,9 @@ async def _check_csr_chars(url: str) -> dict:
                     except Exception:
                         pass  # stealth 실패해도 CSR 측정은 계속 (대개 navigator 인자만 영향)
 
-                resp = await page.goto(url, wait_until="networkidle", timeout=30000)
+                # 광고·추적 스크립트가 끊임없이 폴링하면 networkidle이 영원히 안 옴 → domcontentloaded로 안정화
+                # JS 렌더 시간은 아래의 wait_for_timeout(3000)으로 확보
+                resp = await page.goto(url, wait_until="domcontentloaded", timeout=45000)
                 final_url = page.url
                 http_status = resp.status if resp else None
 
@@ -676,8 +678,9 @@ async def _check_csr_chars(url: str) -> dict:
                         }
                     # 본문이 200자 이상이면 계속 진행 (403이지만 콘텐츠 정상인 경우)
 
-                # JS 프레임워크 렌더링 완료 대기
-                await page.wait_for_timeout(3000)
+                # JS 프레임워크 렌더링 완료 대기 — domcontentloaded는 DOM만 보장하므로 React/Next.js
+                # hydration이 끝나려면 추가 시간 필요. 5초로 늘림 (광고 등 폴링은 무시).
+                await page.wait_for_timeout(5000)
 
                 # 메인 프레임 콘텐츠
                 main_html = await page.content()
