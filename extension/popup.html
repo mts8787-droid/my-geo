@@ -62,9 +62,13 @@
   <!-- 단일 페이지 분석 -->
   <div id="singlePanel" class="panel active">
     <p style="font-size:12px; color:#64748b; margin-bottom:10px;">현재 열려있는 페이지의 측정 방식을 선택하세요.</p>
+    <button id="fullScoreBtn" class="primary" style="background:#6366f1; margin-bottom:8px;">전체 점수 측정 (49 항목)</button>
     <div style="display: flex; gap: 8px;">
-      <button id="analyzeBtn" class="primary">SSR/CSR 측정</button>
-      <button id="schemaBtn" class="primary" style="background:#10b981;">스키마 정합성 체크 (Stealth)</button>
+      <button id="analyzeBtn" class="primary" style="background:#0ea5e9;">SSR/CSR 측정</button>
+      <button id="schemaBtn" class="primary" style="background:#10b981;">스키마 점검</button>
+    </div>
+    <div class="info" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:8px; font-size:10px;">
+      ✓ 서버 IP가 Akamai 화이트리스트에 등록돼 LG 사이트도 차단 없이 분석됩니다.
     </div>
     <div id="singleResult"></div>
   </div>

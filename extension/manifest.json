@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "GEO Audit - SSR/CSR Analyzer",
-  "version": "1.0.0",
-  "description": "웹페이지의 SSR/CSR 텍스트 비중을 측정합니다. 단일 페이지 및 대량 URL 일괄 분석을 지원합니다.",
+  "name": "GEO Audit - Score / SSR-CSR / Schema",
+  "version": "1.1.0",
+  "description": "현재 페이지의 전체 GEO Audit 점수(49항목), SSR/CSR 비중, JSON-LD 스키마 정합성을 즉시 점검합니다.",
   "permissions": ["activeTab", "scripting", "tabs"],
   "host_permissions": ["<all_urls>"],
   "action": {

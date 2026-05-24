@@ -1,3 +1,6 @@
+// ── 서버 API (Akamai 화이트리스트 등록된 Render IP를 통해 분석) ─────────────
+const API_BASE = 'https://my-geo-89ft.onrender.com';
+
 // ── 탭 전환 ──────────────────────────────────────────────────────────────────
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -87,6 +90,94 @@ function renderSingleResult(container, url, ssrChars, csrChars) {
 }
 
 // ── 단일 페이지 분석 ─────────────────────────────────────────────────────────
+// ── 전체 점수 측정 (서버의 /analyze 호출 — Render IP가 Akamai 화이트리스트) ──
+async function fetchFullScore(url) {
+  const res = await fetch(`${API_BASE}/analyze`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, scope: 'all' }),
+  });
+  if (!res.ok) {
+    let detail = `HTTP ${res.status}`;
+    try { const d = await res.json(); if (d.detail) detail = d.detail; } catch (_) {}
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+function renderFullScoreResult(container, url, data) {
+  const score = data.score || {};
+  const total = score.total ?? '-';
+  const max = score.max ?? '-';
+  const grade = score.grade || '-';
+  const breakdown = score.breakdown || {};
+  const gradeColor = grade === 'Good' ? '#15803d'
+    : grade === 'Need Improvement' ? '#b45309' : '#991b1b';
+  const tierClass = grade === 'Good' ? 'tier-excellent'
+    : grade === 'Need Improvement' ? 'tier-partial' : 'tier-poor';
+
+  const catMeta = [
+    { key: 'performance',   label: 'Performance' },
+    { key: 'accessibility', label: 'Accessibility' },
+    { key: 'seo',           label: 'SEO' },
+    { key: 'ai_readiness',  label: 'AI Readiness' },
+  ];
+
+  const catRows = catMeta.map(c => {
+    const b = breakdown[c.key] || {};
+    const pts = b.points ?? 0;
+    const mx = b.max ?? 0;
+    const passed = b.passed ?? 0;
+    const tot = b.total ?? 0;
+    const pct = mx > 0 ? Math.round((pts / mx) * 100) : 0;
+    const barColor = pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444';
+    return `
+      <div style="margin-top:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:11px;">
+          <span style="color:#475569; font-weight:600;">${c.label}</span>
+          <span style="color:#64748b;"><b style="color:#1e293b;">${pts}</b>/${mx} (${passed}/${tot} pass)</span>
+        </div>
+        <div class="ratio-bar"><div class="ratio-fill" style="width:${pct}%; background:${barColor};"></div></div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="result-card">
+      <div class="result-row" style="font-size:11px;">
+        <span class="label">URL</span>
+        <span class="value url-cell" title="${escHtml(url)}">${escHtml(url)}</span>
+      </div>
+      <div style="text-align:center; padding:14px 0; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; margin:8px 0;">
+        <div style="font-size:32px; font-weight:800; color:${gradeColor};">${total}<span style="font-size:14px; color:#94a3b8;"> / ${max}</span></div>
+        <span class="tier-badge ${tierClass}" style="margin-top:6px;">${escHtml(grade)}</span>
+      </div>
+      ${catRows}
+    </div>`;
+}
+
+document.getElementById('fullScoreBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('fullScoreBtn');
+  const container = document.getElementById('singleResult');
+  btn.disabled = true;
+  btn.textContent = '서버에서 분석 중... (최대 60초)';
+  container.innerHTML = '<p class="status-msg">서버에 49개 항목 audit을 요청 중입니다... 잠시 기다려주세요.</p>';
+
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.url || tab.url.startsWith('chrome://')) {
+      container.innerHTML = '<p class="status-msg error">일반 웹페이지에서 사용해주세요.</p>';
+      return;
+    }
+    const data = await fetchFullScore(tab.url);
+    renderFullScoreResult(container, tab.url, data);
+  } catch (err) {
+    container.innerHTML = `<p class="status-msg error">서버 오류: ${escHtml(err.message)}</p>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '전체 점수 측정 (49 항목)';
+  }
+});
+
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
   const btn = document.getElementById('analyzeBtn');
   const container = document.getElementById('singleResult');
