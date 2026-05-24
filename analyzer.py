@@ -666,10 +666,16 @@ async def _check_csr_chars(url: str) -> dict:
                     ssr_ctx = await browser.new_context(java_script_enabled=False, **_context_kwargs)
                     ssr_page = await ssr_ctx.new_page()
                     await ssr_page.goto(url, wait_until="domcontentloaded", timeout=30000)
-                    try:
-                        ssr_text = await ssr_page.locator("body").inner_text(timeout=5000)
-                    except Exception:
-                        ssr_text = ""
+                    ssr_text = ""
+                    for _att in range(2):
+                        try:
+                            ssr_text = await ssr_page.evaluate(
+                                "() => document.body ? document.body.innerText : ''"
+                            )
+                            break
+                        except Exception:
+                            try: await ssr_page.wait_for_timeout(1000)
+                            except: break
                     ssr_chars = len(re.sub(r"\s+", "", ssr_text))
                     await ssr_ctx.close()
                 except Exception as e:
@@ -723,11 +729,20 @@ async def _check_csr_chars(url: str) -> dict:
                 except Exception:
                     pass  # load 미도달이어도 그대로 진행
 
-                # CSS-aware 가시 텍스트 (inner_text는 display:none 등 자동 제외)
-                try:
-                    csr_visible_text = await page.locator("body").inner_text(timeout=10000)
-                except Exception:
-                    csr_visible_text = ""
+                # CSS-aware 가시 텍스트 — page.evaluate가 locator.inner_text보다 안정적
+                # (navigation 중에도 동작, timeout 의존 없음)
+                csr_visible_text = ""
+                for _attempt in range(3):
+                    try:
+                        csr_visible_text = await page.evaluate(
+                            "() => document.body ? document.body.innerText : ''"
+                        )
+                        break
+                    except Exception:
+                        try:
+                            await page.wait_for_timeout(1500)
+                        except Exception:
+                            break
                 main_chars = len(re.sub(r"\s+", "", csr_visible_text))
 
                 # page.content()는 SPA 페이지에서 'page is navigating' 에러 자주 발생 — 재시도
