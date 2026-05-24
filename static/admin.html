@@ -89,6 +89,13 @@
             </svg>
             <span class="nav-label">정기 Audit 관리</span>
           </button>
+          <button onclick="switchPage('stats')" id="nav-stats"
+            class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
+            <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span class="nav-label">페이지 타입 리포트</span>
+          </button>
           <button onclick="switchPage('pagetypes')" id="nav-pagetypes"
             class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
             <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,6 +293,44 @@
             </div>
           </div>
           <div id="schedule-list" class="card divide-y divide-slate-100 overflow-hidden mb-4"></div>
+        </div>
+
+        <!-- Page: 페이지 타입 리포트 -->
+        <div id="page-stats" class="max-w-6xl mx-auto px-6 py-8 hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h1 class="text-xl font-bold text-slate-800">페이지 타입 리포트</h1>
+              <p class="text-xs text-slate-400 mt-1">최근 정기 audit 결과를 page_type별로 집계. 카테고리별 평균 점수 + schema_for_page_type 룰 통과율.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="stats-status" class="text-[11px] text-slate-400">대기</span>
+              <button onclick="loadPageTypeStats()" class="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium">새로고침</button>
+            </div>
+          </div>
+
+          <div class="card overflow-hidden">
+            <table class="w-full text-xs">
+              <thead class="bg-slate-50 border-b border-slate-200">
+                <tr class="text-left">
+                  <th class="px-3 py-2 font-semibold text-slate-600">페이지 타입</th>
+                  <th class="px-3 py-2 font-semibold text-slate-600 text-right">URL</th>
+                  <th class="px-3 py-2 font-semibold text-slate-600 text-right">평균 점수</th>
+                  <th class="px-3 py-2 font-semibold text-slate-600 text-right">Performance</th>
+                  <th class="px-3 py-2 font-semibold text-slate-600 text-right">Accessibility</th>
+                  <th class="px-3 py-2 font-semibold text-slate-600 text-right">SEO</th>
+                  <th class="px-3 py-2 font-semibold text-slate-600 text-right">AI Readiness</th>
+                  <th class="px-3 py-2 font-semibold text-slate-600 text-right">Schema 통과율</th>
+                </tr>
+              </thead>
+              <tbody id="stats-tbody">
+                <tr><td colspan="8" class="px-3 py-6 text-center text-slate-400">불러오는 중...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-3">
+            ※ Schema 통과율 = 해당 페이지 타입에서 <code>schema_for_page_type</code> 룰 PASS 비율 (expected_schemas 모두 발견 시 PASS).
+            룰이 활성된 audit 이후 데이터만 집계됨. 옛 runs는 schema 컬럼 비어있음.
+          </p>
         </div>
 
         <!-- Page: 페이지 타입 정의 -->
@@ -568,6 +613,7 @@ function switchPage(page) {
   document.getElementById('page-criteria').classList.toggle('hidden', page !== 'criteria');
   document.getElementById('page-list').classList.toggle('hidden', page !== 'list');
   document.getElementById('page-schedule').classList.toggle('hidden', page !== 'schedule');
+  document.getElementById('page-stats').classList.toggle('hidden', page !== 'stats');
   document.getElementById('page-pagetypes').classList.toggle('hidden', page !== 'pagetypes');
   document.getElementById('page-logs').classList.toggle('hidden', page !== 'logs');
   document.getElementById('page-sitemap-agent').classList.toggle('hidden', page !== 'sitemap-agent');
@@ -579,6 +625,7 @@ function switchPage(page) {
   if (page === 'list') renderGroups();
   if (page === 'schedule') renderSchedules();
   if (page === 'pagetypes') loadPageTypes();
+  if (page === 'stats') loadPageTypeStats();
   if (page === 'logs') {
     fetchAllLogs();
     if (!window.allLogsInterval && document.getElementById('logs-auto')?.checked) {
@@ -1364,6 +1411,57 @@ async function runSitemapAgent() {
     fetchAgentLogs();
   } catch (e) {
     showToast('네트워크 오류: ' + e.message);
+  }
+}
+
+// ── 페이지 타입 리포트 ──────────────────────────────────────────────────
+async function loadPageTypeStats() {
+  const tbody = document.getElementById('stats-tbody');
+  const status = document.getElementById('stats-status');
+  if (status) status.textContent = '불러오는 중...';
+  try {
+    const res = await fetch('/admin/stats/page-types?limit=50', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) { if (status) status.textContent = `오류 ${res.status}`; tbody.innerHTML = '<tr><td colspan="8" class="text-red-500 px-3 py-4">조회 실패</td></tr>'; return; }
+    const data = await res.json();
+    const stats = data.stats || {};
+    const ids = Object.keys(stats).sort((a, b) => (stats[b].url_count || 0) - (stats[a].url_count || 0));
+
+    if (!ids.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-slate-400 px-3 py-6 text-center">집계할 schedule_run 데이터가 없습니다. 다음 audit 발화 후 다시 확인하세요.</td></tr>';
+      if (status) status.textContent = `runs=${data.run_count || 0}, types=0`;
+      return;
+    }
+
+    const fmt = (v, suffix = '') => v == null ? '<span class="text-slate-300">-</span>' : `${v}${suffix}`;
+    const colorScore = (v) => v == null ? 'text-slate-300' : v >= 80 ? 'text-emerald-600 font-semibold' : v >= 50 ? 'text-amber-600' : 'text-red-500';
+    const colorRate  = (v) => v == null ? 'text-slate-300' : v >= 80 ? 'text-emerald-600 font-semibold' : v >= 50 ? 'text-amber-600' : 'text-red-500';
+
+    tbody.innerHTML = ids.map(id => {
+      const s = stats[id];
+      const cat = s.category_avg || {};
+      return `
+        <tr class="border-b border-slate-50 hover:bg-slate-50/50">
+          <td class="px-3 py-2.5">
+            <div class="font-semibold text-slate-700">${escHtml(s.label || id)}</div>
+            <div class="text-[10px] text-slate-400 font-mono">${escHtml(id)}</div>
+          </td>
+          <td class="px-3 py-2.5 text-right tabular-nums">${(s.url_count || 0).toLocaleString()}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums ${colorScore(s.avg_score)}">${fmt(s.avg_score)}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums ${colorScore(cat.performance)}">${fmt(cat.performance)}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums ${colorScore(cat.accessibility)}">${fmt(cat.accessibility)}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums ${colorScore(cat.seo)}">${fmt(cat.seo)}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums ${colorScore(cat.ai_readiness)}">${fmt(cat.ai_readiness)}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums ${colorRate(s.schema_pass_rate)}">
+            ${fmt(s.schema_pass_rate, '%')}
+            <span class="text-[10px] text-slate-400 ml-1">(${s.schema_pass_count}/${s.schema_total})</span>
+          </td>
+        </tr>`;
+    }).join('');
+
+    if (status) status.textContent = `runs=${data.run_count}, types=${ids.length}`;
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-red-500 px-3 py-4">네트워크 오류: ${escHtml(e.message)}</td></tr>`;
+    if (status) status.textContent = '에러';
   }
 }
 

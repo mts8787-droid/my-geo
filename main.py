@@ -853,6 +853,103 @@ async def run_schedule_now(schedule_id: str, request: Request, background_tasks:
         raise HTTPException(status_code=500, detail=f"실행 실패: {e}")
 
 
+def _aggregate_page_type_stats(runs: list) -> dict:
+    """schedule_runs의 summary를 순회하며 page_type별 통계 집계.
+
+    각 run.summary는 [{"url": ..., "result": <full analyzer result>}, {"url": ..., "error": ...}] 형태.
+    """
+    import json as _json
+    stats: dict = {}
+
+    for run in runs:
+        summary = run.get("summary") or []
+        if isinstance(summary, str):
+            try:
+                summary = _json.loads(summary)
+            except Exception:
+                continue
+        if not isinstance(summary, list):
+            continue
+
+        for entry in summary:
+            if not isinstance(entry, dict):
+                continue
+            result = entry.get("result")
+            if not result:
+                continue  # error entries skip
+            pt = (result.get("page_type") or {})
+            pt_id = pt.get("id") or "unknown"
+
+            s = stats.setdefault(pt_id, {
+                "label": pt.get("label", pt_id),
+                "url_count": 0,
+                "scored_count": 0,
+                "score_sum": 0.0,
+                "schema_check_pass": 0,
+                "schema_check_total": 0,
+                "cat_score_sum": {},  # cat_key -> sum of pct points
+                "cat_score_count": {},
+            })
+            s["url_count"] += 1
+
+            score_obj = result.get("score") or {}
+            total = score_obj.get("total")
+            if isinstance(total, (int, float)):
+                s["scored_count"] += 1
+                s["score_sum"] += float(total)
+
+            # schema_for_page_type 룰 (ai_readiness 카테고리 내 ai_schema_for_page_type item) 통과율
+            breakdown = score_obj.get("breakdown") or {}
+            ai_items = (breakdown.get("ai_readiness") or {}).get("items") or {}
+            sch_item = ai_items.get("ai_schema_for_page_type")
+            if sch_item is not None:
+                s["schema_check_total"] += 1
+                if sch_item.get("pass"):
+                    s["schema_check_pass"] += 1
+
+            # 카테고리별 평균 점수 (이미 %)
+            for cat_key in ("performance", "accessibility", "seo", "ai_readiness"):
+                bd = breakdown.get(cat_key)
+                if not bd:
+                    continue
+                pts = bd.get("points")
+                if isinstance(pts, (int, float)):
+                    s["cat_score_sum"][cat_key] = s["cat_score_sum"].get(cat_key, 0.0) + float(pts)
+                    s["cat_score_count"][cat_key] = s["cat_score_count"].get(cat_key, 0) + 1
+
+    # 정리: 평균/비율 계산
+    out = {}
+    for pt_id, s in stats.items():
+        out[pt_id] = {
+            "label":                  s["label"],
+            "url_count":              s["url_count"],
+            "scored_count":           s["scored_count"],
+            "avg_score":              round(s["score_sum"] / s["scored_count"], 1) if s["scored_count"] else None,
+            "schema_pass_rate":       round(s["schema_check_pass"] / s["schema_check_total"] * 100, 1) if s["schema_check_total"] else None,
+            "schema_pass_count":      s["schema_check_pass"],
+            "schema_total":           s["schema_check_total"],
+            "category_avg": {
+                cat: round(s["cat_score_sum"][cat] / s["cat_score_count"][cat], 1)
+                for cat in s["cat_score_sum"]
+                if s["cat_score_count"].get(cat)
+            },
+        }
+    return out
+
+
+@app.get("/admin/stats/page-types")
+async def page_type_stats(request: Request, limit: int = 50):
+    """최근 schedule_runs를 집계해 페이지 타입별 통계를 반환."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import db
+    runs = db.get_recent_schedule_runs(limit=limit)
+    return {
+        "run_count": len(runs),
+        "stats": _aggregate_page_type_stats(runs),
+    }
+
+
 @app.get("/admin/schedules/runs")
 async def get_schedule_runs(request: Request, schedule_id: str = None, limit: int = 20):
     """최근 정기 Audit 실행 결과 조회."""
