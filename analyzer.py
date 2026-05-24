@@ -579,9 +579,22 @@ async def _check_csr_chars(url: str) -> dict:
     """Playwright로 JS 실행 후 텍스트 글자수를 반환."""
     try:
         from playwright.async_api import async_playwright
-        from playwright_stealth import stealth_async
     except ImportError:
-        return {"status": "unavailable", "csr_chars": 0}
+        return {"status": "unavailable", "csr_chars": 0, "error": "playwright 미설치"}
+
+    # playwright_stealth는 1.x (stealth_async 함수)와 2.x (Stealth 클래스) API가 다름. 양쪽 지원.
+    _stealth_apply = None
+    try:
+        from playwright_stealth import Stealth  # 2.x
+        _stealth_instance = Stealth()
+        async def _stealth_apply(page):
+            await _stealth_instance.apply_stealth_async(page)
+    except ImportError:
+        try:
+            from playwright_stealth import stealth_async  # 1.x
+            _stealth_apply = stealth_async
+        except ImportError:
+            _stealth_apply = None  # stealth 없이 계속 진행 (CSR 측정은 가능)
 
     async with _playwright_sem:
         try:
@@ -627,7 +640,11 @@ async def _check_csr_chars(url: str) -> dict:
                     },
                 )
                 page = await context.new_page()
-                await stealth_async(page)
+                if _stealth_apply is not None:
+                    try:
+                        await _stealth_apply(page)
+                    except Exception:
+                        pass  # stealth 실패해도 CSR 측정은 계속 (대개 navigator 인자만 영향)
 
                 resp = await page.goto(url, wait_until="networkidle", timeout=30000)
                 final_url = page.url
