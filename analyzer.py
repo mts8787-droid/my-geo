@@ -838,13 +838,29 @@ async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict
             "items": items,
         }
 
-    # 등급
+    # ── 점수 변환: 통과수/전체 검수항목수의 % 기반으로 재계산 ──
+    # 카테고리 가중치(points)는 무시. 모든 항목을 동일 비중으로 봄.
+    # - regular 카테고리(items 있음): passed / total * 100
+    # - special 카테고리(robots_ratio, csr_tiers): 본인 cat_max 대비 % 로 변환 (게이지 일관성)
+    for bd in breakdown.values():
+        if "items" in bd and bd.get("total", 0) > 0:
+            bd["points"] = round(bd["passed"] / bd["total"] * 100)
+            bd["max"] = 100
+        elif bd.get("max", 0) > 0:
+            bd["points"] = round(bd.get("points", 0) / bd["max"] * 100)
+            bd["max"] = 100
+
+    # 전체 점수: 모든 regular 카테고리의 통과 항목 합 / 전체 항목 합 * 100
+    total_passed = sum(bd.get("passed", 0) for bd in breakdown.values() if "items" in bd)
+    total_items  = sum(bd.get("total",  0) for bd in breakdown.values() if "items" in bd)
+    score = round(total_passed / total_items * 100) if total_items > 0 else 0
+
+    # 등급 (scoring_config의 임계값 — 기본 Good>=90, Need Improvement>=70 그대로 적용)
     g = cfg.get("grade", {})
-    total_max = sum(cfg.get(k, {}).get("max", 0) for k in cat_keys)
     grade = (
         "Good"             if score >= g.get("good", 90) else
         "Need Improvement" if score >= g.get("need_improvement", 70) else
         "Poor"
     )
 
-    return {"total": score, "max": total_max, "grade": grade, "breakdown": breakdown}
+    return {"total": score, "max": 100, "grade": grade, "breakdown": breakdown}
