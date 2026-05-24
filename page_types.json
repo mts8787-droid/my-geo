@@ -102,6 +102,32 @@
       "recommended_schemas": ["BreadcrumbList"]
     },
     {
+      "id": "buying_guide",
+      "label": "구매 가이드",
+      "detection": {
+        "url_pattern": [
+          "[/-]buying-guides?(/|$)"
+        ]
+      },
+      "expected_schemas":    ["Article", "BreadcrumbList"],
+      "recommended_schemas": ["HowTo"]
+    },
+    {
+      "id": "microsite",
+      "label": "마이크로사이트/캠페인",
+      "_comment": "캠페인성 페이지(aidd-laundry 등) 또는 블로그성 글(why-/what-/how-/best- 슬러그). 다른 타입 미매칭일 때 매칭.",
+      "detection": {
+        "meta_template": ["page-content"],
+        "url_pattern": [
+          "/(why|what|how|best|top|which|when|where)-[a-z]",
+          "-vs-[a-z]",
+          "/blog(/|$)"
+        ]
+      },
+      "expected_schemas":    ["Article", "BreadcrumbList"],
+      "recommended_schemas": ["Author", "WebPage"]
+    },
+    {
       "id": "unknown",
       "label": "분류 불가",
       "detection": null,

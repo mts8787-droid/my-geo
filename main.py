@@ -592,6 +592,45 @@ async def delete_config_snapshot(name: str, request: Request):
     return {"status": "ok"}
 
 
+# ── page_types.json (페이지 타입 정의 편집) ──────────────────────────────────
+
+_PAGE_TYPES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "page_types.json")
+
+
+@app.get("/admin/page-types")
+async def get_page_types(request: Request):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    try:
+        import json
+        with open(_PAGE_TYPES_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"읽기 실패: {e}")
+
+
+@app.put("/admin/page-types")
+async def put_page_types(request: Request):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import json
+    body = await request.json()
+    if not isinstance(body, dict) or "page_types" not in body or not isinstance(body["page_types"], list):
+        raise HTTPException(status_code=400, detail="형식 오류: {\"page_types\": [...]} 필요")
+    try:
+        with open(_PAGE_TYPES_PATH, "w", encoding="utf-8") as f:
+            json.dump(body, f, ensure_ascii=False, indent=2)
+        # page_type 모듈의 캐시 무효화 → 다음 detect 시 새 JSON 적용
+        try:
+            from page_type import load_page_types
+            load_page_types(force=True)
+        except Exception:
+            pass
+        return {"status": "ok"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"저장 실패: {e}")
+
+
 @app.get("/admin/rule-types")
 async def get_rule_types(request: Request):
     if not _verify_admin(request):

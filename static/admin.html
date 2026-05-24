@@ -89,6 +89,13 @@
             </svg>
             <span class="nav-label">정기 Audit 관리</span>
           </button>
+          <button onclick="switchPage('pagetypes')" id="nav-pagetypes"
+            class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
+            <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
+            <span class="nav-label">페이지 타입 정의</span>
+          </button>
           <button onclick="switchPage('logs')" id="nav-logs"
             class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-slate-600">
             <svg class="nav-icon w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -279,6 +286,23 @@
             </div>
           </div>
           <div id="schedule-list" class="card divide-y divide-slate-100 overflow-hidden mb-4"></div>
+        </div>
+
+        <!-- Page: 페이지 타입 정의 -->
+        <div id="page-pagetypes" class="max-w-5xl mx-auto px-6 py-8 hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h1 class="text-xl font-bold text-slate-800">페이지 타입 정의 (page_types.json)</h1>
+              <p class="text-xs text-slate-400 mt-1">메타 태그·body class·URL 패턴으로 페이지를 분류. 각 타입의 expected/recommended_schemas는 <code>schema_for_page_type</code> 룰이 사용.</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="loadPageTypes()" class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-200 transition">새로고침</button>
+              <button onclick="savePageTypes()" id="pt-save-btn" class="px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-semibold rounded-lg hover:opacity-90 transition">저장</button>
+            </div>
+          </div>
+          <div id="pt-error" class="text-xs text-red-500 mb-2 hidden"></div>
+          <textarea id="pt-editor" spellcheck="false" class="w-full h-[560px] border border-slate-200 rounded-lg p-3 font-mono text-xs leading-relaxed focus:ring-2 focus:ring-indigo-400 focus:outline-none"></textarea>
+          <p class="text-[11px] text-slate-400 mt-2">저장 시 JSON 유효성 자동 검증. 저장되면 다음 audit부터 적용됨 (캐시 자동 무효화).</p>
         </div>
 
         <!-- Page: 실시간 로그 모니터링 -->
@@ -544,6 +568,7 @@ function switchPage(page) {
   document.getElementById('page-criteria').classList.toggle('hidden', page !== 'criteria');
   document.getElementById('page-list').classList.toggle('hidden', page !== 'list');
   document.getElementById('page-schedule').classList.toggle('hidden', page !== 'schedule');
+  document.getElementById('page-pagetypes').classList.toggle('hidden', page !== 'pagetypes');
   document.getElementById('page-logs').classList.toggle('hidden', page !== 'logs');
   document.getElementById('page-sitemap-agent').classList.toggle('hidden', page !== 'sitemap-agent');
   document.getElementById('page-doc').classList.toggle('hidden', page !== 'doc');
@@ -553,6 +578,7 @@ function switchPage(page) {
   if (page === 'criteria') loadSnapshots();
   if (page === 'list') renderGroups();
   if (page === 'schedule') renderSchedules();
+  if (page === 'pagetypes') loadPageTypes();
   if (page === 'logs') {
     fetchAllLogs();
     if (!window.allLogsInterval && document.getElementById('logs-auto')?.checked) {
@@ -1338,6 +1364,46 @@ async function runSitemapAgent() {
     fetchAgentLogs();
   } catch (e) {
     showToast('네트워크 오류: ' + e.message);
+  }
+}
+
+// ── 페이지 타입 정의 (page_types.json) ────────────────────────────────────
+async function loadPageTypes() {
+  const ed = document.getElementById('pt-editor');
+  const err = document.getElementById('pt-error');
+  if (err) err.classList.add('hidden');
+  if (!ed) return;
+  ed.value = '불러오는 중...';
+  try {
+    const res = await fetch('/admin/page-types', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) { ed.value = `(불러오기 실패: ${res.status})`; return; }
+    const data = await res.json();
+    ed.value = JSON.stringify(data, null, 2);
+  } catch (e) { ed.value = `(에러: ${e.message})`; }
+}
+
+async function savePageTypes() {
+  const ed = document.getElementById('pt-editor');
+  const err = document.getElementById('pt-error');
+  if (!ed) return;
+  // JSON 유효성
+  let parsed;
+  try { parsed = JSON.parse(ed.value); }
+  catch (e) {
+    if (err) { err.textContent = `JSON 파싱 오류: ${e.message}`; err.classList.remove('hidden'); }
+    return;
+  }
+  try {
+    const res = await fetch('/admin/page-types', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(parsed),
+    });
+    if (!res.ok) { const d = await res.json().catch(()=>({})); if (err) { err.textContent = `저장 실패: ${d.detail || res.status}`; err.classList.remove('hidden'); } return; }
+    if (err) err.classList.add('hidden');
+    showToast('저장됨 — 다음 audit부터 적용');
+  } catch (e) {
+    if (err) { err.textContent = `네트워크 오류: ${e.message}`; err.classList.remove('hidden'); }
   }
 }
 

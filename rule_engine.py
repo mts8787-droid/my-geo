@@ -229,6 +229,15 @@ RULE_TYPES = {
         },
     },
 
+    # ── 페이지 타입별 스키마 검증 ──────────────────────────────────────────────
+    "schema_for_page_type": {
+        "label": "페이지 타입별 JSON-LD 스키마 검증",
+        "description": "page_types.json에 정의된 expected_schemas (페이지 타입별 기대 스키마)가 모두 존재하는지 확인. 페이지 타입 감지는 자동.",
+        "params": {
+            "include_recommended": {"label": "권장 스키마(recommended_schemas)도 함께 평가", "type": "select", "options": ["no", "yes"]},
+        },
+    },
+
     # ── AI Readiness / 콘텐츠 ──────────────────────────────────────────────────
     "schema_required_fields": {
         "label": "JSON-LD 필수 필드 검증",
@@ -989,6 +998,39 @@ _DEF_PATTERN = re.compile(
 _NON_VISIBLE_TAGS = ("script", "style", "noscript", "svg", "path")
 
 
+def _eval_schema_for_page_type(params: dict, ctx: dict) -> dict:
+    """페이지 타입에 정의된 expected_schemas (+선택 recommended_schemas)가 JSON-LD에 모두 있는지."""
+    page_type = ctx.get("page_type") or {}
+    expected = [s for s in (page_type.get("expected_schemas") or [])]
+    if params.get("include_recommended", "no").lower() in ("yes", "true", "1"):
+        expected = expected + [s for s in (page_type.get("recommended_schemas") or [])]
+
+    pt_id = page_type.get("id", "unknown")
+    if not expected:
+        return {
+            "pass": True,
+            "value": f"{pt_id}: 검증할 expected_schemas 없음 (자동 PASS)",
+            "hint": None,
+        }
+
+    jsonld_types = ctx.get("jsonld_types", set())
+    expected_lower = [s.lower() for s in expected]
+    found   = [s for s, sl in zip(expected, expected_lower) if sl in jsonld_types]
+    missing = [s for s, sl in zip(expected, expected_lower) if sl not in jsonld_types]
+
+    if missing:
+        return {
+            "pass":  False,
+            "value": f"page_type={pt_id} / 발견 {found or '없음'} / 누락 {missing}",
+            "hint":  f"이 페이지 타입({pt_id})에서 기대되는 schema {missing}가 JSON-LD에 없음",
+        }
+    return {
+        "pass":  True,
+        "value": f"page_type={pt_id} / 모든 expected_schemas 발견: {found}",
+        "hint":  None,
+    }
+
+
 def _visible_text(soup) -> str:
     """script/style 등 비가시 태그를 제외한 본문 텍스트 (#12)."""
     parts = []
@@ -1282,6 +1324,7 @@ _HANDLERS = {
     "og_required_pairs":      _eval_og_required_pairs,
     # 신규: AI Readiness
     "schema_required_fields": _eval_schema_required_fields,
+    "schema_for_page_type":   _eval_schema_for_page_type,
     "definition_pattern_min": _eval_definition_pattern_min,
     "citable_density_min":    _eval_citable_density_min,
     "image_filename_keyword": _eval_image_filename_keyword,

@@ -166,7 +166,9 @@ async def run_sitemap_audit_task(sitemap_url: str, email: str, site_name: str, s
 def _build_csv(audit_results: list, site_name: str) -> bytes:
     csv_file = io.StringIO()
     writer = csv.writer(csv_file)
-    header = ["Site Name", "URL", "Inspection Time", "Total Score", "Grade", "Error"]
+    header = ["Site Name", "URL", "Inspection Time",
+              "Page Type", "Page Type Label", "Detected By",
+              "Total Score", "Grade", "Error"]
 
     first_success = next((r for r in audit_results if isinstance(r, dict) and "result" in r), None)
     criteria_keys: List[tuple] = []
@@ -179,19 +181,23 @@ def _build_csv(audit_results: list, site_name: str) -> bytes:
     writer.writerow(header + [label for _, _, label in criteria_keys])
 
     inspection_time = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
+    empty_pt_cells = ["", "", ""]  # page_type / label / matched_by
 
     for r in audit_results:
         if isinstance(r, Exception):
             continue
         url = r.get("url", "")
         if "error" in r:
-            writer.writerow([site_name, url, inspection_time, "", "", r["error"]] + [""] * len(criteria_keys))
+            writer.writerow([site_name, url, inspection_time] + empty_pt_cells + ["", "", r["error"]] + [""] * len(criteria_keys))
             continue
 
-        score_obj = r["result"].get("score", {})
+        result_obj = r["result"]
+        score_obj = result_obj.get("score", {})
         score = score_obj.get("total", "")
         grade = score_obj.get("grade", "")
-        row = [site_name, url, inspection_time, score, grade, ""]
+        pt = result_obj.get("page_type", {}) or {}
+        pt_cells = [pt.get("id", ""), pt.get("label", ""), pt.get("matched_by", "")]
+        row = [site_name, url, inspection_time] + pt_cells + [score, grade, ""]
 
         breakdown = score_obj.get("breakdown", {})
         for cat_key, item_id, _label in criteria_keys:

@@ -289,6 +289,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- ① Score Card -->
     <div id="scoreCard" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-8 fade-up fade-up-1 opacity-0">
+      <!-- Page type badge (hidden if absent) -->
+      <div id="pageTypeBadge" class="hidden mb-3 flex items-center gap-2 text-xs">
+        <span class="text-slate-400">페이지 타입</span>
+        <span id="pageTypeLabel" class="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold"></span>
+        <span id="pageTypeMatchedBy" class="text-slate-400 font-mono"></span>
+      </div>
       <!-- Top row: grade + score -->
       <div class="flex items-center gap-5 mb-5">
         <span id="gradeTag" class="text-3xl font-black px-5 py-1.5 rounded-xl shrink-0"></span>
@@ -820,11 +826,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function renderResults(data) {
     document.getElementById('scoreCard').style.display = '';
     renderPageError(data.page_error);
+    renderPageTypeBadge(data.page_type);
     renderScore(data.score);
     renderPdp(data.pdp, data.score?.breakdown?.ai_readiness);
     renderCategoryCards(data.score?.breakdown || {});
     document.getElementById('results').classList.remove('hidden');
     filterResultCards();
+  }
+
+  function renderPageTypeBadge(pt) {
+    const el = document.getElementById('pageTypeBadge');
+    const label = document.getElementById('pageTypeLabel');
+    const mb = document.getElementById('pageTypeMatchedBy');
+    if (!el || !pt || !pt.id) { if (el) el.classList.add('hidden'); return; }
+    if (label) label.textContent = `${pt.label || pt.id} (${pt.id})`;
+    if (mb) mb.textContent = pt.matched_by ? `← ${pt.matched_by}` : '';
+    el.classList.remove('hidden');
   }
 
   function renderPageError(err) {
