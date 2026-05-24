@@ -26,3 +26,5 @@ audit_data.json
 service-account*.json
 geo-audit-batch*.json
 .gcp/
+data/geoaudit.*.log
+data/*.log
