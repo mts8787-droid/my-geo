@@ -173,11 +173,39 @@
             </div>
           </div>
 
-          <div class="flex gap-3 mb-10">
+          <div class="flex gap-3 mb-6">
             <button id="btn-save" onclick="saveConfig()"
               class="flex-1 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition text-sm disabled:opacity-40" disabled>저장</button>
             <button onclick="resetConfig()"
               class="px-6 py-3 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 transition text-sm">기본값으로 리셋</button>
+          </div>
+
+          <!-- ─── 버전 스냅샷 ─── -->
+          <div class="card p-5 fade-in mb-10">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h3 class="text-sm font-bold text-slate-700">버전 스냅샷</h3>
+                <p class="text-[11px] text-slate-400 mt-1">현재 설정을 이름 붙여 저장하고, 나중에 그대로 복원할 수 있습니다.</p>
+              </div>
+              <button onclick="openSnapshotSaveModal()" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-lg hover:bg-indigo-100 transition">현재 설정 저장</button>
+            </div>
+            <div id="snapshot-list" class="divide-y divide-slate-100">
+              <p class="text-xs text-slate-400 py-3">불러오는 중...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Snapshot Save Modal -->
+        <div id="snapshot-save-modal" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 fade-in">
+            <h3 class="text-base font-bold text-slate-800 mb-4">스냅샷 이름</h3>
+            <input id="snapshot-name" type="text" placeholder="예: 2026년 5월 버전" maxlength="80"
+              class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm mb-4 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+            <p class="text-[11px] text-slate-400 mb-4">한글·영문·숫자·공백·점·하이픈 가능. 80자 이내.</p>
+            <div class="flex gap-3">
+              <button onclick="confirmSaveSnapshot()" class="flex-1 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl text-sm hover:opacity-90">저장</button>
+              <button onclick="document.getElementById('snapshot-save-modal').classList.add('hidden')" class="px-6 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl text-sm hover:bg-slate-200">취소</button>
+            </div>
           </div>
         </div>
 
@@ -522,6 +550,7 @@ function switchPage(page) {
   document.getElementById('page-deck').classList.toggle('hidden', page !== 'deck');
   document.getElementById('page-ext-guide').classList.toggle('hidden', page !== 'ext-guide');
 
+  if (page === 'criteria') loadSnapshots();
   if (page === 'list') renderGroups();
   if (page === 'schedule') renderSchedules();
   if (page === 'logs') {
@@ -1310,6 +1339,84 @@ async function runSitemapAgent() {
   } catch (e) {
     showToast('네트워크 오류: ' + e.message);
   }
+}
+
+// ── Scoring Config 버전 스냅샷 ─────────────────────────────────────────
+async function loadSnapshots() {
+  const container = document.getElementById('snapshot-list');
+  if (!container) return;
+  try {
+    const res = await fetch('/admin/config/snapshots', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) { container.innerHTML = '<p class="text-xs text-red-500 py-3">목록을 불러오지 못했습니다.</p>'; return; }
+    const data = await res.json();
+    const snaps = data.snapshots || [];
+    if (!snaps.length) {
+      container.innerHTML = '<p class="text-xs text-slate-400 py-3">저장된 스냅샷이 없습니다. 우측 상단 [현재 설정 저장] 버튼으로 첫 버전을 만드세요.</p>';
+      return;
+    }
+    container.innerHTML = snaps.map(s => {
+      const dt = s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : '-';
+      const kb = ((s.size_bytes || 0) / 1024).toFixed(1);
+      const encName = encodeURIComponent(s.name);
+      return `
+        <div class="flex items-center gap-3 py-2.5">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-slate-700 truncate">${escHtml(s.name)}</p>
+            <p class="text-[11px] text-slate-400">${dt} · ${kb} KB</p>
+          </div>
+          <button onclick="restoreSnapshot('${encName}', '${escHtml(s.name)}')" class="text-[11px] px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition font-medium">불러오기</button>
+          <button onclick="deleteSnapshot('${encName}', '${escHtml(s.name)}')" class="text-[11px] px-2.5 py-1 bg-slate-100 text-slate-500 rounded-lg hover:bg-red-50 hover:text-red-600 transition font-medium">삭제</button>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = `<p class="text-xs text-red-500 py-3">에러: ${escHtml(e.message)}</p>`;
+  }
+}
+
+function openSnapshotSaveModal() {
+  const i = document.getElementById('snapshot-name');
+  if (i) i.value = '';
+  document.getElementById('snapshot-save-modal').classList.remove('hidden');
+  setTimeout(() => i && i.focus(), 50);
+}
+
+async function confirmSaveSnapshot() {
+  const name = (document.getElementById('snapshot-name').value || '').trim();
+  if (!name) { alert('이름을 입력하세요.'); return; }
+  try {
+    const res = await fetch('/admin/config/snapshots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ name })
+    });
+    if (!res.ok) { const d = await res.json().catch(()=>({})); alert('저장 실패: ' + (d.detail || res.status)); return; }
+    document.getElementById('snapshot-save-modal').classList.add('hidden');
+    showToast(`"${name}" 저장됨`);
+    loadSnapshots();
+  } catch (e) { alert('네트워크 오류: ' + e.message); }
+}
+
+async function restoreSnapshot(encName, displayName) {
+  if (!confirm(`"${displayName}" 으로 현재 설정을 덮어씁니다. 진행할까요?`)) return;
+  try {
+    const res = await fetch(`/admin/config/snapshots/${encName}/restore`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) { const d = await res.json().catch(()=>({})); alert('복원 실패: ' + (d.detail || res.status)); return; }
+    showToast(`"${displayName}" 복원됨 — 페이지를 새로고침합니다.`);
+    setTimeout(() => location.reload(), 800);
+  } catch (e) { alert('네트워크 오류: ' + e.message); }
+}
+
+async function deleteSnapshot(encName, displayName) {
+  if (!confirm(`"${displayName}" 을 삭제할까요?`)) return;
+  try {
+    const res = await fetch(`/admin/config/snapshots/${encName}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) { const d = await res.json().catch(()=>({})); alert('삭제 실패: ' + (d.detail || res.status)); return; }
+    loadSnapshots();
+  } catch (e) { alert('네트워크 오류: ' + e.message); }
 }
 
 async function fetchAllLogs() {

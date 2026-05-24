@@ -533,6 +533,65 @@ async def reset_config(request: Request):
     return {"status": "ok", "config": default}
 
 
+# ── Scoring config 스냅샷 (버전 저장/불러오기) ────────────────────────────────
+
+class SnapshotSaveRequest(BaseModel):
+    name: str
+
+
+@app.get("/admin/config/snapshots")
+async def list_config_snapshots(request: Request):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import config_snapshots
+    return {"snapshots": config_snapshots.list_snapshots()}
+
+
+@app.post("/admin/config/snapshots")
+async def save_config_snapshot(request: Request, body: SnapshotSaveRequest):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import config_snapshots
+    try:
+        config_snapshots.save_snapshot(body.name, get_scoring_config())
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return {"status": "ok", "snapshots": config_snapshots.list_snapshots()}
+
+
+@app.get("/admin/config/snapshots/{name}")
+async def get_config_snapshot(name: str, request: Request):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import config_snapshots
+    snap = config_snapshots.get_snapshot(name)
+    if snap is None:
+        raise HTTPException(status_code=404, detail="스냅샷을 찾을 수 없습니다.")
+    return snap
+
+
+@app.post("/admin/config/snapshots/{name}/restore")
+async def restore_config_snapshot(name: str, request: Request):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import config_snapshots
+    snap = config_snapshots.get_snapshot(name)
+    if snap is None:
+        raise HTTPException(status_code=404, detail="스냅샷을 찾을 수 없습니다.")
+    save_scoring_config(snap)
+    return {"status": "ok", "config": get_scoring_config()}
+
+
+@app.delete("/admin/config/snapshots/{name}")
+async def delete_config_snapshot(name: str, request: Request):
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    import config_snapshots
+    if not config_snapshots.delete_snapshot(name):
+        raise HTTPException(status_code=404, detail="스냅샷을 찾을 수 없습니다.")
+    return {"status": "ok"}
+
+
 @app.get("/admin/rule-types")
 async def get_rule_types(request: Request):
     if not _verify_admin(request):
