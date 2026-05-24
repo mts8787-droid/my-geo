@@ -1,0 +1,55 @@
+{
+  "_comment": "LG.com 페이지 타입 정의. detection 우선순위: meta_template → body_class → url_pattern. 첫 매칭 타입이 결정. expected/recommended_schemas는 차후 schema_for_page_type 룰에서 사용.",
+  "page_types": [
+    {
+      "id": "home",
+      "label": "홈페이지",
+      "detection": {
+        "meta_template": ["home-page", "homepage"],
+        "body_class":    ["homepage"],
+        "url_pattern":   ["^https?://[^/]+/?$", "^https?://[^/]+/[a-z]{2}/?$"]
+      },
+      "expected_schemas":    ["Organization", "WebSite"],
+      "recommended_schemas": ["BreadcrumbList"]
+    },
+    {
+      "id": "pdp",
+      "label": "제품 상세 (PDP)",
+      "detection": {
+        "meta_template": ["pdp-page", "product-page"],
+        "body_class":    ["productpage", "pdp"]
+      },
+      "expected_schemas":    ["Product", "BreadcrumbList"],
+      "recommended_schemas": ["Offer", "AggregateRating", "Review"]
+    },
+    {
+      "id": "support",
+      "label": "지원/Support",
+      "detection": {
+        "meta_template": ["support-page-template", "support-page"],
+        "body_class":    ["support"],
+        "url_pattern":   ["/support/"]
+      },
+      "expected_schemas":    ["BreadcrumbList"],
+      "recommended_schemas": []
+    },
+    {
+      "id": "newsroom",
+      "label": "뉴스룸/Press",
+      "detection": {
+        "meta_template": ["newsroom-page", "press-page"],
+        "body_class":    ["newsroom", "presspage"],
+        "url_pattern":   ["/newsroom/", "/press-media/", "/press-release/"]
+      },
+      "expected_schemas":    ["NewsArticle", "Organization"],
+      "recommended_schemas": ["BreadcrumbList"]
+    },
+    {
+      "id": "unknown",
+      "label": "분류 불가",
+      "detection": null,
+      "expected_schemas":    [],
+      "recommended_schemas": []
+    }
+  ]
+}

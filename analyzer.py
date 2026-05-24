@@ -172,6 +172,8 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
 
     jsonld    = _extract_json_ld(page_data)
     pdp       = _detect_pdp(url)
+    from page_type import detect_page_type
+    page_type = detect_page_type(page_data.get("soup"), page_data.get("final_url") or url)
 
     # SSR 글자수 계산 (soup 변조 없이)
     ssr_chars = 0
@@ -190,6 +192,7 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
         "base_url":        base_url,
         "current_url":     page_data.get("final_url") or url,
         "csr_ratio_dict":  csr_ratio,
+        "page_type":       page_type,
     }
 
     score = await _calculate_score(context, robots, csr_ratio)
@@ -212,6 +215,7 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
         "base_url":          base_url,
         "scope":             "all",
         "pdp":               pdp,
+        "page_type":         page_type,
         "robots_txt":        robots,
         "json_ld":           jsonld,
         "csr_ratio":         csr_ratio,
