@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "GEO Audit - Score / SSR-CSR / Schema",
-  "version": "1.1.0",
-  "description": "현재 페이지의 전체 GEO Audit 점수(49항목), SSR/CSR 비중, JSON-LD 스키마 정합성을 즉시 점검합니다.",
-  "permissions": ["activeTab", "scripting", "tabs"],
+  "name": "GEO Audit — Score / SSR-CSR / Schema",
+  "version": "1.2.0",
+  "description": "Analyze the current page: AI Readability score, SSR/CSR ratio, and JSON-LD schema integrity. Bilingual UI (KO / EN).",
+  "permissions": ["activeTab", "tabs"],
   "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",

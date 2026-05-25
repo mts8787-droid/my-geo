@@ -1,690 +1,312 @@
-// ── 서버 API (Akamai 화이트리스트 등록된 Render IP를 통해 분석) ─────────────
+// ──────────────────────────────────────────────────────────────────────────
+// GEO Audit — Chrome Extension popup
+// Single-page mode: analyze the active tab via the backend /analyze endpoint
+// (Render IP is on Akamai whitelist, so LG sites work without bot blocks)
+// ──────────────────────────────────────────────────────────────────────────
+
 const API_BASE = 'https://my-geo-89ft.onrender.com';
 
-// ── 탭 전환 ──────────────────────────────────────────────────────────────────
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab + 'Panel').classList.add('active');
+// ── i18n ─────────────────────────────────────────────────────────────────
+const STR = {
+  ko: {
+    brand_sub:       'AI Readability · SSR / 스키마',
+    open_web:        '웹앱',
+    intro:           '현재 활성 탭을 분석합니다.',
+    analyze_btn:     '이 페이지 분석',
+    whitelist_hint:  '✓ 서버 IP가 Akamai 화이트리스트라 LG 사이트도 차단 없이 분석됩니다.',
+    loading_msg:     '점수·SSR/CSR·스키마 측정 중…',
+    csr_label:       'SSR / CSR',
+    ssr_chars:       'SSR 글자수',
+    csr_chars:       'CSR 글자수',
+    ratio:           '비율',
+    page_type:       '페이지 타입',
+    pass_count:      '통과',
+    na_count:        '대상 아님',
+    items_open:      '항목 펼치기',
+    items_close:     '항목 접기',
+    err_no_tab:      '활성 탭을 찾을 수 없습니다',
+    err_bad_url:     '분석할 수 없는 URL입니다 (chrome:// 등 제외)',
+    err_generic:     '오류',
+    grade_good:      '훌륭함',
+    grade_need:      '개선 필요',
+    grade_poor:      '미흡',
+    tier_excellent:  '우수',
+    tier_good:       '양호',
+    tier_partial:    '부분',
+    tier_poor:       '미흡',
+    tier_blocked:    '차단',
+    tier_skipped:    '생략',
+    tier_unavailable:'측정불가',
+    tier_na:         'N/A',
+    cat_performance:    'Performance',
+    cat_accessibility:  'Accessibility',
+    cat_seo:            'SEO',
+    cat_ai_readiness:   'AI Readiness',
+  },
+  en: {
+    brand_sub:       'AI Readability · SSR / Schema',
+    open_web:        'Open app',
+    intro:           'Analyze the page currently open in your active tab.',
+    analyze_btn:     'Analyze this page',
+    whitelist_hint:  '✓ Server IP is on Akamai whitelist — LG sites analyze without blocks.',
+    loading_msg:     'Measuring score, SSR/CSR and schema…',
+    csr_label:       'SSR / CSR',
+    ssr_chars:       'SSR chars',
+    csr_chars:       'CSR chars',
+    ratio:           'Ratio',
+    page_type:       'Page type',
+    pass_count:      'passed',
+    na_count:        'N/A',
+    items_open:      'Expand items',
+    items_close:     'Collapse items',
+    err_no_tab:      'No active tab found',
+    err_bad_url:     'URL cannot be analyzed (chrome://, etc.)',
+    err_generic:     'Error',
+    grade_good:      'Good',
+    grade_need:      'Needs Improvement',
+    grade_poor:      'Poor',
+    tier_excellent:  'Excellent',
+    tier_good:       'Good',
+    tier_partial:    'Partial',
+    tier_poor:       'Poor',
+    tier_blocked:    'Blocked',
+    tier_skipped:    'Skipped',
+    tier_unavailable:'Unavailable',
+    tier_na:         'N/A',
+    cat_performance:    'Performance',
+    cat_accessibility:  'Accessibility',
+    cat_seo:            'SEO',
+    cat_ai_readiness:   'AI Readiness',
+  },
+};
+
+let lang = (localStorage.getItem('geoAudit.lang') === 'en') ? 'en' : 'ko';
+const t = (key) => (STR[lang] && STR[lang][key]) || STR.ko[key] || key;
+
+// ── util ─────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+const $ = (id) => document.getElementById(id);
+
+function gradeKey(g) {
+  if (g === 'Good') return 'good';
+  if (g === 'Need Improvement') return 'need';
+  return 'poor';
+}
+function gradeLabel(g) { return t('grade_' + gradeKey(g)); }
+function tierLabel(tier) { return t('tier_' + tier) || tier; }
+
+const CAT_META = [
+  { key: 'performance',   icon: '⚡' },
+  { key: 'accessibility', icon: '♿' },
+  { key: 'seo',           icon: '🔍' },
+  { key: 'ai_readiness',  icon: '🤖' },
+];
+
+// ── i18n apply ───────────────────────────────────────────────────────────
+function applyI18n() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const txt = t(key);
+    if (txt) el.textContent = txt;
   });
+  // language toggle pill 활성 상태
+  document.querySelectorAll('.lang-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-lang') === lang);
+  });
+  // 결과가 이미 있으면 재렌더 (라벨이 i18n 의존)
+  if (lastResult) renderResult(lastResult);
+}
+
+let lastResult = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 웹앱 링크
+  $('openWebLink').href = API_BASE + '/';
+
+  applyI18n();
+
+  // 언어 토글 — 양쪽 pill 클릭 모두 처리
+  $('langToggle').addEventListener('click', (e) => {
+    const pill = e.target.closest('.lang-pill');
+    if (!pill) {
+      // 빈 영역 클릭 → 반대 언어로 토글
+      lang = (lang === 'ko') ? 'en' : 'ko';
+    } else {
+      lang = pill.getAttribute('data-lang');
+    }
+    localStorage.setItem('geoAudit.lang', lang);
+    applyI18n();
+  });
+
+  $('analyzeBtn').addEventListener('click', runAnalyze);
 });
 
-// ── 공통 유틸 ────────────────────────────────────────────────────────────────
-function tierInfo(ratio) {
-  if (ratio >= 0.8) return { tier: 'excellent', label: '우수', score: 10, color: '#15803d' };
-  if (ratio >= 0.5) return { tier: 'good', label: '양호', score: 7, color: '#0d9488' };
-  if (ratio >= 0.3) return { tier: 'partial', label: '부분적', score: 4, color: '#b45309' };
-  return { tier: 'poor', label: '미흡', score: 0, color: '#b91c1c' };
-}
+// ── Analyze ──────────────────────────────────────────────────────────────
+async function runAnalyze() {
+  // 활성 탭의 URL 추출
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab) return showError(t('err_no_tab'));
+  const url = tab.url || '';
+  if (!/^https?:\/\//i.test(url)) return showError(t('err_bad_url') + ': ' + url);
 
-function escHtml(s) {
-  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
+  showLoading();
 
-// ── CSR 글자수 측정 (content script 주입) ────────────────────────────────────
-async function measureCsrChars(tabId) {
-  const results = await chrome.scripting.executeScript({
-    target: { tabId },
-    func: () => {
-      const text = document.body.innerText || '';
-      return text.replace(/\s+/g, '').length;
-    },
-  });
-  return results[0]?.result || 0;
-}
-
-// ── SSR 글자수 측정 (확장 프로그램에서 직접 fetch — 서버 불필요) ─────────────
-async function fetchSsrChars(url) {
   try {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; GEOAudit/1.0)',
-        'Accept': 'text/html',
-      },
+    const res = await fetch(`${API_BASE}/analyze`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ url, scope: 'all' }),
     });
-    const html = await res.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    doc.querySelectorAll('script, style, noscript, svg, path').forEach(el => el.remove());
-    const text = (doc.body?.innerText || '').replace(/\s+/g, '');
-    return text.length;
-  } catch {
-    return null;
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`;
+      try { const d = await res.json(); if (d.detail) detail = d.detail; } catch (_) {}
+      throw new Error(detail);
+    }
+    const data = await res.json();
+    data._url = url;
+    lastResult = data;
+    renderResult(data);
+  } catch (err) {
+    showError(`${t('err_generic')}: ${err.message || String(err)}`);
+  } finally {
+    $('analyzeBtn').disabled = false;
   }
 }
 
-// ── 단일 페이지 분석 결과 렌더 ───────────────────────────────────────────────
-function renderSingleResult(container, url, ssrChars, csrChars) {
-  const ratio = csrChars > 0 ? Math.min(ssrChars / csrChars, 1.0) : 0;
-  const info = tierInfo(ratio);
-  const pct = Math.round(ratio * 100);
-
-  container.innerHTML = `
-    <div class="result-card">
-      <div class="result-row">
-        <span class="label">URL</span>
-        <span class="value url-cell" title="${escHtml(url)}">${escHtml(url)}</span>
-      </div>
-      <div class="result-row">
-        <span class="label">SSR 글자수</span>
-        <span class="value" style="color:#2563eb">${ssrChars.toLocaleString()}</span>
-      </div>
-      <div class="result-row">
-        <span class="label">CSR 글자수</span>
-        <span class="value" style="color:#7c3aed">${csrChars.toLocaleString()}</span>
-      </div>
-      <div class="result-row">
-        <span class="label">SSR/CSR 비율</span>
-        <span class="value">${pct}%</span>
-      </div>
-      <div class="result-row">
-        <span class="label">등급</span>
-        <span class="tier-badge tier-${info.tier}">${info.label} (${info.score}/10점)</span>
-      </div>
-      <div class="ratio-bar">
-        <div class="ratio-fill" style="width:${pct}%; background:${info.color};"></div>
-      </div>
-    </div>`;
+// ── States ───────────────────────────────────────────────────────────────
+function showLoading() {
+  $('analyzeBtn').disabled = true;
+  $('error').classList.add('hidden');
+  $('result').classList.add('hidden');
+  $('loading').classList.remove('hidden');
+}
+function showError(msg) {
+  $('loading').classList.add('hidden');
+  $('result').classList.add('hidden');
+  const box = $('error');
+  box.textContent = msg;
+  box.classList.remove('hidden');
 }
 
-// ── 단일 페이지 분석 ─────────────────────────────────────────────────────────
-// ── 전체 점수 측정 (서버의 /analyze 호출 — Render IP가 Akamai 화이트리스트) ──
-async function fetchFullScore(url) {
-  const res = await fetch(`${API_BASE}/analyze`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ url, scope: 'all' }),
-  });
-  if (!res.ok) {
-    let detail = `HTTP ${res.status}`;
-    try { const d = await res.json(); if (d.detail) detail = d.detail; } catch (_) {}
-    throw new Error(detail);
-  }
-  return res.json();
-}
+// ── Render ───────────────────────────────────────────────────────────────
+function renderResult(data) {
+  $('loading').classList.add('hidden');
+  $('error').classList.add('hidden');
+  $('result').classList.remove('hidden');
 
-function renderFullScoreResult(container, url, data) {
   const score = data.score || {};
   const total = score.total ?? '-';
-  const max = score.max ?? '-';
   const grade = score.grade || '-';
   const breakdown = score.breakdown || {};
-  const gradeColor = grade === 'Good' ? '#15803d'
-    : grade === 'Need Improvement' ? '#b45309' : '#991b1b';
-  const tierClass = grade === 'Good' ? 'tier-excellent'
-    : grade === 'Need Improvement' ? 'tier-partial' : 'tier-poor';
 
-  const catMeta = [
-    { key: 'performance',   label: 'Performance' },
-    { key: 'accessibility', label: 'Accessibility' },
-    { key: 'seo',           label: 'SEO' },
-    { key: 'ai_readiness',  label: 'AI Readiness' },
-  ];
+  // Score header
+  $('resUrl').textContent = data._url || data.url || '';
+  $('resTotal').textContent = total;
 
-  const catRows = catMeta.map(c => {
-    const b = breakdown[c.key] || {};
-    const pts = b.points ?? 0;
-    const mx = b.max ?? 0;
-    const passed = b.passed ?? 0;
-    const tot = b.total ?? 0;
-    const pct = mx > 0 ? Math.round((pts / mx) * 100) : 0;
-    const barColor = pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444';
-    return `
-      <div style="margin-top:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:11px;">
-          <span style="color:#475569; font-weight:600;">${c.label}</span>
-          <span style="color:#64748b;"><b style="color:#1e293b;">${pts}</b>/${mx} (${passed}/${tot} pass)</span>
-        </div>
-        <div class="ratio-bar"><div class="ratio-fill" style="width:${pct}%; background:${barColor};"></div></div>
-      </div>`;
-  }).join('');
+  const g = $('resGrade');
+  g.textContent = gradeLabel(grade);
+  g.className = 'grade-badge grade-' + gradeKey(grade);
 
-  container.innerHTML = `
-    <div class="result-card">
-      <div class="result-row" style="font-size:11px;">
-        <span class="label">URL</span>
-        <span class="value url-cell" title="${escHtml(url)}">${escHtml(url)}</span>
-      </div>
-      <div style="text-align:center; padding:14px 0; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; margin:8px 0;">
-        <div style="font-size:32px; font-weight:800; color:${gradeColor};">${total}<span style="font-size:14px; color:#94a3b8;"> / ${max}</span></div>
-        <span class="tier-badge ${tierClass}" style="margin-top:6px;">${escHtml(grade)}</span>
-      </div>
-      ${catRows}
-    </div>`;
+  const pt = data.page_type || {};
+  const ptBadge = $('resPageType');
+  if (pt.label && pt.id !== 'unknown') {
+    ptBadge.textContent = `${t('page_type')}: ${pt.label}`;
+  } else {
+    ptBadge.textContent = '';
+  }
+
+  const pct = typeof total === 'number' ? Math.min(total, 100) : 0;
+  $('resBar').style.width = pct + '%';
+
+  // CSR card
+  renderCsr(data.csr_ratio || {});
+
+  // Category cards
+  renderCategoryCards(breakdown);
 }
 
-document.getElementById('fullScoreBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('fullScoreBtn');
-  const container = document.getElementById('singleResult');
-  btn.disabled = true;
-  btn.textContent = '서버에서 분석 중... (최대 60초)';
-  container.innerHTML = '<p class="status-msg">서버에 49개 항목 audit을 요청 중입니다... 잠시 기다려주세요.</p>';
+function renderCsr(csr) {
+  const status = csr.status || 'unavailable';
+  const tier = csr.tier || status;
+  const tierEl = $('csrTier');
+  tierEl.textContent = tierLabel(tier);
+  tierEl.className = 'csr-tier-badge tier-' + tier;
 
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.url || tab.url.startsWith('chrome://')) {
-      container.innerHTML = '<p class="status-msg error">일반 웹페이지에서 사용해주세요.</p>';
-      return;
-    }
-    const data = await fetchFullScore(tab.url);
-    renderFullScoreResult(container, tab.url, data);
-  } catch (err) {
-    container.innerHTML = `<p class="status-msg error">서버 오류: ${escHtml(err.message)}</p>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '전체 점수 측정 (49 항목)';
-  }
-});
+  const fmt = (n) => (typeof n === 'number') ? n.toLocaleString() : '-';
+  $('ssrChars').textContent = fmt(csr.ssr_chars);
+  $('csrChars').textContent = fmt(csr.csr_chars);
+  $('csrRatio').textContent = (typeof csr.ratio === 'number') ? Math.round(csr.ratio * 100) + '%' : '-';
+}
 
-document.getElementById('analyzeBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('analyzeBtn');
-  const container = document.getElementById('singleResult');
+function renderCategoryCards(breakdown) {
+  const container = $('categoryCards');
+  container.innerHTML = '';
 
-  btn.disabled = true;
-  btn.textContent = '측정 중...';
-  container.innerHTML = '<p class="status-msg">SSR/CSR 글자수를 측정하고 있습니다...</p>';
+  for (const meta of CAT_META) {
+    const c = breakdown[meta.key];
+    if (!c) continue;
 
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.url || tab.url.startsWith('chrome://')) {
-      container.innerHTML = '<p class="status-msg error">일반 웹페이지에서 사용해주세요.</p>';
-      return;
-    }
+    const items = c.items || {};
+    const passed = c.passed ?? 0;
+    const total  = c.total  ?? 0;
+    const naCount = Object.values(items).filter(i => i.na === true || i.pass === null).length;
+    const pct = (c.max && typeof c.points === 'number') ? Math.round((c.points / c.max) * 100) : 0;
+    const barColor = pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444';
 
-    // CSR 측정 (현재 탭에서 직접)
-    const csrChars = await measureCsrChars(tab.id);
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.dataset.cat = meta.key;
 
-    // SSR 측정 (서버 또는 fetch)
-    container.innerHTML = '<p class="status-msg">SSR 글자수를 가져오는 중...</p>';
-    const ssrChars = await fetchSsrChars(tab.url);
+    card.innerHTML = `
+      <div class="cat-head">
+        <div class="cat-icon cat-icon-${meta.key}">${meta.icon}</div>
+        <div class="cat-info">
+          <div class="cat-name">${t('cat_' + meta.key)}</div>
+          <div class="cat-meta">
+            <span>${c.points ?? 0} / ${c.max ?? 0}</span>
+            <span class="pill pass">${passed}/${total} ${t('pass_count')}</span>
+            ${naCount > 0 ? `<span class="pill na">+${naCount} ${t('na_count')}</span>` : ''}
+          </div>
+        </div>
+        <svg class="cat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="cat-bar"><div class="cat-bar-fill" style="width:${pct}%; background:${barColor};"></div></div>
+      <div class="cat-items">${renderItems(items)}</div>
+    `;
 
-    if (ssrChars === null) {
-      container.innerHTML = '<p class="status-msg error">SSR 글자수를 가져올 수 없습니다.</p>';
-      return;
-    }
-
-    renderSingleResult(container, tab.url, ssrChars, csrChars);
-  } catch (err) {
-    container.innerHTML = `<p class="status-msg error">오류: ${escHtml(err.message)}</p>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'SSR/CSR 측정';
-  }
-});
-
-// ── 스키마 체크 (단일 페이지 스텔스 모드) ────────────────────────────────────
-document.getElementById('schemaBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('schemaBtn');
-  const container = document.getElementById('singleResult');
-
-  btn.disabled = true;
-  btn.textContent = '체크 중...';
-  container.innerHTML = '<p class="status-msg">스키마 존재유무 및 정합성을 분석하고 있습니다...</p>';
-
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.url || tab.url.startsWith('chrome://')) {
-      container.innerHTML = '<p class="status-msg error">일반 웹페이지에서 사용해주세요.</p>';
-      return;
-    }
-
-    const results = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: () => {
-        const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-        if (scripts.length === 0) return { exists: false, items: [] };
-        
-        let items = [];
-        scripts.forEach((script, idx) => {
-          const content = script.innerText.trim();
-          let valid = false;
-          let type = 'Unknown';
-          let error = null;
-          
-          if (!content) {
-            items.push({ index: idx + 1, valid: false, type: 'Empty', error: '내용이 없습니다.' });
-            return;
-          }
-          
-          try {
-            const parsed = JSON.parse(content);
-            valid = true;
-            // 리스트 형태일 경우 첫 번째 요소의 type, 혹은 graph 안에 있을 수도 있음
-            if (Array.isArray(parsed)) {
-               type = parsed.map(p => p['@type']).filter(Boolean).join(', ');
-            } else if (parsed['@graph']) {
-               type = parsed['@graph'].map(p => p['@type']).filter(Boolean).join(', ');
-            } else {
-               type = parsed['@type'] || 'Unknown';
-            }
-          } catch (e) {
-            error = e.message;
-          }
-          
-          items.push({ index: idx + 1, valid, type, error });
-        });
-        
-        return { exists: true, items };
-      }
+    card.querySelector('.cat-head').addEventListener('click', () => {
+      card.classList.toggle('open');
     });
 
-    const data = results[0]?.result;
-    if (!data) throw new Error("결과를 가져올 수 없습니다.");
+    container.appendChild(card);
+  }
+}
 
-    let html = `<div class="result-card">`;
-    if (!data.exists) {
-      html += `
-        <div class="result-row">
-          <span class="label">스키마 상태</span>
-          <span class="tier-badge tier-poor">미발견 (Fail)</span>
-        </div>
-        <p style="font-size:11px; color:#64748b; margin-top:8px;">이 페이지에는 JSON-LD 스키마가 존재하지 않습니다.</p>
-      `;
+function renderItems(items) {
+  return Object.entries(items).map(([id, it]) => {
+    // 3-state: PASS / FAIL / N/A (applies_to_page_types skip)
+    const isNa = it.na === true || it.pass === null;
+    let cls, icon;
+    if (isNa) {
+      cls = 'item item-na'; icon = '⊘';
+    } else if (it.pass) {
+      cls = 'item item-pass'; icon = '✓';
     } else {
-      const validCount = data.items.filter(i => i.valid).length;
-      const totalCount = data.items.length;
-      const allValid = validCount === totalCount;
-      
-      html += `
-        <div class="result-row">
-          <span class="label">스키마 상태</span>
-          <span class="tier-badge ${allValid ? 'tier-excellent' : (validCount > 0 ? 'tier-partial' : 'tier-poor')}">
-            ${allValid ? '정합성 통과 (Pass)' : (validCount > 0 ? '일부 오류' : '오류 발생')}
-          </span>
+      cls = 'item item-fail'; icon = '✕';
+    }
+    const value = it.value ? `<div class="item-value">${escHtml(it.value)}</div>` : '';
+    const hint  = it.hint  ? `<div class="item-hint">${escHtml(it.hint)}</div>`  : '';
+    return `
+      <div class="${cls}">
+        <span class="item-icon">${icon}</span>
+        <div class="item-body">
+          <div class="item-label">${escHtml(it.label || id)}</div>
+          ${value}
+          ${hint}
         </div>
-        <div class="result-row">
-          <span class="label">발견된 개수</span>
-          <span class="value">${totalCount}개 (정상 ${validCount}개)</span>
-        </div>
-      `;
-      
-      data.items.forEach(item => {
-        const color = item.valid ? '#166534' : '#ef4444';
-        const typeStr = item.type ? escHtml(String(item.type)) : 'Unknown';
-        html += `
-          <div style="margin-top: 8px; padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-              <span style="font-size:11px; font-weight:700;">#${item.index} 타입: <span style="color:#4f46e5">${typeStr}</span></span>
-              <span style="font-size:10px; font-weight:700; color:${color};">${item.valid ? '유효함' : '에러'}</span>
-            </div>
-            ${item.error ? `<div style="font-size:10px; color:#ef4444; word-break:break-all;">Error: ${escHtml(item.error)}</div>` : ''}
-          </div>
-        `;
-      });
-    }
-    html += `</div>`;
-    container.innerHTML = html;
-
-  } catch (err) {
-    container.innerHTML = `<p class="status-msg error">오류: ${escHtml(err.message)}</p>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '스키마 정합성 체크 (Stealth)';
-  }
-});
-
-// ── 대량 분석 ────────────────────────────────────────────────────────────────
-let bulkRunning = false;
-
-document.getElementById('bulkBtn').addEventListener('click', async () => {
-  if (bulkRunning) return;
-
-  const urlText = document.getElementById('urlList').value.trim();
-  if (!urlText) return;
-
-  const urls = urlText.split('\n')
-    .map(u => u.trim())
-    .filter(u => u && !u.startsWith('#'))
-    .map(u => u.startsWith('http') ? u : 'https://' + u);
-
-  if (urls.length === 0) return;
-  if (urls.length > 100) {
-    document.getElementById('bulkResult').innerHTML =
-      '<p class="status-msg error">최대 100개까지 분석할 수 있습니다.</p>';
-    return;
-  }
-
-  bulkRunning = true;
-  const btn = document.getElementById('bulkBtn');
-  const progress = document.getElementById('bulkProgress');
-  const statusEl = document.getElementById('bulkStatus');
-  const fillEl = document.getElementById('bulkFill');
-  const resultEl = document.getElementById('bulkResult');
-
-  btn.disabled = true;
-  btn.textContent = '분석 중...';
-  progress.style.display = 'block';
-  resultEl.innerHTML = '';
-
-  const results = [];
-
-  for (let i = 0; i < urls.length; i++) {
-    const url = urls[i];
-    const pct = Math.round(((i) / urls.length) * 100);
-    statusEl.textContent = `${i + 1}/${urls.length} 분석 중... ${url}`;
-    fillEl.style.width = pct + '%';
-
-    try {
-      // 백그라운드 탭으로 URL 열기
-      const tab = await chrome.tabs.create({ url, active: false });
-
-      // 페이지 로드 완료 대기
-      await waitForTabLoad(tab.id);
-
-      // 추가 렌더링 대기 (SPA 등)
-      await sleep(2000);
-
-      // CSR 글자수 측정
-      const csrChars = await measureCsrChars(tab.id);
-
-      // 탭 닫기
-      await chrome.tabs.remove(tab.id);
-
-      // SSR 글자수 (서버에서)
-      const ssrChars = await fetchSsrChars(url);
-
-      if (ssrChars !== null) {
-        const ratio = csrChars > 0 ? Math.min(ssrChars / csrChars, 1.0) : 0;
-        const info = tierInfo(ratio);
-        results.push({ url, ssrChars, csrChars, ratio, tier: info.tier, label: info.label, score: info.score });
-      } else {
-        results.push({ url, ssrChars: 0, csrChars, ratio: null, tier: 'error', label: 'SSR 실패', score: 0 });
-      }
-    } catch (err) {
-      results.push({ url, ssrChars: 0, csrChars: 0, ratio: null, tier: 'error', label: '오류', score: 0, error: err.message });
-    }
-  }
-
-  fillEl.style.width = '100%';
-  statusEl.textContent = `완료! ${results.length}개 URL 분석됨`;
-
-  renderBulkResults(resultEl, results);
-
-  btn.disabled = false;
-  btn.textContent = '일괄 측정 시작';
-  bulkRunning = false;
-});
-
-function waitForTabLoad(tabId) {
-  return new Promise((resolve) => {
-    const listener = (id, changeInfo) => {
-      if (id === tabId && changeInfo.status === 'complete') {
-        chrome.tabs.onUpdated.removeListener(listener);
-        resolve();
-      }
-    };
-    chrome.tabs.onUpdated.addListener(listener);
-    // 타임아웃 30초
-    setTimeout(() => {
-      chrome.tabs.onUpdated.removeListener(listener);
-      resolve();
-    }, 30000);
-  });
-}
-
-function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
-}
-
-// ── 대량 결과 렌더 ───────────────────────────────────────────────────────────
-function renderBulkResults(container, results) {
-  const success = results.filter(r => r.tier !== 'error');
-  const avgRatio = success.length > 0
-    ? success.reduce((s, r) => s + (r.ratio || 0), 0) / success.length
-    : 0;
-  const avgInfo = tierInfo(avgRatio);
-
-  let html = `
-    <div class="result-card">
-      <div class="result-row">
-        <span class="label">분석 완료</span>
-        <span class="value">${success.length}/${results.length}개 성공</span>
-      </div>
-      <div class="result-row">
-        <span class="label">평균 SSR/CSR 비율</span>
-        <span class="value">${Math.round(avgRatio * 100)}%</span>
-      </div>
-      <div class="result-row">
-        <span class="label">평균 등급</span>
-        <span class="tier-badge tier-${avgInfo.tier}">${avgInfo.label}</span>
-      </div>
-    </div>
-    <table class="bulk-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>URL</th>
-          <th>SSR</th>
-          <th>CSR</th>
-          <th>비율</th>
-          <th>등급</th>
-        </tr>
-      </thead>
-      <tbody>`;
-
-  results.forEach((r, i) => {
-    const pct = r.ratio !== null ? Math.round(r.ratio * 100) + '%' : '-';
-    const tierCls = r.tier !== 'error' ? `tier-${r.tier}` : '';
-    html += `
-        <tr>
-          <td>${i + 1}</td>
-          <td class="url-cell" title="${escHtml(r.url)}">${escHtml(r.url)}</td>
-          <td>${r.ssrChars ? r.ssrChars.toLocaleString() : '-'}</td>
-          <td>${r.csrChars ? r.csrChars.toLocaleString() : '-'}</td>
-          <td>${pct}</td>
-          <td><span class="tier-badge ${tierCls}">${escHtml(r.label)}</span></td>
-        </tr>`;
-  });
-
-  html += `</tbody></table>
-    <div class="bulk-actions">
-      <button class="export-btn" id="exportCsv">CSV 내보내기</button>
-      <button class="export-btn" id="exportJson">JSON 내보내기</button>
-    </div>`;
-
-  container.innerHTML = html;
-
-  document.getElementById('exportCsv').addEventListener('click', () => exportCsv(results));
-  document.getElementById('exportJson').addEventListener('click', () => exportJson(results));
-}
-
-// ── 내보내기 ─────────────────────────────────────────────────────────────────
-function exportCsv(results) {
-  const header = 'URL,SSR글자수,CSR글자수,비율,등급,점수\n';
-  const rows = results.map(r => {
-    const pct = r.ratio !== null ? Math.round(r.ratio * 100) : '';
-    return `"${r.url}",${r.ssrChars},${r.csrChars},${pct}%,${r.label},${r.score}`;
-  }).join('\n');
-  downloadFile('geo-audit-csr.csv', header + rows, 'text/csv');
-}
-
-function exportJson(results) {
-  downloadFile('geo-audit-csr.json', JSON.stringify(results, null, 2), 'application/json');
-}
-
-function downloadFile(filename, content, type) {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ── 대량 분석 (스키마) ───────────────────────────────────────────────────────
-document.getElementById('bulkSchemaBtn').addEventListener('click', async () => {
-  if (bulkRunning) return;
-
-  const urlText = document.getElementById('urlList').value.trim();
-  if (!urlText) return;
-
-  const urls = urlText.split('\n')
-    .map(u => u.trim())
-    .filter(u => u && !u.startsWith('#'))
-    .map(u => u.startsWith('http') ? u : 'https://' + u);
-
-  if (urls.length === 0) return;
-  if (urls.length > 100) {
-    document.getElementById('bulkResult').innerHTML =
-      '<p class="status-msg error">최대 100개까지 분석할 수 있습니다.</p>';
-    return;
-  }
-
-  bulkRunning = true;
-  const btn = document.getElementById('bulkSchemaBtn');
-  const progress = document.getElementById('bulkProgress');
-  const statusEl = document.getElementById('bulkStatus');
-  const fillEl = document.getElementById('bulkFill');
-  const resultEl = document.getElementById('bulkResult');
-
-  btn.disabled = true;
-  btn.textContent = '분석 중...';
-  progress.style.display = 'block';
-  resultEl.innerHTML = '';
-
-  const results = [];
-
-  for (let i = 0; i < urls.length; i++) {
-    const url = urls[i];
-    const pct = Math.round(((i) / urls.length) * 100);
-    statusEl.textContent = `${i + 1}/${urls.length} 스키마 체크 중... ${url}`;
-    fillEl.style.width = pct + '%';
-
-    try {
-      const tab = await chrome.tabs.create({ url, active: false });
-      await waitForTabLoad(tab.id);
-      await sleep(1500);
-
-      const scriptRes = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: () => {
-          const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-          if (scripts.length === 0) return { exists: false, items: [] };
-          let items = [];
-          scripts.forEach((script) => {
-            const content = script.innerText.trim();
-            if (!content) return;
-            try {
-              const parsed = JSON.parse(content);
-              let type = 'Unknown';
-              if (Array.isArray(parsed)) {
-                 type = parsed.map(p => p['@type']).filter(Boolean).join(', ');
-              } else if (parsed['@graph']) {
-                 type = parsed['@graph'].map(p => p['@type']).filter(Boolean).join(', ');
-              } else {
-                 type = parsed['@type'] || 'Unknown';
-              }
-              items.push({ valid: true, type });
-            } catch (e) {
-              items.push({ valid: false, error: e.message });
-            }
-          });
-          return { exists: true, items };
-        }
-      });
-      await chrome.tabs.remove(tab.id);
-
-      const data = scriptRes[0]?.result;
-      if (!data) throw new Error("결과 없음");
-      
-      let validCount = 0;
-      let allTypes = [];
-      if (data.exists) {
-        validCount = data.items.filter(it => it.valid).length;
-        allTypes = data.items.map(it => it.type).filter(Boolean);
-      }
-      
-      results.push({
-         url, 
-         exists: data.exists, 
-         count: data.items?.length || 0,
-         validCount,
-         types: [...new Set(allTypes)].join(', ')
-      });
-
-    } catch (err) {
-      results.push({ url, exists: false, count: 0, validCount: 0, types: '', error: err.message });
-    }
-  }
-
-  fillEl.style.width = '100%';
-  statusEl.textContent = `완료! ${results.length}개 URL 분석됨`;
-
-  renderBulkSchemaResults(resultEl, results);
-
-  btn.disabled = false;
-  btn.textContent = '스키마 일괄 체크 (Stealth)';
-  bulkRunning = false;
-});
-
-function renderBulkSchemaResults(container, results) {
-  const success = results.filter(r => !r.error);
-  const found = results.filter(r => r.exists);
-  
-  let html = `
-    <div class="result-card">
-      <div class="result-row">
-        <span class="label">분석 완료</span>
-        <span class="value">${success.length}/${results.length}개 성공</span>
-      </div>
-      <div class="result-row">
-        <span class="label">스키마 발견</span>
-        <span class="value">${found.length}개 페이지에서 발견됨</span>
-      </div>
-    </div>
-    <table class="bulk-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>URL</th>
-          <th>발견 개수</th>
-          <th>상태</th>
-          <th>타입 / 에러</th>
-        </tr>
-      </thead>
-      <tbody>`;
-
-  results.forEach((r, i) => {
-    let statusHtml = '';
-    if (r.error) {
-      statusHtml = `<span class="tier-badge tier-poor">오류</span>`;
-    } else if (!r.exists) {
-      statusHtml = `<span class="tier-badge tier-poor">미발견</span>`;
-    } else if (r.validCount === r.count) {
-      statusHtml = `<span class="tier-badge tier-excellent">Pass</span>`;
-    } else {
-      statusHtml = `<span class="tier-badge tier-partial">일부 에러</span>`;
-    }
-
-    let detail = r.error ? escHtml(r.error) : escHtml(r.types);
-    if (!detail && r.exists) detail = 'Unknown';
-    if (!r.exists && !r.error) detail = '-';
-
-    html += `
-        <tr>
-          <td>${i + 1}</td>
-          <td class="url-cell" title="${escHtml(r.url)}">${escHtml(r.url)}</td>
-          <td>${r.exists ? r.count : '-'}</td>
-          <td>${statusHtml}</td>
-          <td style="font-size:10px; word-break:break-all;">${detail}</td>
-        </tr>`;
-  });
-
-  html += `</tbody></table>
-    <div class="bulk-actions">
-      <button class="export-btn" id="exportSchemaCsv">CSV 내보내기</button>
-    </div>`;
-
-  container.innerHTML = html;
-
-  document.getElementById('exportSchemaCsv').addEventListener('click', () => {
-    const header = 'URL,발견개수,정상개수,타입,오류\n';
-    const rows = results.map(r => {
-      return `"${r.url}",${r.count},${r.validCount},"${r.types || ''}","${r.error || ''}"`;
-    }).join('\n');
-    downloadFile('geo-audit-schema-bulk.csv', header + rows, 'text/csv');
-  });
+      </div>`;
+  }).join('') || '<p style="font-size:11px;color:var(--c-text-mute);text-align:center;padding:8px 0;">—</p>';
 }

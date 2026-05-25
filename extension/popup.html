@@ -2,93 +2,85 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { width: 420px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #334155; }
-    .header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 16px; }
-    .header h1 { font-size: 15px; font-weight: 700; }
-    .header p { font-size: 11px; opacity: 0.8; margin-top: 2px; }
-    .tabs { display: flex; border-bottom: 2px solid #e2e8f0; }
-    .tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; background: white; border: none; color: #94a3b8; transition: all 0.2s; }
-    .tab.active { color: #6366f1; border-bottom: 2px solid #6366f1; margin-bottom: -2px; }
-    .tab:hover { color: #6366f1; }
-    .panel { display: none; padding: 16px; }
-    .panel.active { display: block; }
-    button.primary { background: #6366f1; color: white; border: none; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
-    button.primary:hover { background: #4f46e5; }
-    button.primary:disabled { background: #c7d2fe; cursor: not-allowed; }
-    textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; font-size: 12px; font-family: monospace; resize: vertical; min-height: 100px; outline: none; }
-    textarea:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-    .result-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 12px; }
-    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 12px; }
-    .result-row .label { color: #64748b; }
-    .result-row .value { font-weight: 700; }
-    .ratio-bar { height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 8px; overflow: hidden; }
-    .ratio-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
-    .tier-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
-    .tier-excellent { background: #dcfce7; color: #166534; }
-    .tier-good { background: #d1fae5; color: #065f46; }
-    .tier-partial { background: #fef3c7; color: #92400e; }
-    .tier-poor { background: #fee2e2; color: #991b1b; }
-    .progress { margin-top: 12px; }
-    .progress-text { font-size: 11px; color: #64748b; margin-bottom: 4px; }
-    .progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: #6366f1; border-radius: 3px; transition: width 0.3s; }
-    .bulk-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 11px; }
-    .bulk-table th { background: #f1f5f9; padding: 8px 6px; text-align: left; font-weight: 600; color: #475569; }
-    .bulk-table td { padding: 7px 6px; border-bottom: 1px solid #f1f5f9; }
-    .bulk-table tr:hover { background: #f8fafc; }
-    .url-cell { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; font-size: 10px; }
-    .export-btn { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-    .export-btn:hover { background: #e2e8f0; }
-    .status-msg { font-size: 12px; color: #64748b; text-align: center; padding: 20px; }
-    .error { color: #ef4444; }
-    .info { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px; font-size: 11px; color: #1e40af; margin-top: 10px; }
-    .bulk-actions { display: flex; gap: 6px; margin-top: 10px; }
-    .bulk-actions button { flex: 1; }
-  </style>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="header">
-    <h1>GEO Audit - SSR/CSR Analyzer</h1>
-    <p>웹페이지의 서버 렌더링 비중을 측정합니다</p>
-  </div>
+  <!-- Header -->
+  <header class="hdr">
+    <div class="hdr-row">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <div>
+          <h1 class="brand-name">GEO Audit</h1>
+          <p class="brand-sub" data-i18n="brand_sub">AI Readability · SSR / Schema</p>
+        </div>
+      </div>
+      <div class="hdr-actions">
+        <button class="lang-toggle" id="langToggle" title="Toggle language">
+          <span class="lang-pill" data-lang="ko">KO</span>
+          <span class="lang-pill" data-lang="en">EN</span>
+        </button>
+        <a id="openWebLink" class="link-btn" target="_blank" rel="noopener" title="Open full app">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span data-i18n="open_web">Open app</span>
+        </a>
+      </div>
+    </div>
+  </header>
 
-  <div class="tabs">
-    <button class="tab active" data-tab="single">현재 페이지</button>
-    <button class="tab" data-tab="bulk">대량 분석</button>
-  </div>
+  <!-- Body -->
+  <main class="body">
+    <p class="intro" data-i18n="intro">Analyze the page currently open in your active tab.</p>
 
-  <!-- 단일 페이지 분석 -->
-  <div id="singlePanel" class="panel active">
-    <p style="font-size:12px; color:#64748b; margin-bottom:10px;">현재 열려있는 페이지의 측정 방식을 선택하세요.</p>
-    <button id="fullScoreBtn" class="primary" style="background:#6366f1; margin-bottom:8px;">전체 점수 측정 (49 항목)</button>
-    <div style="display: flex; gap: 8px;">
-      <button id="analyzeBtn" class="primary" style="background:#0ea5e9;">SSR/CSR 측정</button>
-      <button id="schemaBtn" class="primary" style="background:#10b981;">스키마 점검</button>
-    </div>
-    <div class="info" style="background:#f0fdf4; border-color:#bbf7d0; color:#166534; margin-top:8px; font-size:10px;">
-      ✓ 서버 IP가 Akamai 화이트리스트에 등록돼 LG 사이트도 차단 없이 분석됩니다.
-    </div>
-    <div id="singleResult"></div>
-  </div>
+    <button id="analyzeBtn" class="btn-primary">
+      <span data-i18n="analyze_btn">Analyze this page</span>
+    </button>
 
-  <!-- 대량 분석 -->
-  <div id="bulkPanel" class="panel">
-    <textarea id="urlList" placeholder="분석할 URL을 한 줄에 하나씩 입력하세요.&#10;&#10;https://example.com&#10;https://example.com/product/123&#10;..."></textarea>
-    <div class="info">
-      브라우저 탭에서 각 URL을 열고 측정합니다. 실제 브라우저이므로 봇 차단이 없습니다.
+    <div class="hint" data-i18n="whitelist_hint">
+      ✓ Server IP is on Akamai whitelist — LG sites analyze without blocks.
     </div>
-    <div style="display: flex; gap: 8px; margin-top:10px;">
-      <button id="bulkBtn" class="primary">SSR/CSR 측정</button>
-      <button id="bulkSchemaBtn" class="primary" style="background:#10b981;">스키마 일괄 체크 (Stealth)</button>
+
+    <!-- Loading state -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p data-i18n="loading_msg">Measuring score, SSR/CSR and schema…</p>
     </div>
-    <div id="bulkProgress" class="progress" style="display:none;">
-      <div class="progress-text"><span id="bulkStatus">준비 중...</span></div>
-      <div class="progress-bar"><div id="bulkFill" class="progress-fill" style="width:0%"></div></div>
+
+    <!-- Error -->
+    <div id="error" class="error-box hidden"></div>
+
+    <!-- Result -->
+    <div id="result" class="result hidden">
+      <!-- Score header -->
+      <div class="score-card">
+        <div class="score-url" id="resUrl"></div>
+        <div class="score-main">
+          <div class="score-value" id="resTotal">-</div>
+          <div class="score-side">
+            <span class="grade-badge" id="resGrade">-</span>
+            <span class="page-type-badge" id="resPageType"></span>
+          </div>
+        </div>
+        <div class="score-bar"><div class="score-bar-fill" id="resBar"></div></div>
+      </div>
+
+      <!-- CSR / SSR ratio -->
+      <div class="csr-card" id="csrCard">
+        <div class="csr-row">
+          <span class="csr-label" data-i18n="csr_label">SSR / CSR</span>
+          <span class="csr-tier-badge" id="csrTier">-</span>
+        </div>
+        <div class="csr-row csr-detail">
+          <span><span data-i18n="ssr_chars">SSR chars</span>: <b id="ssrChars">-</b></span>
+          <span><span data-i18n="csr_chars">CSR chars</span>: <b id="csrChars">-</b></span>
+          <span><span data-i18n="ratio">Ratio</span>: <b id="csrRatio">-</b></span>
+        </div>
+      </div>
+
+      <!-- Category cards (Performance / Accessibility / SEO / AI Readiness) -->
+      <div id="categoryCards"></div>
     </div>
-    <div id="bulkResult"></div>
-  </div>
+  </main>
 
   <script src="popup.js"></script>
 </body>
