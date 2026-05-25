@@ -583,7 +583,9 @@
         "spec_id": "#38",
         "points": 1,
         "enabled": true,
-        "applies_to_page_types": ["pdp"],
+        "applies_to_page_types": [
+          "pdp"
+        ],
         "rule": {
           "type": "css_count",
           "params": {
@@ -599,17 +601,34 @@
         "spec_id": "#39",
         "points": 1,
         "enabled": true,
-        "applies_to_page_types": ["pdp"],
+        "applies_to_page_types": [
+          "pdp"
+        ],
         "rule": {
           "type": "area_coverage",
           "params": {
             "min_groups": 3,
             "groups": [
-              {"label": "제품명",  "selector": "h1.cmp-text, h1"},
-              {"label": "가격",    "selector": "[class*='price-area'], .info-sticky--price"},
-              {"label": "갤러리",  "selector": ".c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"},
-              {"label": "사양",    "selector": ".c-specs-summary, .c-all-specs-area, .c-specs-dimensions"},
-              {"label": "CTA",     "selector": ".c-cta, .c-wrapper, .button-bomE"}
+              {
+                "label": "제품명",
+                "selector": "h1.cmp-text, h1"
+              },
+              {
+                "label": "가격",
+                "selector": "[class*='price-area'], .info-sticky--price"
+              },
+              {
+                "label": "갤러리",
+                "selector": ".c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"
+              },
+              {
+                "label": "사양",
+                "selector": ".c-specs-summary, .c-all-specs-area, .c-specs-dimensions"
+              },
+              {
+                "label": "CTA",
+                "selector": ".c-cta, .c-wrapper, .button-bomE"
+              }
             ]
           }
         },

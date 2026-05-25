@@ -586,6 +586,8 @@
 let token = '';
 let config = {};
 let ruleTypes = {};
+let pageTypesList = [];  // criteria applies_to_page_types 편집 UI에서 사용 — [{id, label}, ...]
+const expandedAppliesRows = new Set();  // "catKey:idx" — applies_to_page_types <details> 펼침 상태 보존 (render 후 복원)
 let dirty = false;
 let modalCatKey = '';
 let auditData = { groups: [], schedules: [] };
@@ -776,7 +778,7 @@ async function doLogin() {
     token = data.token || pw;
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-layout').style.display = 'flex';
-    await Promise.all([loadConfig(), loadRuleTypes(), loadAuditData()]);
+    await Promise.all([loadConfig(), loadRuleTypes(), loadAuditData(), loadPageTypesList()]);
   } catch { errEl.textContent = '서버 연결 실패'; errEl.classList.remove('hidden'); }
 }
 
@@ -802,6 +804,17 @@ async function loadConfig() {
 async function loadRuleTypes() {
   const res = await fetch('/admin/rule-types', { headers: { 'Authorization': `Bearer ${token}` } });
   ruleTypes = await res.json();
+}
+
+async function loadPageTypesList() {
+  try {
+    const res = await fetch('/admin/page-types', { headers: { 'Authorization': `Bearer ${token}` } });
+    const data = await res.json();
+    // GET /admin/page-types 응답은 {page_types: [...]} 형식 — id, label만 추려서 보관 (unknown 제외)
+    pageTypesList = (data.page_types || []).filter(pt => pt.id !== 'unknown').map(pt => ({ id: pt.id, label: pt.label || pt.id }));
+  } catch {
+    pageTypesList = [];
+  }
 }
 
 async function loadAuditData() {
@@ -901,6 +914,7 @@ function renderCards() {
       const rtLabel = rtMeta.label || ruleType;
       const params = rule.params || {};
       let paramsHtml = renderRuleParams(catKey, idx, ruleType, params);
+      let appliesHtml = renderAppliesToPageTypes(catKey, idx, cr.applies_to_page_types);
 
       criteriaHtml += `
         <div class="criteria-row py-3 px-3 rounded-lg transition ${!enabled ? 'opacity-40' : ''}">
@@ -928,6 +942,7 @@ function renderCards() {
             </button>
           </div>
           ${paramsHtml ? `<div class="ml-12 mt-2 flex flex-wrap gap-2">${paramsHtml}</div>` : ''}
+          ${appliesHtml}
         </div>`;
     });
 
@@ -979,6 +994,53 @@ function renderRuleParams(catKey, idx, ruleType, params) {
     }
   }
   return html;
+}
+
+// 적용 페이지 타입 (applies_to_page_types) 편집 UI
+// - 빈 배열/생략 = 모든 페이지에 적용 (기존 동작)
+// - 한 개 이상 선택 = 해당 page type에만 평가, 나머지에서는 N/A
+function renderAppliesToPageTypes(catKey, idx, appliesArr) {
+  if (!pageTypesList.length) return '';  // page types 미로드 시 UI 숨김
+  const applies = Array.isArray(appliesArr) ? appliesArr : [];
+  const isAll = applies.length === 0;
+  const summary = isAll
+    ? '<span class="text-slate-400">모든 페이지</span>'
+    : applies.map(id => `<span class="rule-badge bg-indigo-50 text-indigo-600">${escHtml(id)}</span>`).join(' ');
+  const chips = pageTypesList.map(pt => {
+    const active = applies.includes(pt.id);
+    return `<button type="button" onclick="toggleAppliesToPageType('${catKey}', ${idx}, '${pt.id}')"
+      class="text-[10px] px-2 py-0.5 rounded-full border transition ${active ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300'}">${escHtml(pt.id)}</button>`;
+  }).join('');
+  const key = `${catKey}:${idx}`;
+  const openAttr = expandedAppliesRows.has(key) ? 'open' : '';
+  return `
+    <details ${openAttr} ontoggle="onAppliesToggle('${catKey}', ${idx}, this.open)" class="ml-12 mt-2 text-[10px]">
+      <summary class="cursor-pointer text-slate-400 select-none flex items-center gap-1.5">
+        <span>적용 페이지:</span> ${summary}
+        <span class="text-slate-300">(클릭 시 편집)</span>
+      </summary>
+      <div class="mt-1.5 flex flex-wrap gap-1">${chips}</div>
+    </details>`;
+}
+
+function onAppliesToggle(catKey, idx, isOpen) {
+  const key = `${catKey}:${idx}`;
+  if (isOpen) expandedAppliesRows.add(key); else expandedAppliesRows.delete(key);
+}
+
+function toggleAppliesToPageType(catKey, idx, ptId) {
+  const cr = config[catKey] && config[catKey].criteria && config[catKey].criteria[idx];
+  if (!cr) return;
+  const arr = Array.isArray(cr.applies_to_page_types) ? cr.applies_to_page_types.slice() : [];
+  const i = arr.indexOf(ptId);
+  if (i >= 0) arr.splice(i, 1); else arr.push(ptId);
+  if (arr.length === 0) {
+    delete cr.applies_to_page_types;  // 빈 배열은 필드 자체 제거 (= 모든 페이지)
+  } else {
+    cr.applies_to_page_types = arr;
+  }
+  markDirty();
+  renderCriteriaPage();
 }
 
 function setMax(catKey, val) {
