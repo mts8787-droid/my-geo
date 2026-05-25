@@ -27,6 +27,9 @@ from urllib.parse import urlparse
 import httpx
 from bs4 import BeautifulSoup
 
+# 보일러플레이트(GNB/Footer/쿠키 배너) 제외 로직은 analyzer.py와 단일 소스 공유.
+from analyzer import _BOILERPLATE_JS, _boilerplate_selector, _strip_boilerplate_chars
+
 
 def _visible_text(soup: BeautifulSoup) -> int:
     """script/style 등 비가시 태그를 제외한 본문 글자수 (soup 변조 없음, #11)."""
@@ -48,7 +51,8 @@ async def fetch_ssr_chars(url: str) -> int:
     if "text/html" not in r.headers.get("content-type", ""):
         return 0
     soup = BeautifulSoup(r.text, "html.parser")
-    return _visible_text(soup)
+    # 보일러 제외 후 측정 — analyzer.py와 동일 셀렉터.
+    return _strip_boilerplate_chars(soup, url)
 
 
 _STEALTH_JS = """
@@ -86,8 +90,11 @@ async def fetch_csr_chars(url: str, headless: bool = False) -> dict:
         await context.add_init_script(_STEALTH_JS)
         page = await context.new_page()
 
-        resp = await page.goto(url, wait_until="networkidle", timeout=30000)
+        # networkidle은 광고/추적 스크립트가 계속 폴링하는 사이트에서 영원히 안 옴
+        # → domcontentloaded로 안정화하고 명시적 wait_for_timeout으로 렌더 대기
+        resp = await page.goto(url, wait_until="domcontentloaded", timeout=45000)
         http_status = resp.status if resp else None
+        bp_selector = _boilerplate_selector(url)
 
         # 403이어도 본문이 충분하면 정상 파싱 시도
         if http_status and http_status in (403, 406):
@@ -100,9 +107,16 @@ async def fetch_csr_chars(url: str, headless: bool = False) -> dict:
                 return {"status": "blocked", "csr_chars": 0, "http_status": http_status}
             # 본문이 충분하면 계속 진행 (일부 사이트는 403이지만 콘텐츠 정상)
 
-        await page.wait_for_timeout(3000)
+        # JS 프레임워크 렌더링 완료 대기 (analyzer.py와 동일 5초)
+        await page.wait_for_timeout(5000)
+        try:
+            await page.wait_for_load_state("load", timeout=10000)
+        except Exception:
+            pass
 
-        main_html = await page.content()
+        # CSS-aware + 보일러 제외 가시 텍스트
+        main_text = await page.evaluate(_BOILERPLATE_JS, bp_selector)
+        main_chars = len(re.sub(r"\s+", "", main_text))
         title = await page.title()
 
         frame_texts = []
@@ -119,8 +133,6 @@ async def fetch_csr_chars(url: str, headless: bool = False) -> dict:
         await context.close()
         await browser.close()
 
-    csr_soup = BeautifulSoup(main_html, "html.parser")
-    main_chars = _visible_text(csr_soup)
     iframe_chars = sum(frame_texts)
 
     return {
@@ -167,6 +179,8 @@ async def analyze_one(url: str, headless: bool = False) -> dict:
         "url": url,
         "ssr_chars": ssr_chars,
         "csr_chars": csr_chars,
+        "main_chars": csr_raw.get("main_chars"),
+        "iframe_chars": csr_raw.get("iframe_chars"),
         "ratio": ratio,
         "tier": tier,
         "score": score,
@@ -216,10 +230,15 @@ async def main():
                 "partial": "🟠", "poor": "🔴",
             }.get(result["tier"], "⚪")
 
+            mc = result.get("main_chars")
+            ic = result.get("iframe_chars")
+            breakdown = ""
+            if mc is not None and ic is not None:
+                breakdown = f"  [main {mc:,} + iframe {ic:,}]"
             print(
                 f"  {tier_icon} SSR {result['ssr_chars']:,}자 / "
                 f"CSR {result['csr_chars']:,}자 = {ratio_str} "
-                f"({result['score']}/{result['max']}점)",
+                f"({result['score']}/{result['max']}점){breakdown}",
                 file=sys.stderr,
             )
         except Exception as e:

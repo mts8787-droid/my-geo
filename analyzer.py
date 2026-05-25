@@ -119,6 +119,71 @@ def _safe_visible_text(soup: BeautifulSoup) -> int:
     return len(re.sub(r'\s+', '', ''.join(text_parts)))
 
 
+# ── SSR/CSR 측정: 보일러플레이트(GNB/Footer/쿠키 배너) 제외 ──────────────────────
+# GNB·Footer는 SSR로 박혀 있어 양쪽(분자·분모)에서 동일하게 카운트되면 ratio가
+# 인위적으로 1.0에 가까워져 본문이 100% CSR이어도 "good" 판정이 나옴.
+# 본문만 측정해야 실제 SSR 점유율을 볼 수 있다.
+
+# 범용: 의미태그 + ARIA role. <nav>는 통째 제외하지 않음 (breadcrumb 보존).
+_BOILERPLATE_BASE = [
+    "header",
+    "footer",
+    "[role='banner']",
+    "[role='contentinfo']",
+]
+
+# 도메인별 안전망 (의미태그 누락/축소 사이트 대응 + 쿠키 배너 등)
+_BOILERPLATE_PER_DOMAIN = {
+    "lg.com": [
+        "#header", "#footer",          # id 안전망
+        ".ui-header", ".c-footer",     # class 안전망
+        "#onetrustCookie",             # 쿠키 배너 (OneTrust)
+    ],
+}
+
+# 실행 측 selector 클론·제거 헬퍼. selector는 외부 변수로 한 번만 주입.
+# 주의: cloneNode로 만든 detached node는 layout이 없어 innerText가 script/style 내용도
+# 포함해버린다 (textContent fallback). 그래서 보일러 제거 전에 script/style을 먼저 제거.
+_BOILERPLATE_JS = """
+(selector) => {
+  if (!document.body) return '';
+  const clone = document.body.cloneNode(true);
+  clone.querySelectorAll('script, style, noscript, template').forEach(el => el.remove());
+  if (selector) {
+    try { clone.querySelectorAll(selector).forEach(el => el.remove()); } catch (_) {}
+  }
+  return clone.innerText || '';
+}
+"""
+
+
+def _boilerplate_selector(url: str) -> str:
+    """URL의 도메인을 보고 base + per-domain 셀렉터를 합쳐 CSS selector string 반환."""
+    parts = list(_BOILERPLATE_BASE)
+    try:
+        netloc = urlparse(url).netloc.lower()
+    except Exception:
+        netloc = ""
+    for domain, sels in _BOILERPLATE_PER_DOMAIN.items():
+        if domain in netloc:
+            parts.extend(sels)
+    return ", ".join(parts)
+
+
+def _strip_boilerplate_chars(soup: BeautifulSoup, url: str) -> int:
+    """BeautifulSoup 버전: SSR fallback 측정 시 보일러플레이트 제외 가시 텍스트 길이."""
+    selector = _boilerplate_selector(url)
+    # soup를 수정하지 않기 위해 복제
+    work = BeautifulSoup(str(soup), "html.parser")
+    if selector:
+        try:
+            for el in work.select(selector):
+                el.decompose()
+        except Exception:
+            pass
+    return _safe_visible_text(work)
+
+
 async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -> dict:
     """URL 분석.
 
@@ -193,11 +258,12 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
     page_type = detect_page_type(page_data.get("soup"), page_data.get("final_url") or url)
 
     # SSR 글자수: Playwright(JS off, CSS-aware) 결과 우선. 없으면 httpx soup 기반 폴백.
+    # 둘 다 보일러플레이트(GNB/Footer/쿠키 배너) 제외 후 측정 — ratio 왜곡 방지.
     ssr_chars = csr_raw.get("ssr_chars")
     if not isinstance(ssr_chars, int) or ssr_chars <= 0:
         ssr_chars = 0
         if page_data["status"] == "ok" and page_data["soup"]:
-            ssr_chars = _safe_visible_text(page_data["soup"])
+            ssr_chars = _strip_boilerplate_chars(page_data["soup"], url)
 
     csr_ratio = _calc_csr_ratio(ssr_chars, csr_raw)
 
@@ -659,7 +725,8 @@ async def _check_csr_chars(url: str) -> dict:
                     },
                 )
 
-                # === SSR 측정: JS 비활성화 + body.inner_text (CSS-aware) ===
+                # === SSR 측정: JS 비활성화 + body.innerText (CSS-aware) — 보일러 제외 ===
+                bp_selector = _boilerplate_selector(url)
                 ssr_chars = 0
                 ssr_error = None
                 try:
@@ -669,9 +736,7 @@ async def _check_csr_chars(url: str) -> dict:
                     ssr_text = ""
                     for _att in range(2):
                         try:
-                            ssr_text = await ssr_page.evaluate(
-                                "() => document.body ? document.body.innerText : ''"
-                            )
+                            ssr_text = await ssr_page.evaluate(_BOILERPLATE_JS, bp_selector)
                             break
                         except Exception:
                             try: await ssr_page.wait_for_timeout(1000)
@@ -730,13 +795,11 @@ async def _check_csr_chars(url: str) -> dict:
                     pass  # load 미도달이어도 그대로 진행
 
                 # CSS-aware 가시 텍스트 — page.evaluate가 locator.inner_text보다 안정적
-                # (navigation 중에도 동작, timeout 의존 없음)
+                # (navigation 중에도 동작, timeout 의존 없음). SSR과 동일 셀렉터로 보일러 제외.
                 csr_visible_text = ""
                 for _attempt in range(3):
                     try:
-                        csr_visible_text = await page.evaluate(
-                            "() => document.body ? document.body.innerText : ''"
-                        )
+                        csr_visible_text = await page.evaluate(_BOILERPLATE_JS, bp_selector)
                         break
                     except Exception:
                         try:
