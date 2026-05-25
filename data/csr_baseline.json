@@ -6,31 +6,46 @@
     "avg_ssr_chars": 9966,
     "avg_csr_chars": 19163,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정). 매월 1일 02:00 UTC 자동 갱신 시 10-sample로 교체됨."
   },
   "pdp": {
-    "avg_ratio": 0.647,
-    "avg_score": 7.0,
-    "tier": "good",
-    "avg_ssr_chars": 7110,
-    "avg_csr_chars": 10987,
-    "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/cooking-appliances/mh6565dis/"],
-    "updated_at": "2026-05-25T00:00:00+00:00",
-    "_note": "임시 seed (1-sample 수동 측정)."
+    "avg_ratio": 0.409,
+    "avg_score": 2.9,
+    "tier": "poor",
+    "avg_ssr_chars": 6125,
+    "avg_csr_chars": 14798,
+    "sample_size": 10,
+    "sample_urls": [
+      "https://www.lg.com/sg/residential-air-conditioner/hsuc126b4a0/",
+      "https://www.lg.com/sg/dishwashers/dfc533fv/",
+      "https://www.lg.com/sg/test0/",
+      "https://www.lg.com/sg/residential-air-conditioner/bsnq096b4a5/",
+      "https://www.lg.com/sg/residential-air-conditioner/hmnc096dwa0/",
+      "https://www.lg.com/sg/residential-air-conditioner/a3uq26gfa0/",
+      "https://www.lg.com/sg/washing-machines/tg2402ntww/",
+      "https://www.lg.com/sg/cooking-appliances/mh6565dis/",
+      "https://www.lg.com/sg/residential-air-conditioner/amnc18g2cl0/",
+      "https://www.lg.com/sg/washing-machines/fv1410h3ba/"
+    ],
+    "updated_at": "2026-05-25T21:02:04.627370+00:00"
   },
   "plp": {
-    "avg_ratio": 0.563,
-    "avg_score": 7.0,
-    "tier": "good",
-    "avg_ssr_chars": 3494,
-    "avg_csr_chars": 6208,
-    "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/commercial-monitors/"],
-    "updated_at": "2026-05-25T00:00:00+00:00",
-    "_note": "임시 seed (1-sample 수동 측정)."
+    "avg_ratio": 0.443,
+    "avg_score": 4.0,
+    "tier": "partial",
+    "avg_ssr_chars": 2753,
+    "avg_csr_chars": 6166,
+    "sample_size": 3,
+    "sample_urls": [
+      "https://www.lg.com/sg/tvs-soundbars/nano-4k-uhd/",
+      "https://www.lg.com/sg/consumer-monitors/uhd-4k/",
+      "https://www.lg.com/sg/air-purifiers/360-air-purifier/"
+    ],
+    "updated_at": "2026-05-25T21:02:23.581636+00:00"
   },
   "support": {
     "avg_ratio": 0.476,
@@ -39,7 +54,9 @@
     "avg_ssr_chars": 3614,
     "avg_csr_chars": 7594,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/support/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/support/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정)."
   },
@@ -50,7 +67,9 @@
     "avg_ssr_chars": 3692,
     "avg_csr_chars": 10202,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/uk/support/product-support/troubleshoot/help-library/cs-CT00008333-20152713868434OLT/"],
+    "sample_urls": [
+      "https://www.lg.com/uk/support/product-support/troubleshoot/help-library/cs-CT00008333-20152713868434OLT/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (UK help-library 1-sample)."
   },
@@ -61,7 +80,9 @@
     "avg_ssr_chars": 4088,
     "avg_csr_chars": 7167,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/business/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/business/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정)."
   },
@@ -72,7 +93,9 @@
     "avg_ssr_chars": 2721,
     "avg_csr_chars": 6621,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/lg-experience/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/lg-experience/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정)."
   },
@@ -83,7 +106,9 @@
     "avg_ssr_chars": 5913,
     "avg_csr_chars": 8839,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/tncs/12-day-of-savings/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/tncs/12-day-of-savings/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정)."
   },
@@ -94,7 +119,9 @@
     "avg_ssr_chars": 3141,
     "avg_csr_chars": 6073,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/about-lg/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/about-lg/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정)."
   },
@@ -105,7 +132,9 @@
     "avg_ssr_chars": 2754,
     "avg_csr_chars": 5683,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/press-media/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/press-media/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정)."
   },
@@ -116,7 +145,9 @@
     "avg_ssr_chars": 2649,
     "avg_csr_chars": 5575,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/buying-guide/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/buying-guide/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (1-sample 수동 측정)."
   },
@@ -127,7 +158,9 @@
     "avg_ssr_chars": 8743,
     "avg_csr_chars": 12611,
     "sample_size": 1,
-    "sample_urls": ["https://www.lg.com/sg/why-lg-oled/overview/"],
+    "sample_urls": [
+      "https://www.lg.com/sg/why-lg-oled/overview/"
+    ],
     "updated_at": "2026-05-25T00:00:00+00:00",
     "_note": "임시 seed (why-lg-oled microsite 1-sample)."
   }

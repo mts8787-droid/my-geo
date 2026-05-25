@@ -25,6 +25,7 @@ import asyncio
 import json
 import logging
 import random
+import re
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -37,6 +38,103 @@ BASELINE_PATH = Path(__file__).parent / "data" / "csr_baseline.json"
 SAMPLES_PER_TYPE = 10
 # Playwright 인스턴스 메모리 무거움 — 동시 2개로 매우 보수적 (Render 500MB)
 MAX_CONCURRENCY = 2
+
+# PDP/PLP 휴리스틱 — page_types.json에 url_pattern이 없어서 unknown으로 분류되는 페이지
+# 후보를 잡기 위한 정규식. 후보는 이후 httpx fetch + body class 검사로 실제 검증된다.
+# PDP: /<country>/<category>/<model-code>/  (model-code에 숫자 포함, 알파벳+숫자 혼합)
+_PDP_HEURISTIC = re.compile(r"^https?://[^/]+/[a-z]{2}/[a-z][a-z0-9-]+/[a-z0-9-]*[0-9][a-z0-9-]*/?$", re.I)
+# PLP: /<country>/<category>/   (1-depth, 숫자/하이픈 없거나 단순)
+_PLP_HEURISTIC = re.compile(r"^https?://[^/]+/[a-z]{2}/[a-z][a-z0-9-]+/?$", re.I)
+
+_BODY_CLASS_PDP = {"productpage", "pdp"}
+_BODY_CLASS_PLP = {"plppage", "categorypage", "productlistingpage"}
+_META_TEMPLATE_PDP = {"pdp-page", "product-page"}
+_META_TEMPLATE_PLP = {"plp-page", "category-page", "product-listing-page"}
+
+
+async def _verify_url_page_type(client, url: str) -> Optional[str]:
+    """httpx로 URL fetch → body class + meta template으로 'pdp', 'plp' 또는 None 반환.
+
+    PDP/PLP 휴리스틱 후보 검증용. body class가 잘 잡히는 게 가장 신뢰성 높음.
+    """
+    try:
+        r = await client.get(url, headers={
+            "User-Agent": "Mozilla/5.0 (compatible; GEOAudit/1.0)",
+            "Accept": "text/html",
+        }, timeout=15, follow_redirects=True)
+        if r.status_code != 200:
+            return None
+        html = r.text
+    except Exception:
+        return None
+
+    # body class 추출
+    m = re.search(r'<body\b[^>]*\bclass\s*=\s*"([^"]+)"', html, re.I)
+    if m:
+        classes = {c.lower() for c in m.group(1).split()}
+        if classes & _BODY_CLASS_PDP:
+            return "pdp"
+        if classes & _BODY_CLASS_PLP:
+            return "plp"
+
+    # meta template fallback
+    m = re.search(r'<meta\s+name="template"\s+content="([^"]+)"', html, re.I)
+    if m:
+        tmpl = m.group(1).strip().lower()
+        if tmpl in _META_TEMPLATE_PDP:
+            return "pdp"
+        if tmpl in _META_TEMPLATE_PLP:
+            return "plp"
+
+    return None
+
+
+async def _augment_pdp_plp_samples(all_urls: list, existing_samples: dict) -> dict:
+    """unknown 분류된 URL에서 PDP/PLP 후보 휴리스틱 추출 → httpx 검증 → 검증된 풀에서
+    SAMPLES_PER_TYPE개 무작위 추출하여 existing_samples에 채워준다.
+
+    검증은 동시 10개 (httpx 가벼움). 차단/오류 URL은 자연 제외.
+    """
+    import httpx
+
+    # 휴리스틱 후보 수집
+    pdp_candidates = [u for u in all_urls if _PDP_HEURISTIC.search(u)]
+    plp_candidates = [u for u in all_urls if _PLP_HEURISTIC.search(u)]
+
+    # 너무 많으면 무작위 prefetch (검증 부담 제한 — 각 type당 후보 최대 60개 검증)
+    PREFETCH_LIMIT = 60
+    if len(pdp_candidates) > PREFETCH_LIMIT:
+        pdp_candidates = random.sample(pdp_candidates, PREFETCH_LIMIT)
+    if len(plp_candidates) > PREFETCH_LIMIT:
+        plp_candidates = random.sample(plp_candidates, PREFETCH_LIMIT)
+
+    sem = asyncio.Semaphore(10)
+
+    async with httpx.AsyncClient() as client:
+        async def _verify(url):
+            async with sem:
+                return url, await _verify_url_page_type(client, url)
+
+        candidates_all = pdp_candidates + plp_candidates
+        results = await asyncio.gather(*(_verify(u) for u in candidates_all))
+
+    verified = {"pdp": [], "plp": []}
+    for url, pt in results:
+        if pt in verified:
+            verified[pt].append(url)
+
+    log.info("PDP/PLP 휴리스틱 검증: pdp 후보=%d / 확인=%d, plp 후보=%d / 확인=%d",
+             len(pdp_candidates), len(verified["pdp"]),
+             len(plp_candidates), len(verified["plp"]))
+
+    # 검증된 풀에서 SAMPLES_PER_TYPE 추출 → existing_samples에 추가 (이미 있으면 덮어씀)
+    for type_id, urls in verified.items():
+        if not urls:
+            continue
+        n = min(SAMPLES_PER_TYPE, len(urls))
+        existing_samples[type_id] = random.sample(urls, n)
+
+    return existing_samples
 
 
 def get_baseline_for_page_type(page_type_id: str) -> Optional[dict]:
@@ -104,6 +202,12 @@ async def regenerate_baseline() -> dict:
         n = min(SAMPLES_PER_TYPE, len(urls))
         if n > 0:
             samples[type_id] = random.sample(urls, n)
+
+    # PDP/PLP는 page_types.json url_pattern이 없어 unknown으로 분류됨 — 휴리스틱+검증으로 보강
+    try:
+        samples = await _augment_pdp_plp_samples(all_urls, samples)
+    except Exception as e:
+        log.warning("PDP/PLP 휴리스틱 검증 실패 (skip): %s", e)
 
     if not samples:
         return {"status": "no_samples", "types": 0, "sample_total": 0}
