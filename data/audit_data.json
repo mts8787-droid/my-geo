@@ -4802,7 +4802,7 @@
       "group_id": "grp_lg_uk"
     },
     {
-      "frequency": "monthly_day_2",
+      "frequency": "monthly_day_1",
       "time": "01:30",
       "chunk_size": 1000,
       "id": "sch_lg_de",
@@ -4812,7 +4812,7 @@
       "group_id": "grp_lg_de"
     },
     {
-      "frequency": "monthly_day_2",
+      "frequency": "monthly_day_1",
       "time": "01:40",
       "chunk_size": 1000,
       "id": "sch_lg_ru",
@@ -4822,7 +4822,7 @@
       "group_id": "grp_lg_ru"
     },
     {
-      "frequency": "monthly_day_3",
+      "frequency": "monthly_day_1",
       "time": "01:50",
       "chunk_size": 1000,
       "id": "sch_lg_es",
@@ -4832,7 +4832,7 @@
       "group_id": "grp_lg_es"
     },
     {
-      "frequency": "monthly_day_3",
+      "frequency": "monthly_day_2",
       "time": "02:00",
       "chunk_size": 1000,
       "id": "sch_lg_in",
@@ -4842,7 +4842,7 @@
       "group_id": "grp_lg_in"
     },
     {
-      "frequency": "monthly_day_4",
+      "frequency": "monthly_day_2",
       "time": "02:10",
       "chunk_size": 1000,
       "id": "sch_lg_id",
@@ -4852,7 +4852,7 @@
       "group_id": "grp_lg_id"
     },
     {
-      "frequency": "monthly_day_4",
+      "frequency": "monthly_day_2",
       "time": "02:20",
       "chunk_size": 1000,
       "id": "sch_lg_fr",
@@ -4862,7 +4862,7 @@
       "group_id": "grp_lg_fr"
     },
     {
-      "frequency": "monthly_day_5",
+      "frequency": "monthly_day_2",
       "time": "02:30",
       "chunk_size": 1000,
       "id": "sch_lg_it",
@@ -4872,7 +4872,7 @@
       "group_id": "grp_lg_it"
     },
     {
-      "frequency": "monthly_day_5",
+      "frequency": "monthly_day_2",
       "time": "02:40",
       "chunk_size": 1000,
       "id": "sch_lg_at",
@@ -4882,7 +4882,7 @@
       "group_id": "grp_lg_at"
     },
     {
-      "frequency": "monthly_day_6",
+      "frequency": "monthly_day_3",
       "time": "02:50",
       "chunk_size": 1000,
       "id": "sch_lg_br",
@@ -4892,7 +4892,7 @@
       "group_id": "grp_lg_br"
     },
     {
-      "frequency": "monthly_day_6",
+      "frequency": "monthly_day_3",
       "time": "03:00",
       "chunk_size": 1000,
       "id": "sch_lg_pa",
@@ -4902,7 +4902,7 @@
       "group_id": "grp_lg_pa"
     },
     {
-      "frequency": "monthly_day_7",
+      "frequency": "monthly_day_3",
       "time": "03:10",
       "chunk_size": 1000,
       "id": "sch_lg_kz",
@@ -4912,7 +4912,7 @@
       "group_id": "grp_lg_kz"
     },
     {
-      "frequency": "monthly_day_7",
+      "frequency": "monthly_day_3",
       "time": "03:20",
       "chunk_size": 1000,
       "id": "sch_lg_hu",
@@ -4922,7 +4922,7 @@
       "group_id": "grp_lg_hu"
     },
     {
-      "frequency": "monthly_day_8",
+      "frequency": "monthly_day_3",
       "time": "03:30",
       "chunk_size": 1000,
       "id": "sch_lg_cz",
@@ -4932,7 +4932,7 @@
       "group_id": "grp_lg_cz"
     },
     {
-      "frequency": "monthly_day_8",
+      "frequency": "monthly_day_4",
       "time": "03:40",
       "chunk_size": 1000,
       "id": "sch_lg_ec",
@@ -4942,7 +4942,7 @@
       "group_id": "grp_lg_ec"
     },
     {
-      "frequency": "monthly_day_9",
+      "frequency": "monthly_day_4",
       "time": "03:50",
       "chunk_size": 1000,
       "id": "sch_lg_au",
@@ -4952,7 +4952,7 @@
       "group_id": "grp_lg_au"
     },
     {
-      "frequency": "monthly_day_9",
+      "frequency": "monthly_day_4",
       "time": "04:00",
       "chunk_size": 1000,
       "id": "sch_lg_se",
@@ -4962,7 +4962,7 @@
       "group_id": "grp_lg_se"
     },
     {
-      "frequency": "monthly_day_10",
+      "frequency": "monthly_day_4",
       "time": "04:10",
       "chunk_size": 1000,
       "id": "sch_lg_mx",
@@ -4972,7 +4972,7 @@
       "group_id": "grp_lg_mx"
     },
     {
-      "frequency": "monthly_day_10",
+      "frequency": "monthly_day_4",
       "time": "04:20",
       "chunk_size": 1000,
       "id": "sch_lg_cac",
@@ -4982,7 +4982,7 @@
       "group_id": "grp_lg_cac"
     },
     {
-      "frequency": "monthly_day_11",
+      "frequency": "monthly_day_5",
       "time": "04:30",
       "chunk_size": 1000,
       "id": "sch_lg_pt",
@@ -4992,7 +4992,7 @@
       "group_id": "grp_lg_pt"
     },
     {
-      "frequency": "monthly_day_11",
+      "frequency": "monthly_day_5",
       "time": "04:40",
       "chunk_size": 1000,
       "id": "sch_lg_dk",
@@ -5002,7 +5002,7 @@
       "group_id": "grp_lg_dk"
     },
     {
-      "frequency": "monthly_day_12",
+      "frequency": "monthly_day_5",
       "time": "04:50",
       "chunk_size": 1000,
       "id": "sch_lg_gr",
@@ -5012,7 +5012,7 @@
       "group_id": "grp_lg_gr"
     },
     {
-      "frequency": "monthly_day_12",
+      "frequency": "monthly_day_5",
       "time": "05:00",
       "chunk_size": 1000,
       "id": "sch_lg_th",
@@ -5022,7 +5022,7 @@
       "group_id": "grp_lg_th"
     },
     {
-      "frequency": "monthly_day_13",
+      "frequency": "monthly_day_5",
       "time": "05:10",
       "chunk_size": 1000,
       "id": "sch_lg_sg",
@@ -5032,7 +5032,7 @@
       "group_id": "grp_lg_sg"
     },
     {
-      "frequency": "monthly_day_13",
+      "frequency": "monthly_day_6",
       "time": "05:20",
       "chunk_size": 1000,
       "id": "sch_lg_tr",
@@ -5042,7 +5042,7 @@
       "group_id": "grp_lg_tr"
     },
     {
-      "frequency": "monthly_day_14",
+      "frequency": "monthly_day_6",
       "time": "05:30",
       "chunk_size": 1000,
       "id": "sch_lg_ua",
@@ -5052,7 +5052,7 @@
       "group_id": "grp_lg_ua"
     },
     {
-      "frequency": "monthly_day_14",
+      "frequency": "monthly_day_6",
       "time": "05:40",
       "chunk_size": 1000,
       "id": "sch_lg_ae",
@@ -5062,7 +5062,7 @@
       "group_id": "grp_lg_ae"
     },
     {
-      "frequency": "monthly_day_15",
+      "frequency": "monthly_day_6",
       "time": "05:50",
       "chunk_size": 1000,
       "id": "sch_lg_hr",
@@ -5072,7 +5072,7 @@
       "group_id": "grp_lg_hr"
     },
     {
-      "frequency": "monthly_day_15",
+      "frequency": "monthly_day_6",
       "time": "06:00",
       "chunk_size": 1000,
       "id": "sch_lg_vn",
@@ -5082,7 +5082,7 @@
       "group_id": "grp_lg_vn"
     },
     {
-      "frequency": "monthly_day_16",
+      "frequency": "monthly_day_7",
       "time": "06:10",
       "chunk_size": 1000,
       "id": "sch_lg_bg",
@@ -5092,7 +5092,7 @@
       "group_id": "grp_lg_bg"
     },
     {
-      "frequency": "monthly_day_16",
+      "frequency": "monthly_day_7",
       "time": "06:20",
       "chunk_size": 1000,
       "id": "sch_lg_rs",
@@ -5102,7 +5102,7 @@
       "group_id": "grp_lg_rs"
     },
     {
-      "frequency": "monthly_day_17",
+      "frequency": "monthly_day_7",
       "time": "06:30",
       "chunk_size": 1000,
       "id": "sch_lg_il",
@@ -5112,7 +5112,7 @@
       "group_id": "grp_lg_il"
     },
     {
-      "frequency": "monthly_day_17",
+      "frequency": "monthly_day_7",
       "time": "06:40",
       "chunk_size": 1000,
       "id": "sch_lg_ee",
@@ -5122,7 +5122,7 @@
       "group_id": "grp_lg_ee"
     },
     {
-      "frequency": "monthly_day_18",
+      "frequency": "monthly_day_7",
       "time": "06:50",
       "chunk_size": 1000,
       "id": "sch_lg_co",
@@ -5132,7 +5132,7 @@
       "group_id": "grp_lg_co"
     },
     {
-      "frequency": "monthly_day_18",
+      "frequency": "monthly_day_8",
       "time": "07:00",
       "chunk_size": 1000,
       "id": "sch_lg_lv",
@@ -5142,7 +5142,7 @@
       "group_id": "grp_lg_lv"
     },
     {
-      "frequency": "monthly_day_19",
+      "frequency": "monthly_day_8",
       "time": "07:10",
       "chunk_size": 1000,
       "id": "sch_lg_sk",
@@ -5152,7 +5152,7 @@
       "group_id": "grp_lg_sk"
     },
     {
-      "frequency": "monthly_day_19",
+      "frequency": "monthly_day_8",
       "time": "07:20",
       "chunk_size": 1000,
       "id": "sch_lg_fi",
@@ -5162,7 +5162,7 @@
       "group_id": "grp_lg_fi"
     },
     {
-      "frequency": "monthly_day_20",
+      "frequency": "monthly_day_8",
       "time": "07:30",
       "chunk_size": 1000,
       "id": "sch_lg_pe",
@@ -5172,7 +5172,7 @@
       "group_id": "grp_lg_pe"
     },
     {
-      "frequency": "monthly_day_20",
+      "frequency": "monthly_day_8",
       "time": "07:40",
       "chunk_size": 1000,
       "id": "sch_lg_cl",
@@ -5182,7 +5182,7 @@
       "group_id": "grp_lg_cl"
     },
     {
-      "frequency": "monthly_day_21",
+      "frequency": "monthly_day_9",
       "time": "07:50",
       "chunk_size": 1000,
       "id": "sch_lg_no",
@@ -5192,7 +5192,7 @@
       "group_id": "grp_lg_no"
     },
     {
-      "frequency": "monthly_day_21",
+      "frequency": "monthly_day_9",
       "time": "08:00",
       "chunk_size": 1000,
       "id": "sch_lg_tw",
@@ -5202,7 +5202,7 @@
       "group_id": "grp_lg_tw"
     },
     {
-      "frequency": "monthly_day_22",
+      "frequency": "monthly_day_9",
       "time": "08:10",
       "chunk_size": 1000,
       "id": "sch_lg_lt",
@@ -5212,7 +5212,7 @@
       "group_id": "grp_lg_lt"
     },
     {
-      "frequency": "monthly_day_22",
+      "frequency": "monthly_day_9",
       "time": "08:20",
       "chunk_size": 1000,
       "id": "sch_lg_sa",
@@ -5222,7 +5222,7 @@
       "group_id": "grp_lg_sa"
     },
     {
-      "frequency": "monthly_day_23",
+      "frequency": "monthly_day_9",
       "time": "08:30",
       "chunk_size": 1000,
       "id": "sch_lg_nz",
@@ -5232,7 +5232,7 @@
       "group_id": "grp_lg_nz"
     },
     {
-      "frequency": "monthly_day_23",
+      "frequency": "monthly_day_10",
       "time": "08:40",
       "chunk_size": 1000,
       "id": "sch_lg_ro",
@@ -5242,7 +5242,7 @@
       "group_id": "grp_lg_ro"
     },
     {
-      "frequency": "monthly_day_24",
+      "frequency": "monthly_day_10",
       "time": "08:50",
       "chunk_size": 1000,
       "id": "sch_lg_my",
@@ -5252,7 +5252,7 @@
       "group_id": "grp_lg_my"
     },
     {
-      "frequency": "monthly_day_24",
+      "frequency": "monthly_day_10",
       "time": "09:00",
       "chunk_size": 1000,
       "id": "sch_lg_ph",
@@ -5262,7 +5262,7 @@
       "group_id": "grp_lg_ph"
     },
     {
-      "frequency": "monthly_day_25",
+      "frequency": "monthly_day_10",
       "time": "09:10",
       "chunk_size": 1000,
       "id": "sch_lg_cn",
@@ -5272,7 +5272,7 @@
       "group_id": "grp_lg_cn"
     },
     {
-      "frequency": "monthly_day_25",
+      "frequency": "monthly_day_10",
       "time": "09:20",
       "chunk_size": 1000,
       "id": "sch_lg_hk",
@@ -5282,7 +5282,7 @@
       "group_id": "grp_lg_hk"
     },
     {
-      "frequency": "monthly_day_26",
+      "frequency": "monthly_day_11",
       "time": "09:30",
       "chunk_size": 1000,
       "id": "sch_lg_uz",
@@ -5292,7 +5292,7 @@
       "group_id": "grp_lg_uz"
     },
     {
-      "frequency": "monthly_day_26",
+      "frequency": "monthly_day_11",
       "time": "09:40",
       "chunk_size": 1000,
       "id": "sch_lg_jp",
@@ -5302,7 +5302,7 @@
       "group_id": "grp_lg_jp"
     },
     {
-      "frequency": "monthly_day_27",
+      "frequency": "monthly_day_11",
       "time": "09:50",
       "chunk_size": 1000,
       "id": "sch_lg_bd",
@@ -5312,7 +5312,7 @@
       "group_id": "grp_lg_bd"
     },
     {
-      "frequency": "monthly_day_27",
+      "frequency": "monthly_day_11",
       "time": "10:00",
       "chunk_size": 1000,
       "id": "sch_lg_ir",
@@ -5322,7 +5322,7 @@
       "group_id": "grp_lg_ir"
     },
     {
-      "frequency": "monthly_day_28",
+      "frequency": "monthly_day_11",
       "time": "10:10",
       "chunk_size": 1000,
       "id": "sch_lg_ma",
@@ -5332,7 +5332,7 @@
       "group_id": "grp_lg_ma"
     },
     {
-      "frequency": "monthly_day_28",
+      "frequency": "monthly_day_12",
       "time": "10:20",
       "chunk_size": 1000,
       "id": "sch_lg_tn",
@@ -5342,7 +5342,7 @@
       "group_id": "grp_lg_tn"
     },
     {
-      "frequency": "monthly_day_29",
+      "frequency": "monthly_day_12",
       "time": "10:30",
       "chunk_size": 1000,
       "id": "sch_lg_ar",
@@ -5352,7 +5352,7 @@
       "group_id": "grp_lg_ar"
     },
     {
-      "frequency": "monthly_day_29",
+      "frequency": "monthly_day_12",
       "time": "10:40",
       "chunk_size": 1000,
       "id": "sch_lg_lk",
@@ -5362,7 +5362,7 @@
       "group_id": "grp_lg_lk"
     },
     {
-      "frequency": "monthly_day_30",
+      "frequency": "monthly_day_12",
       "time": "10:50",
       "chunk_size": 1000,
       "id": "sch_lg_np",
@@ -5372,7 +5372,7 @@
       "group_id": "grp_lg_np"
     },
     {
-      "frequency": "monthly_day_30",
+      "frequency": "monthly_day_12",
       "time": "11:00",
       "chunk_size": 1000,
       "id": "sch_lg_dz",
