@@ -888,13 +888,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         : 'bg-red-100 text-red-700';
 
       const itemsHtml = Object.entries(items).map(([id, it]) => {
-        const passClass = it.pass ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100';
-        const textClass = it.pass ? 'text-emerald-800' : 'text-red-800';
+        // 3-state: PASS (✅ 초록) / FAIL (❌ 빨강) / N/A (⊘ 회색 — 이 page type 대상 아님)
+        const isNa = it.na === true || it.pass === null;
+        let passClass, textClass, icon, hintColor;
+        if (isNa) {
+          passClass = 'bg-slate-50 border-slate-200';
+          textClass = 'text-slate-500';
+          icon = '⊘';
+          hintColor = 'text-slate-400';
+        } else if (it.pass) {
+          passClass = 'bg-emerald-50 border-emerald-100';
+          textClass = 'text-emerald-800';
+          icon = '✅';
+          hintColor = 'text-red-500';
+        } else {
+          passClass = 'bg-red-50 border-red-100';
+          textClass = 'text-red-800';
+          icon = '❌';
+          hintColor = 'text-red-500';
+        }
         const valueLine = it.value ? `<p class="text-xs text-slate-500 mt-0.5 truncate" title="${escHtml(it.value)}">${escHtml(it.value)}</p>` : '';
-        const hintLine  = it.hint  ? `<p class="text-xs text-red-500 mt-0.5">${escHtml(it.hint)}</p>` : '';
+        const hintLine  = it.hint  ? `<p class="text-xs ${hintColor} mt-0.5">${escHtml(it.hint)}</p>` : '';
         return `
           <div class="flex items-start gap-2.5 p-3 rounded-xl border ${passClass}">
-            <span class="text-lg shrink-0 mt-0.5">${it.pass ? '✅' : '❌'}</span>
+            <span class="text-lg shrink-0 mt-0.5">${icon}</span>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold ${textClass}">${escHtml(it.label || id)}</p>
               ${valueLine}
@@ -902,6 +919,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </div>`;
       }).join('');
+
+      // 카테고리 헤더에 N/A 카운트 — passed/total 옆에 별도 표시
+      const naCount = Object.values(items).filter(i => i.na === true || i.pass === null).length;
 
       container.innerHTML += `
         <div data-cat="${catKey}" class="card bg-white rounded-2xl shadow-md border border-slate-100 p-6 fade-up fade-up-2 opacity-0" style="animation-delay:0s">
@@ -912,6 +932,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div class="flex items-center gap-2 flex-wrap">
                 <h2 class="font-bold text-slate-800 text-lg">${meta.label}</h2>
                 <span class="text-xs px-2 py-0.5 rounded-full font-medium ${badgeColor}">${passed}/${total} 통과</span>
+                ${naCount > 0 ? `<span class="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-500" title="이 page type 대상이 아닌 항목 수">+${naCount} N/A</span>` : ''}
                 <span class="text-xs text-slate-400 ml-auto">${cat.points}/${cat.max}점</span>
               </div>
               <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-2">

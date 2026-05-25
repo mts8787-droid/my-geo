@@ -57,7 +57,26 @@ def detect_page_type(soup, url: str = "") -> dict:
             elif isinstance(cls, str):
                 body_classes = {c.lower() for c in cls.split()}
 
-    # 3) 정의된 타입 순회 (unknown 빼고). 우선순위: meta_template > body_class > url_pattern
+    # 3) 정의된 타입 순회 (unknown 빼고).
+    # 우선순위: url_pattern > meta_template > body_class
+    # — URL이 페이지 의도를 가장 직접 표현하고, LG가 template를 재사용하는 케이스
+    # (business→home-page, why-lg-oled→pdp-page)를 무력화하기 위해 URL 우선.
+    # 두 패스로 분리: 1패스 URL 매칭, 2패스 meta/body fallback.
+
+    # 1패스: url_pattern
+    if url:
+        for pt in page_types:
+            if pt.get("id") == "unknown":
+                continue
+            url_targets = (pt.get("detection") or {}).get("url_pattern") or []
+            for pat in url_targets:
+                try:
+                    if re.search(pat, url, re.IGNORECASE):
+                        return _build(pt, matched_by=f"url_pattern={pat}")
+                except re.error:
+                    continue
+
+    # 2패스: meta_template / body_class fallback (URL 패턴 없는 page_type 대응 — pdp, plp 등)
     for pt in page_types:
         if pt.get("id") == "unknown":
             continue
@@ -71,15 +90,6 @@ def detect_page_type(soup, url: str = "") -> dict:
         if body_classes and any(t in body_targets for t in body_classes):
             matched = next(t for t in body_targets if t in body_classes)
             return _build(pt, matched_by=f"body_class={matched}")
-
-        url_targets = detection.get("url_pattern") or []
-        if url and url_targets:
-            for pat in url_targets:
-                try:
-                    if re.search(pat, url, re.IGNORECASE):
-                        return _build(pt, matched_by=f"url_pattern={pat}")
-                except re.error:
-                    continue
 
     # 4) fallback — unknown
     unk = next((pt for pt in page_types if pt.get("id") == "unknown"), None)
