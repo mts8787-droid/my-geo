@@ -126,6 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // 웹앱 링크
   $('openWebLink').href = API_BASE + '/';
 
+  // manifest version 자동 표시 (자동 버전업 훅이 갱신)
+  try {
+    const v = chrome.runtime.getManifest().version;
+    $('brandVersion').textContent = 'v' + v;
+  } catch (_) {}
+
   applyI18n();
 
   // 언어 토글 — 양쪽 pill 클릭 모두 처리

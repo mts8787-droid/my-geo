@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# ──────────────────────────────────────────────────────────────────────────
+# pre-commit hook
+# extension/ 안 파일이 staged면 자동으로:
+#   1. extension/manifest.json version patch +1
+#   2. static/geo-audit-extension.zip 재빌드
+#   3. static/index.html 의 download attribute 파일명에 버전 반영
+#   4. 모든 변경을 다시 staging
+#
+# 설치: scripts/install-hooks.sh 한 번 실행 (core.hooksPath = .githooks)
+# ──────────────────────────────────────────────────────────────────────────
+set -e
+
+REPO=$(git rev-parse --show-toplevel)
+MANIFEST="$REPO/extension/manifest.json"
+ZIP_PATH="$REPO/static/geo-audit-extension.zip"
+INDEX="$REPO/static/index.html"
+
+# extension/ 안에 staged 파일 있나?
+staged_ext=$(git diff --cached --name-only -- 'extension/' 2>/dev/null || true)
+if [ -z "$staged_ext" ]; then
+  exit 0
+fi
+
+# 단, manifest.json만 단독으로 stage된 경우(이 hook 자체가 직전 수행으로 만든 변경)는 재증가 방지
+# → manifest 외 다른 extension/ 파일이 staged인지 확인
+other_staged=$(echo "$staged_ext" | grep -v '^extension/manifest\.json$' || true)
+if [ -z "$other_staged" ]; then
+  exit 0
+fi
+
+CUR_VER=$(/usr/bin/python3 -c "import json; print(json.load(open('$MANIFEST'))['version'])")
+NEW_VER=$(/usr/bin/python3 -c "
+parts = '$CUR_VER'.split('.')
+while len(parts) < 3: parts.append('0')
+parts[2] = str(int(parts[2]) + 1)
+print('.'.join(parts))
+")
+
+/usr/bin/python3 -c "
+import json
+m = json.load(open('$MANIFEST'))
+m['version'] = '$NEW_VER'
+with open('$MANIFEST', 'w', encoding='utf-8') as f:
+    json.dump(m, f, indent=2, ensure_ascii=False)
+    f.write('\n')
+"
+
+# zip 재빌드 (extension 디렉토리 안 모든 파일, .DS_Store 제외)
+(cd "$REPO/extension" && zip -rq "$ZIP_PATH" . -x "*.DS_Store" "*.git*")
+
+# index.html의 download 파일명에 버전 반영
+/usr/bin/python3 -c "
+import re
+path = '$INDEX'
+content = open(path).read()
+new = re.sub(
+    r'href=\"/static/geo-audit-extension\.zip\"\s+download(?:=\"[^\"]*\")?',
+    'href=\"/static/geo-audit-extension.zip\" download=\"my-geo-audit-for-lge-v$NEW_VER.zip\"',
+    content, count=1,
+)
+if new != content:
+    open(path, 'w').write(new)
+"
+
+git add "$MANIFEST" "$ZIP_PATH" "$INDEX"
+
+echo "  [hook] extension v$CUR_VER → v$NEW_VER · zip rebuilt · index.html updated"
