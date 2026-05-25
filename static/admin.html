@@ -293,6 +293,49 @@
             </div>
           </div>
           <div id="schedule-list" class="card divide-y divide-slate-100 overflow-hidden mb-4"></div>
+
+          <!-- CSR/SSR Baseline 카드 — 매월 1일 02:00 UTC 자동 + 수동 트리거 -->
+          <div class="card p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.657-1.343 3-3 3s-3-1.343-3-3 1.343-3 3-3 3 1.343 3 3zm12-3c0 1.657-1.343 3-3 3s-3-1.343-3-3 1.343-3 3-3 3 1.343 3 3z"/></svg>
+                </div>
+                <h2 class="text-sm font-bold text-slate-700">CSR/SSR 표본 Baseline</h2>
+                <span class="text-[10px] text-slate-400">매월 1일 02:00 UTC 자동</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="baseline-status" class="text-[11px] text-slate-400">대기</span>
+                <button onclick="loadBaseline()" class="text-xs px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition font-medium">새로고침</button>
+                <button onclick="runBaseline()" id="baseline-run-btn" class="text-xs px-3 py-1.5 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition font-medium" title="page_type별 10개 URL 무작위 추출 → Playwright 실측 (30분~1시간 소요)">
+                  지금 실행
+                </button>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">
+              page_type별 10개 URL을 무작위 표본 추출하여 Playwright(lightweight=False)로 실측한 CSR/SSR 평균.
+              정기 sitemap audit (lightweight) 결과에서 같은 page_type의 다른 URL에는 이 평균값이 주입됨.
+            </p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                  <tr class="text-left">
+                    <th class="px-3 py-2 font-semibold text-slate-600">page_type</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-right">avg ratio</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-center">tier</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-right">avg score</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-right">avg SSR</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-right">avg CSR</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-right">samples</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600">updated</th>
+                  </tr>
+                </thead>
+                <tbody id="baseline-tbody">
+                  <tr><td colspan="8" class="px-3 py-6 text-center text-slate-400">아직 baseline이 없습니다. "지금 실행" 버튼을 눌러주세요.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         <!-- Page: 페이지 타입 리포트 -->
@@ -625,7 +668,7 @@ function switchPage(page) {
 
   if (page === 'criteria') loadSnapshots();
   if (page === 'list') renderGroups();
-  if (page === 'schedule') renderSchedules();
+  if (page === 'schedule') { renderSchedules(); loadBaseline(); }
   if (page === 'pagetypes') loadPageTypes();
   if (page === 'stats') loadPageTypeStats();
   if (page === 'logs') {
@@ -1477,6 +1520,88 @@ async function runSitemapAgent() {
 }
 
 // ── 페이지 타입 리포트 ──────────────────────────────────────────────────
+// ── CSR/SSR Baseline (page_type별 표본 평균) ────────────────────────────────
+async function loadBaseline() {
+  const tbody = document.getElementById('baseline-tbody');
+  const status = document.getElementById('baseline-status');
+  if (!tbody) return;
+  if (status) status.textContent = '불러오는 중...';
+  try {
+    const res = await fetch('/admin/csr-baseline', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) {
+      if (status) status.textContent = `오류 ${res.status}`;
+      tbody.innerHTML = '<tr><td colspan="8" class="text-red-500 px-3 py-4">조회 실패</td></tr>';
+      return;
+    }
+    const data = await res.json();
+    const ids = Object.keys(data || {});
+    if (!ids.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="px-3 py-6 text-center text-slate-400">아직 baseline이 없습니다. "지금 실행" 버튼을 눌러주세요.</td></tr>';
+      if (status) status.textContent = '비어있음';
+      return;
+    }
+    const tierColor = (t) => ({
+      excellent: 'bg-emerald-100 text-emerald-700',
+      good:      'bg-emerald-50 text-emerald-700',
+      partial:   'bg-amber-50 text-amber-700',
+      poor:      'bg-red-50 text-red-700',
+    }[t] || 'bg-slate-100 text-slate-600');
+    const formatDate = (iso) => {
+      if (!iso) return '<span class="text-slate-300">-</span>';
+      try { return new Date(iso).toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+      catch { return iso; }
+    };
+    tbody.innerHTML = ids.sort().map(id => {
+      const b = data[id];
+      const ratio = (b.avg_ratio != null) ? `${(b.avg_ratio * 100).toFixed(1)}%` : '<span class="text-slate-300">-</span>';
+      return `
+        <tr class="border-b border-slate-50 hover:bg-slate-50/50">
+          <td class="px-3 py-2.5 font-mono text-slate-700">${escHtml(id)}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums font-semibold">${ratio}</td>
+          <td class="px-3 py-2.5 text-center">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${tierColor(b.tier)}">${escHtml(b.tier || '-')}</span>
+          </td>
+          <td class="px-3 py-2.5 text-right tabular-nums">${(b.avg_score != null) ? b.avg_score.toFixed(1) : '-'}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums text-slate-500">${(b.avg_ssr_chars || 0).toLocaleString()}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums text-slate-500">${(b.avg_csr_chars || 0).toLocaleString()}</td>
+          <td class="px-3 py-2.5 text-right tabular-nums">${b.sample_size || 0}</td>
+          <td class="px-3 py-2.5 text-[10px] text-slate-500">${formatDate(b.updated_at)}</td>
+        </tr>`;
+    }).join('');
+    if (status) status.textContent = `${ids.length} types`;
+  } catch (e) {
+    if (status) status.textContent = '네트워크 오류';
+    tbody.innerHTML = `<tr><td colspan="8" class="text-red-500 px-3 py-4">${escHtml(String(e))}</td></tr>`;
+  }
+}
+
+async function runBaseline() {
+  const btn = document.getElementById('baseline-run-btn');
+  const status = document.getElementById('baseline-status');
+  if (!confirm('CSR Baseline 갱신을 시작합니다.\n\nplaywright로 page_type별 10개 URL을 실측 (30분~1시간 소요, 백그라운드).\n진행 후 약 1시간 뒤에 "새로고침" 눌러 결과 확인.')) return;
+  btn.disabled = true; btn.textContent = '시작 중...';
+  if (status) status.textContent = '백그라운드 시작 중...';
+  try {
+    const res = await fetch('/admin/csr-baseline/run', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.ok && data.status === 'ok') {
+      if (status) status.textContent = '백그라운드 실행 중 — 30분~1시간 후 새로고침';
+      showToast('CSR baseline 갱신 시작 (백그라운드)');
+    } else {
+      if (status) status.textContent = '실패';
+      showToast(`오류: ${data.detail || data.message || 'unknown'}`);
+    }
+  } catch (e) {
+    if (status) status.textContent = '네트워크 오류';
+    showToast('네트워크 오류: ' + e);
+  } finally {
+    btn.disabled = false; btn.textContent = '지금 실행';
+  }
+}
+
 async function loadPageTypeStats() {
   const tbody = document.getElementById('stats-tbody');
   const status = document.getElementById('stats-status');
