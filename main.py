@@ -759,6 +759,29 @@ async def run_sitemap_sync_now(request: Request, background_tasks: BackgroundTas
     return {"status": "ok", "message": "사이트맵 동기를 백그라운드에서 시작했습니다. 로그창에서 진행상황 확인."}
 
 
+@app.post("/admin/csr-baseline/run")
+async def run_csr_baseline_now(request: Request, background_tasks: BackgroundTasks):
+    """매월 1일 자동 실행되는 CSR/SSR baseline 갱신을 지금 1회 수동 실행 (백그라운드).
+
+    page_type별 10개 URL을 Playwright(lightweight=False)로 실측 → 평균을
+    data/csr_baseline.json에 저장. 약 120 URL 분석이라 수십 분 걸릴 수 있음.
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from csr_baseline import regenerate_baseline
+    background_tasks.add_task(regenerate_baseline)
+    return {"status": "ok", "message": "CSR baseline 갱신을 백그라운드에서 시작했습니다. (수십 분 소요 가능)"}
+
+
+@app.get("/admin/csr-baseline")
+async def get_csr_baseline(request: Request):
+    """현재 저장된 CSR/SSR baseline 조회 (page_type별 표본 평균)."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from csr_baseline import load_baseline_all
+    return load_baseline_all()
+
+
 class ParseSitemapRequest(BaseModel):
     sitemap_url: str
 

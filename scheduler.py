@@ -267,6 +267,37 @@ def _register_sitemap_sync_job() -> None:
     )
 
 
+_CSR_BASELINE_JOB_ID = "csr_baseline_monthly"
+
+
+def _register_csr_baseline_job() -> None:
+    """매월 1일 02:00 UTC 에 page_type별 CSR/SSR baseline 갱신.
+
+    - 12개 page_type × 10개 URL = 약 120 URL을 Playwright(lightweight=False)로 실측
+    - 평균을 data/csr_baseline.json에 저장
+    - 일반 sitemap audit(lightweight=True)에서 csr_ratio가 비어있을 때 이 평균값 주입
+    """
+    if _scheduler is None:
+        return
+    trigger = CronTrigger(day=1, hour=2, minute=0)
+
+    async def _job():
+        from csr_baseline import regenerate_baseline
+        try:
+            result = await regenerate_baseline()
+            log.info("csr_baseline 갱신 완료: %s", result)
+        except Exception as e:
+            log.exception("csr_baseline 갱신 실패: %s", e)
+
+    _scheduler.add_job(
+        _job,
+        trigger=trigger,
+        id=_CSR_BASELINE_JOB_ID,
+        replace_existing=True,
+        misfire_grace_time=7200,
+    )
+
+
 def start_scheduler() -> bool:
     """서버 startup에서 호출. APScheduler 시작 + 스케줄 로드."""
     global _scheduler
@@ -279,7 +310,8 @@ def start_scheduler() -> bool:
     _scheduler.start()
     n = reload_schedules()
     _register_sitemap_sync_job()
-    log.info("scheduler 시작 — 활성 스케줄 %d개 + sitemap-sync daily", n)
+    _register_csr_baseline_job()
+    log.info("scheduler 시작 — 활성 스케줄 %d개 + sitemap-sync daily + csr-baseline monthly", n)
     return True
 
 

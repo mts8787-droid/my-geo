@@ -266,6 +266,29 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
 
     csr_ratio = _calc_csr_ratio(ssr_chars, csr_raw)
 
+    # lightweight 모드 등으로 CSR 측정이 skipped/unavailable이면 page_type baseline 주입.
+    # (csr_baseline.py가 매월 page_type별 10개 표본을 Playwright로 실측해서 만든 평균값.)
+    if csr_ratio.get("status") in ("skipped", "unavailable"):
+        try:
+            from csr_baseline import get_baseline_for_page_type
+            bl = get_baseline_for_page_type(page_type.get("id"))
+            if bl:
+                csr_ratio = {
+                    "status":      "baseline",
+                    "ratio":       bl.get("avg_ratio"),
+                    "tier":        bl.get("tier"),
+                    "score":       bl.get("avg_score"),
+                    "ssr_chars":   bl.get("avg_ssr_chars"),
+                    "csr_chars":   bl.get("avg_csr_chars"),
+                    "baseline":    {
+                        "sample_size": bl.get("sample_size"),
+                        "updated_at":  bl.get("updated_at"),
+                        "note":        f"page_type='{page_type.get('id')}' 표본 평균 (실측 아님)",
+                    },
+                }
+        except Exception:
+            pass  # baseline 모듈 로드 실패 시 원래 skipped 상태 유지
+
     # 룰 엔진 context 구성
     all_types = set(jsonld.get("all_types", []))
     context = {
