@@ -174,14 +174,14 @@ async def _run_schedule(schedule_id: str, force: bool = False):
     # 결과 저장 — DB에 저장 (chunk-level 시작/완료 로그는 더 이상 안 찍음 — per-URL 로그가 대신)
     db.save_schedule_run(run)
 
-    # Update schedule chunk_index if chunking is used
+    # chunk_index 갱신 — 마지막 chunk 끝나면 0으로 리셋하여 다음 발화 시 자동 재사이클.
+    # (이전엔 enabled=False로 자동 비활성 → 정기 sync에 부적합해서 제거)
     fresh = audit_store.load()
     if chunk_size > 0:
         fresh_sch = next((s for s in fresh.get("schedules", []) if s.get("id") == schedule_id), None)
         if fresh_sch:
             if (chunk_index + 1) * chunk_size >= total_urls:
-                fresh_sch["chunk_index"] = 0
-                fresh_sch["enabled"] = False # Disable when done
+                fresh_sch["chunk_index"] = 0   # 다음 발화 시 처음부터 새 사이클
             else:
                 fresh_sch["chunk_index"] = chunk_index + 1
 
