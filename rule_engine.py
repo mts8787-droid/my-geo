@@ -290,6 +290,13 @@ RULE_TYPES = {
             "min_groups": {"label": "최소 매칭 그룹 수", "type": "number", "placeholder": "3"},
         },
     },
+    "schema_any_of": {
+        "label": "schema 타입 OR 중 하나라도 존재",
+        "description": "콤마 구분 타입 목록 중 하나라도 JSON-LD에 있으면 PASS (예: PDP의 AggregateRating OR Review)",
+        "params": {
+            "types": {"label": "schema 타입들 (콤마 구분)", "type": "text", "placeholder": "AggregateRating,Review"},
+        },
+    },
 }
 
 
@@ -1300,6 +1307,23 @@ async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
 
 # ── 핸들러 레지스트리 ─────────────────────────────────────────────────────────
 
+def _eval_schema_any_of(params: dict, ctx: dict) -> dict:
+    """jsonld_types 중 하나라도 매칭되면 PASS (OR 관계)."""
+    types_raw = params.get("types", "") or ""
+    types = [t.strip() for t in types_raw.split(",") if t.strip()]
+    if not types:
+        return {"pass": False, "value": None, "hint": "types 파라미터 비어있음"}
+    jsonld_types = ctx.get("jsonld_types", set())
+    types_lower = [t.lower() for t in types]
+    found = [orig for orig, lo in zip(types, types_lower) if lo in jsonld_types]
+    passed = len(found) > 0
+    return {
+        "pass": passed,
+        "value": f"발견: {found}" if found else f"{types} 모두 없음",
+        "hint": None if passed else f"types {types} 중 하나도 JSON-LD에 없음 (둘 중 하나 필요)",
+    }
+
+
 def _eval_area_coverage(params: dict, ctx: dict) -> dict:
     """여러 selector 영역 중 N개 이상에서 요소가 존재하면 PASS.
 
@@ -1379,6 +1403,7 @@ _HANDLERS = {
     "author_or_source":       _eval_author_or_source,
     "ssr_text_ratio_min":     _eval_ssr_text_ratio_min,
     "area_coverage":          _eval_area_coverage,
+    "schema_any_of":          _eval_schema_any_of,
 }
 
 # async 핸들러

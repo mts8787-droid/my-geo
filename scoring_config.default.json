@@ -364,7 +364,7 @@
         "name": "#22 Schema: Speakable",
         "spec_id": "#22",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "schema_required_fields",
           "params": {
@@ -385,7 +385,12 @@
             "type": "FAQPage",
             "fields": "mainEntity"
           }
-        }
+        },
+        "applies_to_page_types": [
+          "pdp",
+          "buying_guide",
+          "microsite"
+        ]
       },
       {
         "id": "ai_schema_collection",
@@ -399,7 +404,10 @@
             "type": "CollectionPage",
             "fields": "mainEntity"
           }
-        }
+        },
+        "applies_to_page_types": [
+          "plp"
+        ]
       },
       {
         "id": "ai_schema_product",
@@ -411,9 +419,13 @@
           "type": "schema_required_fields",
           "params": {
             "type": "Product",
-            "fields": "name,description,sku,brand,offers.price,offers.availability,aggregateRating.ratingValue,review"
+            "fields": "name,description,sku,brand,offers.price,offers.availability"
           }
-        }
+        },
+        "applies_to_page_types": [
+          "pdp",
+          "business"
+        ]
       },
       {
         "id": "ai_schema_image",
@@ -427,7 +439,13 @@
             "type": "ImageObject",
             "fields": "url,name,description,uploadDate"
           }
-        }
+        },
+        "applies_to_page_types": [
+          "pdp",
+          "content",
+          "newsroom",
+          "microsite"
+        ]
       },
       {
         "id": "ai_schema_video",
@@ -441,7 +459,13 @@
             "type": "VideoObject",
             "fields": "url,name,description,thumbnailUrl"
           }
-        }
+        },
+        "applies_to_page_types": [
+          "pdp",
+          "content",
+          "newsroom",
+          "microsite"
+        ]
       },
       {
         "id": "ai_schema_howto",
@@ -455,7 +479,13 @@
             "type": "HowTo",
             "fields": "step"
           }
-        }
+        },
+        "applies_to_page_types": [
+          "pdp",
+          "support_troubleshoot",
+          "buying_guide",
+          "microsite"
+        ]
       },
       {
         "id": "ai_schema_article",
@@ -469,14 +499,19 @@
             "type": "Article",
             "fields": "headline,author,publisher,articleBody"
           }
-        }
+        },
+        "applies_to_page_types": [
+          "content",
+          "buying_guide",
+          "microsite"
+        ]
       },
       {
         "id": "ai_schema_digidoc",
         "name": "#30 Schema: DigitalDocument",
         "spec_id": "#30",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "schema_required_fields",
           "params": {
@@ -490,7 +525,7 @@
         "name": "#31 Schema: Recipe",
         "spec_id": "#31",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "schema_required_fields",
           "params": {
@@ -583,7 +618,9 @@
         "spec_id": "#38",
         "points": 1,
         "enabled": true,
-        "applies_to_page_types": ["pdp"],
+        "applies_to_page_types": [
+          "pdp"
+        ],
         "rule": {
           "type": "css_count",
           "params": {
@@ -599,17 +636,34 @@
         "spec_id": "#39",
         "points": 1,
         "enabled": true,
-        "applies_to_page_types": ["pdp"],
+        "applies_to_page_types": [
+          "pdp"
+        ],
         "rule": {
           "type": "area_coverage",
           "params": {
             "min_groups": 3,
             "groups": [
-              {"label": "제품명",  "selector": "h1.cmp-text, h1"},
-              {"label": "가격",    "selector": "[class*='price-area'], .info-sticky--price"},
-              {"label": "갤러리",  "selector": ".c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"},
-              {"label": "사양",    "selector": ".c-specs-summary, .c-all-specs-area, .c-specs-dimensions"},
-              {"label": "CTA",     "selector": ".c-cta, .c-wrapper, .button-bomE"}
+              {
+                "label": "제품명",
+                "selector": "h1.cmp-text, h1"
+              },
+              {
+                "label": "가격",
+                "selector": "[class*='price-area'], .info-sticky--price"
+              },
+              {
+                "label": "갤러리",
+                "selector": ".c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"
+              },
+              {
+                "label": "사양",
+                "selector": ".c-specs-summary, .c-all-specs-area, .c-specs-dimensions"
+              },
+              {
+                "label": "CTA",
+                "selector": ".c-cta, .c-wrapper, .button-bomE"
+              }
             ]
           }
         },
@@ -693,6 +747,146 @@
           "params": {
             "path": "/sitemap.xml",
             "max_days": 30
+          }
+        }
+      },
+      {
+        "id": "ai_schema_website",
+        "name": "#40 Schema: WebSite",
+        "spec_id": "#40",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "home"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "WebSite",
+            "fields": "name,url"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_aboutpage",
+        "name": "#41 Schema: AboutPage",
+        "spec_id": "#41",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "about"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "AboutPage",
+            "fields": "name,url,mainEntity"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_webpage",
+        "name": "#42 Schema: WebPage",
+        "spec_id": "#42",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "promotion",
+          "microsite"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "WebPage",
+            "fields": "name,url"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_offer",
+        "name": "#43 Schema: Offer",
+        "spec_id": "#43",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "pdp",
+          "business",
+          "promotion"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Offer",
+            "fields": "price,priceCurrency,availability"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_itemlist",
+        "name": "#46 Schema: ItemList",
+        "spec_id": "#46",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "plp"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "ItemList",
+            "fields": "itemListElement"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_newsarticle",
+        "name": "#47 Schema: NewsArticle",
+        "spec_id": "#47",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "newsroom"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "NewsArticle",
+            "fields": "headline,datePublished,author,publisher,image"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_person",
+        "name": "#48 Schema: Person (Author)",
+        "spec_id": "#48",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "content",
+          "newsroom",
+          "microsite"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Person",
+            "fields": "name"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_rating_or_review",
+        "name": "#44 Schema: AggregateRating OR Review",
+        "spec_id": "#44",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "pdp"
+        ],
+        "rule": {
+          "type": "schema_any_of",
+          "params": {
+            "types": "AggregateRating,Review"
           }
         }
       }
