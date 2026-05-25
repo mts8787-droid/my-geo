@@ -945,11 +945,27 @@ async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict
             continue
 
         # ── 범용 룰 엔진 평가 ──
+        # applies_to_page_types 가 있으면 현재 page_type 에 매칭될 때만 평가.
+        # 안 맞으면 items 에는 포함하되 pass=None + na=True 로 N/A 처리하여
+        # passed/total 카운트에서 빠지게 한다 (점수 영향 없음).
+        current_pt = (context.get("page_type") or {}).get("id")
         cat_score = 0
         items = {}
+        applicable_total = 0
         for cr in criteria:
             rule = cr.get("rule")
             if not rule:
+                continue
+            applies = cr.get("applies_to_page_types")
+            if applies and current_pt and current_pt not in applies:
+                items[cr["id"]] = {
+                    "label": cr.get("name", cr["id"]),
+                    "pass":  None,
+                    "value": None,
+                    "hint":  f"이 항목은 {', '.join(applies)} 페이지에서만 평가됩니다 (현재: {current_pt})",
+                    "rule_type": rule.get("type"),
+                    "na": True,
+                }
                 continue
             result = await evaluate_rule_async(rule, context)
             passed = result.get("pass", False)
@@ -962,15 +978,16 @@ async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict
                 "hint":  result.get("hint"),
                 "rule_type": rule.get("type"),
             }
+            applicable_total += 1
 
         cat_score = min(cat_score, cat_max)
         score += cat_score
-        passed_count = sum(1 for v in items.values() if v["pass"])
+        passed_count = sum(1 for v in items.values() if v.get("pass") is True)
         breakdown[cat_key] = {
             "points": cat_score,
             "max": cat_max,
             "passed": passed_count,
-            "total": len(criteria),
+            "total": applicable_total,
             "items": items,
         }
 

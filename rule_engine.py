@@ -281,6 +281,15 @@ RULE_TYPES = {
             "min_ratio": {"label": "최소 비율 (0.0~1.0)", "type": "number", "placeholder": "0.6"},
         },
     },
+    "area_coverage": {
+        "label": "영역 커버리지 (N개 이상)",
+        "description": "여러 selector 영역 중 N개 이상에서 요소가 존재하면 PASS (예: PDP의 제품명/가격/갤러리/사양/CTA 중 3개 이상)",
+        "params": {
+            "groups":     {"label": "영역 정의 (JSON list)", "type": "text",
+                           "placeholder": '[{"label":"제품명","selector":"h1"}, ...]'},
+            "min_groups": {"label": "최소 매칭 그룹 수", "type": "number", "placeholder": "3"},
+        },
+    },
 }
 
 
@@ -1291,6 +1300,45 @@ async def _eval_sitemap_recent(params: dict, ctx: dict) -> dict:
 
 # ── 핸들러 레지스트리 ─────────────────────────────────────────────────────────
 
+def _eval_area_coverage(params: dict, ctx: dict) -> dict:
+    """여러 selector 영역 중 N개 이상에서 요소가 존재하면 PASS.
+
+    params:
+      groups: list of {"label": str, "selector": str} — 각 영역
+      min_groups: int — 최소 매칭 그룹 수
+    """
+    soup = ctx.get("soup")
+    if soup is None:
+        return {"pass": False, "value": None, "hint": "HTML 파싱 실패"}
+    groups = params.get("groups") or []
+    min_groups = int(params.get("min_groups", 1))
+
+    matched_labels, missing_labels = [], []
+    for g in groups:
+        label = (g.get("label") or "?").strip()
+        sel = (g.get("selector") or "").strip()
+        if not sel:
+            continue
+        try:
+            count = len(soup.select(sel))
+        except Exception:
+            count = 0
+        if count > 0:
+            matched_labels.append(f"{label}({count})")
+        else:
+            missing_labels.append(label)
+
+    matched_n = len(matched_labels)
+    total_n = len(matched_labels) + len(missing_labels)
+    passed = matched_n >= min_groups
+    return {
+        "pass": passed,
+        "value": f"{matched_n}/{total_n} 영역",
+        "hint": None if passed else
+                f"매칭: [{', '.join(matched_labels) or '없음'}] · 누락: [{', '.join(missing_labels)}] · 최소 {min_groups}개 필요",
+    }
+
+
 _HANDLERS = {
     # 기존
     "css_exists":             _eval_css_exists,
@@ -1330,6 +1378,7 @@ _HANDLERS = {
     "image_filename_keyword": _eval_image_filename_keyword,
     "author_or_source":       _eval_author_or_source,
     "ssr_text_ratio_min":     _eval_ssr_text_ratio_min,
+    "area_coverage":          _eval_area_coverage,
 }
 
 # async 핸들러

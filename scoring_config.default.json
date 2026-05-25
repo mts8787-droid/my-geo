@@ -579,14 +579,15 @@
       },
       {
         "id": "ai_pdp_thumbnails",
-        "name": "#38 PDP 썸네일 1-3 SSR",
+        "name": "#38 PDP 썸네일 3장 이상 SSR",
         "spec_id": "#38",
         "points": 1,
         "enabled": true,
+        "applies_to_page_types": ["pdp"],
         "rule": {
           "type": "css_count",
           "params": {
-            "selector": ".product-thumbnail img, .pdp-thumb img, [data-thumb] img",
+            "selector": ".c-summary-gallery img, .c-gallery img, .swiper-wrapper .swiper-slide img",
             "operator": ">=",
             "value": 3
           }
@@ -594,19 +595,25 @@
       },
       {
         "id": "ai_core_element",
-        "name": "#39 PDP 핵심 element SSR",
+        "name": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
         "spec_id": "#39",
         "points": 1,
         "enabled": true,
+        "applies_to_page_types": ["pdp"],
         "rule": {
-          "type": "css_count",
+          "type": "area_coverage",
           "params": {
-            "selector": "[itemprop='name'], [class*='product-name'], [class*='product-title'], [class*='price'], [data-price], [class*='buy-button'], [class*='add-to-cart'], [class*='product-spec'], [class*='spec-list']",
-            "operator": ">=",
-            "value": 2
+            "min_groups": 3,
+            "groups": [
+              {"label": "제품명",  "selector": "h1.cmp-text, h1"},
+              {"label": "가격",    "selector": "[class*='price-area'], .info-sticky--price"},
+              {"label": "갤러리",  "selector": ".c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"},
+              {"label": "사양",    "selector": ".c-specs-summary, .c-all-specs-area, .c-specs-dimensions"},
+              {"label": "CTA",     "selector": ".c-cta, .c-wrapper, .button-bomE"}
+            ]
           }
         },
-        "note": "임시 placeholder — LG팀 selector 확정 시 교체. 어드민에서 직접 편집 가능"
+        "note": "LG SG PDP 3개(cooking/refrig/washing) dom 조사 기반 selector. 다른 국가/스킨은 어드민에서 추가 가능."
       },
       {
         "id": "ai_summary_ssr",
