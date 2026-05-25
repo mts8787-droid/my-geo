@@ -761,21 +761,40 @@ async def run_sitemap_sync_now(request: Request, background_tasks: BackgroundTas
 
 @app.post("/admin/csr-baseline/run")
 async def run_csr_baseline_now(request: Request, background_tasks: BackgroundTasks):
-    """매월 1일 자동 실행되는 CSR/SSR baseline 갱신을 지금 1회 수동 실행 (백그라운드).
+    """모든 그룹 baseline 갱신을 백그라운드에서 1회 실행. 매우 오래 걸림 (~수 시간).
 
-    page_type별 10개 URL을 Playwright(lightweight=False)로 실측 → 평균을
-    data/csr_baseline.json에 저장. 약 120 URL 분석이라 수십 분 걸릴 수 있음.
+    그룹별 trigger는 POST /admin/csr-baseline/run/{group_id} 사용.
     """
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
-    from csr_baseline import regenerate_baseline
-    background_tasks.add_task(regenerate_baseline)
-    return {"status": "ok", "message": "CSR baseline 갱신을 백그라운드에서 시작했습니다. (수십 분 소요 가능)"}
+    from csr_baseline import regenerate_baseline_all_groups
+    background_tasks.add_task(regenerate_baseline_all_groups)
+    return {"status": "ok", "message": "모든 그룹 CSR baseline 갱신 시작. 그룹별로 ~30분, 전체는 수 시간 소요."}
+
+
+@app.post("/admin/csr-baseline/run/{group_id}")
+async def run_csr_baseline_for_group(group_id: str, request: Request, background_tasks: BackgroundTasks):
+    """지정 그룹 baseline 갱신을 백그라운드에서 1회 실행 (~30분 소요).
+
+    page_type별 10개 URL을 Playwright(lightweight=False)로 실측. Render IP가
+    Akamai whitelist라 LG 사이트 차단 없이 통과.
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from csr_baseline import regenerate_baseline_for_group
+    background_tasks.add_task(regenerate_baseline_for_group, group_id)
+    return {
+        "status": "ok",
+        "message": f"그룹 {group_id} CSR baseline 갱신 시작 (~30분 소요). 완료 후 새로고침.",
+    }
 
 
 @app.get("/admin/csr-baseline")
 async def get_csr_baseline(request: Request):
-    """현재 저장된 CSR/SSR baseline 조회 (page_type별 표본 평균)."""
+    """저장된 모든 그룹·page_type 별 baseline 조회.
+
+    응답: { "<group_id>": { "_meta": {...}, "<page_type_id>": {...}, ... }, ... }
+    """
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
     from csr_baseline import load_baseline_all

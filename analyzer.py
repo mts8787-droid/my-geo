@@ -267,11 +267,12 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
     csr_ratio = _calc_csr_ratio(ssr_chars, csr_raw)
 
     # lightweight 모드 등으로 CSR 측정이 skipped/unavailable이면 page_type baseline 주입.
-    # (csr_baseline.py가 매월 page_type별 10개 표본을 Playwright로 실측해서 만든 평균값.)
+    # 같은 그룹(국가)의 baseline 우선, 없으면 다른 그룹 평균 fallback.
     if csr_ratio.get("status") in ("skipped", "unavailable"):
         try:
-            from csr_baseline import get_baseline_for_page_type
-            bl = get_baseline_for_page_type(page_type.get("id"))
+            from csr_baseline import get_baseline_for_page_type, _detect_group_id_from_url
+            group_id = _detect_group_id_from_url(url)
+            bl = get_baseline_for_page_type(page_type.get("id"), group_id=group_id)
             if bl:
                 csr_ratio = {
                     "status":      "baseline",
