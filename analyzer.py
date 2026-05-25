@@ -253,7 +253,6 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
         )
 
     jsonld    = _extract_json_ld(page_data)
-    pdp       = _detect_pdp(url)
     from page_type import detect_page_type
     page_type = detect_page_type(page_data.get("soup"), page_data.get("final_url") or url)
 
@@ -299,7 +298,6 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
         "url":               url,
         "base_url":          base_url,
         "scope":             "all",
-        "pdp":               pdp,
         "page_type":         page_type,
         "robots_txt":        robots,
         "json_ld":           jsonld,
@@ -882,21 +880,6 @@ def _calc_csr_ratio(ssr_chars: int, csr_raw: dict) -> dict:
         "ratio":     ratio,
         "error":     None,
         "debug":     debug,
-    }
-
-
-# ── PDP Detection ─────────────────────────────────────────────────────────────
-
-def _detect_pdp(url: str) -> dict:
-    parsed   = urlparse(url)
-    path     = parsed.path.strip("/")
-    segments = [s for s in path.split("/") if s]
-    is_pdp   = len(segments) >= 3
-    return {
-        "is_pdp":        is_pdp,
-        "path_segments": segments,
-        "pattern":       "/".join(segments) if segments else "",
-        "segment_count": len(segments),
     }
 
 

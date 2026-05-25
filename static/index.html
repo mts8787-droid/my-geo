@@ -323,10 +323,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="scoreBreakdown" class="space-y-3"></div>
     </div>
 
-    <!-- ② PDP Banner (conditional) -->
-    <div id="pdpBanner" class="hidden fade-up fade-up-2 opacity-0"></div>
-
-    <!-- ③ Category Cards (Performance / Accessibility / SEO / AI Readiness) -->
+    <!-- ② Category Cards (Performance / Accessibility / SEO / AI Readiness) -->
     <div id="categoryCards" class="space-y-5"></div>
 
   </div><!-- /results -->
@@ -813,7 +810,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function renderScopedResults(data) {
     // scope 응답에는 score만 포함 — score 카드 + 카테고리 카드 표시 후 필터
     document.getElementById('scoreCard').style.display = '';
-    document.getElementById('pdpBanner').classList.add('hidden');
     if (data.score) {
       renderScore(data.score);
       renderCategoryCards(data.score.breakdown);
@@ -828,7 +824,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     renderPageError(data.page_error);
     renderPageTypeBadge(data.page_type);
     renderScore(data.score);
-    renderPdp(data.pdp, data.score?.breakdown?.ai_readiness);
     renderCategoryCards(data.score?.breakdown || {});
     document.getElementById('results').classList.remove('hidden');
     filterResultCards();
@@ -999,43 +994,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       })(barId, pct), delay);
       delay += 70;
     }
-  }
-
-  // ── ② PDP Banner ───────────────────────────────────────────────────────────
-  function renderPdp(pdp, aiBreakdown) {
-    const el = document.getElementById('pdpBanner');
-    if (!pdp || !pdp.is_pdp) {
-      el.classList.add('hidden');
-      return;
-    }
-    el.classList.remove('hidden');
-
-    const items = aiBreakdown?.items || {};
-    const hasProduct = items.ai_schema_product?.pass;
-    const hasFaqPage = items.ai_schema_faq?.pass;
-
-    let warnings = '';
-    if (!hasProduct)
-      warnings += `<p class="flex items-center gap-1.5 text-red-600 text-sm font-semibold">
-        <span class="text-base">⚠️</span> Product 스키마 누락 — PDP 필수 항목입니다</p>`;
-    if (!hasFaqPage)
-      warnings += `<p class="flex items-center gap-1.5 text-red-600 text-sm font-semibold">
-        <span class="text-base">⚠️</span> FAQPage 스키마 누락 — PDP 필수 항목입니다</p>`;
-
-    el.innerHTML = `
-      <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-5">
-        <div class="flex flex-wrap items-center gap-2 mb-2">
-          <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full tracking-wide">PDP 감지</span>
-          <span class="text-blue-800 font-semibold text-sm">Product Detail Page (URL Pattern)</span>
-          <code class="text-xs bg-blue-100 border border-blue-200 text-blue-700 px-2 py-0.5 rounded ml-auto font-mono">
-            /${escHtml(pdp.pattern)}
-          </code>
-        </div>
-        ${warnings
-          ? `<div class="space-y-1 mt-2">${warnings}</div>`
-          : `<p class="text-emerald-700 text-sm font-medium flex items-center gap-1.5"><span>✅</span> Product · FAQPage 스키마 모두 확인됨</p>`
-        }
-      </div>`;
   }
 
   function escHtml(str) {
