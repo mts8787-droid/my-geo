@@ -66,26 +66,57 @@ async def _install_chromium_on_startup():
 
 
 async def _startup_pull_audit_data() -> None:
-    """시작 시 AUDIT_DATA_PEER_URL에서 audit_data를 1회 pull. Render 재배포로 휘발된 데이터 복구용."""
+    """시작 시 AUDIT_DATA_PEER_URL에서 audit_data + 보조 파일들 pull.
+    Render 재배포로 휘발된 데이터를 Mac Mini에서 복구.
+    """
     if not _AUDIT_DATA_PEER_URL or not _WORKER_SECRET:
         return
+    headers = {"X-Worker-Secret": _WORKER_SECRET}
+
+    # 1) audit_data (groups/schedules) — 핵심 데이터
     try:
         async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
-            resp = await client.get(
-                f"{_AUDIT_DATA_PEER_URL}/admin/audit-data",
-                headers={"X-Worker-Secret": _WORKER_SECRET},
-            )
+            resp = await client.get(f"{_AUDIT_DATA_PEER_URL}/admin/audit-data", headers=headers)
             resp.raise_for_status()
             data = resp.json()
         await audit_store.save(data)
-        log.info(
-            "startup pull 완료 — peer=%s, groups=%d, schedules=%d",
-            _AUDIT_DATA_PEER_URL,
-            len(data.get("groups", [])),
-            len(data.get("schedules", [])),
-        )
+        log.info("startup pull audit_data 완료 — groups=%d, schedules=%d",
+                 len(data.get("groups", [])), len(data.get("schedules", [])))
     except Exception as e:
-        log.warning("startup pull 실패 (peer=%s): %s", _AUDIT_DATA_PEER_URL, e)
+        log.warning("startup pull audit_data 실패 (peer=%s): %s", _AUDIT_DATA_PEER_URL, e)
+
+    # 2) 보조 파일들 — url_classifications, csr_baseline
+    for endpoint, local_path, label in [
+        ("/admin/url-classifications-raw", _URL_CLASSIFICATIONS_PATH, "url_classifications"),
+        ("/admin/csr-baseline-raw",        _CSR_BASELINE_PATH,        "csr_baseline"),
+    ]:
+        try:
+            async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+                resp = await client.get(f"{_AUDIT_DATA_PEER_URL}{endpoint}", headers=headers)
+                resp.raise_for_status()
+                data = resp.json()
+            if data:  # 빈 dict 받으면 덮어쓸 필요 없음
+                _write_aux_file(local_path, data)
+                log.info("startup pull %s 완료 — entries=%d", label, len(data))
+        except Exception as e:
+            log.warning("startup pull %s 실패: %s", label, e)
+
+
+async def _peer_push_aux(endpoint: str, data: dict) -> None:
+    """보조 파일을 Mac Mini로 즉시 push (변경 시 호출). best-effort, 실패해도 무시."""
+    if not _AUDIT_DATA_PEER_URL or not _WORKER_SECRET:
+        return
+    try:
+        async with httpx.AsyncClient(timeout=20, follow_redirects=True) as client:
+            resp = await client.put(
+                f"{_AUDIT_DATA_PEER_URL}{endpoint}",
+                json=data,
+                headers={"X-Worker-Secret": _WORKER_SECRET},
+            )
+            resp.raise_for_status()
+            log.info("peer push %s 완료", endpoint)
+    except Exception as e:
+        log.warning("peer push %s 실패: %s", endpoint, e)
 
 
 @asynccontextmanager
@@ -910,6 +941,74 @@ async def get_audit_data(request: Request):
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
     return audit_store.load()
+
+
+# ── auxiliary JSON files (url_classifications, csr_baseline) peer sync ──
+# Render(ephemeral)에서 만들어진 데이터를 Mac Mini(persistent)에서도 보존하기 위해.
+# Render startup pull + Mac Mini 주기 pull + 변경 시 push 모두에서 사용.
+
+import json as _json_mod
+_URL_CLASSIFICATIONS_PATH = os.path.join(_DATA_DIR if (_DATA_DIR := os.environ.get("DATA_DIR")) else os.path.join(os.path.dirname(os.path.abspath(__file__)), "data"), "url_classifications.json")
+_CSR_BASELINE_PATH        = os.path.join(_DATA_DIR if (_DATA_DIR := os.environ.get("DATA_DIR")) else os.path.join(os.path.dirname(os.path.abspath(__file__)), "data"), "csr_baseline.json")
+
+
+def _read_aux_file(path: str) -> dict:
+    try:
+        with open(path, encoding="utf-8") as f:
+            return _json_mod.load(f)
+    except Exception:
+        return {}
+
+
+def _write_aux_file(path: str, data: dict) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    # atomic write
+    import tempfile
+    fd, tmp = tempfile.mkstemp(prefix=".aux_", suffix=".json.tmp", dir=os.path.dirname(path))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            _json_mod.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, path)
+    except Exception:
+        try: os.unlink(tmp)
+        except OSError: pass
+        raise
+
+
+@app.get("/admin/url-classifications-raw")
+async def get_url_classifications_raw(request: Request):
+    """url_classifications.json 전체 반환 (sync용). worker_authorized OK."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    return _read_aux_file(_URL_CLASSIFICATIONS_PATH)
+
+
+@app.put("/admin/url-classifications-raw")
+async def put_url_classifications_raw(request: Request):
+    """url_classifications.json 전체 교체 (peer push 받는 endpoint)."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    body = await request.json()
+    _write_aux_file(_URL_CLASSIFICATIONS_PATH, body)
+    return {"status": "ok", "entries": len(body)}
+
+
+@app.get("/admin/csr-baseline-raw")
+async def get_csr_baseline_raw(request: Request):
+    """csr_baseline.json 전체 반환 (sync용)."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    return _read_aux_file(_CSR_BASELINE_PATH)
+
+
+@app.put("/admin/csr-baseline-raw")
+async def put_csr_baseline_raw(request: Request):
+    """csr_baseline.json 전체 교체 (peer push 받는 endpoint)."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    body = await request.json()
+    _write_aux_file(_CSR_BASELINE_PATH, body)
+    return {"status": "ok", "groups": len(body)}
 
 
 @app.put("/admin/audit-data")

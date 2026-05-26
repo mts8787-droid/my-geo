@@ -174,6 +174,13 @@ async def classify_group(group_id: str) -> dict:
     with open(CLASSIFICATIONS_PATH, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
 
+    # peer(Mac Mini)로 즉시 push — Render ephemeral disk 보존용
+    try:
+        from main import _peer_push_aux
+        await _peer_push_aux("/admin/url-classifications-raw", full)
+    except Exception as e:
+        log.warning("peer push 실패 (무시): %s", e)
+
     return {
         "status":     "ok",
         "group_id":   group_id,
