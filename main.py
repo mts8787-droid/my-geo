@@ -1023,6 +1023,13 @@ async def update_audit_data(request: Request):
     except Exception as e:
         log.exception("reload_schedules 실패: %s", e)
         n = 0
+
+    # Mac Mini로 즉시 push — Render ephemeral disk 보존용 (best-effort, 실패해도 무시)
+    # peer가 보낸 push 자체가 다시 돌아오는 echo는 worker_authorized 헤더 없는 admin
+    # 호출만 push하여 회피
+    if not getattr(request.state, "worker_authorized", False):
+        await _peer_push_aux("/admin/audit-data", body)
+
     return {"status": "ok", "data": body, "active_schedules": n}
 
 
