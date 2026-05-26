@@ -822,18 +822,55 @@ async def get_csr_baseline(request: Request):
 
 @app.post("/admin/classify/run/{group_id}")
 async def run_classify_for_group(group_id: str, request: Request, background_tasks: BackgroundTasks):
-    """[1단계] 지정 그룹의 모든 URL을 httpx fetch + page_type 분류 (~10분 백그라운드).
+    """[1단계 + sitemap sync 통합] 그룹의 sitemap fetch + URL 분류 (~15분 백그라운드).
 
-    각 URL을 fetch하여 HTML 소스의 body class/meta template으로 정확히 분류.
-    200 응답 + non-redirect만 채택. 결과는 data/url_classifications.json에 저장.
+    1) sitemap.xml에서 최신 URL 추출하여 group.urls 갱신 (sync_group)
+    2) groups[gid].urls 전체를 httpx fetch + body class/meta template 분류 (classify_group)
+    3) 결과 저장 + Mac Mini로 즉시 push
+
+    이전엔 sitemap-sync와 classify를 분리해서 두 번 trigger했지만, 보통 같이
+    필요하니 한 번 클릭으로 통합.
     """
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
-    from url_classifier import classify_group
-    background_tasks.add_task(classify_group, group_id)
+
+    async def _task():
+        try:
+            data = audit_store.load()
+            group = next((g for g in data.get("groups", []) if g.get("id") == group_id), None)
+            if not group:
+                log.warning("[sync+classify] group not found: %s", group_id)
+                return
+
+            # 1) sitemap-sync (single group)
+            sitemap_url = group.get("sitemap_url")
+            if sitemap_url:
+                try:
+                    from sitemap_sync import sync_group
+                    log.info("[sync+classify] %s: sitemap sync 시작 (%s)", group_id, sitemap_url)
+                    result = await sync_group(group)
+                    await audit_store.save(data)
+                    # audit_data 변경 → Mac Mini push
+                    await _peer_push_aux("/admin/audit-data", data)
+                    log.info("[sync+classify] %s: sitemap sync 완료 — %s", group_id, result)
+                except Exception as e:
+                    log.exception("[sync+classify] %s: sitemap sync 실패 — %s", group_id, e)
+                    # sync 실패해도 기존 URLs로 classify는 진행
+            else:
+                log.info("[sync+classify] %s: sitemap_url 없음 — sync 생략", group_id)
+
+            # 2) classify
+            from url_classifier import classify_group
+            log.info("[sync+classify] %s: classify 시작", group_id)
+            r = await classify_group(group_id)
+            log.info("[sync+classify] %s: classify 완료 — %s", group_id, r)
+        except Exception as e:
+            log.exception("[sync+classify] %s: 전체 실패 — %s", group_id, e)
+
+    background_tasks.add_task(_task)
     return {
         "status":  "ok",
-        "message": f"그룹 {group_id} URL 분류 시작 (~10분, 백그라운드).",
+        "message": f"그룹 {group_id} Sitemap sync + URL 분류 시작 (~15분, 백그라운드).",
     }
 
 
