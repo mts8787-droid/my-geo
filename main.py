@@ -801,6 +801,61 @@ async def get_csr_baseline(request: Request):
     return load_baseline_all()
 
 
+@app.post("/admin/classify/run/{group_id}")
+async def run_classify_for_group(group_id: str, request: Request, background_tasks: BackgroundTasks):
+    """[1단계] 지정 그룹의 모든 URL을 httpx fetch + page_type 분류 (~10분 백그라운드).
+
+    각 URL을 fetch하여 HTML 소스의 body class/meta template으로 정확히 분류.
+    200 응답 + non-redirect만 채택. 결과는 data/url_classifications.json에 저장.
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from url_classifier import classify_group
+    background_tasks.add_task(classify_group, group_id)
+    return {
+        "status":  "ok",
+        "message": f"그룹 {group_id} URL 분류 시작 (~10분, 백그라운드).",
+    }
+
+
+@app.get("/admin/classify/{group_id}")
+async def get_classify_for_group(group_id: str, request: Request):
+    """[1단계] 지정 그룹의 분류 결과 조회 (summary + by_type 분포)."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from url_classifier import get_group_classification
+    entry = get_group_classification(group_id)
+    if not entry:
+        return {"status": "not_classified"}
+    # 응답 크기 줄이기 — classifications/failed_urls는 admin이 따로 안 보여줘도 됨
+    return {
+        "status":     "ok",
+        "group_id":   group_id,
+        "group_name": entry.get("group_name"),
+        "updated_at": entry.get("updated_at"),
+        "took_sec":   entry.get("took_sec"),
+        "summary":    entry.get("summary"),
+    }
+
+
+@app.get("/admin/classify")
+async def get_classify_all(request: Request):
+    """전체 그룹의 분류 summary 일괄 조회. 큰 classifications dict는 제외."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from url_classifier import load_classifications_all
+    full = load_classifications_all()
+    return {
+        gid: {
+            "group_name": e.get("group_name"),
+            "updated_at": e.get("updated_at"),
+            "took_sec":   e.get("took_sec"),
+            "summary":    e.get("summary"),
+        }
+        for gid, e in full.items()
+    }
+
+
 class ParseSitemapRequest(BaseModel):
     sitemap_url: str
 
