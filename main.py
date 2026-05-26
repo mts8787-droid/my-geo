@@ -764,26 +764,14 @@ async def get_agent_logs(request: Request):
 
 @app.post("/admin/sitemap-sync/run")
 async def run_sitemap_sync_now(request: Request, background_tasks: BackgroundTasks):
-    """매일 자동 실행되는 사이트맵 동기를 지금 1회 수동 실행 (백그라운드).
+    """사이트맵 동기를 지금 1회 수동 실행 (백그라운드).
 
-    AUDIT_DATA_PEER_URL 설정돼 있으면 워커(Mac Mini)에 위임 — Render IP는 Akamai에서
-    /XX/sitemap.xml이 403나는 경우가 있어 Mac Mini가 처리해야 안전.
+    이전엔 Mac Mini로 proxy했지만, Mac Mini IP가 Akamai 차단된 케이스가 있어
+    Render에서 직접 실행하도록 변경. Render IP는 Akamai whitelist에 등록돼 있어
+    sitemap.xml fetch가 통과한다.
     """
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
-
-    if _AUDIT_DATA_PEER_URL and _WORKER_SECRET:
-        try:
-            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
-                resp = await client.post(
-                    f"{_AUDIT_DATA_PEER_URL}/admin/sitemap-sync/run",
-                    headers={"X-Worker-Secret": _WORKER_SECRET},
-                )
-                resp.raise_for_status()
-                return resp.json()
-        except Exception as e:
-            log.exception("sitemap-sync peer proxy 실패: %s", e)
-            raise HTTPException(status_code=502, detail=f"워커 호출 실패: {e}")
 
     from sitemap_sync import run_daily_sync
     background_tasks.add_task(run_daily_sync)
