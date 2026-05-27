@@ -95,15 +95,22 @@ async def _classify_one(client, url: str) -> dict:
 async def classify_group(group_id: str) -> dict:
     """지정 그룹의 모든 URL을 분류하여 data/url_classifications.json에 저장.
 
+    Chunk 단위(CHUNK_SIZE)로 처리하여 매 chunk 완료 시:
+      - 진행 로그(db.add_system_log) — admin 실시간 로그에 표시됨
+      - 부분 결과 디스크 저장 — 도중 task 죽어도 거기까지 보존
+
     Returns: {"status": "ok", "group_id", "total", "classified", "failed", "took_sec"}
     """
     import audit_store
     import httpx
+    import db
+
+    CHUNK_SIZE = 500   # 한 chunk 처리에 ~75초 (500 / 20 동시 * 3초). 부분 저장 주기.
 
     started_at = datetime.now(timezone.utc)
 
     try:
-        data = await audit_store.load()
+        data = audit_store.load()
     except Exception as e:
         return {"status": "error", "error": f"audit_store 로드 실패: {e}"}
 
@@ -111,70 +118,97 @@ async def classify_group(group_id: str) -> dict:
     if not group:
         return {"status": "error", "error": f"group not found: {group_id}"}
     urls = group.get("urls") or []
+    # URL이 dict 형식인 경우(audit_data에 따라) string으로 변환
+    url_strs = []
+    for u in urls:
+        if isinstance(u, dict):
+            us = u.get("url")
+            if us: url_strs.append(us)
+        elif isinstance(u, str):
+            url_strs.append(u)
+    urls = url_strs
+
     if not urls:
         return {"status": "no_urls", "group_id": group_id}
 
-    sem = asyncio.Semaphore(CLASSIFY_CONCURRENCY)
+    db.add_system_log(f"[classify] {group_id}: 시작 — total={len(urls)} URLs, chunk={CHUNK_SIZE}, concurrency={CLASSIFY_CONCURRENCY}")
 
-    # httpx async client — limits 같이 잡음
+    sem = asyncio.Semaphore(CLASSIFY_CONCURRENCY)
     limits = httpx.Limits(max_connections=CLASSIFY_CONCURRENCY * 2,
                           max_keepalive_connections=CLASSIFY_CONCURRENCY)
 
     classified = {}
     failed = []
 
+    def _save_partial(is_final: bool = False):
+        """현재까지 결과를 디스크에 저장."""
+        by_type = Counter(c["page_type"] for c in classified.values())
+        elapsed = (datetime.now(timezone.utc) - started_at).total_seconds()
+        group_entry = {
+            "group_name":      group.get("name", group_id),
+            "updated_at":      datetime.now(timezone.utc).isoformat(),
+            "took_sec":        round(elapsed, 1),
+            "in_progress":     not is_final,
+            "summary": {
+                "total":      len(urls),
+                "classified": len(classified),
+                "failed":     len(failed),
+                "by_type":    dict(by_type.most_common()),
+            },
+            "classifications": classified,
+            "failed_urls":     failed[:200],
+        }
+        CLASSIFICATIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        if CLASSIFICATIONS_PATH.exists():
+            try:
+                with open(CLASSIFICATIONS_PATH, encoding="utf-8") as f:
+                    full = json.load(f)
+            except Exception:
+                full = {}
+        else:
+            full = {}
+        full[group_id] = group_entry
+        with open(CLASSIFICATIONS_PATH, "w", encoding="utf-8") as f:
+            json.dump(full, f, ensure_ascii=False, indent=2)
+        return full
+
     async with httpx.AsyncClient(limits=limits) as client:
         async def _one(url):
             async with sem:
                 return await _classify_one(client, url)
 
-        # gather가 4000개 task 한 번에 시작해도 sem이 동시 20개로 제한
-        results = await asyncio.gather(*(_one(u) for u in urls))
+        # CHUNK_SIZE 단위로 처리
+        for start in range(0, len(urls), CHUNK_SIZE):
+            end = min(start + CHUNK_SIZE, len(urls))
+            chunk = urls[start:end]
+            results = await asyncio.gather(*(_one(u) for u in chunk))
+            for r in results:
+                if r.get("failed"):
+                    failed.append({"url": r["url"], "reason": r["reason"]})
+                else:
+                    classified[r["url"]] = {
+                        "page_type":   r["page_type"],
+                        "matched_by":  r["matched_by"],
+                        "http_status": r["http_status"],
+                    }
+            # 중간 저장 + 진행 로그
+            _save_partial(is_final=False)
+            db.add_system_log(
+                f"[classify] {group_id}: {end}/{len(urls)} 진행 — "
+                f"classified={len(classified)} failed={len(failed)}"
+            )
 
-    for r in results:
-        if r.get("failed"):
-            failed.append({"url": r["url"], "reason": r["reason"]})
-        else:
-            classified[r["url"]] = {
-                "page_type":   r["page_type"],
-                "matched_by":  r["matched_by"],
-                "http_status": r["http_status"],
-            }
+    # 최종 저장 (in_progress=False)
+    full = _save_partial(is_final=True)
 
-    # by_type 분포 + summary
     by_type = Counter(c["page_type"] for c in classified.values())
-
     took = (datetime.now(timezone.utc) - started_at).total_seconds()
-    summary = {
-        "total":      len(urls),
-        "classified": len(classified),
-        "failed":     len(failed),
-        "by_type":    dict(by_type.most_common()),
-    }
-    group_entry = {
-        "group_name":      group.get("name", group_id),
-        "updated_at":      datetime.now(timezone.utc).isoformat(),
-        "took_sec":        round(took, 1),
-        "summary":         summary,
-        "classifications": classified,
-        "failed_urls":     failed[:200],  # 너무 길어지지 않게 200개로 제한 (전수는 summary.failed)
-    }
+    db.add_system_log(
+        f"[classify] {group_id}: 완료 — total={len(urls)} classified={len(classified)} "
+        f"failed={len(failed)} took={took:.0f}s by_type={dict(by_type.most_common(5))}"
+    )
 
-    # 기존 데이터 merge
-    CLASSIFICATIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if CLASSIFICATIONS_PATH.exists():
-        try:
-            with open(CLASSIFICATIONS_PATH, encoding="utf-8") as f:
-                full = json.load(f)
-        except Exception:
-            full = {}
-    else:
-        full = {}
-    full[group_id] = group_entry
-    with open(CLASSIFICATIONS_PATH, "w", encoding="utf-8") as f:
-        json.dump(full, f, ensure_ascii=False, indent=2)
-
-    # peer(Mac Mini)로 즉시 push — Render ephemeral disk 보존용
+    # peer(Mac Mini)로 즉시 push — 최종 결과만
     try:
         from main import _peer_push_aux
         await _peer_push_aux("/admin/url-classifications-raw", full)
