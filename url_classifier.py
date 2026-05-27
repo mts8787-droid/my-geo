@@ -45,6 +45,14 @@ FETCH_TIMEOUT_SEC = 15
 # 200 응답 + non-redirect 만 채택 (사용자 명시)
 # redirect URL은 분류 제외 (원본 URL이 유효하지 않다는 신호)
 
+# URL 제외 패턴 — classify 대상에서 사전 제외.
+# - test/staging/preview 등 비프로덕션
+# - business: B2B 페이지는 GEO/소비자 audit 대상 아님 (사용자 명시 2026-05-27)
+_EXCLUDE_URL_PATTERN = re.compile(
+    r"/(test|adobeqa|sandbox|preview|staging|dev|local|business)\b",
+    re.IGNORECASE,
+)
+
 
 async def _classify_one(client, url: str) -> dict:
     """단일 URL 분류 — 결과 dict 반환.
@@ -128,8 +136,13 @@ async def classify_group(group_id: str) -> dict:
             url_strs.append(u)
     urls = url_strs
 
+    # EXCLUDE 필터 — business/test/staging 등 제외
+    before = len(urls)
+    urls = [u for u in urls if not _EXCLUDE_URL_PATTERN.search(u)]
+    excluded_count = before - len(urls)
+
     if not urls:
-        return {"status": "no_urls", "group_id": group_id}
+        return {"status": "no_urls", "group_id": group_id, "excluded": excluded_count}
 
     # Resume — 기존 분류 결과 로드, 이미 처리된 URL은 skip.
     # Render 백그라운드가 도중에 죽어도 trigger 반복으로 점진 완성 가능.
@@ -152,7 +165,7 @@ async def classify_group(group_id: str) -> dict:
 
     db.add_system_log(
         f"[classify] {group_id}: 시작 — total={len(urls)} "
-        f"(resume: 기존 {len(already_done)} skip, 남은 {len(urls_to_process)}) "
+        f"(excluded {excluded_count}, resume: 기존 {len(already_done)} skip, 남은 {len(urls_to_process)}) "
         f"chunk={CHUNK_SIZE} concurrency={CLASSIFY_CONCURRENCY}"
     )
 
@@ -261,3 +274,50 @@ def load_classifications_all() -> dict:
 def get_group_classification(group_id: str) -> Optional[dict]:
     """지정 그룹의 분류 결과만 반환."""
     return load_classifications_all().get(group_id)
+
+
+def cleanup_excluded_in_group(group_id: str) -> dict:
+    """기존 분류 결과에서 _EXCLUDE_URL_PATTERN에 매칭되는 URL을 제거.
+
+    business 같은 패턴을 새로 추가했을 때 한 번 호출해서 dirty entry 청소.
+    summary/by_type/failed_urls 모두 재계산.
+    """
+    full = load_classifications_all()
+    if group_id not in full:
+        return {"status": "not_found", "group_id": group_id}
+
+    entry = full[group_id]
+    classifications = entry.get("classifications", {})
+    failed_urls = entry.get("failed_urls", [])
+
+    before_c = len(classifications)
+    before_f = len(failed_urls)
+
+    new_classifications = {u: v for u, v in classifications.items() if not _EXCLUDE_URL_PATTERN.search(u)}
+    new_failed = [f for f in failed_urls if isinstance(f, dict) and not _EXCLUDE_URL_PATTERN.search(f.get("url", ""))]
+
+    removed_c = before_c - len(new_classifications)
+    removed_f = before_f - len(new_failed)
+
+    by_type = Counter(c["page_type"] for c in new_classifications.values())
+    entry["classifications"] = new_classifications
+    entry["failed_urls"]     = new_failed
+    entry["summary"] = {
+        **entry.get("summary", {}),
+        "classified": len(new_classifications),
+        "failed":     len(new_failed),
+        "by_type":    dict(by_type.most_common()),
+    }
+    entry["updated_at"] = datetime.now(timezone.utc).isoformat()
+    full[group_id] = entry
+
+    with open(CLASSIFICATIONS_PATH, "w", encoding="utf-8") as f:
+        json.dump(full, f, ensure_ascii=False, indent=2)
+
+    return {
+        "status":            "ok",
+        "group_id":          group_id,
+        "removed_classified": removed_c,
+        "removed_failed":    removed_f,
+        "remaining":         len(new_classifications),
+    }

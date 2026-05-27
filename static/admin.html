@@ -1679,6 +1679,22 @@ async function runClassifyForGroup(groupId, groupName) {
   }
 }
 
+async function cleanupExcluded(groupId) {
+  if (!confirm(`그룹 "${groupId}"의 기존 분류 결과에서 EXCLUDE 패턴(business 등) 매칭 URL을 제거합니다.\n\n계속할까요?`)) return;
+  try {
+    const res = await fetch(`/admin/classify/cleanup/${encodeURIComponent(groupId)}`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.ok && data.status === 'ok') {
+      showToast(`${groupId}: 제거 ${data.removed_classified}개, 남은 ${data.remaining}개`);
+      loadClassifySummary();
+    } else {
+      showToast(`오류: ${data.detail || data.status || 'unknown'}`);
+    }
+  } catch (e) { showToast('네트워크 오류: ' + e); }
+}
+
 async function loadClassifySummary() {
   const tbody = document.getElementById('classify-tbody');
   const status = document.getElementById('classify-status');
@@ -1708,7 +1724,9 @@ async function loadClassifySummary() {
         .join('');
       return `
         <tr class="border-b border-slate-50 hover:bg-slate-50/50">
-          <td class="px-3 py-2.5 font-mono text-slate-700">${escHtml((e.group_name || gid).replace('LG Sitemap - ', ''))}</td>
+          <td class="px-3 py-2.5 font-mono text-slate-700">${escHtml((e.group_name || gid).replace('LG Sitemap - ', ''))}
+            <button onclick="cleanupExcluded('${escHtml(gid)}')" class="ml-2 text-[9px] text-slate-400 hover:text-rose-500 underline" title="EXCLUDE 패턴(business 등) 매칭 URL을 기존 분류 결과에서 제거">cleanup</button>
+          </td>
           <td class="px-3 py-2.5 text-right tabular-nums">${(s.total || 0).toLocaleString()}</td>
           <td class="px-3 py-2.5 text-right tabular-nums text-emerald-600 font-semibold">${(s.classified || 0).toLocaleString()}</td>
           <td class="px-3 py-2.5 text-right tabular-nums text-slate-400">${(s.failed || 0).toLocaleString()}</td>

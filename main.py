@@ -912,6 +912,23 @@ async def get_classify_all(request: Request):
     }
 
 
+@app.post("/admin/classify/cleanup/{group_id}")
+async def cleanup_classify_for_group(group_id: str, request: Request):
+    """기존 분류 결과에서 _EXCLUDE_URL_PATTERN에 매칭되는 URL을 제거.
+
+    EXCLUDE 패턴 변경 후 (예: business 추가) dirty entry 청소용. 동기 호출.
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from url_classifier import cleanup_excluded_in_group
+    result = cleanup_excluded_in_group(group_id)
+    # 변경된 데이터 즉시 Mac Mini로 push
+    if result.get("status") == "ok":
+        from url_classifier import load_classifications_all
+        await _peer_push_aux("/admin/url-classifications-raw", load_classifications_all())
+    return result
+
+
 class ParseSitemapRequest(BaseModel):
     sitemap_url: str
 
