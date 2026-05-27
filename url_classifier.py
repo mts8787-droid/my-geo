@@ -131,14 +131,34 @@ async def classify_group(group_id: str) -> dict:
     if not urls:
         return {"status": "no_urls", "group_id": group_id}
 
-    db.add_system_log(f"[classify] {group_id}: 시작 — total={len(urls)} URLs, chunk={CHUNK_SIZE}, concurrency={CLASSIFY_CONCURRENCY}")
+    # Resume — 기존 분류 결과 로드, 이미 처리된 URL은 skip.
+    # Render 백그라운드가 도중에 죽어도 trigger 반복으로 점진 완성 가능.
+    existing = load_classifications_all().get(group_id, {})
+    classified = dict(existing.get("classifications", {}))
+    failed = list(existing.get("failed_urls", []))
+    failed_url_set = {f.get("url") for f in failed if isinstance(f, dict)}
+    already_done = set(classified.keys()) | failed_url_set
+    urls_to_process = [u for u in urls if u not in already_done]
+
+    if not urls_to_process:
+        db.add_system_log(f"[classify] {group_id}: 이미 모두 분류됨 ({len(classified)}/{len(urls)}) — skip")
+        return {
+            "status":     "already_done",
+            "group_id":   group_id,
+            "total":      len(urls),
+            "classified": len(classified),
+            "failed":     len(failed),
+        }
+
+    db.add_system_log(
+        f"[classify] {group_id}: 시작 — total={len(urls)} "
+        f"(resume: 기존 {len(already_done)} skip, 남은 {len(urls_to_process)}) "
+        f"chunk={CHUNK_SIZE} concurrency={CLASSIFY_CONCURRENCY}"
+    )
 
     sem = asyncio.Semaphore(CLASSIFY_CONCURRENCY)
     limits = httpx.Limits(max_connections=CLASSIFY_CONCURRENCY * 2,
                           max_keepalive_connections=CLASSIFY_CONCURRENCY)
-
-    classified = {}
-    failed = []
 
     def _save_partial(is_final: bool = False):
         """현재까지 결과를 디스크에 저장."""
@@ -177,10 +197,10 @@ async def classify_group(group_id: str) -> dict:
             async with sem:
                 return await _classify_one(client, url)
 
-        # CHUNK_SIZE 단위로 처리
-        for start in range(0, len(urls), CHUNK_SIZE):
-            end = min(start + CHUNK_SIZE, len(urls))
-            chunk = urls[start:end]
+        # CHUNK_SIZE 단위로 처리 — urls_to_process만 새로 처리, classified/failed에 누적
+        for start in range(0, len(urls_to_process), CHUNK_SIZE):
+            end = min(start + CHUNK_SIZE, len(urls_to_process))
+            chunk = urls_to_process[start:end]
             results = await asyncio.gather(*(_one(u) for u in chunk))
             for r in results:
                 if r.get("failed"):
@@ -194,8 +214,9 @@ async def classify_group(group_id: str) -> dict:
             # 중간 저장 + 진행 로그
             _save_partial(is_final=False)
             db.add_system_log(
-                f"[classify] {group_id}: {end}/{len(urls)} 진행 — "
-                f"classified={len(classified)} failed={len(failed)}"
+                f"[classify] {group_id}: {len(classified)+len(failed)}/{len(urls)} 진행 — "
+                f"classified={len(classified)} failed={len(failed)} "
+                f"(이번 batch: {end}/{len(urls_to_process)})"
             )
 
     # 최종 저장 (in_progress=False)
