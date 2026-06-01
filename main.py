@@ -820,57 +820,55 @@ async def get_csr_baseline(request: Request):
     return load_baseline_all()
 
 
-@app.post("/admin/classify/run/{group_id}")
-async def run_classify_for_group(group_id: str, request: Request, background_tasks: BackgroundTasks):
-    """[1단계 + sitemap sync 통합] 그룹의 sitemap fetch + URL 분류 (~15분 백그라운드).
+@app.post("/admin/sync/run/{group_id}")
+async def run_sync_for_group(group_id: str, request: Request, background_tasks: BackgroundTasks):
+    """[1a단계] 그룹의 sitemap에서 URL 수집만 (sub-sitemap 재귀 포함).
 
-    1) sitemap.xml에서 최신 URL 추출하여 group.urls 갱신 (sync_group)
-    2) groups[gid].urls 전체를 httpx fetch + body class/meta template 분류 (classify_group)
-    3) 결과 저장 + Mac Mini로 즉시 push
-
-    이전엔 sitemap-sync와 classify를 분리해서 두 번 trigger했지만, 보통 같이
-    필요하니 한 번 클릭으로 통합.
+    parse_sitemap이 sitemap_index를 만나면 자동 재귀로 모든 sub-sitemap을 펼침.
+    classify는 별도 endpoint(/admin/classify/run/{group_id})에서 진행.
     """
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
 
     async def _task():
         try:
+            import db
             data = audit_store.load()
             group = next((g for g in data.get("groups", []) if g.get("id") == group_id), None)
             if not group:
-                log.warning("[sync+classify] group not found: %s", group_id)
+                db.add_system_log(f"[sync] {group_id}: group not found")
                 return
-
-            # 1) sitemap-sync (single group)
             sitemap_url = group.get("sitemap_url")
-            if sitemap_url:
-                try:
-                    from sitemap_sync import sync_group
-                    log.info("[sync+classify] %s: sitemap sync 시작 (%s)", group_id, sitemap_url)
-                    result = await sync_group(group)
-                    await audit_store.save(data)
-                    # audit_data 변경 → Mac Mini push
-                    await _peer_push_aux("/admin/audit-data", data)
-                    log.info("[sync+classify] %s: sitemap sync 완료 — %s", group_id, result)
-                except Exception as e:
-                    log.exception("[sync+classify] %s: sitemap sync 실패 — %s", group_id, e)
-                    # sync 실패해도 기존 URLs로 classify는 진행
-            else:
-                log.info("[sync+classify] %s: sitemap_url 없음 — sync 생략", group_id)
-
-            # 2) classify
-            from url_classifier import classify_group
-            log.info("[sync+classify] %s: classify 시작", group_id)
-            r = await classify_group(group_id)
-            log.info("[sync+classify] %s: classify 완료 — %s", group_id, r)
+            if not sitemap_url:
+                db.add_system_log(f"[sync] {group_id}: sitemap_url 없음 — skip")
+                return
+            from sitemap_sync import sync_group
+            db.add_system_log(f"[sync] {group_id}: 시작 ({sitemap_url})")
+            result = await sync_group(group)
+            await audit_store.save(data)
+            await _peer_push_aux("/admin/audit-data", data)
+            db.add_system_log(f"[sync] {group_id}: 완료 — {result}, total URLs={len(group.get('urls', []))}")
         except Exception as e:
-            log.exception("[sync+classify] %s: 전체 실패 — %s", group_id, e)
+            log.exception("[sync] %s: 실패 — %s", group_id, e)
 
     background_tasks.add_task(_task)
+    return {"status": "ok", "message": f"그룹 {group_id} sitemap sync 시작 (백그라운드)."}
+
+
+@app.post("/admin/classify/run/{group_id}")
+async def run_classify_for_group(group_id: str, request: Request, background_tasks: BackgroundTasks):
+    """[1b단계] 그룹의 group.urls 전체를 httpx fetch + page_type 분류만.
+
+    sitemap sync는 별도 endpoint(/admin/sync/run/{group_id})에서 먼저 진행.
+    이 endpoint는 group.urls를 그대로 사용 (sync 안 함). resume 기능 포함.
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from url_classifier import classify_group
+    background_tasks.add_task(classify_group, group_id)
     return {
         "status":  "ok",
-        "message": f"그룹 {group_id} Sitemap sync + URL 분류 시작 (~15분, 백그라운드).",
+        "message": f"그룹 {group_id} URL 분류 시작 (백그라운드, resume).",
     }
 
 

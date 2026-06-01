@@ -1382,9 +1382,12 @@ function renderSchedules() {
         <button onclick="runScheduleNow('${escHtml(sid)}')"
           class="text-[11px] px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition font-medium flex-shrink-0"
           ${sid ? '' : 'disabled'}>실행</button>
+        <button onclick="runSyncForGroup('${escHtml(s.group_id || '')}', '${escHtml(s.name || '')}')"
+          class="text-[11px] px-2 py-0.5 bg-sky-50 text-sky-700 rounded hover:bg-sky-100 transition font-medium flex-shrink-0"
+          ${s.group_id ? '' : 'disabled'} title="Sitemap에서 URL 수집만 (sub-sitemap 재귀 포함, 빠름)">Sync</button>
         <button onclick="runClassifyForGroup('${escHtml(s.group_id || '')}', '${escHtml(s.name || '')}')"
           class="text-[11px] px-2 py-0.5 bg-amber-50 text-amber-700 rounded hover:bg-amber-100 transition font-medium flex-shrink-0"
-          ${s.group_id ? '' : 'disabled'} title="Sitemap에서 URL 수집 + 모든 URL을 body class/meta로 분류 (~15분 백그라운드)">Sync+Classify</button>
+          ${s.group_id ? '' : 'disabled'} title="group.urls를 fetch + page_type 분류 (resume 가능)">Classify</button>
         <button onclick="runBaselineForGroup('${escHtml(s.group_id || '')}', '${escHtml(s.name || '')}')"
           class="text-[11px] px-2 py-0.5 bg-rose-50 text-rose-600 rounded hover:bg-rose-100 transition font-medium flex-shrink-0"
           ${s.group_id ? '' : 'disabled'} title="CSR/SSR Baseline 측정 (Playwright, ~30분 백그라운드)">Baseline</button>
@@ -1660,9 +1663,25 @@ async function loadBaseline() {
 }
 
 // ── URL 분류 (1단계) ─────────────────────────────────────────────────────
+async function runSyncForGroup(groupId, groupName) {
+  if (!groupId) { showToast('group_id 없음'); return; }
+  if (!confirm(`그룹 "${groupName || groupId}"의 sitemap에서 URL을 수집합니다.\n\nsub-sitemap이 있으면 재귀로 모두 펼침. group.urls 갱신.\n분류는 별도 "Classify" 버튼.`)) return;
+  try {
+    const res = await fetch(`/admin/sync/run/${encodeURIComponent(groupId)}`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.ok && data.status === 'ok') {
+      showToast(`그룹 ${groupId} sync 시작 (백그라운드)`);
+    } else {
+      showToast(`오류: ${data.detail || 'unknown'}`);
+    }
+  } catch (e) { showToast('네트워크 오류: ' + e); }
+}
+
 async function runClassifyForGroup(groupId, groupName) {
   if (!groupId) { showToast('group_id 없음'); return; }
-  if (!confirm(`그룹 "${groupName || groupId}"의 Sitemap Sync + URL 분류를 시작합니다.\n\n1) sitemap.xml에서 최신 URL 추출 → group.urls 갱신\n2) 각 URL을 httpx fetch + body class/meta template으로 정확히 분류 (200 + non-redirect만)\n\n~15분 백그라운드 실행. 완료 후 "분류 결과" 카드에서 새로고침.`)) return;
+  if (!confirm(`그룹 "${groupName || groupId}"의 group.urls 전체를 분류합니다.\n\nhttpx fetch + body class/meta template (200 응답 + non-redirect만).\nResume 지원 — 이미 분류된 URL은 skip. 도중 죽어도 재trigger.\n\nsync(URL 수집)는 먼저 별도 "Sync" 버튼으로.`)) return;
   try {
     const res = await fetch(`/admin/classify/run/${encodeURIComponent(groupId)}`, {
       method: 'POST',
