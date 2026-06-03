@@ -331,6 +331,43 @@
             </div>
           </div>
 
+          <!-- Audit Lists 카드 (2단계) — page_type별 sample -->
+          <div class="card p-4 mb-4">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                </div>
+                <h2 class="text-sm font-bold text-slate-700">Audit Lists <span class="text-[10px] font-medium text-slate-400">(2단계 — page_type별 100개 sample)</span></h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="audit-lists-status" class="text-[11px] text-slate-400">대기</span>
+                <button onclick="loadAuditLists()" class="text-xs px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition font-medium">새로고침</button>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">
+              위 분류 결과의 각 row "<b>build lists</b>" 클릭 → page_type별 max 100개 random sample로 audit_list 생성.
+              같은 source × page_type 조합 재실행 시 덮어쓰기. 다음 3단계에서 각 list에 schedule 등록 예정.
+            </p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                  <tr class="text-left">
+                    <th class="px-3 py-2 font-semibold text-slate-600">source</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600">page_type</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-right">URLs</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600">name</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600">updated</th>
+                    <th class="px-3 py-2 font-semibold text-slate-600 text-center">action</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-lists-tbody">
+                  <tr><td colspan="6" class="px-3 py-6 text-center text-slate-400">아직 audit_list가 없습니다. 위 분류 결과 row의 "build lists" 버튼을 눌러주세요.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- CSR/SSR Baseline 카드 — 그룹(sitemap)별 -->
           <div class="card p-4">
             <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
@@ -707,7 +744,7 @@ function switchPage(page) {
 
   if (page === 'criteria') loadSnapshots();
   if (page === 'list') renderGroups();
-  if (page === 'schedule') { renderSchedules(); loadClassifySummary(); loadBaseline(); }
+  if (page === 'schedule') { renderSchedules(); loadClassifySummary(); loadAuditLists(); loadBaseline(); }
   if (page === 'pagetypes') loadPageTypes();
   if (page === 'stats') loadPageTypeStats();
   if (page === 'logs') {
@@ -1698,6 +1735,76 @@ async function runClassifyForGroup(groupId, groupName) {
   }
 }
 
+async function buildAuditLists(groupId) {
+  if (!confirm(`그룹 "${groupId}"의 분류 결과로 page_type별 100개 sample audit_list를 생성합니다.\n\n같은 source × page_type 조합은 덮어쓰기.`)) return;
+  try {
+    const res = await fetch(`/admin/audit-lists/build/${encodeURIComponent(groupId)}`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.ok && data.status === 'ok') {
+      showToast(`${groupId}: ${data.lists_created} lists, ${data.total_urls} URLs`);
+      loadAuditLists();
+    } else {
+      showToast(`오류: ${data.error || data.detail || data.status}`);
+    }
+  } catch (e) { showToast('네트워크 오류: ' + e); }
+}
+
+async function loadAuditLists() {
+  const tbody = document.getElementById('audit-lists-tbody');
+  const status = document.getElementById('audit-lists-status');
+  if (!tbody) return;
+  if (status) status.textContent = '불러오는 중...';
+  try {
+    const res = await fetch('/admin/audit-lists', { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) { if (status) status.textContent = `오류 ${res.status}`; return; }
+    const data = await res.json();
+    const lists = data.lists || [];
+    if (!lists.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-6 text-center text-slate-400">아직 audit_list가 없습니다. 위 분류 결과 row의 "build lists" 버튼을 눌러주세요.</td></tr>';
+      if (status) status.textContent = '비어있음';
+      return;
+    }
+    const formatDate = (iso) => {
+      if (!iso) return '<span class="text-slate-300">-</span>';
+      try { return new Date(iso).toLocaleString('ko-KR', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+      catch { return iso; }
+    };
+    // 정렬: source_group_id → page_type
+    lists.sort((a,b) => (a.source_group_id||'').localeCompare(b.source_group_id||'') || (a.page_type||'').localeCompare(b.page_type||''));
+    tbody.innerHTML = lists.map(l => `
+      <tr class="border-b border-slate-50 hover:bg-slate-50/50">
+        <td class="px-3 py-2.5 font-mono text-[10px] text-slate-500">${escHtml((l.source_group_id||'').replace('grp_lg_',''))}</td>
+        <td class="px-3 py-2.5 font-mono text-slate-700">${escHtml(l.page_type||'-')}</td>
+        <td class="px-3 py-2.5 text-right tabular-nums font-semibold">${(l.url_count || 0).toLocaleString()}</td>
+        <td class="px-3 py-2.5 text-[10px] text-slate-500">${escHtml(l.name||'')}</td>
+        <td class="px-3 py-2.5 text-[10px] text-slate-500">${formatDate(l.updated_at)}</td>
+        <td class="px-3 py-2.5 text-center">
+          <button onclick="deleteAuditList('${escHtml(l.id)}')" class="text-[10px] text-slate-400 hover:text-rose-500 underline">delete</button>
+        </td>
+      </tr>
+    `).join('');
+    if (status) status.textContent = `${lists.length} lists`;
+  } catch (e) { if (status) status.textContent = '네트워크 오류'; }
+}
+
+async function deleteAuditList(listId) {
+  if (!confirm(`audit_list "${listId}" 를 삭제합니다.`)) return;
+  try {
+    const res = await fetch(`/admin/audit-lists/${encodeURIComponent(listId)}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.ok && data.status === 'ok') {
+      showToast(`${listId} 삭제됨`);
+      loadAuditLists();
+    } else {
+      showToast(`오류: ${data.detail || data.status}`);
+    }
+  } catch (e) { showToast('네트워크 오류: ' + e); }
+}
+
 async function cleanupExcluded(groupId) {
   if (!confirm(`그룹 "${groupId}"의 기존 분류 결과에서 EXCLUDE 패턴(business 등) 매칭 URL을 제거합니다.\n\n계속할까요?`)) return;
   try {
@@ -1745,6 +1852,7 @@ async function loadClassifySummary() {
         <tr class="border-b border-slate-50 hover:bg-slate-50/50">
           <td class="px-3 py-2.5 font-mono text-slate-700">${escHtml((e.group_name || gid).replace('LG Sitemap - ', ''))}
             <button onclick="cleanupExcluded('${escHtml(gid)}')" class="ml-2 text-[9px] text-slate-400 hover:text-rose-500 underline" title="EXCLUDE 패턴(business 등) 매칭 URL을 기존 분류 결과에서 제거">cleanup</button>
+            <button onclick="buildAuditLists('${escHtml(gid)}')" class="ml-1 text-[9px] text-indigo-500 hover:text-indigo-700 underline font-semibold" title="page_type별 100개 sample audit_list 생성">build lists</button>
           </td>
           <td class="px-3 py-2.5 text-right tabular-nums">${(s.total || 0).toLocaleString()}</td>
           <td class="px-3 py-2.5 text-right tabular-nums text-emerald-600 font-semibold">${(s.classified || 0).toLocaleString()}</td>

@@ -910,6 +910,46 @@ async def get_classify_all(request: Request):
     }
 
 
+@app.post("/admin/audit-lists/build/{group_id}")
+async def build_audit_lists(group_id: str, request: Request):
+    """[2단계] 지정 그룹의 분류 결과를 받아 page_type별 100개 sample audit_list 생성.
+
+    같은 source_group_id × page_type 조합은 덮어쓰기 (재실행 가능).
+    audit_data.json::audit_lists 에 저장. peer push 자동.
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from audit_list_builder import build_lists_for_group
+    result = await build_lists_for_group(group_id)
+    # audit_data 변경 → Mac Mini push
+    if result.get("status") == "ok":
+        data = audit_store.load()
+        await _peer_push_aux("/admin/audit-data", data)
+    return result
+
+
+@app.get("/admin/audit-lists")
+async def get_audit_lists(request: Request):
+    """저장된 audit_lists 전체 조회."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from audit_list_builder import load_audit_lists
+    return {"lists": load_audit_lists()}
+
+
+@app.delete("/admin/audit-lists/{list_id}")
+async def remove_audit_list(list_id: str, request: Request):
+    """audit_list 삭제."""
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from audit_list_builder import delete_audit_list
+    result = await delete_audit_list(list_id)
+    if result.get("status") == "ok":
+        data = audit_store.load()
+        await _peer_push_aux("/admin/audit-data", data)
+    return result
+
+
 @app.post("/admin/classify/cleanup/{group_id}")
 async def cleanup_classify_for_group(group_id: str, request: Request):
     """기존 분류 결과에서 _EXCLUDE_URL_PATTERN에 매칭되는 URL을 제거.
