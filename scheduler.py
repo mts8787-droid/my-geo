@@ -115,6 +115,13 @@ async def _run_schedule(schedule_id: str, force: bool = False):
     # 슬라이스 전 전체 URL 수 보관 (청크 종료 판단에 사용)
     total_urls = (group or {}).get("url_count") or len(urls)
     if chunk_size > 0 and urls:
+        # chunk_index가 범위를 벗어났으면 0으로 리셋 (무한 빈-slice 루프 회피)
+        if chunk_index * chunk_size >= len(urls):
+            db.add_system_log(
+                f"[audit] {sch.get('name')}: chunk_index={chunk_index} 범위 벗어남 "
+                f"(start={chunk_index*chunk_size} >= total={len(urls)}) → 0 으로 리셋"
+            )
+            chunk_index = 0
         start = chunk_index * chunk_size
         end = start + chunk_size
         urls = urls[start:end]
