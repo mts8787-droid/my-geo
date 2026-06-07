@@ -13,6 +13,7 @@ import logging
 import os
 import socket
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from typing import List, Optional
 from urllib.parse import urlparse
 
@@ -908,6 +909,85 @@ async def get_classify_all(request: Request):
         }
         for gid, e in full.items()
     }
+
+
+@app.get("/admin/schema-matrix.csv")
+async def get_schema_matrix_csv(request: Request):
+    """page_type ↔ schema 매트릭스를 CSV로 다운로드.
+
+    - scoring_config의 ai_schema_* 룰을 진실 소스로 사용 (applies_to_page_types)
+    - applies_to_page_types 없는 룰은 모든 page_type 적용 (예: Organization, BreadcrumbList)
+    - enabled=false 룰은 제외
+    - wide matrix 형식: 행=page_type, 열=schema_type, cell=✓ 또는 빈칸
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+
+    from analyzer import get_scoring_config
+    from page_type import load_page_types
+    import csv
+    import io
+
+    cfg = get_scoring_config()
+    pt_cfg = load_page_types()
+    page_types = [pt["id"] for pt in pt_cfg.get("page_types", []) if pt.get("id") and pt["id"] != "unknown"]
+
+    # ai_readiness의 schema 룰 (enabled만)
+    schema_rules = []
+    for c in (cfg.get("ai_readiness") or {}).get("criteria", []):
+        if not c.get("enabled"): continue
+        rule = c.get("rule") or {}
+        rt = rule.get("type", "")
+        if rt not in ("schema_required_fields", "schema_any_of"): continue
+        params = rule.get("params", {})
+        if rt == "schema_required_fields":
+            schema_label = params.get("type", "?")
+        else:  # schema_any_of
+            schema_label = " OR ".join(t.strip() for t in (params.get("types", "") or "").split(","))
+        applies = c.get("applies_to_page_types")  # None = all
+        schema_rules.append({
+            "rule_id":      c.get("id"),
+            "rule_name":    c.get("name", c.get("id")),
+            "schema_label": schema_label,
+            "applies":      applies,  # None or list
+        })
+
+    # CSV — wide matrix
+    out = io.StringIO()
+    writer = csv.writer(out)
+    # 헤더: page_type + schema labels
+    header = ["page_type", "label"] + [r["schema_label"] for r in schema_rules]
+    writer.writerow(header)
+    # 각 page_type별 row
+    pt_label_map = {pt["id"]: pt.get("label", pt["id"]) for pt in pt_cfg.get("page_types", [])}
+    for pt_id in page_types:
+        row = [pt_id, pt_label_map.get(pt_id, "")]
+        for r in schema_rules:
+            applies = r["applies"]
+            mark = "✓" if (applies is None or pt_id in applies) else ""
+            row.append(mark)
+        writer.writerow(row)
+
+    # 빈 줄 + 메타 정보
+    writer.writerow([])
+    writer.writerow(["# meta"])
+    writer.writerow(["# generated", datetime.now(timezone.utc).isoformat()])
+    writer.writerow(["# source", "scoring_config.json::ai_readiness (enabled schema rules) + page_types.json"])
+    writer.writerow(["# rule_count", len(schema_rules)])
+    writer.writerow(["# page_type_count", len(page_types)])
+
+    csv_text = out.getvalue()
+    out.close()
+    # UTF-8 BOM — Excel 한국어 호환
+    csv_bytes = "﻿" + csv_text
+    from fastapi.responses import Response
+    return Response(
+        content=csv_bytes,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="schema-matrix-{datetime.now().strftime("%Y%m%d")}.csv"',
+        },
+    )
 
 
 @app.post("/admin/audit-lists/build/{group_id}")

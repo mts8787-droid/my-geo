@@ -460,6 +460,7 @@
               <p class="text-xs text-slate-400 mt-1">메타 태그·body class·URL 패턴으로 페이지를 분류. 각 타입의 expected/recommended_schemas는 <code>schema_for_page_type</code> 룰이 사용.</p>
             </div>
             <div class="flex gap-2">
+              <button onclick="downloadSchemaMatrix()" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 transition" title="page_type별 schema 매트릭스 CSV (Excel 호환)">📥 Schema 매트릭스 CSV</button>
               <button onclick="loadPageTypes()" class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-200 transition">새로고침</button>
               <button onclick="savePageTypes()" id="pt-save-btn" class="px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-semibold rounded-lg hover:opacity-90 transition">저장</button>
             </div>
@@ -1730,6 +1731,28 @@ async function runClassifyForGroup(groupId, groupName) {
     } else {
       showToast(`오류: ${data.detail || data.message || 'unknown'}`);
     }
+  } catch (e) {
+    showToast('네트워크 오류: ' + e);
+  }
+}
+
+async function downloadSchemaMatrix() {
+  try {
+    const res = await fetch('/admin/schema-matrix.csv', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) { showToast(`다운로드 실패: ${res.status}`); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    a.href = url;
+    a.download = `schema-matrix-${today}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Schema 매트릭스 CSV 다운로드 시작');
   } catch (e) {
     showToast('네트워크 오류: ' + e);
   }
