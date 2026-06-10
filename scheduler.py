@@ -159,6 +159,8 @@ async def _run_audit_lists_schedule(sch: dict, data: dict):
             "summary":       [],
             "error":         None,
         }
+        # 시작 즉시 running 상태로 저장 — 도중에 프로세스가 죽어도 이력에 흔적이 남음
+        db.save_schedule_run(run)
         results, success_count = await _analyze_urls(f"{sch_label}/{gname}", urls)
         run["summary"]       = results
         run["success_count"] = success_count
@@ -230,6 +232,8 @@ async def _run_schedule(schedule_id: str, force: bool = False):
         return
 
     sch_label = sch.get("name", schedule_id)
+    # 시작 즉시 running 상태로 저장 — 도중에 프로세스가 죽어도 이력에 흔적이 남음
+    db.save_schedule_run(run)
     results, success_count = await _analyze_urls(sch_label, urls)
     run["summary"]       = results  # 풀 결과 — 49항목 breakdown 포함
     run["success_count"] = success_count
