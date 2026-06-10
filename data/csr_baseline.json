@@ -165,28 +165,186 @@
     }
   },
   "grp_lg_uk": {
+    "about": {
+      "avg_ratio": 0.715,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6455,
+      "avg_csr_chars": 8947,
+      "sample_size": 5,
+      "sample_urls": [
+        "https://www.lg.com/uk/about-lg/press-media/lg-to-unveil-new-version-of-popular-webos-smart-tv-platform-at-ces-2016/",
+        "https://www.lg.com/uk/about-lg/press-media/lg-works-with-instagram-artist-to-showcase-the-worlds-first-wallpaper-tv/",
+        "https://www.lg.com/uk/about-lg/press-media/exclusive-bts-content-available-only-on-lg-smartphones/",
+        "https://www.lg.com/uk/about-lg/press-media/lg-smart-park-named-lighthouse-factory-for-futuristic-manufacturing-technology/",
+        "https://www.lg.com/uk/about-lg/press-media/lg-electronics-honored-with-four-eisa-awards/"
+      ],
+      "updated_at": "2026-06-10T12:15:19.647074+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.789,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 11503,
+      "avg_csr_chars": 14013,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/uk/buying-guides/laundry-features-guide/",
+        "https://www.lg.com/uk/computing/buying-guide/why-lg-ultragear/",
+        "https://www.lg.com/uk/buying-guide/speakers/",
+        "https://www.lg.com/uk/washing-machine-buying-guide/",
+        "https://www.lg.com/uk/tvs-soundbars/tv-buying-guide/tv-technology/what-is-4k-tv/",
+        "https://www.lg.com/uk/buying-guides/tv-spec-library/",
+        "https://www.lg.com/uk/appliances/buying-guide/fridge-freezers/feature-performance/",
+        "https://www.lg.com/uk/buying-guides/tv-lineup-guide/",
+        "https://www.lg.com/uk/buying-guides/tv-features-guide/",
+        "https://www.lg.com/uk/tvs-soundbars/tv-buying-guide/tv-design/"
+      ],
+      "updated_at": "2026-06-10T12:17:49.996931+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.694,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6335,
+      "avg_csr_chars": 8884,
+      "sample_size": 7,
+      "sample_urls": [
+        "https://www.lg.com/uk/tvs-soundbars/why-true-wireless/",
+        "https://www.lg.com/uk/blog/",
+        "https://www.lg.com/uk/blog/types-of-air-to-water-heat-pumps/",
+        "https://www.lg.com/uk/tvs-soundbars/why-qned-evo/",
+        "https://www.lg.com/uk/blog/lg-wins-coveted-h-and-a-news-award/",
+        "https://www.lg.com/uk/blog/green-homes-grant/",
+        "https://www.lg.com/uk/lg-experience-old/lg-experience-renewal-sample/helpful-hints/best-energy-efficient-fridge-freezer/"
+      ],
+      "updated_at": "2026-06-10T12:19:57.980211+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.666,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6768,
+      "avg_csr_chars": 9765,
+      "sample_size": 6,
+      "sample_urls": [
+        "https://www.lg.com/uk/lg-experience/inspiration/the-power-of-packaging/",
+        "https://www.lg.com/uk/lg-experience/up-coming/ifa-2018-your-guide-to-the-new-lg-signature/",
+        "https://www.lg.com/uk/lg-experience/buying-guide/",
+        "https://www.lg.com/uk/lg-experience/lg-lab/best-audio-speakers-spring-wk7-pk7-pk5-pk3/",
+        "https://www.lg.com/uk/lg-experience/",
+        "https://www.lg.com/uk/lg-experience/inspiration/sustainable-collaborations/"
+      ],
+      "updated_at": "2026-06-10T12:22:04.797421+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.713,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 7444,
+      "avg_csr_chars": 10058,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/uk/promotion/g4-free-installation/",
+        "https://www.lg.com/uk/tncs/2022bankholiday/",
+        "https://www.lg.com/uk/tncs/whos-your-hero-giveaway-apr-2020/",
+        "https://www.lg.com/uk/tncs/dw-5-year-warranty-sept-2025/",
+        "https://www.lg.com/uk/promotion/ha-pairing/",
+        "https://www.lg.com/uk/tncs/gram-hustle-sticker/",
+        "https://www.lg.com/uk/promotion/summer-appliance-event/",
+        "https://www.lg.com/uk/tncs/roxi-premium/",
+        "https://www.lg.com/uk/tncs/g7monitor-terms/",
+        "https://www.lg.com/uk/tncs/ultragear-monitor-preorder/"
+      ],
+      "updated_at": "2026-06-10T12:24:29.410254+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.599,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4088,
+      "avg_csr_chars": 6763,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/uk/support/announcement/GBNTC150421105540/",
+        "https://www.lg.com/uk/support/announcement/GBNTC20230310153481/",
+        "https://www.lg.com/uk/support/minho-page/",
+        "https://www.lg.com/uk/support/announcement/GBNTC20240527001/",
+        "https://www.lg.com/uk/support/product-support/warranty/",
+        "https://www.lg.com/uk/support/contact-us/share-your-voice-with-the-lg-president/",
+        "https://www.lg.com/uk/support/washing-machine-support/",
+        "https://www.lg.com/uk/support/minho-page/additional-support1/announcements/announcement-details/",
+        "https://www.lg.com/uk/support/minho-page/additional-support/product-registration/product-registration-form/",
+        "https://www.lg.com/uk/support/minho-page/additional-support1/environmental/"
+      ],
+      "updated_at": "2026-06-10T12:26:53.247564+00:00"
+    },
     "support_troubleshoot": {
-      "avg_ratio": 0.362,
-      "avg_score": 4.0,
-      "tier": "partial",
-      "avg_ssr_chars": 3692,
-      "avg_csr_chars": 10202,
+      "avg_ratio": 0.522,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 3402,
+      "avg_csr_chars": 6564,
+      "sample_size": 5,
+      "sample_urls": [
+        "https://www.lg.com/uk/support/minho-page/product-support1/troubleshoot/",
+        "https://www.lg.com/uk/support/product-support/troubleshoot/help-library/",
+        "https://www.lg.com/uk/support/product-support/troubleshoot/",
+        "https://www.lg.com/uk/support/minho-page/product-support2/troubleshoot/",
+        "https://www.lg.com/uk/support/minho-page/product-support/troubleshoot/"
+      ],
+      "updated_at": "2026-06-10T12:28:04.076003+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.504,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5762,
+      "avg_csr_chars": 11312,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/uk/washing-machines/f14u2tdn0/",
+        "https://www.lg.com/uk/washing-machines/f6v1009wtse/",
+        "https://www.lg.com/uk/laptops/16z90p-k88/",
+        "https://www.lg.com/uk/lg-friends/lgr105/",
+        "https://www.lg.com/uk/mobile-phone-accessories/wcd-100/",
+        "https://www.lg.com/uk/monitors/24mp58vq-p/",
+        "https://www.lg.com/uk/tumble-dryers/rc8055ah3m/",
+        "https://www.lg.com/uk/projectors/cf3d/",
+        "https://www.lg.com/uk/blu-ray-dvd-players/hr400/",
+        "https://www.lg.com/uk/tumble-dryers/rc9042aq3z/"
+      ],
+      "updated_at": "2026-06-10T12:30:08.846821+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.659,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10016,
+      "avg_csr_chars": 15188,
       "sample_size": 1,
       "sample_urls": [
-        "https://www.lg.com/uk/support/product-support/troubleshoot/help-library/cs-CT00008333-20152713868434OLT/"
+        "https://www.lg.com/uk/monitors/144-hz-monitor/"
       ],
-      "updated_at": "2026-05-25T00:00:00+00:00",
-      "_note": "임시 seed (UK help-library 1-sample)."
+      "updated_at": "2026-06-10T12:30:21.205483+00:00"
     },
     "_meta": {
       "group_name": "LG Sitemap - uk",
-      "updated_at": "2026-05-25T00:00:00+00:00",
-      "took_sec": null,
-      "sample_total": 1,
+      "updated_at": "2026-06-10T12:30:21.206661+00:00",
+      "took_sec": 1051.7,
+      "sample_total": 64,
       "types": [
-        "support_troubleshoot"
+        "about",
+        "buying_guide",
+        "microsite",
+        "content",
+        "promotion",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
       ],
-      "_note": "마이그레이션 (1-sample seed). 매월 1일 자동 갱신 시 10-sample로 교체."
+      "in_progress": false
     }
   }
 }

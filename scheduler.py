@@ -86,16 +86,96 @@ def _cron_trigger_for_schedule(sch: dict):
             return CronTrigger(day=day, hour=hour, minute=minute)
         except Exception:
             return CronTrigger(day=1, hour=hour, minute=minute)
+    if freq == "semimonthly":
+        # 매월 2회 — 1일은 baseline cron과 겹치지 않게 2·16일 사용
+        return CronTrigger(day="2,16", hour=hour, minute=minute)
     return CronTrigger(hour=hour, minute=minute)
+
+
+async def _analyze_urls(sch_label: str, urls: List[str]):
+    """URL 목록을 동시성 5로 분석. (results, success_count) 반환."""
+    from analyzer import analyze_url  # 순환 import 회피
+
+    sem = asyncio.Semaphore(5)
+
+    async def _run_one(url: str) -> dict:
+        async with sem:
+            db.add_system_log(f"[audit] {sch_label}: 처리 중 {url}")
+            try:
+                result = await analyze_url(url, lightweight=True)
+                score = (result.get("score") or {})
+                total = score.get("total")
+                grade = score.get("grade")
+                db.add_system_log(f"[audit] {sch_label}: {url} → total={total} ({grade})")
+                # analyze_url의 전체 결과를 그대로 보존 (49 항목 breakdown 포함)
+                return {"url": url, "result": result}
+            except Exception as e:
+                err = f"{type(e).__name__}: {str(e)[:200]}"
+                db.add_system_log(f"[audit] {sch_label}: {url} → ERROR {err}")
+                return {"url": url, "error": err}
+
+    results = await asyncio.gather(*(_run_one(u) for u in urls), return_exceptions=False)
+    success_count = sum(
+        1 for r in results
+        if "error" not in r and (r.get("result", {}).get("score") or {}).get("total") is not None
+    )
+    return results, success_count
+
+
+async def _run_audit_lists_schedule(sch: dict, data: dict):
+    """audit_lists 기반 실행 — 국가(그룹)를 이름순으로 순차 처리, 국가별 run 레코드 저장."""
+    schedule_id = sch.get("id")
+    sch_label = sch.get("name", schedule_id)
+
+    by_group: dict = {}
+    for lst in data.get("audit_lists", []):
+        gid = lst.get("source_group_id")
+        if gid:
+            by_group.setdefault(gid, []).extend(lst.get("urls") or [])
+    if not by_group:
+        db.add_system_log(f"[audit] {sch_label}: audit_lists 비어있음 — skip")
+        return
+
+    group_names = {g.get("id"): g.get("name") for g in data.get("groups", [])}
+    order = sorted(by_group, key=lambda gid: group_names.get(gid) or gid)
+    db.add_system_log(
+        f"[audit] {sch_label}: {len(order)}개 국가 순차 실행 시작 — "
+        + ", ".join(group_names.get(g) or g for g in order)
+    )
+
+    for gid in order:
+        urls = by_group[gid]
+        gname = group_names.get(gid) or gid
+        run = {
+            "id":            f"run_{uuid.uuid4().hex[:12]}",
+            "schedule_id":   schedule_id,
+            "schedule_name": sch_label,
+            "group_id":      gid,
+            "group_name":    gname,
+            "started_at":    datetime.now(timezone.utc).isoformat(),
+            "url_count":     len(urls),
+            "success_count": 0,
+            "status":        "running",
+            "summary":       [],
+            "error":         None,
+        }
+        results, success_count = await _analyze_urls(f"{sch_label}/{gname}", urls)
+        run["summary"]       = results
+        run["success_count"] = success_count
+        run["status"]        = "ok" if success_count == len(urls) else ("partial" if success_count else "error")
+        run["finished_at"]   = datetime.now(timezone.utc).isoformat()
+        db.save_schedule_run(run)
+        db.add_system_log(f"[audit] {sch_label}: {gname} 완료 — {success_count}/{len(urls)}")
 
 
 async def _run_schedule(schedule_id: str, force: bool = False):
     """스케줄 실행 — 그룹의 URL을 일괄 분석 후 결과 저장."""
-    from analyzer import analyze_url  # 순환 import 회피
-
     data = audit_store.load()
     sch = next((s for s in data["schedules"] if s.get("id") == schedule_id), None)
     if not sch or (not force and not sch.get("enabled", True)):
+        return
+    if sch.get("use_audit_lists"):
+        await _run_audit_lists_schedule(sch, data)
         return
     group = next((g for g in data["groups"] if g.get("id") == sch.get("group_id")), None)
     urls = (group or {}).get("urls", [])
@@ -149,30 +229,8 @@ async def _run_schedule(schedule_id: str, force: bool = False):
         db.add_system_log(f"[audit] {sch.get('name')} ({group_name}): 그룹에 URL 없음 — skip")
         return
 
-    sem = asyncio.Semaphore(5)
     sch_label = sch.get("name", schedule_id)
-
-    async def _run_one(url: str) -> dict:
-        async with sem:
-            db.add_system_log(f"[audit] {sch_label}: 처리 중 {url}")
-            try:
-                result = await analyze_url(url, lightweight=True)
-                score = (result.get("score") or {})
-                total = score.get("total")
-                grade = score.get("grade")
-                db.add_system_log(f"[audit] {sch_label}: {url} → total={total} ({grade})")
-                # analyze_url의 전체 결과를 그대로 보존 (49 항목 breakdown 포함)
-                return {"url": url, "result": result}
-            except Exception as e:
-                err = f"{type(e).__name__}: {str(e)[:200]}"
-                db.add_system_log(f"[audit] {sch_label}: {url} → ERROR {err}")
-                return {"url": url, "error": err}
-
-    results = await asyncio.gather(*(_run_one(u) for u in urls), return_exceptions=False)
-    success_count = sum(
-        1 for r in results
-        if "error" not in r and (r.get("result", {}).get("score") or {}).get("total") is not None
-    )
+    results, success_count = await _analyze_urls(sch_label, urls)
     run["summary"]       = results  # 풀 결과 — 49항목 breakdown 포함
     run["success_count"] = success_count
     run["status"]        = "ok" if success_count == len(urls) else ("partial" if success_count else "error")
@@ -204,10 +262,18 @@ def reload_schedules() -> int:
 
     Returns: 등록된 활성 스케줄 개수
     """
+    import os
     global _scheduler
     if not APSCHEDULER_AVAILABLE or _scheduler is None:
         return 0
     _scheduler.remove_all_jobs()
+    # remove_all_jobs가 sitemap-sync / csr-baseline job도 지우므로 재등록
+    _register_sitemap_sync_job()
+    _register_csr_baseline_job()
+    # Mac Mini daemon 등에서 중복 실행 방지 — env로 audit 스케줄 등록 차단
+    if os.environ.get("AUDIT_SCHEDULES_ENABLED", "true").lower() in ("false", "0", "no"):
+        log.info("AUDIT_SCHEDULES_ENABLED=false — audit 스케줄 미등록")
+        return 0
     data = audit_store.load()
     count = 0
     for sch in data.get("schedules", []):

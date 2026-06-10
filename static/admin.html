@@ -1396,7 +1396,7 @@ function renderSchedules() {
     </div>`;
     return;
   }
-  const freqLabel = { daily: '매일', weekly: '매주', monthly: '매월', hourly: '매시간', every_30_min: '30분마다', every_15_min: '15분마다' };
+  const freqLabel = { daily: '매일', weekly: '매주', monthly: '매월', hourly: '매시간', every_30_min: '30분마다', every_15_min: '15분마다', semimonthly: '매월 2·16일' };
   const groupName = (id) => {
     const g = (auditData.groups || []).find((_, i) => String(i) === String(id));
     return g ? g.name : '(삭제됨)';
@@ -1416,7 +1416,7 @@ function renderSchedules() {
         </button>
         <p class="text-sm font-medium text-slate-700 truncate flex-1 min-w-0">${escHtml(s.name)}</p>
         <span class="text-[11px] text-slate-400 w-28 flex-shrink-0">${freq} ${s.time || ''}</span>
-        <span class="text-[11px] text-indigo-600 font-medium truncate w-40 flex-shrink-0" title="${escHtml(groupName(s.groupIdx))}">${escHtml(groupName(s.groupIdx))}</span>
+        <span class="text-[11px] text-indigo-600 font-medium truncate w-40 flex-shrink-0" title="${escHtml(s.use_audit_lists ? '전 국가 Audit List 순차' : groupName(s.groupIdx))}">${escHtml(s.use_audit_lists ? '전 국가 Audit List 순차' : groupName(s.groupIdx))}</span>
         <button onclick="runScheduleNow('${escHtml(sid)}')"
           class="text-[11px] px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition font-medium flex-shrink-0"
           ${sid ? '' : 'disabled'}>실행</button>
