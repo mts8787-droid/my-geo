@@ -35,6 +35,7 @@ Why: 정기 sitemap audit는 lightweight=True 모드로 동작해 CSR/SSR ratio�
 import asyncio
 import json
 import logging
+import os
 import random
 import re
 from collections import Counter, defaultdict
@@ -54,6 +55,9 @@ MAX_CONCURRENCY = 1
 # 차단 페이지 감지 — Akamai "Access Denied" 같은 짧은 페이지를 baseline에 넣지 않도록.
 # 정상 LG 페이지의 SSR/CSR 가시 텍스트는 보통 1000자 이상.
 _BLOCKED_PAGE_CHAR_THRESHOLD = 1000
+
+# 요청 간 딜레이(초) — 연속 측정 시 Akamai velocity 차단 회피. env로 조정.
+BASELINE_DELAY_SEC = float(os.getenv("BASELINE_DELAY_SEC", "0"))
 
 # PDP/PLP 휴리스틱 — page_types.json에 url_pattern이 없어서 unknown으로 분류되는 페이지.
 _PDP_HEURISTIC = re.compile(r"^https?://[^/]+/[a-z]{2}/[a-z][a-z0-9-]+/[a-z0-9-]*[0-9][a-z0-9-]*/?$", re.I)
@@ -297,6 +301,8 @@ async def regenerate_baseline_for_group(group_id: str) -> dict:
     async def _analyze_one(url: str) -> Optional[dict]:
         async with sem:
             try:
+                if BASELINE_DELAY_SEC > 0:
+                    await asyncio.sleep(BASELINE_DELAY_SEC)
                 result = await analyze_url(url, lightweight=False)
                 csr = result.get("csr_ratio") or {}
                 if csr.get("status") != "ok":
