@@ -48,8 +48,9 @@ FETCH_TIMEOUT_SEC = 15
 # URL 제외 패턴 — classify 대상에서 사전 제외.
 # - test/staging/preview 등 비프로덕션
 # - business: B2B 페이지는 GEO/소비자 audit 대상 아님 (사용자 명시 2026-05-27)
+# (?<![a-z0-9]) — 세그먼트 시작뿐 아니라 -/_ 뒤도 잡음 (MW-Test, Testing_Folder 등)
 _EXCLUDE_URL_PATTERN = re.compile(
-    r"/(test|adobeqa|sandbox|preview|staging|dev|local|business)\b",
+    r"(?<![a-z0-9])(test(ing)?[0-9_-]*|adobeqa|sandbox|preview|staging|dev|local|business)(?![a-z])",
     re.IGNORECASE,
 )
 

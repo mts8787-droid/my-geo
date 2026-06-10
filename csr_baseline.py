@@ -75,7 +75,8 @@ _PDP_REQUIRED_CATEGORIES = {
 }
 
 # URL 제외 — test/staging/preview 등 비프로덕션 흔적.
-_EXCLUDE_URL_PATTERN = re.compile(r"/(test|adobeqa|sandbox|preview|staging|dev|local)\b", re.I)
+_EXCLUDE_URL_PATTERN = re.compile(
+    r"(?<![a-z0-9])(test(ing)?[0-9_-]*|adobeqa|sandbox|preview|staging|dev|local|business)(?![a-z])", re.I)
 
 
 # ── 조회 ─────────────────────────────────────────────────────────────────
