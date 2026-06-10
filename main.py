@@ -794,18 +794,29 @@ async def run_csr_baseline_now(request: Request, background_tasks: BackgroundTas
 
 @app.post("/admin/csr-baseline/run/{group_id}")
 async def run_csr_baseline_for_group(group_id: str, request: Request, background_tasks: BackgroundTasks):
-    """지정 그룹 baseline 갱신을 백그라운드에서 1회 실행 (~30분 소요).
-
-    page_type별 10개 URL을 Playwright(lightweight=False)로 실측. Render IP가
-    Akamai whitelist라 LG 사이트 차단 없이 통과.
-    """
+    """지정 그룹 baseline 갱신을 백그라운드에서 1회 실행 (~30분 소요)."""
     if not _verify_admin(request):
         raise HTTPException(status_code=401, detail="인증이 필요합니다.")
-    from csr_baseline import regenerate_baseline_for_group
-    background_tasks.add_task(regenerate_baseline_for_group, group_id)
+
+    # trigger 시점 즉시 로그 (admin 실시간 로그에 표시)
+    import db
+    db.add_system_log(f"[baseline-trigger] {group_id}: endpoint 호출됨, background task 등록")
+
+    async def _wrapped():
+        """csr_baseline 호출을 try/except로 감싸서 silent exception 표면화."""
+        try:
+            from csr_baseline import regenerate_baseline_for_group
+            db.add_system_log(f"[baseline-trigger] {group_id}: regenerate 호출 시작")
+            r = await regenerate_baseline_for_group(group_id)
+            db.add_system_log(f"[baseline-trigger] {group_id}: 결과 = {r}")
+        except Exception as e:
+            db.add_system_log(f"[baseline-trigger] {group_id}: EXCEPTION — {type(e).__name__}: {str(e)[:300]}")
+            log.exception("baseline task 실패: %s", e)
+
+    background_tasks.add_task(_wrapped)
     return {
         "status": "ok",
-        "message": f"그룹 {group_id} CSR baseline 갱신 시작 (~30분 소요). 완료 후 새로고침.",
+        "message": f"그룹 {group_id} CSR baseline 갱신 시작. 실시간 로그 확인.",
     }
 
 
