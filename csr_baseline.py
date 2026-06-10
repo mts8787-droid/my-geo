@@ -233,20 +233,29 @@ async def regenerate_baseline_for_group(group_id: str) -> dict:
     from analyzer import analyze_url
     from page_type import detect_page_type
     import audit_store
+    import db
 
     started_at = datetime.now(timezone.utc)
 
     try:
-        data = await audit_store.load()
+        data = audit_store.load()  # sync 함수
     except Exception as e:
+        db.add_system_log(f"[baseline] {group_id}: audit_store 로드 실패 — {e}")
         return {"status": "error", "error": f"audit_store 로드 실패: {e}"}
 
     group = next((g for g in data.get("groups", []) if g.get("id") == group_id), None)
     if not group:
+        db.add_system_log(f"[baseline] {group_id}: group not found")
         return {"status": "error", "error": f"group not found: {group_id}"}
     urls = group.get("urls") or []
     if not urls:
+        db.add_system_log(f"[baseline] {group_id}: 그룹에 URL 없음 — skip")
         return {"status": "no_urls", "group_id": group_id}
+
+    db.add_system_log(
+        f"[baseline] {group_id}: 시작 — total URLs={len(urls)}, "
+        f"samples_per_type={SAMPLES_PER_TYPE}, concurrency={MAX_CONCURRENCY}"
+    )
 
     # page_type별 분류 (URL pattern 기반 — soup 없이)
     by_type = defaultdict(list)
@@ -276,7 +285,11 @@ async def regenerate_baseline_for_group(group_id: str) -> dict:
         log.warning("PDP/PLP 휴리스틱 검증 실패 (skip): %s", e)
 
     if not samples:
+        db.add_system_log(f"[baseline] {group_id}: 검증된 sample 0개 — skip")
         return {"status": "no_samples", "group_id": group_id}
+
+    by_type_str = ", ".join(f"{k}:{len(v)}" for k, v in samples.items())
+    db.add_system_log(f"[baseline] {group_id}: 표본 추출 완료 — {by_type_str}")
 
     sem = asyncio.Semaphore(MAX_CONCURRENCY)
 
@@ -302,13 +315,44 @@ async def regenerate_baseline_for_group(group_id: str) -> dict:
                 log.warning("baseline 분석 실패 %s: %s", url, e)
                 return None
 
-    # type별 분석 + 평균
+    # 부분 저장 헬퍼 — page_type 한 개 끝날 때마다 디스크에 저장 (도중 죽어도 보존)
+    def _save_partial(gb: dict, sample_total: int):
+        BASELINE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        if BASELINE_PATH.exists():
+            try:
+                with open(BASELINE_PATH, encoding="utf-8") as f:
+                    full = json.load(f)
+            except Exception:
+                full = {}
+        else:
+            full = {}
+        # 그룹 entry merge (in_progress=True)
+        entry = dict(gb)
+        entry["_meta"] = {
+            "group_name":   group.get("name", group_id),
+            "updated_at":   datetime.now(timezone.utc).isoformat(),
+            "took_sec":     round((datetime.now(timezone.utc) - started_at).total_seconds(), 1),
+            "sample_total": sample_total,
+            "types":        [k for k in gb.keys()],
+            "in_progress":  True,
+        }
+        full[group_id] = entry
+        with open(BASELINE_PATH, "w", encoding="utf-8") as f:
+            json.dump(full, f, ensure_ascii=False, indent=2)
+
+    # type별 분석 + 평균 (각 type 끝나면 부분 저장)
     group_baseline = {}
     sample_total = 0
     for type_id, type_urls in samples.items():
-        results = await asyncio.gather(*[_analyze_one(u) for u in type_urls])
+        db.add_system_log(f"[baseline] {group_id}: {type_id} 분석 시작 ({len(type_urls)}개)")
+        try:
+            results = await asyncio.gather(*[_analyze_one(u) for u in type_urls])
+        except Exception as e:
+            db.add_system_log(f"[baseline] {group_id}: {type_id} 분석 실패 — {e}")
+            continue
         valid = [r for r in results if r and r.get("ratio") is not None]
         if not valid:
+            db.add_system_log(f"[baseline] {group_id}: {type_id} — 유효 sample 0 (차단 추정), skip")
             continue
         n = len(valid)
         sample_total += n
@@ -322,14 +366,22 @@ async def regenerate_baseline_for_group(group_id: str) -> dict:
             "sample_urls":   [r["url"] for r in valid],
             "updated_at":    datetime.now(timezone.utc).isoformat(),
         }
+        # 부분 저장 — 다음 type 시작 전
+        _save_partial(group_baseline, sample_total)
+        db.add_system_log(
+            f"[baseline] {group_id}: {type_id} 완료 — ratio={group_baseline[type_id]['avg_ratio']*100:.1f}% "
+            f"tier={group_baseline[type_id]['tier']} ({n}/{len(type_urls)} valid)"
+        )
 
     took = (datetime.now(timezone.utc) - started_at).total_seconds()
+    types_completed = [k for k in group_baseline.keys()]
     group_baseline["_meta"] = {
         "group_name":   group.get("name", group_id),
         "updated_at":   datetime.now(timezone.utc).isoformat(),
         "took_sec":     round(took, 1),
         "sample_total": sample_total,
-        "types":        [k for k in group_baseline.keys() if k != "_meta"],
+        "types":        types_completed,
+        "in_progress":  False,
     }
 
     # 기존 데이터 merge — 해당 group_id 키만 덮어씀
@@ -346,16 +398,21 @@ async def regenerate_baseline_for_group(group_id: str) -> dict:
     with open(BASELINE_PATH, "w", encoding="utf-8") as f:
         json.dump(full, f, ensure_ascii=False, indent=2)
 
+    db.add_system_log(
+        f"[baseline] {group_id}: 완료 — types={len(types_completed)} samples={sample_total} took={took:.0f}s"
+    )
+
     # peer(Mac Mini)로 즉시 push — Render ephemeral disk 보존용
     try:
         from main import _peer_push_aux
         await _peer_push_aux("/admin/csr-baseline-raw", full)
     except Exception as e:
         log.warning("peer push 실패 (무시): %s", e)
+        db.add_system_log(f"[baseline] {group_id}: peer push 실패 (무시) — {e}")
 
     return {
         "status": "ok", "group_id": group_id,
-        "types": len(group_baseline) - 1,  # _meta 제외
+        "types": len(types_completed),
         "sample_total": sample_total,
         "took_sec": round(took, 1),
     }
