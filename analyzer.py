@@ -703,6 +703,10 @@ async def _check_csr_chars(url: str) -> dict:
         except ImportError:
             _stealth_apply = None  # stealth 없이 계속 진행 (CSR 측정은 가능)
 
+    # Akamai가 headless Chromium을 403 차단하는 환경(Mac Mini 등)에서는
+    # PLAYWRIGHT_HEADED=1로 headed 모드 강제 (GUI 세션 필요)
+    headless = os.getenv("PLAYWRIGHT_HEADED", "") != "1"
+
     async with _playwright_sem:
         try:
             async with async_playwright() as p:
@@ -713,7 +717,7 @@ async def _check_csr_chars(url: str) -> dict:
                 ]
                 try:
                     browser = await p.chromium.launch(
-                        headless=True,
+                        headless=headless,
                         args=launch_args,
                     )
                 except Exception as launch_err:
@@ -724,7 +728,7 @@ async def _check_csr_chars(url: str) -> dict:
                                     "error": "Chromium 설치 실패 — Render 대시보드에서 Build Command를 확인하세요.",
                                     "csr_chars": 0}
                         browser = await p.chromium.launch(
-                            headless=True,
+                            headless=headless,
                             args=launch_args,
                         )
                     else:

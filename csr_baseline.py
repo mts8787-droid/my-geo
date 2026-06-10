@@ -299,6 +299,8 @@ async def regenerate_baseline_for_group(group_id: str) -> dict:
                 result = await analyze_url(url, lightweight=False)
                 csr = result.get("csr_ratio") or {}
                 if csr.get("status") != "ok":
+                    log.warning("baseline %s: csr status=%s (%s) — 제외",
+                                url, csr.get("status"), (csr.get("error") or "")[:120])
                     return None
                 ssr_chars = csr.get("ssr_chars") or 0
                 csr_chars = csr.get("csr_chars") or 0
