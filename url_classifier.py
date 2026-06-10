@@ -28,6 +28,7 @@ template)까지 봐서 정확히 분류. 200 응답 + non-redirect URL만 채택
 import asyncio
 import json
 import logging
+import os
 import re
 from collections import Counter
 from datetime import datetime, timezone
@@ -38,9 +39,17 @@ log = logging.getLogger(__name__)
 
 CLASSIFICATIONS_PATH = Path(__file__).parent / "data" / "url_classifications.json"
 
-# 동시 fetch 수 — httpx는 가벼우니 20 정도 안전
-CLASSIFY_CONCURRENCY = 20
+# 동시 fetch 수 / 요청 간 딜레이 — Akamai velocity 차단 시 env로 낮춰서 재시도
+CLASSIFY_CONCURRENCY = int(os.getenv("CLASSIFY_CONCURRENCY", "20"))
+CLASSIFY_DELAY_SEC = float(os.getenv("CLASSIFY_DELAY_SEC", "0"))
 FETCH_TIMEOUT_SEC = 15
+
+# Akamai 화이트리스트 UA (Render IP + 이 UA 조합으로 등록됨) — analyzer와 동일해야 함
+try:
+    from analyzer import _DEDICATED_UA as _CLASSIFY_UA
+except Exception:
+    _CLASSIFY_UA = "MyGEOAudit/1.0 (Audit agent operated by D2C Digital Marketing Team, LG Electronics)"
+_CLASSIFY_UA = os.getenv("AUDIT_USER_AGENT") or _CLASSIFY_UA
 
 # 200 응답 + non-redirect 만 채택 (사용자 명시)
 # redirect URL은 분류 제외 (원본 URL이 유효하지 않다는 신호)
@@ -66,7 +75,7 @@ async def _classify_one(client, url: str) -> dict:
 
     try:
         r = await client.get(url, headers={
-            "User-Agent": "Mozilla/5.0 (compatible; GEOAudit/1.0; +https://geoaudit.dev)",
+            "User-Agent": _CLASSIFY_UA,
             "Accept": "text/html",
             "Accept-Language": "en;q=0.9",
         }, timeout=FETCH_TIMEOUT_SEC, follow_redirects=True)
@@ -209,6 +218,8 @@ async def classify_group(group_id: str) -> dict:
     async with httpx.AsyncClient(limits=limits) as client:
         async def _one(url):
             async with sem:
+                if CLASSIFY_DELAY_SEC > 0:
+                    await asyncio.sleep(CLASSIFY_DELAY_SEC)
                 return await _classify_one(client, url)
 
         # CHUNK_SIZE 단위로 처리 — urls_to_process만 새로 처리, classified/failed에 누적
@@ -216,8 +227,13 @@ async def classify_group(group_id: str) -> dict:
             end = min(start + CHUNK_SIZE, len(urls_to_process))
             chunk = urls_to_process[start:end]
             results = await asyncio.gather(*(_one(u) for u in chunk))
+            chunk_403 = 0
             for r in results:
                 if r.get("failed"):
+                    if r.get("reason") == "http_403":
+                        # Akamai 차단은 일시적 — failed로 저장하지 않아 resume 시 재시도됨
+                        chunk_403 += 1
+                        continue
                     failed.append({"url": r["url"], "reason": r["reason"]})
                 else:
                     classified[r["url"]] = {
@@ -232,6 +248,15 @@ async def classify_group(group_id: str) -> dict:
                 f"classified={len(classified)} failed={len(failed)} "
                 f"(이번 batch: {end}/{len(urls_to_process)})"
             )
+            # 한 chunk의 절반 이상이 403이면 velocity 차단 발동으로 보고 run 중단
+            if chunk_403 >= max(10, len(chunk) // 2):
+                db.add_system_log(
+                    f"[classify] {group_id}: http_403 {chunk_403}/{len(chunk)} — "
+                    f"Akamai velocity 차단 감지, run 중단 (쿨다운 후 재트리거 시 resume)"
+                )
+                return {"status": "blocked", "group_id": group_id,
+                        "classified": len(classified), "failed": len(failed),
+                        "chunk_403": chunk_403}
 
     # 최종 저장 (in_progress=False)
     full = _save_partial(is_final=True)
