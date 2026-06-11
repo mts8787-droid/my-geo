@@ -43,6 +43,7 @@ CLASSIFICATIONS_PATH = Path(__file__).parent / "data" / "url_classifications.jso
 CLASSIFY_CONCURRENCY = int(os.getenv("CLASSIFY_CONCURRENCY", "20"))
 CLASSIFY_DELAY_SEC = float(os.getenv("CLASSIFY_DELAY_SEC", "0"))
 FETCH_TIMEOUT_SEC = 15
+MAX_FETCH_BYTES = 1_048_576
 
 # Akamai 화이트리스트 UA (Render IP + 이 UA 조합으로 등록됨) — analyzer와 동일해야 함
 try:
@@ -86,27 +87,34 @@ async def _classify_one(client, url: str) -> dict:
     except Exception:
         pass
 
+    # 스트리밍 + 크기 상한: 거대 응답(압축 폭탄 포함)이 512MB 인스턴스를 죽이는 것 방지.
+    # 분류에 필요한 meta template / body class는 HTML 앞부분에 있음.
     try:
-        r = await client.get(url, headers={
+        async with client.stream("GET", url, headers={
             "User-Agent": _CLASSIFY_UA,
             "Accept": "text/html",
             "Accept-Language": "en;q=0.9",
-        }, timeout=FETCH_TIMEOUT_SEC, follow_redirects=True)
+        }, timeout=FETCH_TIMEOUT_SEC, follow_redirects=True) as r:
+            if r.status_code != 200:
+                return {"url": url, "failed": True, "reason": f"http_{r.status_code}"}
+            if r.history:
+                return {"url": url, "failed": True, "reason": "redirect"}
+            ctype = r.headers.get("content-type", "")
+            if "text/html" not in ctype.lower():
+                return {"url": url, "failed": True, "reason": f"non-html ({ctype[:30]})"}
+            buf = bytearray()
+            async for chunk in r.aiter_bytes():
+                buf += chunk
+                if len(buf) >= MAX_FETCH_BYTES:
+                    break
+            status_code = r.status_code
+            encoding = r.charset_encoding or "utf-8"
     except Exception as e:
         return {"url": url, "failed": True, "reason": f"fetch_error: {type(e).__name__}"}
 
-    if r.status_code != 200:
-        return {"url": url, "failed": True, "reason": f"http_{r.status_code}"}
-    if r.history:
-        return {"url": url, "failed": True, "reason": "redirect"}
-
-    ctype = r.headers.get("content-type", "")
-    if "text/html" not in ctype.lower():
-        return {"url": url, "failed": True, "reason": f"non-html ({ctype[:30]})"}
-
     # HTML parse → page_type 검출
     try:
-        soup = BeautifulSoup(r.text, "html.parser")
+        soup = BeautifulSoup(bytes(buf).decode(encoding, errors="replace"), "html.parser")
     except Exception as e:
         return {"url": url, "failed": True, "reason": f"parse_error: {e}"}
 
@@ -119,7 +127,7 @@ async def _classify_one(client, url: str) -> dict:
         "url":         url,
         "page_type":   pt.get("id") or "unknown",
         "matched_by":  pt.get("matched_by") or "",
-        "http_status": r.status_code,
+        "http_status": status_code,
     }
 
 
