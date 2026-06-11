@@ -73,6 +73,19 @@ async def _classify_one(client, url: str) -> dict:
     from page_type import detect_page_type
     from bs4 import BeautifulSoup
 
+    # URL 패턴만으로 결정되면 fetch 생략 — Akamai 부하/대용량 응답 OOM 회피
+    try:
+        pt = detect_page_type(None, url)
+        if pt.get("id") and pt["id"] != "unknown" and str(pt.get("matched_by", "")).startswith("url_pattern="):
+            return {
+                "url":         url,
+                "page_type":   pt["id"],
+                "matched_by":  pt["matched_by"],
+                "http_status": None,
+            }
+    except Exception:
+        pass
+
     try:
         r = await client.get(url, headers={
             "User-Agent": _CLASSIFY_UA,

@@ -17,7 +17,8 @@
       "label": "제품 상세 (PDP)",
       "detection": {
         "meta_template": ["pdp-page", "product-page"],
-        "body_class":    ["productpage", "pdp"]
+        "body_class":    ["productpage", "pdp"],
+        "url_pattern":   ["/us/(?!support|business|press)[^/]+/lg-[a-zA-Z0-9]"]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "Product", "Offer", "AggregateRating", "Review", "FAQPage", "HowTo", "ImageObject", "VideoObject"],
       "recommended_schemas": []
@@ -27,7 +28,12 @@
       "label": "제품 카테고리 (PLP)",
       "detection": {
         "meta_template": ["plp-page", "category-page", "product-listing-page"],
-        "body_class":    ["plppage", "categorypage", "productlistingpage"]
+        "body_class":    ["plppage", "categorypage", "productlistingpage"],
+        "url_pattern":   [
+          "^https?://[^/]+/us/(?!(?:support|business|about-lg|about|promotion|promotions|tncs|lifesgood|magazine|lg-experience|monthly-lg|blog|press-release|press-media|newsroom)(?:/|\\?|$))(?!(?:why|what|how|best|top|which|when|where)-)(?!.*-vs-)(?!.*buying-guides?(?:/|$))[a-z0-9-]+/?$",
+          "/us/collections/",
+          "/us/[^/]+/discontinued(/|$)"
+        ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "ItemList", "CollectionPage"],
       "recommended_schemas": []
