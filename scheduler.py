@@ -127,10 +127,11 @@ async def _run_audit_lists_schedule(sch: dict, data: dict):
     schedule_id = sch.get("id")
     sch_label = sch.get("name", schedule_id)
 
+    target_gid = sch.get("group_id")  # 지정 시 해당 국가만 실행
     by_group: dict = {}
     for lst in data.get("audit_lists", []):
         gid = lst.get("source_group_id")
-        if gid:
+        if gid and (not target_gid or gid == target_gid):
             by_group.setdefault(gid, []).extend(lst.get("urls") or [])
     if not by_group:
         db.add_system_log(f"[audit] {sch_label}: audit_lists 비어있음 — skip")
