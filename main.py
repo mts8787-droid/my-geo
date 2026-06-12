@@ -1348,6 +1348,84 @@ async def get_schedule_runs(request: Request, schedule_id: str = None, limit: in
         raise HTTPException(status_code=500, detail=f"조회 실패: {e}")
 
 
+# ── read-only 결과 API ────────────────────────────────────────────
+# 외부 에이전트가 audit 결과만 조회할 수 있는 별도 토큰 기반 API.
+# RESULTS_TOKEN 환경변수 미설정 시 전체 404 (어드민과 동일한 정책).
+RESULTS_TOKEN = os.environ.get("RESULTS_TOKEN", "")
+
+
+def _verify_results(request: Request) -> bool:
+    if _verify_admin(request):
+        return True
+    if not RESULTS_TOKEN:
+        return False
+    auth = request.headers.get("authorization", "")
+    if not auth.startswith("Bearer "):
+        return False
+    return hmac.compare_digest(auth[7:], RESULTS_TOKEN)
+
+
+def _results_guard(request: Request):
+    if not RESULTS_TOKEN and not ADMIN_PASSWORD:
+        raise HTTPException(status_code=404, detail="Not Found")
+    if not _verify_results(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+
+
+@app.get("/results/runs")
+async def results_list_runs(request: Request, schedule_id: str = None, group_id: str = None, limit: int = 20):
+    """run 목록 — 메타데이터만 (per-URL summary 제외)."""
+    _results_guard(request)
+    from scheduler import get_recent_runs
+    runs = get_recent_runs(schedule_id=schedule_id, limit=min(limit, 100))
+    if group_id:
+        runs = [r for r in runs if r.get("group_id") == group_id]
+    out = []
+    for r in runs:
+        meta = {k: r.get(k) for k in ("id", "schedule_id", "schedule_name", "group_id", "group_name",
+                                      "started_at", "finished_at", "status", "url_count", "success_count", "error")}
+        meta["result_count"] = len(r.get("summary") or [])
+        out.append(meta)
+    return {"runs": out}
+
+
+@app.get("/results/runs/{run_id}")
+async def results_run_detail(request: Request, run_id: str, offset: int = 0, limit: int = 100, detail: str = "summary"):
+    """run 상세 — URL별 결과 페이지네이션.
+
+    detail=summary: url / page_type / 점수·등급 / 카테고리별 점수만.
+    detail=full   : 49항목 breakdown 포함 원본 결과 (응답 큼 — limit 줄여서 사용 권장).
+    """
+    _results_guard(request)
+    import db
+    run = db.get_schedule_run(run_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="run을 찾을 수 없습니다.")
+    entries = run.pop("summary", []) or []
+    offset = max(offset, 0)
+    limit = min(max(limit, 1), 500)
+    page = entries[offset:offset + limit]
+    if detail != "full":
+        slim = []
+        for e in page:
+            res = e.get("result") or {}
+            score = res.get("score") or {}
+            slim.append({
+                "url": e.get("url"),
+                "error": e.get("error"),
+                "page_type": (res.get("page_type") or {}).get("id"),
+                "score": score.get("total"),
+                "max": score.get("max"),
+                "grade": score.get("grade"),
+                "categories": {
+                    cat: {k: v.get(k) for k in ("points", "max", "passed", "total")}
+                    for cat, v in (score.get("breakdown") or {}).items()
+                },
+            })
+        page = slim
+    return {**run, "total_results": len(entries), "offset": offset, "limit": limit, "results": page}
+
+
 @app.post("/admin/smtp-test")
 async def test_smtp(request: Request, body: dict):
     """SMTP 연결 테스트."""

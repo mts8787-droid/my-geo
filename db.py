@@ -132,6 +132,25 @@ def save_schedule_run(run: dict):
     except Exception as e:
         log.error(f"Failed to save schedule run: {e}")
 
+def get_schedule_run(run_id: str) -> dict:
+    """run id로 단건 조회. 없으면 None."""
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM schedule_runs WHERE id = ?", (run_id,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+            run = dict(row)
+            try:
+                run["summary"] = json.loads(run["summary"]) if run.get("summary") else []
+            except Exception:
+                run["summary"] = []
+            return run
+    except Exception as e:
+        log.error(f"Failed to fetch schedule run {run_id}: {e}")
+        return None
+
 def get_recent_schedule_runs(schedule_id: str = None, limit: int = 20) -> list:
     """최근 스케줄 실행 결과를 조회합니다."""
     try:
