@@ -91307,6 +91307,15 @@
       "name": "LG Sitemap - dz",
       "enabled": false,
       "group_id": "grp_lg_dz"
+    },
+    {
+      "id": "sch_audit_lists_uk",
+      "name": "Audit List - UK 수동",
+      "enabled": false,
+      "use_audit_lists": true,
+      "group_id": "grp_lg_uk",
+      "frequency": "semimonthly",
+      "time": "02:00"
     }
   ],
   "runs": [],
