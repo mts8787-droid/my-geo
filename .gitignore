@@ -18,6 +18,7 @@ reports/lg_urls_list.csv
 
 # 로컬 캐시 / 런타임 산출물
 results/
+data/run_results/
 data/audit.db
 audit_data.json
 

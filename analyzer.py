@@ -13,6 +13,10 @@ from rule_engine import evaluate_rule, evaluate_rule_async, RULE_TYPES
 # Playwright 동시 실행 제한 (로컬 멀티코어 환경에 맞춰 15로 상향)
 _playwright_sem = asyncio.Semaphore(int(os.environ.get("PLAYWRIGHT_CONCURRENCY", 15)))
 
+# 응답 본문 크기 상한: 거대 응답(압축 폭탄 포함)이 512MB 인스턴스를 OOM시키는 것 방지.
+# 정상 LG 페이지는 대개 <500KB라 2MB면 본문 채점에 충분. 초과분은 절단.
+MAX_FETCH_BYTES = int(os.environ.get("MAX_FETCH_BYTES", 2 * 1024 * 1024))
+
 # 벌크 분석 시 동시 요청 제한
 _bulk_sem = asyncio.Semaphore(50)
 
@@ -385,8 +389,10 @@ async def _fetch_page(url: str) -> dict:
         # 봇 보호(Akamai/Cloudflare) 간헐적 403/429 회피용 재시도 (백오프 0.5s, 1.5s)
         BACKOFFS = [0, 0.5, 1.5]
         last_error = None
-        r = None
         ttfb_ms = 0
+        # 스트리밍으로 본문을 MAX_FETCH_BYTES까지만 읽어 OOM 방지. 응답은 연결이
+        # 열린 동안만 유효하므로 stream 컨텍스트 안에서 필요한 값을 모두 추출한다.
+        meta = None
         for attempt, delay in enumerate(BACKOFFS):
             if delay:
                 await asyncio.sleep(delay)
@@ -395,11 +401,34 @@ async def _fetch_page(url: str) -> dict:
                 async with httpx.AsyncClient(
                     timeout=15, follow_redirects=True, max_redirects=10, http2=True
                 ) as client:
-                    r = await client.get(url, headers=headers)
-                ttfb_ms = int((time.perf_counter() - t0) * 1000)
-                if r.status_code in (403, 429) and attempt < len(BACKOFFS) - 1:
-                    last_error = f"HTTP {r.status_code} 후 재시도 #{attempt + 1}"
-                    continue
+                    async with client.stream("GET", url, headers=headers) as r:
+                        ttfb_ms = int((time.perf_counter() - t0) * 1000)
+                        if r.status_code in (403, 429) and attempt < len(BACKOFFS) - 1:
+                            last_error = f"HTTP {r.status_code} 후 재시도 #{attempt + 1}"
+                            continue
+                        content_type = r.headers.get("content-type", "")
+                        is_html = "text/html" in content_type
+                        buf = bytearray()
+                        truncated = False
+                        if is_html:
+                            async for chunk in r.aiter_bytes():
+                                buf += chunk
+                                if len(buf) >= MAX_FETCH_BYTES:
+                                    truncated = True
+                                    del buf[MAX_FETCH_BYTES:]
+                                    break
+                        meta = {
+                            "status_code":    r.status_code,
+                            "final_url":      str(r.url),
+                            "redirect_count": len(r.history),
+                            "headers":        {k: v for k, v in r.headers.items()},
+                            "http_version":   getattr(r, "http_version", "") or "",
+                            "content_type":   content_type,
+                            "is_html":        is_html,
+                            "encoding":       r.charset_encoding or "utf-8",
+                            "body":           bytes(buf),
+                            "truncated":      truncated,
+                        }
                 break
             except httpx.HTTPError as e:
                 last_error = f"{type(e).__name__}: {str(e)[:100]}"
@@ -407,40 +436,33 @@ async def _fetch_page(url: str) -> dict:
                     continue
                 raise
 
-        if r is None:
+        if meta is None:
             raise RuntimeError(last_error or "fetch 실패")
 
-        redirect_count = len(r.history)
-        content_type = r.headers.get("content-type", "")
-        resp_headers = {k: v for k, v in r.headers.items()}
-        try:
-            html_bytes = len(r.content)
-        except Exception:
-            html_bytes = len(r.text.encode("utf-8"))
-        http_version = getattr(r, "http_version", "") or ""
+        text = meta["body"].decode(meta["encoding"], errors="replace") if meta["is_html"] else ""
+        html_bytes = len(meta["body"])
 
         common = {
-            "headers":       resp_headers,
-            "http_version":  http_version,
+            "headers":       meta["headers"],
+            "http_version":  meta["http_version"],
             "html_bytes":    html_bytes,
             "ttfb_ms":       ttfb_ms,
-            "raw_html":      r.text if "text/html" in content_type else "",
+            "raw_html":      text,
         }
 
         # HTML 본문이 충분하거나 status 200이면 파싱 시도. 일부 사이트는 4xx에도 정상 콘텐츠 (#21)
-        is_html = "text/html" in content_type
-        if is_html and (len(r.text) > 500 or r.status_code == 200):
+        if meta["is_html"] and (len(text) > 500 or meta["status_code"] == 200):
             return {
                 "status":         "ok",
-                "soup":           BeautifulSoup(r.text, "html.parser"),
-                "http_status":    r.status_code,
-                "final_url":      str(r.url),
-                "redirect_count": redirect_count,
+                "soup":           BeautifulSoup(text, "html.parser"),
+                "http_status":    meta["status_code"],
+                "final_url":      meta["final_url"],
+                "redirect_count": meta["redirect_count"],
                 **common,
             }
 
-        return {"status": "error", "http_status": r.status_code,
-                "soup": None, "redirect_count": redirect_count, **common}
+        return {"status": "error", "http_status": meta["status_code"],
+                "soup": None, "redirect_count": meta["redirect_count"], **common}
     except httpx.TimeoutException:
         return {"status": "error", "error": "요청 시간 초과 (15초)", "soup": None, "redirect_count": 0}
     except httpx.ConnectError:
