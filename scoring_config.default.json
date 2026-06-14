@@ -772,7 +772,7 @@
         "name": "#41 Schema: AboutPage",
         "spec_id": "#41",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "applies_to_page_types": [
           "about"
         ],
@@ -789,7 +789,7 @@
         "name": "#42 Schema: WebPage",
         "spec_id": "#42",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "applies_to_page_types": [
           "promotion",
           "microsite"
