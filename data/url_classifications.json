@@ -1,7 +1,7 @@
 {
   "grp_lg_uk": {
     "group_name": "LG Sitemap - uk",
-    "updated_at": "2026-06-10T10:14:38.088639+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 4660.4,
     "in_progress": false,
     "summary": {
@@ -16,10 +16,11 @@
         "microsite": 229,
         "support": 191,
         "unknown": 127,
-        "about": 107,
+        "newsroom": 105,
         "buying_guide": 42,
         "home": 6,
-        "support_troubleshoot": 5
+        "support_troubleshoot": 5,
+        "about": 2
       }
     },
     "classifications": {
@@ -99,528 +100,528 @@
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/1000-pound-kitchen-investment-gives-10000-pound-return/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/99-per-cent-of-brits-cannot-recognise-common-garment-care-symbols-despite-9-in-10-owning-a-washing-machine/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/brits-forgo-washing-underwear-to-help-the-environment/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/designed-with-solid-fundamentals-new-lg-q-and-k-series-are-designed-to-impress/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/evolution-of-the-eye-revealed-with-lg-oled-tv-and-natural-history-museum/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/exceptional-picture-quality-of-lgs-2017-4k-tvs-certified-by-eurofins/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/exclusive-bts-content-available-only-on-lg-smartphones/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/get-the-message-with-lgs-new-ks360/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/inimitable-style-slender-strength/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/introducing-a-more-playful-and-innovative-lg-ux-50/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/introducing-the-g4c-the-newest-member-o-lgs-g4-series/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-2021-soundbars-offer-premium-audio-and-ai-features/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-adds-touch-of-class-to-gsma-world-congress-2008-with-cutting-edge-line-up-of-new-devices/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-advances-smart-home-ecosystem-with-smart-thinq-hub-at-ces-2016/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-appliances-awarded-energy-saving-trust-verification/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-begins-android-60-marshmallow-rollout-starting-with-g4/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-begins-uk-rollout-of-2020-tv-lineup-spearheaded-by-award-winning-oled-tvs/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-brings-intelligent-manufacturing-solutions-to-hannover-messe-2019/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-brings-new-meaning-to-pc-entertainment/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-captures-the-moment-with-the-new-lg-kc550/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-commits-to-carbon-neutrality-by-2030/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-electronics-2008-lcd-hdtv-line-includes-eight-series-focus-on-design-superior-performance/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-electronics-announces-new-symbian-smartphone-with-gps/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-electronics-becomes-a-global-partner-of-formula-1/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-electronics-expands-it-product-portfolio-unveiling-new-lcd-monitors-optical-storage-options/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-electronics-honored-with-four-eisa-awards/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-electronics-renews-multi-million-sponsorship-deal-with-the-fa/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-electronics-uk-ltd-tax-strategy/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-emerges-as-big-winner-at-2019-red-dot-design-awards/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-expands-its-widescreen-monitor-range/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-expands-popular-musicflow-lineup-with-new-wireless-sound-barsand-x-boom-audio-systems/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-films-first-tottenham-hotspur-premier-league-game-in-8k/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-g-flex2-begins-global-rollout/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-g3-named-best-smartphone-and-lg-urbane-smart-watches-take-home-9-awards-at-mwc-2015/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-hits-the-road-to-find-the-uks-ultimate-style-icon/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-introduces-mind-reading-interactive-phone/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-is-bringing-football-home-to-the-streets-of-wembley-with-bumper-home-entertainment-giveaway/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-kicks-off-global-rollout-of-2019-tv-lineup/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-kicks-off-loops-new-football-campaign/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-22-webcam-monitor-in-the-uk/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-first-9kg-steam-washing-machine/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-if-award-winning-monitor/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-its-premium-22-100001-monitor-in-the-uk/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-kt520/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-the-hit-new-lcd-tv-scarlet/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-the-kc550-pink/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-launches-the-lg-twinwash-football-challenge-in-collaboration-with-the-national-schools-partnership/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-leverages-display-expertise-entersmedical-imaging-market/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-named-brand-of-the-year-2015-at-red-dot-award/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-named-which-home-entertainment-brand-of-the-year/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-oled-tv-and-xbox-series-x-unleash-next-gen-console-gaming-experience/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-oled-tv-brings-home-if-gold-award-for-design-excellence/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-opens-new-shop-in-shop-in-hulls-hanson-electrical/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-receives-more-than-140-ces-awards-and-honours-across-various-categories/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-returns-to-london-fashion-week-with-its-intelligent-fashion-icons/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-reveals-new-self-cleaning-wireless-earbuds/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-shines-a-light-on-darker-days-with-colour-therapy-content-series/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-showcases-real-life-benefits-of-lg-home-at-innofest-europe-2019/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-signature-collaborates-with-designer-patrick-grant-to-celebrate-a-vision-of-modern-living/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-signature-oled-tv-w-pushes-tv-design-into-a-new-dimension-at-ces-2017/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-signs-multi-million-sponsorship-deal-with-the-fa/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-smart-park-named-lighthouse-factory-for-futuristic-manufacturing-technology/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-to-double-global-oled-tv-offerings-in-2015/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-to-introduce-all-new-4k-hdr-enabled-oled-tv-lineup-at-ces-2016/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-to-offer-free-value-pack-upgrade-to-webos-10-smart-tv-owners/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-to-unveil-new-version-of-popular-webos-smart-tv-platform-at-ces-2016/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-to-unveil-uber-durable-centum-system-front-load-washing-machine-at-ifa-2015/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-to-unveillg-signature-premium-lineup-at-ces-2016/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-toughens-up-with-its-new-hard-glass-monitors/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-ultragear-named-league-of-legends-european-championship-official-gaming-monitor-partner/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-unveils-eco-city-garden-for-rhs-chelsea-flower-show-2018/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-unveils-more-human-centric-lg-ux-40/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-unveils-new-g6-with-a-large-fullvision-display-tailored-to-fit-in-one-hand/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-unveils-two-groundbreaking-smartphones/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-unveils-world-first-full-touchscreen-8-megapixel-camera-phone/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-watch-urbane-melds-classic-look-with-enhanced-features/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lg-works-with-instagram-artist-to-showcase-the-worlds-first-wallpaper-tv/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-ai-enabled-thinq-devices-take-top-honours/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-beautiful-curved-soundbar-sounds-as-good-as-it-looks/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-firstever-super-bowl-commercial-bolstersbig-oled-tv-marketing-blitz/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-lighting-up-londons-skyline-this-new-years-eve/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-new-mid-range-smartphone-lineup-delivers-premium-design-and-features/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-pg6000-takes-it-to-the-edge/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-record-breaking-blu-ray-external-drive-launches-in-the-uk/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-record-breaking-blu-ray-external-drive/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/lgs-secret-unveiled/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/marilyn-monroe-and-elvis-the-uks-favourite-style-icons/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/new-additions-to-lg-tone-free-lineup-deliver-enhanced-performance/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/newlg-super-uhd-tv-lineup-sure-to-impress-2016-ces-attendees/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/nexus-5x-lg-and-google-collaborate-on-the-most-advanced-nexus-phone-to-date/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/nutritious-healthy-meals-created-in-an-instant-with-lgsbr-all-in-one-solarcube-oven/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/popular-lg-tone-infinim-head-set-gets-updated-for-2016/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/press-contact/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/press-media/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/press-media1/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/sky-store-tv-app-now-available-exclusively-on-lg-smart-tvs/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/slim-stylish-sleek-lcds-have-just-got-sexy/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/stronglg-electronics-strong-to-sponsor-fis-snowboard-world-/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/the-jungle-book-revealed-as-the-most-nostalgic-disney-film/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/the-value-of-television/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/triple-your-efficiency-with-lg-kf700/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/uk-says-the-mobile-phone-is-the-secret-to-a-perfect-look/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/with-lg-360-cam-and-google-street-view-share-and-enjoy-360-degree-content-with-ease/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/about-lg/press-media/your-kitchen-in-bloom/": {
-        "page_type": "about",
-        "matched_by": "url_pattern=/[a-z]{2}/about-lg(/|$)",
+        "page_type": "newsroom",
+        "matched_by": "url_pattern=/press-media(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/uk/accessibility-declaration/": {
@@ -41718,7 +41719,7 @@
   },
   "grp_lg_es": {
     "group_name": "LG Sitemap - es",
-    "updated_at": "2026-06-10T21:31:33.292228+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 9.1,
     "in_progress": false,
     "summary": {
@@ -41729,10 +41730,10 @@
         "pdp": 5330,
         "microsite": 2076,
         "plp": 396,
-        "unknown": 209,
+        "unknown": 166,
         "support": 68,
+        "promotion": 65,
         "buying_guide": 26,
-        "promotion": 22,
         "home": 1,
         "content": 1
       }
@@ -74479,33 +74480,33 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/climatizacion/lifes-good-days-climatizacion/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/climatizacion/partidazos-climatizacion/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/10--descuento-en-electrodomesticos/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/5-anos-de-garantia-en-frigorificos/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/black-edition/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/descuentos-electrodomesticos/": {
@@ -74514,8 +74515,8 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/descuentos-moodup/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/dias-sin-iva/": {
@@ -74524,68 +74525,68 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/garantia-semi-profesional-lavadoras/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/hogar-eficiente/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/instalacion-hornos-y-placas/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/lifes-good-days-aspiracion/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/lifes-good-days-electrodomesticos-integrables/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/lifes-good-days-frigorificos/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/lifes-good-days-lavado-y-secado/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/lifes-good-days-lavavajillas/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/lifes-good-days-placas/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/ofertas-flash/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/pack-electrodomesticos/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/partidazos-frigorificos/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/partidazos-hornos/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/partidazos-lavado-y-secado/": {
@@ -74594,18 +74595,18 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/partidazos-lavavajillas/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/partidazos-placas/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/servicio-premium-gratuito/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/electrodomesticos/servicio-premium-hornos-y-placas/": {
@@ -74614,8 +74615,8 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/1-ano-psn-plus-de-regalo/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/10-dto-portatiles/": {
@@ -74624,13 +74625,13 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/2024-ultragear-gaming-weeks/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/5--descuento-en-monitores/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/descuentos-monitores/": {
@@ -74659,8 +74660,8 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/kit-home-office/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/lanzamiento-LG-gram-2025/": {
@@ -74679,38 +74680,38 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/lec/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/lifes-good-days-informatica/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/pack-set-up-gaming/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/partidazos-monitores/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/partidazos-portatiles/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/pc-mas-monitor-portatil/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/recomendados/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/setup-informatica/": {
@@ -74719,18 +74720,18 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/stock-fuera/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/informatica/ultragear-monitor-2025/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/pack-tv-barra-de-sonido/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/time-sale---demo/": {
@@ -74764,18 +74765,18 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/tv-audio-video/lg-xboom-la-bestia-altavoz-de-regalo/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/tv-audio-video/lifes-good-days-barras-de-sonido/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/tv-audio-video/lifes-good-days-tv/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/tv-audio-video/partidazos-sonido/": {
@@ -74784,13 +74785,13 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/tv-audio-video/partidazos-tv/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/tv-audio-video/partidazos-tv/garantia/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/ventas-cruzadas-monitores/": {
@@ -74799,8 +74800,8 @@
         "http_status": 200
       },
       "https://www.lg.com/es/todas-las-promociones/ventas-flash/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/es/toma-buenas-decisiones/": {
@@ -125785,7 +125786,7 @@
   },
   "grp_lg_ca": {
     "group_name": "LG Sitemap - ca",
-    "updated_at": "2026-06-11T04:05:03.876551+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 2128.1,
     "in_progress": false,
     "summary": {
@@ -125794,12 +125795,14 @@
       "failed": 10,
       "by_type": {
         "pdp": 3285,
-        "microsite": 963,
+        "microsite": 955,
         "plp": 301,
-        "unknown": 145,
-        "support": 79,
-        "buying_guide": 23,
-        "home": 1
+        "unknown": 126,
+        "support": 84,
+        "buying_guide": 22,
+        "content": 22,
+        "home": 1,
+        "promotion": 1
       }
     },
     "classifications": {
@@ -130679,8 +130682,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/experience/why-lg-soundbars/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/experiencing-entertainment/": {
@@ -134484,23 +134487,23 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/4k-ultra-hd-tv-buying-guide/": {
-        "page_type": "buying_guide",
-        "matched_by": "url_pattern=[/-]buying-guides?(/|$)",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/helpful-hints/best-home-appliances-gifts-for-mothers-day/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/helpful-hints/how-much-water-and-energy-does-a-dishwasher-use/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/helpful-hints/how-to-measure-and-read-tv-sizes/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/helpful-hints/neochef/": {
@@ -134509,8 +134512,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/helpful-hints/type-of-ice-choosing-the-right-ice-for-every-moment/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/helpful-hints/ultimate-guide-to-dishwasher-article-enfr/": {
@@ -134524,8 +134527,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/lg-lab/best-portable-party-speakers/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/lg-lab/discover-styler/": {
@@ -134544,8 +134547,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/lg-lab/lg-studio/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/lg-lab/lg-studio/kitchen/": {
@@ -134674,18 +134677,18 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/lg-lab/what-is-4k-television/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/lg-lab/what-is-a-smart-tv/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experience/lg-lab/which-soundbar-is-right-for-you-lg/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/lg-experiencing-entertainment-suspend/8-creative-ways-to-use-your-hd-projector/": {
@@ -138334,58 +138337,58 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/a-home-that-lives-lightly/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/a-routine-becomes-daily-joy-with-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/at-home-warmth-with-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/finding-focus-and-flow/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/life-starts-at-home/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/personalizing-your-space/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/rediscovered-real-reviews/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/sharper-than-the-stadium-with-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/smarter-balanced-life-with-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/spring-home-decor-with-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/monthly-lg/the-perfect-world-for-us-with-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/multi-room-cooling-heating/": {
@@ -138784,8 +138787,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/promotions/redemption-prod/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/ranges-ovens/": {
@@ -144904,8 +144907,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/config/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/contact-us/": {
@@ -145279,8 +145282,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/smart-thinq-alexa-voice-control/work-with-voice-assistant-html-contents/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/smart-thinq-google-assistant-voice-control/": {
@@ -145289,8 +145292,8 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/smart-thinq-google-assistant-voice-control/smart-thinq-google-assistant-voice-control/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/thinq/": {
@@ -145319,13 +145322,13 @@
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/water-air-filter-finder/air-filter/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/support/water-air-filter-finder/water-filter/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/ca_en/sustainable-living/": {
@@ -149834,7 +149837,7 @@
   },
   "grp_lg_de": {
     "group_name": "LG Sitemap - de",
-    "updated_at": "2026-06-11T04:44:39.892215+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 2347.8,
     "in_progress": false,
     "summary": {
@@ -149846,12 +149849,12 @@
         "microsite": 617,
         "newsroom": 317,
         "plp": 267,
-        "unknown": 124,
+        "unknown": 122,
         "support": 64,
         "content": 42,
         "buying_guide": 24,
+        "promotion": 3,
         "home": 1,
-        "promotion": 1,
         "support_troubleshoot": 1
       }
     },
@@ -166527,8 +166530,8 @@
         "http_status": 200
       },
       "https://www.lg.com/de/promotions/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/de/promotions/1600rpm/": {
@@ -167302,8 +167305,8 @@
         "http_status": 200
       },
       "https://www.lg.com/de/promotions/ultragear-monitor-2025/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/de/promotions/ultrawide/": {
@@ -182345,7 +182348,7 @@
   },
   "grp_lg_mx": {
     "group_name": "LG Sitemap - mx",
-    "updated_at": "2026-06-11T21:45:59.151629+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 1211.2,
     "in_progress": false,
     "summary": {
@@ -182354,13 +182357,14 @@
       "failed": 19,
       "by_type": {
         "pdp": 2597,
-        "microsite": 731,
+        "microsite": 729,
         "plp": 281,
-        "unknown": 115,
-        "support": 70,
-        "content": 41,
+        "unknown": 93,
+        "support": 78,
+        "content": 55,
         "buying_guide": 24,
-        "home": 2
+        "home": 2,
+        "promotion": 2
       }
     },
     "classifications": {
@@ -189875,38 +189879,38 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/calor-en-casa-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/consejos-refrescantes-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/consultor-a-espacial-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/cuando-la-rutina-se-convierte-en-alegria-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/dia-de-las-madres-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/escapada-hanok-armoniosa-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/gran-partido-de-futbol-en-casa-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/historias-con-lg1/": {
@@ -189935,8 +189939,8 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/nuestro-mundo-perfecto-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/oficina-en-casa-con-lg/": {
@@ -189945,23 +189949,23 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/pregunta-prueba-comprueba-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/redescubre-el-partido-en-casa-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/redescubre-lg-con-revisores-reales/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/reset-de-ano-nuevo-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/reseteo-dominical-con-lg/": {
@@ -189970,13 +189974,13 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/trabajo-y-diversion-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/vida-duradera-con-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/historias-con-lg/vida-inteligente-con-lg/": {
@@ -194115,8 +194119,8 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/promociones/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/promociones/TV-RUSH/": {
@@ -194360,8 +194364,8 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/promociones/mexico-vs-australia/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=-vs-[a-z]",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": null
       },
       "https://www.lg.com/mx/promociones/mexicovsportugal/": {
@@ -196415,8 +196419,8 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/lg-a-tu-lado/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/lg-a-tu-lado/buy-lg-best-care/": {
@@ -196465,13 +196469,13 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/lg-a-tu-lado/servicios-lg-a-tu-lado-resp/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/lg-a-tu-lado/servicios-lg-a-tu-lado/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/lg-a-tu-lado/tyc-best-care/": {
@@ -196495,8 +196499,8 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/lg-thinq/magazine/how-to-make-sure-your-home-is-ready-for-summer/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": null
       },
       "https://www.lg.com/mx/soporte/lg-thinq/magazine/smart-homes-narrowing-digital-divide-for-everyone/": {
@@ -196640,8 +196644,8 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/simulador-aire-acondicionado/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/smart-share/": {
@@ -196730,13 +196734,13 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/soporte-de-producto/solicita-una-reparacion/request-repair-form/form/request-completed/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/soporte-de-producto/solicita-una-reparacion/request-repair-form/form/request-failed/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/soporte-de-producto/solicita-una-reparacion/track-repair-detail/": {
@@ -196815,8 +196819,8 @@
         "http_status": 200
       },
       "https://www.lg.com/mx/soporte/youtube-videos/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/mx/sound-suite/": {
@@ -201751,7 +201755,7 @@
   },
   "grp_lg_au": {
     "group_name": "LG Sitemap - au",
-    "updated_at": "2026-06-11T13:35:29.634179+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 1603.4,
     "in_progress": false,
     "summary": {
@@ -201763,10 +201767,10 @@
         "microsite": 679,
         "about": 274,
         "plp": 271,
-        "unknown": 151,
-        "content": 99,
+        "unknown": 113,
+        "content": 100,
         "support": 72,
-        "promotion": 21,
+        "promotion": 58,
         "buying_guide": 19,
         "home": 2,
         "support_troubleshoot": 2
@@ -205099,8 +205103,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/discover/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/discover(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/discover/cloud/": {
@@ -213494,28 +213498,28 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/add-on-bundle-50iff-all-in-one-tower/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/add-on-bundle-xboom-tone-it/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/add-one-bundle-50off-canister/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/april-accessories-offer/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/august-new-monitors/": {
@@ -213524,8 +213528,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/autumn/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/bogof/audio/": {
@@ -213544,13 +213548,13 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/buy-more-save-more-on-home-appliances/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/buy-more-save-more-on-home-appliances/package-deal/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/buy-one-get-50--off-the-second-filter/": {
@@ -213569,8 +213573,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/easter-flash-sale-affiliate/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/easter/": {
@@ -213579,8 +213583,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/eofy-accessory-sale/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/eofy-sale/": {
@@ -213629,13 +213633,13 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/fridge-accessories/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/home-appliance-package-deal/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/home-entertainment-bundles/": {
@@ -213699,8 +213703,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/mothers-day-2025/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/multi-buy-xboom/": {
@@ -213739,8 +213743,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/single-double-triple-pack-replacement-filter-offer/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/spring-sale/": {
@@ -213749,8 +213753,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/styler-accessory-package/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/styler-bonus-mastercard-giftcard/": {
@@ -213759,8 +213763,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/the-dirt-company-12-month-free-detergent-with-washtower-purchase/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/tv-afl-sale/": {
@@ -213819,8 +213823,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/winter-sale-washer-dryers-old/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/winter-sale-washer-dryers/": {
@@ -213829,8 +213833,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2025/winter-sale/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2026-register-and-sign-27gm950b/": {
@@ -213939,8 +213943,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2026/buy-more-save-more-on-computing-products/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/2026/eofy-up-to-30--off-selected-accessories/": {
@@ -214019,8 +214023,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/a9n-solo-offer/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/accessory-bundle/": {
@@ -214044,8 +214048,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/buy-more-save-more-monitors/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/cashback-nanocell/": {
@@ -214059,18 +214063,18 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/dishwashers-focus/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/education-hub-september-offer/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/end-of-spring-sale/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/end-of-winter-sale-ha/": {
@@ -214084,13 +214088,13 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/feb-mar-new-grams-monitors/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/finish-bonus-pack/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/flash-deal-nanocell/": {
@@ -214099,18 +214103,18 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/halloween-sale/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/halloween-stanbyme/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/it-flash-sale/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/it-package-deal/": {
@@ -214164,18 +214168,18 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/new-gaming-monitors-gram-laptops/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/new-lg-gram-book-and-lg-monitors-terms-and-conditions/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/notify-me--to-send-2nd-email-for-2025-it-npi-pre-order-/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/package-deals/": {
@@ -214184,18 +214188,18 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/pax-promotion-2024/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/pax-vip-promotion-2024/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/save-on-lg-monitors/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/spring-sale-2024/appliances/": {
@@ -214224,8 +214228,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/terms-and-conditions-feb-mar-new-grams-monitors/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/terms-and-conditions/apple-tv/": {
@@ -214254,8 +214258,8 @@
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/two-pack-water-filter/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/au/promotions/vip-nanocell-sale/": {
@@ -225161,7 +225165,7 @@
   },
   "grp_lg_vn": {
     "group_name": "LG Sitemap - vn",
-    "updated_at": "2026-06-11T13:58:58.418982+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 1352.5,
     "in_progress": false,
     "summary": {
@@ -225170,12 +225174,12 @@
       "failed": 24,
       "by_type": {
         "pdp": 2556,
-        "microsite": 497,
+        "microsite": 496,
         "plp": 227,
-        "unknown": 130,
-        "support": 107,
+        "unknown": 129,
+        "support": 108,
         "content": 64,
-        "promotion": 21,
+        "promotion": 22,
         "buying_guide": 3,
         "support_troubleshoot": 2,
         "home": 1
@@ -230613,8 +230617,8 @@
         "http_status": 200
       },
       "https://www.lg.com/vn/khuyen-mai/streaming-week-2025/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/vn/khuyen-mai/the-le-chuong-trinh-LG-memberdays/": {
@@ -237923,8 +237927,8 @@
         "http_status": 200
       },
       "https://www.lg.com/vn/tro-giup/lg-thinq/magazine/how-to-make-sure-your-home-is-ready-for-summer/": {
-        "page_type": "microsite",
-        "matched_by": "url_pattern=/(why|what|how|best|top|which|when|where)-[a-z]",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/vn/tro-giup/lg-thinq/magazine/smart-homes-narrowing-digital-divide-for-everyone/": {
@@ -243324,7 +243328,7 @@
   },
   "grp_lg_br": {
     "group_name": "LG Sitemap - br",
-    "updated_at": "2026-06-11T21:24:48.543445+00:00",
+    "updated_at": "2026-06-14T21:33:26.590736+00:00",
     "took_sec": 2963.4,
     "in_progress": false,
     "summary": {
@@ -243335,13 +243339,13 @@
         "pdp": 6925,
         "microsite": 385,
         "plp": 174,
-        "unknown": 164,
+        "support": 132,
+        "unknown": 124,
         "newsroom": 112,
-        "support": 108,
-        "content": 71,
+        "content": 85,
         "buying_guide": 25,
         "home": 3,
-        "promotion": 1
+        "promotion": 3
       }
     },
     "classifications": {
@@ -252736,8 +252740,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/aconchego-em-casa-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/ano-novo-novo-eu-com-lg/": {
@@ -252751,8 +252755,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/consultoria-espacial-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/dando-vida-ao-futebol-com-lg/": {
@@ -252761,18 +252765,18 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/dia-das-maes-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/dicas-refrescantes-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/escapada-hanok-harmoniosa-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/escritorio-em-casa-com-lg/": {
@@ -252781,8 +252785,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/futebol-em-casa-tv-oled-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/inspiracao-de-interior-com-lg/": {
@@ -252791,8 +252795,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/mundo-perfeito-para-nos-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/natal-aconchegante-com-lg/": {
@@ -252806,8 +252810,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/pergunte-teste-comprove-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/qa-view/may-26/": {
@@ -252816,13 +252820,13 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/quando-rotina-vira-alegria-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/redescubra-lg-atraves-de-quem-testou/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/reset-da-semana-com-lg/": {
@@ -252831,23 +252835,23 @@
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/reset-de-ano-novo-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/stadium-feel-starts-at-home/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/trabalho-e-diversao-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/vida-feita-para-durar-com-lg/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "content",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/historias-com-lg/vida-inteligente-com-lg/": {
@@ -264826,8 +264830,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/promocoes/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/promocoes/aduosmart/": {
@@ -265356,8 +265360,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/promocoes/pkgdeal/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "promotion",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/promocoes/pride/": {
@@ -267066,78 +267070,78 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/10/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/11/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/12/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/13/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/14/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/15/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/2/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/3/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/4/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/5/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/6/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/7/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/8/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/ia-troubleshooting/9/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/instala-plus-club/": {
@@ -267266,8 +267270,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-ar-condicionado/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-ar-condicionado/acessorio/": {
@@ -267961,8 +267965,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-audio/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-audio/acessorio/": {
@@ -268061,8 +268065,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-forno-micro-ondas/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-forno-micro-ondas/acessorio/": {
@@ -268186,8 +268190,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-lavadoras-de-roupa/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-lavadoras-de-roupa/acessorio/": {
@@ -268551,8 +268555,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-monitores/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-monitores/acessorio/": {
@@ -268691,8 +268695,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-notebook/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-notebook/acessorio/": {
@@ -268726,8 +268730,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-projetor/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-projetor/acessorio/": {
@@ -268746,8 +268750,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-refrigeradores/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-refrigeradores/acG73426019/": {
@@ -269026,8 +269030,8 @@
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-televisao/": {
-        "page_type": "unknown",
-        "matched_by": "fallback",
+        "page_type": "support",
+        "matched_by": "url_pattern=/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)",
         "http_status": 200
       },
       "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-televisao/acessorio/": {
