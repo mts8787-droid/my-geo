@@ -741,7 +741,7 @@
         "name": "#45 Sitemap (도메인, 1개월 내)",
         "spec_id": "#45",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "sitemap_recent",
           "params": {
@@ -826,7 +826,7 @@
         "name": "#46 Schema: ItemList",
         "spec_id": "#46",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "applies_to_page_types": [
           "plp"
         ],
@@ -843,7 +843,7 @@
         "name": "#47 Schema: NewsArticle",
         "spec_id": "#47",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "applies_to_page_types": [
           "newsroom"
         ],
@@ -860,7 +860,7 @@
         "name": "#48 Schema: Person (Author)",
         "spec_id": "#48",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "applies_to_page_types": [
           "content",
           "newsroom",
@@ -879,7 +879,7 @@
         "name": "#44 Schema: AggregateRating OR Review",
         "spec_id": "#44",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "applies_to_page_types": [
           "pdp"
         ],
