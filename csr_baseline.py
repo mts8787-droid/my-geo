@@ -143,6 +143,52 @@ def get_baseline_for_page_type(page_type_id: str, group_id: Optional[str] = None
     }
 
 
+def get_site_baseline_average() -> Optional[dict]:
+    """전체 사이트(모든 그룹·모든 page_type) baseline 평균.
+
+    page_type 매칭 entry가 없을 때의 최종 fallback. sample_size로 가중 평균.
+    """
+    if not BASELINE_PATH.exists():
+        return None
+    try:
+        with open(BASELINE_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return None
+
+    entries = []
+    for gid, gd in data.items():
+        if not isinstance(gd, dict):
+            continue
+        for pid, entry in gd.items():
+            if pid == "_meta":
+                continue
+            if isinstance(entry, dict) and entry.get("avg_ratio") is not None:
+                entries.append(entry)
+    if not entries:
+        return None
+
+    tot_n = sum(e.get("sample_size", 0) for e in entries)
+    if tot_n > 0:
+        def wavg(key):
+            return sum(e.get(key, 0) * e.get("sample_size", 0) for e in entries) / tot_n
+    else:
+        n = len(entries)
+        def wavg(key):
+            return sum(e.get(key, 0) for e in entries) / n
+
+    return {
+        "avg_ratio":     round(wavg("avg_ratio"), 3),
+        "avg_score":     round(wavg("avg_score"), 1),
+        "tier":          None,
+        "avg_ssr_chars": int(wavg("avg_ssr_chars")),
+        "avg_csr_chars": int(wavg("avg_csr_chars")),
+        "sample_size":   tot_n,
+        "_site_average": True,
+        "_entries":      len(entries),
+    }
+
+
 def load_baseline_all() -> dict:
     """전체 baseline dict 반환 (admin 조회용)."""
     if not BASELINE_PATH.exists():

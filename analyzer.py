@@ -274,9 +274,16 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
     # 같은 그룹(국가)의 baseline 우선, 없으면 다른 그룹 평균 fallback.
     if csr_ratio.get("status") in ("skipped", "unavailable"):
         try:
-            from csr_baseline import get_baseline_for_page_type, _detect_group_id_from_url
+            from csr_baseline import (get_baseline_for_page_type,
+                                      get_site_baseline_average,
+                                      _detect_group_id_from_url)
             group_id = _detect_group_id_from_url(url)
             bl = get_baseline_for_page_type(page_type.get("id"), group_id=group_id)
+            basis = "page_type"
+            if not bl:
+                # page_type 매칭 표본이 없으면 사이트 전체 평균으로 fallback
+                bl = get_site_baseline_average()
+                basis = "site"
             if bl:
                 csr_ratio = {
                     "status":      "baseline",
@@ -286,9 +293,12 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
                     "ssr_chars":   bl.get("avg_ssr_chars"),
                     "csr_chars":   bl.get("avg_csr_chars"),
                     "baseline":    {
+                        "basis":       basis,
                         "sample_size": bl.get("sample_size"),
                         "updated_at":  bl.get("updated_at"),
-                        "note":        f"page_type='{page_type.get('id')}' 표본 평균 (실측 아님)",
+                        "note":        (f"page_type='{page_type.get('id')}' 표본 평균 (실측 아님)"
+                                        if basis == "page_type"
+                                        else "사이트 전체 평균 (page_type 표본 부족, 실측 아님)"),
                     },
                 }
         except Exception:

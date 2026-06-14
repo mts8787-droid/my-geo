@@ -20,8 +20,8 @@ const STR = {
     csr_chars:       'CSR 글자수',
     ratio:           '비율',
     csr_baseline_note: '※ 같은 페이지 타입 표본 평균값 (실측 아님)',
-    csr_no_match_title:'이 페이지 타입의 baseline 없음',
-    csr_no_match_msg:  '이 페이지 타입은 baseline 데이터가 없습니다. 항목 점수 추가가 필요하면 관리자에게 요청해주세요.',
+    csr_site_avg_note: '※ 데이터가 충분치 않아 사이트 전체 평균으로 SSR/CSR을 확인했습니다 (실측 아님)',
+    csr_unavailable:   'SSR/CSR baseline 데이터가 없습니다.',
     page_type:       '페이지 타입',
     pass_count:      '통과',
     na_count:        '대상 아님',
@@ -58,8 +58,8 @@ const STR = {
     csr_chars:       'CSR chars',
     ratio:           'Ratio',
     csr_baseline_note: '※ Sample average for this page type (not measured live)',
-    csr_no_match_title:'No baseline for this page type',
-    csr_no_match_msg:  'There is no baseline data for this page type. Please ask the admin to add an item score.',
+    csr_site_avg_note: '※ Not enough data — SSR/CSR checked using the whole-site average (not live)',
+    csr_unavailable:   'No SSR/CSR baseline data available.',
     page_type:       'Page type',
     pass_count:      'passed',
     na_count:        'N/A',
@@ -248,16 +248,17 @@ function renderResult(data) {
 }
 
 // 확장은 SSR/CSR을 직접 측정하지 않고 기존 baseline 데이터를 표시한다.
-// csr_ratio.status === 'baseline' → 표본 평균 표시.
-// 그 외(매칭 page_type baseline 없음) → 관리자 메일 요청 안내.
+// status==='baseline' → baseline.basis 가
+//   'page_type' : 같은 페이지 타입 표본 평균
+//   'site'      : page_type 표본 부족 → 사이트 전체 평균 fallback
+// baseline 자체가 없으면 unavailable 안내 (메일 발송 없음).
 function renderCsr(data) {
   const csr = data.csr_ratio || {};
-  const status = csr.status || 'unavailable';
   const tierEl = $('csrTier');
 
-  if (status === 'baseline') {
+  if (csr.status === 'baseline') {
     $('csrData').classList.remove('hidden');
-    $('csrNoMatch').classList.add('hidden');
+    $('csrUnavail').classList.add('hidden');
 
     // baseline entry에 tier가 없으면 ratio로 유도 (#37 통과 기준 0.6)
     const tier = csr.tier || tierFromRatio(csr.ratio);
@@ -268,27 +269,19 @@ function renderCsr(data) {
     $('ssrChars').textContent = fmt(csr.ssr_chars);
     $('csrChars').textContent = fmt(csr.csr_chars);
     $('csrRatio').textContent = (typeof csr.ratio === 'number') ? Math.round(csr.ratio * 100) + '%' : '-';
-    $('csrBaselineNote').classList.remove('hidden');
+
+    const basis = (csr.baseline || {}).basis;
+    const note = $('csrNote');
+    note.textContent = t(basis === 'site' ? 'csr_site_avg_note' : 'csr_baseline_note');
+    note.classList.remove('hidden');
     return;
   }
 
-  // baseline 매칭 실패 → 관리자 요청 안내
+  // baseline 자체가 없는 예외 케이스
   $('csrData').classList.add('hidden');
-  $('csrNoMatch').classList.remove('hidden');
+  $('csrUnavail').classList.remove('hidden');
   tierEl.textContent = tierLabel('na');
   tierEl.className = 'csr-tier-badge tier-na';
-
-  const ptId = (data.page_type || {}).id || 'unknown';
-  const pageUrl = data._url || data.url || '';
-  const subject = encodeURIComponent('[GEO Audit] baseline 항목 점수 추가 요청');
-  const lines = [
-    '아래 페이지의 page_type baseline 데이터가 없어 항목 점수 추가를 요청합니다.',
-    '',
-    'URL: ' + pageUrl,
-    'page_type: ' + ptId,
-  ];
-  $('csrAdminMail').href =
-    'mailto:ts.moon@lge.com?subject=' + subject + '&body=' + encodeURIComponent(lines.join('\n'));
 }
 
 function renderCategoryCards(breakdown) {
