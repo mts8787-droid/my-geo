@@ -6,18 +6,31 @@ URL을 입력하면 해당 사이트가 GPT, Gemini, Claude 등 AI 엔진에 얼
 
 ## 분석 항목
 
-| 항목 | 배점 | 설명 |
-|------|------|------|
-| 기본 SEO 태그 | 20점 | Title, Meta Description, Canonical 등 10종 × 2점 |
-| `robots.txt` AI 봇 | 10점 | GPTBot, Gemini, Claude 등 10개 봇의 허용/차단 |
-| JSON-LD 구조화 데이터 | 15점 | 필수(Product+FAQPage 8점) + 보조(BreadcrumbList/Organization 7점) |
-| `/llms.txt` | 5점 | AI 모델을 위한 사이트 지침 파일 존재 여부 |
-| FAQ 섹션 | 15점 | FAQPage 스키마(8점) + HTML FAQ 섹션(7점) |
-| 서머리 박스 | 5점 | 요약/핵심/TL;DR 영역 존재 여부 |
-| Heading 구조 | 5점 | H1 고유성(2점) + H2 복수(2점) + 논리적 순서(1점) |
-| 통계 데이터 | 5점 | 본문에 숫자·수치 데이터 존재 여부 |
-| 리뷰 SSR | 10점 | #reviews_container 서버사이드 렌더링 존재 여부 |
-| SSR/CSR 비중 | 10점 | SSR 글자수 ÷ CSR 글자수 비율 (≥80%: 10점) |
+4개 카테고리로 점검합니다. 점수는 **활성 항목 중 PASS 비율(%)** 로 산정하며, 페이지 타입과 매칭되지 않는 항목은 N/A 처리되어 분모에서 제외됩니다.
+
+| 카테고리 (key) | 활성/전체 항목 | 대표 점검 |
+|------|:------:|------|
+| Performance (`performance`) | 8 / 11 | TTFB, 압축, HTTP/2+, 캐시 헤더, 이미지 최적화 등 (LCP/CLS/INP는 PSI API 필요로 비활성) |
+| Accessibility (`accessibility`) | 4 / 4 | Image Alt, Semantic HTML, Heading 계층, ARIA |
+| SEO (`seo`) | 8 / 8 | Title, Meta Description, Canonical, robots(meta+헤더), Open Graph, sitemap 등 |
+| AI Readiness (`ai_readiness`) | 28 / 34 | JSON-LD 스키마(페이지 타입별), llms.txt, FAQ, 요약 박스, 통계, SSR/CSR 비중, robots AI 봇 등 |
+
+### 스키마(JSON-LD) 채점 — 페이지 타입별
+
+스키마 항목은 **해당 페이지 타입에 매칭될 때만 채점**됩니다 (`applies_to_page_types`). 예: Product/Offer/FAQ → PDP, CollectionPage/ItemList → PLP, NewsArticle → newsroom. 매칭되지 않는 스키마는 N/A로 분모에서 제외됩니다.
+
+- **활성**: BreadcrumbList(범용), FAQPage, CollectionPage, Product, ImageObject, VideoObject, HowTo, Article, WebSite, Offer, ItemList, NewsArticle, Person, AggregateRating/Review
+- **비활성**: Organization(#20), Speakable(#22), DigitalDocument(#30), Recipe(#31), AboutPage(#41), WebPage(#42)
+
+### 등급 기준
+
+| 등급 | 점수 |
+|------|------|
+| Good | ≥ 80 |
+| Need Improvement | ≥ 60 |
+| Poor | < 60 |
+
+> 채점 기준의 source of truth는 [`docs/audit-criteria.md`](docs/audit-criteria.md) + `scoring_config.json` 입니다. 항목/배점/룰은 어드민에서 동적으로 토글할 수 있습니다.
 
 ## 기술 스택
 
@@ -32,7 +45,7 @@ URL을 입력하면 해당 사이트가 GPT, Gemini, Claude 등 AI 엔진에 얼
 
 | 용도 | 모델 | 모델 ID |
 |------|------|---------| 
-| 개발 (코드 작성/리팩토링/디버깅) | Claude Opus | `claude-opus-4-6` |
+| 개발 (코드 작성/리팩토링/디버깅) | Claude Opus | `claude-opus-4-7` |
 | 운영 (코드 리뷰/모니터링/경량 작업) | Claude Sonnet | `claude-sonnet-4-6` |
 
 ## 설치 및 실행
@@ -62,7 +75,7 @@ python main.py
 my-geo-audit/
 ├── main.py                # FastAPI 앱 진입점 (API 라우팅, 보안, Rate Limit)
 ├── analyzer.py            # GEO 분석 핵심 로직 (페이지 fetch, JSON-LD, CSR 분석)
-├── rule_engine.py         # 룰 엔진 — 어드민 정의 규칙 평가 (12종 룰 타입)
+├── rule_engine.py         # 룰 엔진 — 어드민 정의 규칙 평가 (34종 룰 타입)
 ├── csr_local.py           # 로컬 SSR/CSR 분석 CLI
 ├── scoring_config.json    # 채점 설정 파일 (어드민에서 수정 가능)
 ├── requirements.txt       # Python 의존성
