@@ -30,7 +30,7 @@
         "meta_template": ["plp-page", "category-page", "product-listing-page"],
         "body_class":    ["plppage", "categorypage", "productlistingpage"],
         "url_pattern":   [
-          "^https?://[^/]+/us/(?!(?:support|business|about-lg|about|promotion|promotions|tncs|lifesgood|magazine|lg-experience|monthly-lg|blog|press-release|press-media|newsroom)(?:/|\\?|$))(?!(?:why|what|how|best|top|which|when|where)-)(?!.*-vs-)(?!.*buying-guides?(?:/|$))[a-z0-9-]+/?$",
+          "^https?://[^/]+/us/(?!(?:support|business|about-lg|about|promotion|promotions|tncs|lifesgood|magazine|lg-experience|experience|discover|monthly-lg|blog|press-release|press-media|newsroom)(?:/|\\?|$))(?!(?:why|what|how|best|top|which|when|where)-)(?!.*-vs-)(?!.*buying-guides?(?:/|$))[a-z0-9-]+/?$",
           "/us/collections/",
           "/us/[^/]+/discontinued(/|$)"
         ]
@@ -77,6 +77,8 @@
       "detection": {
         "url_pattern": [
           "/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/experience(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/discover(/|$)",
           "/[a-z]{2}(?:[_-][a-z]{2})?/magazine(/|$)",
           "/[a-z]{2}(?:[_-][a-z]{2})?/lifesgood(/|$)",
           "/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
