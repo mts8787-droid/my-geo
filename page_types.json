@@ -87,6 +87,18 @@
       "recommended_schemas": []
     },
     {
+      "id": "newsroom",
+      "label": "뉴스룸/Press",
+      "_comment": "about/promotion보다 먼저 매칭 — press-media가 /sobre-a-lg/ 등 about 하위에 중첩될 때 newsroom이 우선.",
+      "detection": {
+        "meta_template": ["newsroom-page", "press-page"],
+        "body_class":    ["newsroom", "presspage"],
+        "url_pattern":   ["/newsroom(/|$)", "/press-media(/|$)", "/press-release(/|$)"]
+      },
+      "expected_schemas":    ["Organization", "BreadcrumbList", "NewsArticle", "Person", "ImageObject", "VideoObject"],
+      "recommended_schemas": []
+    },
+    {
       "id": "promotion",
       "label": "프로모션/약관",
       "detection": {
@@ -110,17 +122,6 @@
         ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "AboutPage"],
-      "recommended_schemas": []
-    },
-    {
-      "id": "newsroom",
-      "label": "뉴스룸/Press",
-      "detection": {
-        "meta_template": ["newsroom-page", "press-page"],
-        "body_class":    ["newsroom", "presspage"],
-        "url_pattern":   ["/newsroom(/|$)", "/press-media(/|$)", "/press-release(/|$)"]
-      },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "NewsArticle", "Person", "ImageObject", "VideoObject"],
       "recommended_schemas": []
     },
     {
