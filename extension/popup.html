@@ -64,16 +64,26 @@
         <div class="score-bar"><div class="score-bar-fill" id="resBar"></div></div>
       </div>
 
-      <!-- CSR / SSR ratio -->
+      <!-- CSR / SSR ratio (baseline reference, not live) -->
       <div class="csr-card" id="csrCard">
         <div class="csr-row">
           <span class="csr-label" data-i18n="csr_label">SSR / CSR</span>
           <span class="csr-tier-badge" id="csrTier">-</span>
         </div>
-        <div class="csr-row csr-detail">
-          <span><span data-i18n="ssr_chars">SSR chars</span>: <b id="ssrChars">-</b></span>
-          <span><span data-i18n="csr_chars">CSR chars</span>: <b id="csrChars">-</b></span>
-          <span><span data-i18n="ratio">Ratio</span>: <b id="csrRatio">-</b></span>
+        <!-- baseline 매칭 성공 -->
+        <div id="csrData">
+          <div class="csr-row csr-detail">
+            <span><span data-i18n="ssr_chars">SSR chars</span>: <b id="ssrChars">-</b></span>
+            <span><span data-i18n="csr_chars">CSR chars</span>: <b id="csrChars">-</b></span>
+            <span><span data-i18n="ratio">Ratio</span>: <b id="csrRatio">-</b></span>
+          </div>
+          <div class="csr-baseline-note hidden" id="csrBaselineNote" data-i18n="csr_baseline_note">Baseline sample average (not measured live).</div>
+        </div>
+        <!-- baseline 매칭 실패 → 관리자 요청 안내 -->
+        <div class="csr-nomatch hidden" id="csrNoMatch">
+          <div class="csr-nomatch-title" data-i18n="csr_no_match_title">No baseline for this page type</div>
+          <p class="csr-nomatch-msg" data-i18n="csr_no_match_msg">There is no baseline data for this page type. Please request that an item score be added.</p>
+          <a class="csr-nomatch-mail" id="csrAdminMail" href="mailto:ts.moon@lge.com">ts.moon@lge.com</a>
         </div>
       </div>
 

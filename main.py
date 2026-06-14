@@ -337,6 +337,7 @@ VALID_SCOPES = {"all", "schema", "seo", "faq"}
 class AnalyzeRequest(BaseModel):
     url: str
     scope: str = "all"
+    lightweight: bool = False
 
 
 class AnalyzeBulkRequest(BaseModel):
@@ -364,7 +365,7 @@ async def analyze(request: Request, body: AnalyzeRequest):
     # 프록시 모드: 워커(Mac Mini)에 위임
     if _WORKER_URL:
         try:
-            return await _proxy_to_worker("/analyze", {"url": url, "scope": scope})
+            return await _proxy_to_worker("/analyze", {"url": url, "scope": scope, "lightweight": body.lightweight})
         except httpx.HTTPStatusError as e:
             log.warning("worker /analyze HTTP %d: %s", e.response.status_code, e.response.text[:200])
             raise HTTPException(status_code=502, detail="워커 호출 실패")
@@ -373,7 +374,7 @@ async def analyze(request: Request, body: AnalyzeRequest):
             raise HTTPException(status_code=502, detail="워커 연결 실패")
 
     try:
-        result = await analyze_url(url, scope=scope)
+        result = await analyze_url(url, scope=scope, lightweight=body.lightweight)
         return result
     except Exception as e:
         log.exception("/analyze 실패: url=%s err=%s", url, e)

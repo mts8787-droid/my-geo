@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "My GEO Audit for LGE",
-  "version": "2.0.2",
-  "description": "Analyze the current page: AI Readability score, SSR/CSR ratio, and JSON-LD schema integrity. Bilingual UI (KO / EN).",
+  "version": "2.3.1",
+  "description": "Analyze the current page: AI Readability score, SSR/CSR baseline reference, and JSON-LD schema integrity. Bilingual UI (KO / EN).",
   "permissions": [
     "activeTab",
     "tabs"
