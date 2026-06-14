@@ -7,7 +7,7 @@
       "detection": {
         "meta_template": ["home-page", "homepage"],
         "body_class":    ["homepage"],
-        "url_pattern":   ["^https?://[^/]+/?$", "^https?://[^/]+/[a-z]{2}/?$"]
+        "url_pattern":   ["^https?://[^/]+/?$", "^https?://[^/]+/[a-z]{2}(?:[_-][a-z]{2})?/?$"]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "WebSite"],
       "recommended_schemas": []
@@ -44,8 +44,8 @@
       "_comment": "support 안에서 트러블슈팅/help-library 콘텐츠. support보다 먼저 매칭되어야 우선 적용됨.",
       "detection": {
         "url_pattern": [
-          "/[a-z]{2}/support/.*?/troubleshoot(/|$)",
-          "/[a-z]{2}/support/.*?/help-library(/|$)"
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)/(?:.*?/)?troubleshoot(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)/(?:.*?/)?help-library(/|$)"
         ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "HowTo"],
@@ -57,7 +57,7 @@
       "detection": {
         "meta_template": ["support-page-template", "support-page"],
         "body_class":    ["support"],
-        "url_pattern":   ["/[a-z]{2}/support(/|$)"]
+        "url_pattern":   ["/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)"]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList"],
       "recommended_schemas": []
@@ -66,7 +66,7 @@
       "id": "business",
       "label": "B2B (사업자)",
       "detection": {
-        "url_pattern": ["/[a-z]{2}/business(/|$)"]
+        "url_pattern": ["/[a-z]{2}(?:[_-][a-z]{2})?/business(/|$)"]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "Product", "Offer"],
       "recommended_schemas": []
@@ -76,10 +76,11 @@
       "label": "콘텐츠/매거진",
       "detection": {
         "url_pattern": [
-          "/[a-z]{2}/lg-experience(/|$)",
-          "/[a-z]{2}/magazine(/|$)",
-          "/[a-z]{2}/lifesgood(/|$)",
-          "/[a-z]{2}/monthly-lg(/|$)"
+          "/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/magazine(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/lifesgood(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)"
         ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "Article", "Person", "ImageObject", "VideoObject"],
@@ -90,8 +91,9 @@
       "label": "프로모션/약관",
       "detection": {
         "url_pattern": [
-          "/[a-z]{2}/promotion(/|$)",
-          "/[a-z]{2}/tncs(/|$)"
+          "/[a-z]{2}(?:[_-][a-z]{2})?/promotion(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/tncs(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)"
         ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "WebPage", "Offer"],
@@ -102,8 +104,9 @@
       "label": "회사/About",
       "detection": {
         "url_pattern": [
-          "/[a-z]{2}/about-lg(/|$)",
-          "/[a-z]{2}/about(/|$)"
+          "/[a-z]{2}(?:[_-][a-z]{2})?/about-lg(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/about(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(acerca-de-lg|sobre-a-lg|uber-lg|ueber-lg|gioi-thieu-lg)(/|$)"
         ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "AboutPage"],

@@ -59,9 +59,17 @@ _BLOCKED_PAGE_CHAR_THRESHOLD = 1000
 # 요청 간 딜레이(초) — 연속 측정 시 Akamai velocity 차단 회피. env로 조정.
 BASELINE_DELAY_SEC = float(os.getenv("BASELINE_DELAY_SEC", "0"))
 
+# 국가/로케일 토큰 — /us/ · /mx/ 같은 2자 또는 /ca_en/ · /en-us/ 같은 접미사 포함.
+_LOCALE = r"[a-z]{2}(?:[_-][a-z]{2})?"
+
 # PDP/PLP 휴리스틱 — page_types.json에 url_pattern이 없어서 unknown으로 분류되는 페이지.
-_PDP_HEURISTIC = re.compile(r"^https?://[^/]+/[a-z]{2}/[a-z][a-z0-9-]+/[a-z0-9-]*[0-9][a-z0-9-]*/?$", re.I)
-_PLP_HEURISTIC = re.compile(r"^https?://[^/]+/[a-z]{2}/[a-z][a-z0-9-]+/?$", re.I)
+_PDP_HEURISTIC = re.compile(rf"^https?://[^/]+/{_LOCALE}/[a-z][a-z0-9-]+/[a-z0-9-]*[0-9][a-z0-9-]*/?$", re.I)
+_PLP_HEURISTIC = re.compile(rf"^https?://[^/]+/{_LOCALE}/[a-z][a-z0-9-]+/?$", re.I)
+
+# 구조적 PLP 탐지용 — 카테고리(1세그먼트)와 그 하위 제품(2세그먼트, 끝이 제품코드).
+_URL_SEGS = re.compile(rf"^(https?://[^/]+)/({_LOCALE})/(.*)$", re.I)
+_PROD_LAST_SEG = re.compile(r"^[a-z0-9-]*[0-9][a-z0-9-]*$", re.I)
+_PLP_MIN_CHILDREN = 3
 
 _BODY_CLASS_PDP = {"productpage", "pdp"}
 _BODY_CLASS_PLP = {"plppage", "categorypage", "productlistingpage"}
@@ -86,8 +94,8 @@ _EXCLUDE_URL_PATTERN = re.compile(
 # ── 조회 ─────────────────────────────────────────────────────────────────
 
 def _detect_group_id_from_url(url: str) -> Optional[str]:
-    """URL의 국가 코드로 group_id 추정 (예: /sg/ → grp_lg_sg)."""
-    m = re.search(r"https?://[^/]+/([a-z]{2})/", url)
+    """URL의 국가 코드로 group_id 추정 (예: /sg/ → grp_lg_sg, /ca_en/ → grp_lg_ca)."""
+    m = re.search(r"https?://[^/]+/([a-z]{2})(?:[_-][a-z]{2})?/", url)
     return f"grp_lg_{m.group(1)}" if m else None
 
 
@@ -192,38 +200,76 @@ def _pick_pdp_samples(verified_urls: list, n: int = SAMPLES_PER_TYPE) -> list:
     return samples
 
 
-async def _augment_pdp_plp_samples(all_urls: list, existing_samples: dict) -> dict:
-    """unknown 분류 URL에서 PDP/PLP 후보 휴리스틱 → httpx 검증 → 표본 추출."""
-    import httpx
-    def _ok(u): return not _EXCLUDE_URL_PATTERN.search(u)
-    pdp_candidates = [u for u in all_urls if _PDP_HEURISTIC.search(u) and _ok(u)]
-    plp_candidates = [u for u in all_urls if _PLP_HEURISTIC.search(u) and _ok(u)]
+def _structural_plp_candidates(all_urls: list) -> list:
+    """sitemap 구조만으로 PLP(카테고리) 탐지 — fetch 불필요, 로케일 독립.
 
-    PREFETCH_LIMIT_PDP, PREFETCH_LIMIT_PLP = 120, 60
+    카테고리 = 로케일 뒤 1세그먼트 경로(`/<locale>/<cat>/`)이면서,
+    그 아래 제품 URL(`/<locale>/<cat>/<제품코드>/`)이 `_PLP_MIN_CHILDREN`개 이상 존재.
+    LG 카테고리 페이지는 표준 body class(categorypage 등)가 없어 fetch 검증이
+    실패하므로(MX·CA 확인됨), 구조 신호로 대체한다.
+    """
+    children = defaultdict(int)
+    oneseg = {}
+    for u in all_urls:
+        m = _URL_SEGS.match(u)
+        if not m:
+            continue
+        host, lc, rest = m.group(1), m.group(2), m.group(3).strip("/")
+        segs = rest.split("/") if rest else []
+        if len(segs) == 1:
+            oneseg.setdefault(f"{host}/{lc}/{segs[0]}/", u)
+        elif len(segs) == 2 and _PROD_LAST_SEG.match(segs[1]):
+            children[f"{host}/{lc}/{segs[0]}/"] += 1
+    return [orig for key, orig in oneseg.items() if children.get(key, 0) >= _PLP_MIN_CHILDREN]
+
+
+async def _augment_pdp_plp_samples(all_urls: list, existing_samples: dict) -> dict:
+    """unknown 분류 URL에서 PDP/PLP 표본 추출.
+
+    PDP: 휴리스틱 후보 → httpx body class/meta template 검증 (제품 페이지는 표준
+         마커 보유 → 검증 신뢰 가능).
+    PLP: 구조적 탐지 (`_structural_plp_candidates`) — 카테고리 페이지는 표준 마커가
+         없어 검증 불가하므로 sitemap 구조로 판별.
+    """
+    import httpx
+    from page_type import detect_page_type
+    def _ok(u): return not _EXCLUDE_URL_PATTERN.search(u)
+
+    # ── PDP: 휴리스틱 + 검증 ──
+    pdp_candidates = [u for u in all_urls if _PDP_HEURISTIC.search(u) and _ok(u)]
+    PREFETCH_LIMIT_PDP = 120
     if len(pdp_candidates) > PREFETCH_LIMIT_PDP:
         pdp_candidates = random.sample(pdp_candidates, PREFETCH_LIMIT_PDP)
-    if len(plp_candidates) > PREFETCH_LIMIT_PLP:
-        plp_candidates = random.sample(plp_candidates, PREFETCH_LIMIT_PLP)
 
-    sem = asyncio.Semaphore(10)
-    async with httpx.AsyncClient() as client:
-        async def _verify(url):
-            async with sem:
-                return url, await _verify_url_page_type(client, url)
-        results = await asyncio.gather(*(_verify(u) for u in (pdp_candidates + plp_candidates)))
+    verified_pdp = []
+    if pdp_candidates:
+        sem = asyncio.Semaphore(10)
+        async with httpx.AsyncClient() as client:
+            async def _verify(url):
+                async with sem:
+                    return url, await _verify_url_page_type(client, url)
+            results = await asyncio.gather(*(_verify(u) for u in pdp_candidates))
+        verified_pdp = [url for url, pt in results if pt == "pdp"]
 
-    verified = {"pdp": [], "plp": []}
-    for url, pt in results:
-        if pt in verified:
-            verified[pt].append(url)
-    log.info("PDP/PLP 검증: pdp 후보=%d/확인=%d, plp 후보=%d/확인=%d",
-             len(pdp_candidates), len(verified["pdp"]), len(plp_candidates), len(verified["plp"]))
+    # ── PLP: 구조적 탐지 (이미 다른 타입으로 분류된 경로는 제외) ──
+    plp_candidates = []
+    for u in _structural_plp_candidates(all_urls):
+        if not _ok(u):
+            continue
+        try:
+            if detect_page_type(None, u).get("id") == "unknown":
+                plp_candidates.append(u)
+        except Exception:
+            continue
 
-    if verified["pdp"]:
-        existing_samples["pdp"] = _pick_pdp_samples(verified["pdp"], SAMPLES_PER_TYPE)
-    if verified["plp"]:
-        n = min(SAMPLES_PER_TYPE, len(verified["plp"]))
-        existing_samples["plp"] = random.sample(verified["plp"], n)
+    log.info("PDP/PLP 추출: pdp 후보=%d/확인=%d, plp 구조후보=%d",
+             len(pdp_candidates), len(verified_pdp), len(plp_candidates))
+
+    if verified_pdp:
+        existing_samples["pdp"] = _pick_pdp_samples(verified_pdp, SAMPLES_PER_TYPE)
+    if plp_candidates:
+        n = min(SAMPLES_PER_TYPE, len(plp_candidates))
+        existing_samples["plp"] = random.sample(plp_candidates, n)
     return existing_samples
 
 

@@ -346,5 +346,1907 @@
       ],
       "in_progress": false
     }
+  },
+  "grp_lg_au": {
+    "home": {
+      "avg_ratio": 0.685,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10069,
+      "avg_csr_chars": 14707,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/au/"
+      ],
+      "updated_at": "2026-06-14T01:48:09.122212+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.805,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8854,
+      "avg_csr_chars": 10949,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/au/fridge-freezers/top-mount/gr-w600gsl/",
+        "https://www.lg.com/au/fridge-freezers/top-mount/gt-515btdc/",
+        "https://www.lg.com/au/washer-dryers/top-load-washing-machines/wtl5-10w/",
+        "https://www.lg.com/au/fridge-freezers/top-mount/gt-223mwl/",
+        "https://www.lg.com/au/fridge-freezers/top-mount/gr-559fsdr/",
+        "https://www.lg.com/au/washer-dryers/top-load-washing-machines/wtx3-08w/",
+        "https://www.lg.com/au/fridge-freezers/top-mount/gn-422fs/",
+        "https://www.lg.com/au/washer-dryers/top-load-washing-machines/wtg1432wh/",
+        "https://www.lg.com/au/fridge-freezers/top-mount/gr-559fwd/",
+        "https://www.lg.com/au/washer-dryers/top-load-washing-machines/wtr1234wf/"
+      ],
+      "updated_at": "2026-06-14T01:50:33.097291+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.951,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10332,
+      "avg_csr_chars": 10847,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/au/about-lg/press-and-media/lg-amplifies-positive-influence-of-the-life-s-good-campaign-via-social-media-challenge/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-electronics-australia-named-choice--best-brand-across-multipl/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-unveils-expanded-oled-tv-lineup-at-ces-2015/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-stylus-dab-worlds-first-smartphone-with-built-in-digital-radio/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-introduces-2025-oled-evo-lineup-with-vibrant-brightness-and-ai-powered-personalization/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-electronics-australia-wins-at-finder-awards-2025/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-unveils-the-wallpaper-tv--the-world-s-thinnest--true-wireless/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-presents-vision-for-expanding-its-ai-home-solutions-into-mobility-spaces-at-ces-2025/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-to-unveil-home-robot-at-ces-2026--sharing-vision-for-the--zer/",
+        "https://www.lg.com/au/about-lg/press-and-media/lg-reveals-2025-xboom-by-will-i-am-audio-products-fortified-with-signature-sound-and-ai-versatility/"
+      ],
+      "updated_at": "2026-06-14T01:53:26.548594+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.937,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10144,
+      "avg_csr_chars": 10782,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/au/tv-soundbars/tv-buying-guide/lifestyle/",
+        "https://www.lg.com/au/appliances/buying-guide/washing-machines/type/",
+        "https://www.lg.com/au/tv-soundbars/tv-buying-guide/tv-technology/oled-vs-qned/",
+        "https://www.lg.com/au/tv-soundbars/tv-buying-guide/",
+        "https://www.lg.com/au/buying-guide/",
+        "https://www.lg.com/au/appliances/buying-guide/fridge-freezers/type/",
+        "https://www.lg.com/au/appliances/buying-guide/washing-machines/feature-performance/",
+        "https://www.lg.com/au/air-conditioning/air-conditioner-buying-guide/",
+        "https://www.lg.com/au/appliances/buying-guide/fridge-freezers/",
+        "https://www.lg.com/au/tv-soundbars/tv-buying-guide/tv-size/"
+      ],
+      "updated_at": "2026-06-14T01:55:55.028443+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.912,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 12086,
+      "avg_csr_chars": 13288,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/au/lg-experience/helpful-hints/which-lg-soundbar-is-right-for-you-lg/",
+        "https://www.lg.com/au/lg-experience/buying-guides/tv-cleaning-guide/",
+        "https://www.lg.com/au/lifesgood/optimism-your-feed/interview/",
+        "https://www.lg.com/au/lg-experience/helpful-hints/keeping-food-fresh-eating-healthy/",
+        "https://www.lg.com/au/lg-experience/buying-guides/fridge/",
+        "https://www.lg.com/au/lifesgood/ai-office/",
+        "https://www.lg.com/au/lifesgood/ai-mobility/",
+        "https://www.lg.com/au/lg-experience/buying-guides/dishwasher-buying-guide/",
+        "https://www.lg.com/au/lg-experience/helpful-hints/how-to-clean-your-fridge/",
+        "https://www.lg.com/au/lg-experience/11-years-of-lg-oled-tvs/"
+      ],
+      "updated_at": "2026-06-14T01:58:16.711750+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.888,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6955,
+      "avg_csr_chars": 7705,
+      "sample_size": 9,
+      "sample_urls": [
+        "https://www.lg.com/au/promotions/2026/Bonus-Gift-Valued-at--399/",
+        "https://www.lg.com/au/tncs/washing-machine-tub-cleaning-service-terms-and-conditions/",
+        "https://www.lg.com/au/promotions/2025/bogof/audio/",
+        "https://www.lg.com/au/tncs/air-solutions-promotion-terms-and-conditions/",
+        "https://www.lg.com/au/promotions/spring-sale-2024/appliances/",
+        "https://www.lg.com/au/promotions/2026/Computer-Products-Flash-Sale/",
+        "https://www.lg.com/au/promotions/2025/buy-more-save-more-on-home-appliances/package-deal/",
+        "https://www.lg.com/au/promotions/2025/fathers-day-sale/",
+        "https://www.lg.com/au/promotions/2026/March-Madness-Sale/"
+      ],
+      "updated_at": "2026-06-14T02:00:34.184321+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.913,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6268,
+      "avg_csr_chars": 6867,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/au/support/announcement/AUNTC20230831154137/",
+        "https://www.lg.com/au/support/esafety/",
+        "https://www.lg.com/au/support/product-support/",
+        "https://www.lg.com/au/support/announcement/AUNTC20260324001/",
+        "https://www.lg.com/au/support/warranty-terms1/",
+        "https://www.lg.com/au/support/fota/",
+        "https://www.lg.com/au/support/product-support/manuals-software/",
+        "https://www.lg.com/au/support/contact-us/inquiry-status/inquiry-result/",
+        "https://www.lg.com/au/support/announcement/AUNTC20220906152995/",
+        "https://www.lg.com/au/support/product-support/product-registration/registration-failed/"
+      ],
+      "updated_at": "2026-06-14T02:03:08.148354+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.708,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5945,
+      "avg_csr_chars": 8719,
+      "sample_size": 2,
+      "sample_urls": [
+        "https://www.lg.com/au/support/product-support/troubleshoot/",
+        "https://www.lg.com/au/support/product-support/troubleshoot/help-library/"
+      ],
+      "updated_at": "2026-06-14T02:03:37.986963+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.754,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8248,
+      "avg_csr_chars": 10916,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/au/microwave-ovens/ms-1947c/",
+        "https://www.lg.com/au/cloud-devices/27cn650w-ap/",
+        "https://www.lg.com/au/monitors/l1919sp-se/",
+        "https://www.lg.com/au/microwave-ovens/ms2044vs/",
+        "https://www.lg.com/au/microwave-ovens/ms2540srb/",
+        "https://www.lg.com/au/microwave-ovens/ms2536db/",
+        "https://www.lg.com/au/monitors/m3801scbn/",
+        "https://www.lg.com/au/monitors/l1719sp-se/",
+        "https://www.lg.com/au/microwave-ovens/ms2548xr/",
+        "https://www.lg.com/au/microwave-ovens/ms4296ows/"
+      ],
+      "updated_at": "2026-06-14T02:05:42.762102+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.903,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 7724,
+      "avg_csr_chars": 8545,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/au/cloud-devices/",
+        "https://www.lg.com/au/medical-displays/",
+        "https://www.lg.com/au/tv-accessories/",
+        "https://www.lg.com/au/microwave-ovens/",
+        "https://www.lg.com/au/tv-soundbars/",
+        "https://www.lg.com/au/laptops/",
+        "https://www.lg.com/au/dishwashers/",
+        "https://www.lg.com/au/monitors/",
+        "https://www.lg.com/au/dvd-burners-drives/",
+        "https://www.lg.com/au/washer-dryers/"
+      ],
+      "updated_at": "2026-06-14T02:07:47.526135+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - au",
+      "updated_at": "2026-06-14T02:07:47.530262+00:00",
+      "took_sec": 1227.4,
+      "sample_total": 82,
+      "types": [
+        "home",
+        "microsite",
+        "about",
+        "buying_guide",
+        "content",
+        "promotion",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_br": {
+    "home": {
+      "avg_ratio": 0.453,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8541,
+      "avg_csr_chars": 18842,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/br/"
+      ],
+      "updated_at": "2026-06-14T02:08:40.598257+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.904,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5427,
+      "avg_csr_chars": 5946,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/why-lg-oled/sustainability/",
+        "https://www.lg.com/br/qr-code/top-gun/wd18gnt/",
+        "https://www.lg.com/br/televisores-e-colunas-de-som/qned/2022/why-lg-qned-old/",
+        "https://www.lg.com/br/tv/why-lgoled/sustainability/",
+        "https://www.lg.com/br/why-lg-oled/2023-oled-lineup/",
+        "https://www.lg.com/br/why-lgoled/game/",
+        "https://www.lg.com/br/qr-code/top-freezer/b452pffq/",
+        "https://www.lg.com/br/qr-code/top-freezer/b392pxgb/",
+        "https://www.lg.com/br/qr-code/top-freezer-gn-b392pxg/",
+        "https://www.lg.com/br/why-lgoled/overview/"
+      ],
+      "updated_at": "2026-06-14T02:11:14.522849+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.931,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10004,
+      "avg_csr_chars": 10516,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/buying-guides/monitor-spec-library/",
+        "https://www.lg.com/br/tvs-e-soundbars/tv-buying-guide/tv-design/",
+        "https://www.lg.com/br/home-appliances/buying-guide/fridge-freezer/size-volume/",
+        "https://www.lg.com/br/tv/2022/buying-guide/",
+        "https://www.lg.com/br/tvs-e-soundbars/tv-buying-guide/what-is-a-smart-tv-ai-tv/",
+        "https://www.lg.com/br/tvs-e-soundbars/tv-buying-guide/lifestyle/",
+        "https://www.lg.com/br/home-appliances/buying-guide/washing-machine/type/",
+        "https://www.lg.com/br/home-appliances/buying-guide/washing-machine/feature-performance/",
+        "https://www.lg.com/br/tvs-e-soundbars/tv-buying-guide/",
+        "https://www.lg.com/br/buying-guides/monitor-lineup-guide/"
+      ],
+      "updated_at": "2026-06-14T02:13:56.070225+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.861,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9583,
+      "avg_csr_chars": 11125,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/historias-com-lg/pergunte-teste-comprove-com-lg/",
+        "https://www.lg.com/br/lg-experience/dicas-uteis/como-medir-tamanhos-de-tv/",
+        "https://www.lg.com/br/lg-experience/laboratorio-lg/soundbar-ideal-para-voce-lg/",
+        "https://www.lg.com/br/lg-experience/inspiracao/mudancas-tecnologia/",
+        "https://www.lg.com/br/lg-experience/inspiracao/",
+        "https://www.lg.com/br/lifesgood/ai-office/",
+        "https://www.lg.com/br/lg-experience/inspiracao/melhor-notebook-para-escritores/",
+        "https://www.lg.com/br/historias-com-lg/escritorio-em-casa-com-lg/",
+        "https://www.lg.com/br/lifesgood/product-story-washtower/",
+        "https://www.lg.com/br/lg-experience/dicas-uteis/tv-ia-melhora-som-imagem/"
+      ],
+      "updated_at": "2026-06-14T02:16:32.701231+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.759,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4425,
+      "avg_csr_chars": 6261,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/promocoes/combos/27gx790-22u403/",
+        "https://www.lg.com/br/promocoes/outlet-lg/",
+        "https://www.lg.com/br/promocoes/instalacao-gratis/",
+        "https://www.lg.com/br/promocoes/review-tv-huuray/",
+        "https://www.lg.com/br/promocoes/combos/LP1419IVSI-CV5013/",
+        "https://www.lg.com/br/promocoes/pixday/",
+        "https://www.lg.com/br/promocoes/jahtech/",
+        "https://www.lg.com/br/promocoes/cupons-5off/",
+        "https://www.lg.com/br/promocoes/almap/",
+        "https://www.lg.com/br/promocoes/operacaonatal/"
+      ],
+      "updated_at": "2026-06-14T02:18:52.912468+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.885,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6211,
+      "avg_csr_chars": 6929,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/sobre-a-lg/press-media/lg-webOS/",
+        "https://www.lg.com/br/sobre-a-lg/index/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/situacoes-que-a-lg-xboom-transforma-o-ambiente/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/como-funciona-a-tecnologia-lg-ai-dd/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/5-dicas-para-escolher-a-smart-tv-ideal-para-a-sua-casa-em-2026/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/como-alcancar-a-produtividade-maxima-com-um-monitor-ultrawide-lg/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/lg-my-view-smart-monitor/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/geladeira-lg-como-conservar-frutas-verduras-e-carnes-por-mais-tempo/",
+        "https://www.lg.com/br/sobre-a-lg/press-media/o-que-e-qned-e-por-que-a-tecnologia-das-tvs-lg-entrega-brilho-superior/"
+      ],
+      "updated_at": "2026-06-14T02:21:22.507730+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.769,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 25999,
+      "avg_csr_chars": 27530,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/support/products/documents/termos-e-condicoes-gerais-de-venda/",
+        "https://www.lg.com/br/suporte/ia-troubleshooting/12/",
+        "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-audio/peca-de-reposicao/tcg37249106/",
+        "https://www.lg.com/br/suporte/anuncios/Aviso-sobre-a-interrup--o-dos-servi-os-da-AccuWeather/",
+        "https://www.lg.com/br/suporte/fale-conosco/anexar-documento/success/",
+        "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-televisao/peca-de-reposicao/eaj30068501/",
+        "https://www.lg.com/br/suporte/suporte-ao-producto/grantia/",
+        "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-notebook/pecas-e-acessorios-para-notebook1/",
+        "https://www.lg.com/br/suporte/ajuda-artigos/",
+        "https://www.lg.com/br/suporte/pecas-e-acessorios/pecas-e-acessorios-para-refrigeradores/peca-de-reposicao/eau63923608/"
+      ],
+      "updated_at": "2026-06-14T02:23:55.976833+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.015,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 2820,
+      "avg_csr_chars": 186444,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/br/suporte/suporte-ao-producto/solucionar-problemas/help-library/"
+      ],
+      "updated_at": "2026-06-14T02:24:10.478534+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.556,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5396,
+      "avg_csr_chars": 10123,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/pecas-e-acessorios-para-tv-audio/ebu66689601/",
+        "https://www.lg.com/br/pecas-e-acessorios-para-tv-audio/eay64548902/",
+        "https://www.lg.com/br/pecas-e-acessorios-para-tv-audio/ebt64446903/",
+        "https://www.lg.com/br/pecas-e-acessorios-para-tv-audio/eab65816102/",
+        "https://www.lg.com/br/pecas-e-acessorios-informatica/ebu67017702/",
+        "https://www.lg.com/br/videoconferencia-interativa/49um5n-h/",
+        "https://www.lg.com/br/pecas-e-acessorios-informatica/ead63669424/",
+        "https://www.lg.com/br/ar-condicionado-comercial/amnh09gtuc0/",
+        "https://www.lg.com/br/pecas-e-acessorios-para-tv-audio/maz65405108/",
+        "https://www.lg.com/br/pecas-e-acessorios-informatica/eaj65778301/"
+      ],
+      "updated_at": "2026-06-14T02:26:15.511021+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.856,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5378,
+      "avg_csr_chars": 6202,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/br/pecas-e-acessorios-de-ar-condicionado/",
+        "https://www.lg.com/br/lousa-digital/",
+        "https://www.lg.com/br/videoconferencia-interativa/",
+        "https://www.lg.com/br/pecas-e-acessorios-informatica/",
+        "https://www.lg.com/br/televisores-e-colunas-de-som/",
+        "https://www.lg.com/br/ar-condicionado-residencial/",
+        "https://www.lg.com/br/pecas-e-acessorios-para-tv-audio/",
+        "https://www.lg.com/br/projetores/",
+        "https://www.lg.com/br/monitores/",
+        "https://www.lg.com/br/lavanderia/"
+      ],
+      "updated_at": "2026-06-14T02:28:23.031537+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - br",
+      "updated_at": "2026-06-14T02:28:23.035815+00:00",
+      "took_sec": 1235.3,
+      "sample_total": 82,
+      "types": [
+        "home",
+        "microsite",
+        "buying_guide",
+        "content",
+        "promotion",
+        "about",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_ca": {
+    "home": {
+      "avg_ratio": 0.769,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4867,
+      "avg_csr_chars": 6328,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/"
+      ],
+      "updated_at": "2026-06-14T02:29:11.016606+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.817,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6038,
+      "avg_csr_chars": 7234,
+      "sample_size": 9,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/about-lg/about-lg-main/",
+        "https://www.lg.com/ca_en/about-lg/press-and-media/LG-ELECTRONICS-CANADA-ANNOUNCES-AVAILABILITY-AND-PRICING-OF-2026-OLED-TV-LINEUP-AND-LG-SOUND-SUITE-/",
+        "https://www.lg.com/ca_en/about-lg/press-and-media/lg-2023-sound-bars-enrich-home-entertainment-with-immersive-audio-and-versatile-features/",
+        "https://www.lg.com/ca_en/about-lg/press-and-media/lg-announces-global-launch-of-revolutionary-lg-thinq-up-appliances/",
+        "https://www.lg.com/ca_en/about-lg/press-and-media/lg-delivers-year-around-comfort-and-elegance-with-new-artcool--gallery-at-ces-2023/",
+        "https://www.lg.com/ca_en/about-lg/press-and-media/LG-HONOURED-WITH-MAJOR-APPLIANCE-INDUSTRY-PERFORMANCE-AWARD-FROM-CIRCANA/",
+        "https://www.lg.com/ca_en/about-lg/sponsorship/",
+        "https://www.lg.com/ca_en/about-lg/press-and-media/lg-to-present-esg-vision-for-better-life-for-all-at-ces-2023/",
+        "https://www.lg.com/ca_en/about-lg/press-and-media/innovative-new-television-form-factor-arrives-in-canada-with-lg-oled-objet-collection-pos-tv/"
+      ],
+      "updated_at": "2026-06-14T02:31:43.985255+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.714,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10062,
+      "avg_csr_chars": 13511,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/dishwashers/top-control/ldnth753d/",
+        "https://www.lg.com/ca_en/dishwashers/top-control/ldnpq445s/",
+        "https://www.lg.com/ca_en/refrigerators/top-freezer/lhtns2403s/",
+        "https://www.lg.com/ca_en/dishwashers/top-control/ldps6762s/",
+        "https://www.lg.com/ca_en/why-lg/",
+        "https://www.lg.com/ca_en/best-seats/rules/",
+        "https://www.lg.com/ca_en/dishwashers/top-control/sdwb24w3/",
+        "https://www.lg.com/ca_en/dishwashers/top-control/ldph5554d/",
+        "https://www.lg.com/ca_en/refrigerators/top-freezer/lt11c2000v/",
+        "https://www.lg.com/ca_en/tv-soundbars/why-qned-evo/"
+      ],
+      "updated_at": "2026-06-14T02:34:02.712309+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.889,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 11434,
+      "avg_csr_chars": 12637,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/tv-soundbars/tv-buying-guide/lifestyle/",
+        "https://www.lg.com/ca_en/microsite-article/ms/it/monitor/ultragear-buying-guide/",
+        "https://www.lg.com/ca_en/tv-soundbars/tv-buying-guide/tv-design/",
+        "https://www.lg.com/ca_en/monitors/buying-guides/multi-monitor/",
+        "https://www.lg.com/ca_en/tv-soundbars/tv-buying-guide/what-is-a-smart-tv-ai-tv/",
+        "https://www.lg.com/ca_en/buying-guides/tv-lineup-guide/",
+        "https://www.lg.com/ca_en/buying-guides/tv-spec-library/",
+        "https://www.lg.com/ca_en/buying-guides/monitor-lineup-guide/",
+        "https://www.lg.com/ca_en/tv-soundbars/tv-buying-guide/tv-technology/what-is-4k-tv/",
+        "https://www.lg.com/ca_en/tv-soundbars/tv-buying-guide/sport-tv/"
+      ],
+      "updated_at": "2026-06-14T02:36:21.306489+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.723,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 7939,
+      "avg_csr_chars": 11223,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/lg-experience/lg-lab/lg-studio/kitchen/lshd3089bd/",
+        "https://www.lg.com/ca_en/lg-experience/lg-lab/lg-studio/kitchen/wces6428f/",
+        "https://www.lg.com/ca_en/monthly-lg/smarter-balanced-life-with-lg/",
+        "https://www.lg.com/ca_en/monthly-lg/spring-home-decor-with-lg/",
+        "https://www.lg.com/ca_en/monthly-lg/sharper-than-the-stadium-with-lg/",
+        "https://www.lg.com/ca_en/monthly-lg/a-home-that-lives-lightly/",
+        "https://www.lg.com/ca_en/lg-experience/lg-lab/lg-studio/laundry/wsex200hna/",
+        "https://www.lg.com/ca_en/lg-experience/lg-lab/lg-studio/kitchen/cbis3018be/",
+        "https://www.lg.com/ca_en/lg-experience/lg-lab/lg-studio/kitchen/lsce305st/",
+        "https://www.lg.com/ca_en/lg-experience/helpful-hints/neochef/"
+      ],
+      "updated_at": "2026-06-14T02:39:05.063556+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.684,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4052,
+      "avg_csr_chars": 5933,
+      "sample_size": 2,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/promotions/redemption-prod/",
+        "https://www.lg.com/ca_en/promotions/new-oled-gaming-monitors/"
+      ],
+      "updated_at": "2026-06-14T02:39:34.922000+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.704,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5184,
+      "avg_csr_chars": 7803,
+      "sample_size": 9,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/support/config/",
+        "https://www.lg.com/ca_en/support/contactus/document-upload/",
+        "https://www.lg.com/ca_en/support/announcement/CANTC20220601152390/",
+        "https://www.lg.com/ca_en/support/announcement/lg-range-recall/",
+        "https://www.lg.com/ca_en/support/thinq/",
+        "https://www.lg.com/ca_en/support/",
+        "https://www.lg.com/ca_en/support/additional-support/",
+        "https://www.lg.com/ca_en/support/out-of-warranty-repair/",
+        "https://www.lg.com/ca_en/support/product-support/repair-request/form/"
+      ],
+      "updated_at": "2026-06-14T02:42:04.009357+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.455,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 3203,
+      "avg_csr_chars": 9456,
+      "sample_size": 2,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/support/product-support/troubleshoot/",
+        "https://www.lg.com/ca_en/support/product-support/troubleshoot/help-library/"
+      ],
+      "updated_at": "2026-06-14T02:42:32.084516+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.547,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5524,
+      "avg_csr_chars": 9965,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/washing-machines/wm5500hva/",
+        "https://www.lg.com/ca_en/washing-machines/wm4100hba/",
+        "https://www.lg.com/ca_en/computer/bh10ls30/",
+        "https://www.lg.com/ca_en/washing-machines/wt7300cw/",
+        "https://www.lg.com/ca_en/la-friends/lgr100/",
+        "https://www.lg.com/ca_en/speakers/nd8530/",
+        "https://www.lg.com/ca_en/vacuum/a916bm/",
+        "https://www.lg.com/ca_en/washtower/wke100hwa/",
+        "https://www.lg.com/ca_en/dishwashers/ldt5665bd/",
+        "https://www.lg.com/ca_en/computer/n4b1n/"
+      ],
+      "updated_at": "2026-06-14T02:44:39.160404+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.702,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 3560,
+      "avg_csr_chars": 4945,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/ca_en/computer/",
+        "https://www.lg.com/ca_en/monitors/",
+        "https://www.lg.com/ca_en/kitchen-packages/",
+        "https://www.lg.com/ca_en/la-friends/",
+        "https://www.lg.com/ca_en/speakers/",
+        "https://www.lg.com/ca_en/vacuum/",
+        "https://www.lg.com/ca_en/wall-ovens/",
+        "https://www.lg.com/ca_en/gaming/",
+        "https://www.lg.com/ca_en/tumble-dryers/",
+        "https://www.lg.com/ca_en/computer-accessories/"
+      ],
+      "updated_at": "2026-06-14T02:46:55.336958+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - ca",
+      "updated_at": "2026-06-14T02:46:55.340103+00:00",
+      "took_sec": 1112.3,
+      "sample_total": 73,
+      "types": [
+        "home",
+        "about",
+        "microsite",
+        "buying_guide",
+        "content",
+        "promotion",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_de": {
+    "home": {
+      "avg_ratio": 0.758,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 14171,
+      "avg_csr_chars": 18685,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/de/"
+      ],
+      "updated_at": "2026-06-14T02:47:41.672274+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.935,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 13146,
+      "avg_csr_chars": 13895,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/de/monitore/monitore-buying-guide/monitor-lineup_qa/",
+        "https://www.lg.com/de/tvs-und-soundbars/tv-buying-guide/lifestyle/",
+        "https://www.lg.com/de/buying-guides/tv-spec-library/",
+        "https://www.lg.com/de/tvs-und-soundbars/tv-buying-guide/tv-technology/what-is-4k-tv/",
+        "https://www.lg.com/de/tvs-und-soundbars/tv-buying-guide/what-is-a-smart-tv-ai-tv/",
+        "https://www.lg.com/de/monitore/monitore-buying-guide/monitor-spec-wiki_qa/",
+        "https://www.lg.com/de/buying-guide/washing-machines-type/",
+        "https://www.lg.com/de/tvs-und-soundbars/tv-buying-guide/tv-spec-wiki_qa/",
+        "https://www.lg.com/de/tv/oled-tv/2021/oled-buying-guide/",
+        "https://www.lg.com/de/tvs-und-soundbars/tv-buying-guide/tv-size/"
+      ],
+      "updated_at": "2026-06-14T02:50:18.360092+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.944,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 11411,
+      "avg_csr_chars": 12079,
+      "sample_size": 7,
+      "sample_urls": [
+        "https://www.lg.com/de/haushaltsgeraete/haushaltsgeraete-tipps-und-anleitungen/waeschepflege/waermepumpen-vs-kondensationstrockner/",
+        "https://www.lg.com/de/tvs-und-soundbars/why-qned-evo/",
+        "https://www.lg.com/de/microsite-article/hs/laundry/article-contents/how-to-clean-washing-machine/",
+        "https://www.lg.com/de/microsite-article/hs/laundry/article-contents/heat-pump-vs-condenser-dryer/",
+        "https://www.lg.com/de/tv/why-lgoled/sustainability/",
+        "https://www.lg.com/de/haushaltsgeraete/haushaltsgeraete-tipps-und-anleitungen/waeschepflege/how-to-clean-washing-machine/",
+        "https://www.lg.com/de/tvs-und-soundbars/why-true-wireless/"
+      ],
+      "updated_at": "2026-06-14T02:52:08.885280+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.916,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 11905,
+      "avg_csr_chars": 12954,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/de/monthly-lg/maerz-2024/",
+        "https://www.lg.com/de/monthly-lg/",
+        "https://www.lg.com/de/monthly-lg/level-up-verwandle-dein-zuhause-in-eine-gaming-oase/",
+        "https://www.lg.com/de/monthly-lg/neuentdeckt-echte-bewertungen/",
+        "https://www.lg.com/de/monthly-lg/leben-und-arbeitsflow-zuhause/",
+        "https://www.lg.com/de/monthly-lg/aktion-ueberraschung-fuer-mama-mit-lg/",
+        "https://www.lg.com/de/lg-experience/",
+        "https://www.lg.com/de/lifesgood/product-story-oled-t/",
+        "https://www.lg.com/de/lg-experience/tech-hub/welcher-tv-passt-zu-mir",
+        "https://www.lg.com/de/lg-experience/tech-hub/"
+      ],
+      "updated_at": "2026-06-14T02:54:40.088928+00:00"
+    },
+    "newsroom": {
+      "avg_ratio": 0.914,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9049,
+      "avg_csr_chars": 9835,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/de/newsroom/231115_LG_AS_Wa-rmepumpen_LG-gru-ndet-Forschungslabor-in-Alaska_PM/",
+        "https://www.lg.com/de/newsroom/230510_LG-UltraGear-release_/",
+        "https://www.lg.com/de/newsroom/230824_Pressemitteilung_LG-x-Amazon-Luna-1/",
+        "https://www.lg.com/de/newsroom/Pressemitteilung_LG_CES_gram-2024/",
+        "https://www.lg.com/de/newsroom/",
+        "https://www.lg.com/de/newsroom/20240701_LG-Pressemeldung_ECAHR/",
+        "https://www.lg.com/de/newsroom/LG-Home-Appliances-installiert-Doppelspitze-fuer-Sales-und-Marketing/",
+        "https://www.lg.com/de/newsroom/240325_Neue-Smart-TV-Apps/",
+        "https://www.lg.com/de/newsroom/20240131_LG_Press-Release_ECE/",
+        "https://www.lg.com/de/newsroom/LG-raeumt-bei-den-IFA-Innovation-Awards-2025-ab--17-Auszeichnungen-inklusive--Best-of-IFA-/"
+      ],
+      "updated_at": "2026-06-14T02:57:41.669380+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.849,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8178,
+      "avg_csr_chars": 9512,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/de/promotions/blackedition/",
+        "https://www.lg.com/de/promotions/Jackpot_Gewinnspiel/",
+        "https://www.lg.com/de/promotions/ITawards/",
+        "https://www.lg.com/de/promotions/ultraleicht/",
+        "https://www.lg.com/de/promotions/haushaltsgeraete_weihnachtsangebote/",
+        "https://www.lg.com/de/promotions/summerdeals/",
+        "https://www.lg.com/de/promotions/homeoffice/",
+        "https://www.lg.com/de/teilnahmebedingungen/LG-Ansons-Gewinnspiel/",
+        "https://www.lg.com/de/teilnahmebedingungen/LG-StanbyMe-x-Philips-Hue/",
+        "https://www.lg.com/de/promotions/TV_Saisonstart/"
+      ],
+      "updated_at": "2026-06-14T03:00:00.699705+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.882,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6556,
+      "avg_csr_chars": 7420,
+      "sample_size": 9,
+      "sample_urls": [
+        "https://www.lg.com/de/support/produkt-hilfe/fehlerbehebung/",
+        "https://www.lg.com/de/support/error-pages/down-time-check/",
+        "https://www.lg.com/de/support/ersatzteile-zubehoer/",
+        "https://www.lg.com/de/support/find-us/brand-shop/",
+        "https://www.lg.com/de/support/ankuendigungen/aktualisierungen-der-datenschutzrichtlinie-von-lg-electronics-service/",
+        "https://www.lg.com/de/support/bestellsupport/track-my-order/",
+        "https://www.lg.com/de/support/kontaktieren-sie-uns/email-to-ceo/",
+        "https://www.lg.com/de/support/produkt-hilfe/reparatur-garantie/anfrage-reparatur-log-in/",
+        "https://www.lg.com/de/support/ankuendigungen/DENTC20230503153713/"
+      ],
+      "updated_at": "2026-06-14T03:02:27.009342+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.499,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5973,
+      "avg_csr_chars": 11963,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/de/support/produkt-hilfe/fehlerbehebung/help-library/"
+      ],
+      "updated_at": "2026-06-14T03:02:42.199430+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.893,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6600,
+      "avg_csr_chars": 7372,
+      "sample_size": 9,
+      "sample_urls": [
+        "https://www.lg.com/de/uber-lg/unsere-marke/",
+        "https://www.lg.com/de/uber-lg/presse-and-medien/pressekontakt/",
+        "https://www.lg.com/de/uber-lg/nachhaltigkeit/",
+        "https://www.lg.com/de/uber-lg/soziale-verantwortung/klimawandel-energie/",
+        "https://www.lg.com/de/uber-lg/stellenangebote/",
+        "https://www.lg.com/de/uber-lg/karriere/",
+        "https://www.lg.com/de/uber-lg/presse-and-medien/pressekontakt/presse/",
+        "https://www.lg.com/de/uber-lg/soziale-verantwortung/umweltsicherheit/",
+        "https://www.lg.com/de/uber-lg/index/"
+      ],
+      "updated_at": "2026-06-14T03:05:00.025349+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.684,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 13305,
+      "avg_csr_chars": 18722,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/de/tvs-und-soundbars/65mrgb88b9b/",
+        "https://www.lg.com/de/klimaanlagen/s24eq/",
+        "https://www.lg.com/de/klimaanlagen/pc09sk/",
+        "https://www.lg.com/de/klimaanlagen/a12ll/",
+        "https://www.lg.com/de/klimaanlagen/a09ga1/",
+        "https://www.lg.com/de/klimaanlagen/ac09sq/",
+        "https://www.lg.com/de/computer-zubehoer/uhg71/",
+        "https://www.lg.com/de/staubsauger/vrd830mgpcm/",
+        "https://www.lg.com/de/soundsuite/immersive-suite-7/",
+        "https://www.lg.com/de/klimaanlagen/ap09rk/"
+      ],
+      "updated_at": "2026-06-14T03:07:18.240054+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.85,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9827,
+      "avg_csr_chars": 11472,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/de/computer-zubehoer/",
+        "https://www.lg.com/de/my-lg/",
+        "https://www.lg.com/de/staubsauger/",
+        "https://www.lg.com/de/notebooks/",
+        "https://www.lg.com/de/tvs-und-soundbars/",
+        "https://www.lg.com/de/soundsuite/",
+        "https://www.lg.com/de/monitore/",
+        "https://www.lg.com/de/klimaanlagen/",
+        "https://www.lg.com/de/haushaltsgeraete-zubehoer/",
+        "https://www.lg.com/de/taschenfoto/"
+      ],
+      "updated_at": "2026-06-14T03:09:31.992188+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - de",
+      "updated_at": "2026-06-14T03:09:31.996329+00:00",
+      "took_sec": 1356.7,
+      "sample_total": 87,
+      "types": [
+        "home",
+        "buying_guide",
+        "microsite",
+        "content",
+        "newsroom",
+        "promotion",
+        "support",
+        "support_troubleshoot",
+        "about",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_es": {
+    "home": {
+      "avg_ratio": 0.634,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10075,
+      "avg_csr_chars": 15896,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/es/"
+      ],
+      "updated_at": "2026-06-14T03:10:35.424666+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.784,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6399,
+      "avg_csr_chars": 8045,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/es/acerca-de-lg/prensa-y-medios/barra-sonido-qp5/",
+        "https://www.lg.com/es/acerca-de-lg/comunicados-de-prensa/lg---go--la-nueva-gama-de-smart-tv-que-se-mueve-contigo-a-cualqu/",
+        "https://www.lg.com/es/acerca-de-lg/comunicados-de-prensa/nuevos-televisores-lg-qned-mayor-calidad-imagen/",
+        "https://www.lg.com/es/acerca-de-lg/comunicados-de-prensa/lg-galardones-ces2021/",
+        "https://www.lg.com/es/acerca-de-lg/comunicados-de-prensa/videomarcador-lg/",
+        "https://www.lg.com/es/acerca-de-lg/prensa-y-medios/claves-en-el-exito-del-negocio/",
+        "https://www.lg.com/es/acerca-de-lg/comunicados-de-prensa/lg-gram-portatil/",
+        "https://www.lg.com/es/acerca-de-lg/prensa-y-medios/nueva-identidad-de-marca-lg/",
+        "https://www.lg.com/es/acerca-de-lg/comunicados-de-prensa/lg-impulsa-la-log-stica-avanzada-en-base-a-su-experiencia-como--lighthouse-factory/",
+        "https://www.lg.com/es/acerca-de-lg/prensa-y-medios/lg-universidad-ceu/"
+      ],
+      "updated_at": "2026-06-14T03:14:00.942173+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.81,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9504,
+      "avg_csr_chars": 11256,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/es/tv-y-barras-de-sonido/tv-buying-guide/tv-technology/oled-vs-qned/",
+        "https://www.lg.com/es/microsite-article/ms/it/monitor/ultragear-buying-guide/productividad-y-entretenimiento/",
+        "https://www.lg.com/es/computing/buying-guides/multi-monitor/",
+        "https://www.lg.com/es/microsite-article/ms/it/monitor/ultragear-buying-guide/",
+        "https://www.lg.com/es/buying-guides/tv-spec-library/",
+        "https://www.lg.com/es/microsite-article/hs/laundry/buying-guide/fridge-freezer-size-capacity/",
+        "https://www.lg.com/es/buying-guide/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/tv-buying-guide/tv-technology/what-is-4k-tv/",
+        "https://www.lg.com/es/microsite-article/hs/laundry/buying-guide/washing-machines-size-capacity/",
+        "https://www.lg.com/es/buying-guides/monitor-spec-library/"
+      ],
+      "updated_at": "2026-06-14T03:16:42.163729+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.77,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 7345,
+      "avg_csr_chars": 8994,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/es/tvs-soundbars/qned/2022/why-lg-qned/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/qned/2022/why-lg-qned/",
+        "https://www.lg.com/es/qned-tvs/2022/why-lg-qned/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/why-qned-evo/",
+        "https://www.lg.com/es/tvs-soundbars/why-qned-evo/",
+        "https://www.lg.com/es/electrodomesticos-guias-consejos/lavadoras-y-secadoras/heat-pump-vs-condenser-dryer/",
+        "https://www.lg.com/es/why-lgoled/design/",
+        "https://www.lg.com/es/why-lgoled/cinema/",
+        "https://www.lg.com/es/why-lgoled/overview/",
+        "https://www.lg.com/es/electrodomesticos-guias-consejos/lavadoras-y-secadoras/how-to-clean-washing-machine/"
+      ],
+      "updated_at": "2026-06-14T03:19:18.632610+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.896,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 17066,
+      "avg_csr_chars": 18592,
+      "sample_size": 4,
+      "sample_urls": [
+        "https://www.lg.com/es/lg-experience/inspiracion/accesorios-para-camping-de-lg/",
+        "https://www.lg.com/es/lg-experience/inspiracion/smart-home-hogar-inteligente/",
+        "https://www.lg.com/es/lg-experience/inspiracion/oficina-en-casa-lg/",
+        "https://www.lg.com/es/lg-experience/tech-hub/tv-inalambrico"
+      ],
+      "updated_at": "2026-06-14T03:21:17.056698+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.745,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5295,
+      "avg_csr_chars": 5566,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/es/todas-las-promociones/electrodomesticos/pack-electrodomesticos/",
+        "https://www.lg.com/es/todas-las-promociones/electrodomesticos/lifes-good-days-aspiracion/",
+        "https://www.lg.com/es/todas-las-promociones/electrodomesticos/partidazos-frigorificos/",
+        "https://www.lg.com/es/todas-las-promociones/time-sale---demo/",
+        "https://www.lg.com/es/todas-las-promociones/informatica/lanzamiento-LG-gram-2025/",
+        "https://www.lg.com/es/todas-las-promociones/informatica/garantia-extra-monitores/",
+        "https://www.lg.com/es/todas-las-promociones/informatica/lec/",
+        "https://www.lg.com/es/todas-las-promociones/electrodomesticos/servicio-premium-gratuito/",
+        "https://www.lg.com/es/todas-las-promociones/electrodomesticos/5-anos-de-garantia-en-frigorificos/",
+        "https://www.lg.com/es/tncs/lg-65g3-c3-delivered-sales-promotion/"
+      ],
+      "updated_at": "2026-06-14T03:23:44.790113+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.741,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 3780,
+      "avg_csr_chars": 5118,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/es/soporte/guias-y-soluciones/television/mando-magic-control-an-mr650a-webos-2019/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/monitor/actualizacion-software-solucion-uac/",
+        "https://www.lg.com/es/soporte/contacto/encuesta-web/failure/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/television/apagado-ahorro-energia-eco/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/movil/la-aplicacion-se-ha-detenido-no-se-puede-iniciar/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/climatizacion/filtro-multiproteccion-3m/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/television/boton-azul-tv-lg/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/climatizacion/mantenimiento/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/lavado-secado/codigos-de-error-lavado-secado/",
+        "https://www.lg.com/es/soporte/guias-y-soluciones/portatiles/"
+      ],
+      "updated_at": "2026-06-14T03:26:12.968711+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.197,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 2915,
+      "avg_csr_chars": 14797,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/es/soporte/soporte-producto/resolucion-problemas/help-library/"
+      ],
+      "updated_at": "2026-06-14T03:26:30.243718+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.605,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8328,
+      "avg_csr_chars": 13380,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/es/tv-y-barras-de-sonido/65ur76006ll1/",
+        "https://www.lg.com/es/aparatos-de-cocina/mh6336gih/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/32lk6200pla/",
+        "https://www.lg.com/es/monitores3/22tn410v-pz/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/55un71006lb1/",
+        "https://www.lg.com/es/lavavajillas/df425hss0/",
+        "https://www.lg.com/es/barras-de-sonido/s9trsp-desb/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/43uq70006lb/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/50ur81006lj0/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/55up81006lr1/"
+      ],
+      "updated_at": "2026-06-14T03:28:39.937140+00:00"
+    },
+    "plp": {
+      "avg_ratio": 1.0,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10618,
+      "avg_csr_chars": 7642,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/es/aire-acondicionado-domestico/",
+        "https://www.lg.com/es/tv-y-barras-de-sonido/",
+        "https://www.lg.com/es/barra-de-sonido/",
+        "https://www.lg.com/es/monitores/",
+        "https://www.lg.com/es/proyectores/",
+        "https://www.lg.com/es/laptops/",
+        "https://www.lg.com/es/electrodomesticos-integrables/",
+        "https://www.lg.com/es/lavadoras-y-secadoras/",
+        "https://www.lg.com/es/aspiradoras/",
+        "https://www.lg.com/es/altavoces/"
+      ],
+      "updated_at": "2026-06-14T03:31:01.889880+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - es",
+      "updated_at": "2026-06-14T03:31:01.893988+00:00",
+      "took_sec": 1289.9,
+      "sample_total": 76,
+      "types": [
+        "home",
+        "about",
+        "buying_guide",
+        "microsite",
+        "content",
+        "promotion",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_in": {
+    "home": {
+      "avg_ratio": 0.561,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6572,
+      "avg_csr_chars": 11723,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/in/"
+      ],
+      "updated_at": "2026-06-14T04:55:05.983273+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.898,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6275,
+      "avg_csr_chars": 6872,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/about-lg/press-and-media/lg-and-habitat-for-humanity-indias-lifes-good-hope-village-project-highlights-the-value-of-a-home-during-the-pandemic/",
+        "https://www.lg.com/in/about-lg/press-and-media/lg-launches-khwahishon-se-khushiyon-tak-season-2-lucky-draw-with-prizes-worth-5-crores/",
+        "https://www.lg.com/in/about-lg/press-and-media/empowering-vision-lg-electronics-indias-karein-roshni-initiative-illuminates-lives/",
+        "https://www.lg.com/in/about-lg/press-and-media/lg-maharashtra-press-release/",
+        "https://www.lg.com/in/about-lg/press-and-media/lg-karsalaam-initiative/",
+        "https://www.lg.com/in/about-lg/press-and-media/press-release-lg-launches-freedom-is-good-campaign-on-independence-day-12-aug/",
+        "https://www.lg.com/in/about-lg/press-and-media/",
+        "https://www.lg.com/in/about-lg/press-and-media/lg-electronics-brings-cinema-to-indian-homes-with-new-cinebeam-projector-and-ultrafine-display-oled-pro/",
+        "https://www.lg.com/in/about-lg/press-and-media/lg-announces-the-winner-of-mallika-e-kitchen-8th-edition-at-the-grand-finale/",
+        "https://www.lg.com/in/about-lg/press-and-media/meet-the-new-lg-q60-with-premium-features/"
+      ],
+      "updated_at": "2026-06-14T04:58:32.132473+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.92,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8376,
+      "avg_csr_chars": 8930,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/tv-soundbars/tv-buying-guide/tv-technology/oled-vs-qned/",
+        "https://www.lg.com/in/qned-tvs/2021/qned-buying-guide/",
+        "https://www.lg.com/in/tv-soundbars/tv-buying-guide/gaming-tv/",
+        "https://www.lg.com/in/tv-soundbars/tv-buying-guide/lifestyle/",
+        "https://www.lg.com/in/laundry/laundry-tips/lg-washing-machine-buying-guide/",
+        "https://www.lg.com/in/microsite-article/ms/it/monitor/ultragear-buying-guide/",
+        "https://www.lg.com/in/tv-soundbars/tv-buying-guide/tv-size/",
+        "https://www.lg.com/in/air-conditioners/ac-tips/air-conditioner-buying-guide/",
+        "https://www.lg.com/in/air-conditioners/rac-product-buying-guide/",
+        "https://www.lg.com/in/washing-machine-buying-guide/"
+      ],
+      "updated_at": "2026-06-14T05:01:43.089723+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.769,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8138,
+      "avg_csr_chars": 10777,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/laundry/top-loading-washing-machines/thd10swm/",
+        "https://www.lg.com/in/laundry/top-loading-washing-machines/thd08sjm/",
+        "https://www.lg.com/in/laundry/top-loading-washing-machines/t80ajmb1z/",
+        "https://www.lg.com/in/laundry/top-loading-washing-machines/t12sjmb1z/",
+        "https://www.lg.com/in/laundry/top-loading-washing-machines/t80vbmb4z/",
+        "https://www.lg.com/in/why-lgoled/sustainability/",
+        "https://www.lg.com/in/why-lgoled/cinema/",
+        "https://www.lg.com/in/qned-tvs/2022/why-lg-qned/",
+        "https://www.lg.com/in/laundry/top-loading-washing-machines/thd09swm/",
+        "https://www.lg.com/in/laundry/top-loading-washing-machines/thd09nwm/"
+      ],
+      "updated_at": "2026-06-14T05:04:57.305935+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.935,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6383,
+      "avg_csr_chars": 6798,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/magazine/experience-immersive-viewing-happiness-with-lg-oled-tv/",
+        "https://www.lg.com/in/magazine/6-best-uhd-tvs-you-can-buy-in-2026/",
+        "https://www.lg.com/in/magazine/demystifying-uhd-4k-and-5k-monitors-what-you-need-to-know/",
+        "https://www.lg.com/in/magazine/big-is-brilliant/",
+        "https://www.lg.com/in/magazine/monsoon-ready-with-lg-true-water-purifier/",
+        "https://www.lg.com/in/magazine/watch-on-in-wonder-with-the-all-new-lg-objet-collection-tv/",
+        "https://www.lg.com/in/magazine/front-load-washing-machines-a-complete-guide-to-pros-cons-and-buying-tips/",
+        "https://www.lg.com/in/magazine/enjoy-karaoke-sessions-with-bluetooth-speakers-with-mic-know-everything-about-it-here/",
+        "https://www.lg.com/in/magazine/ai-6-in-1-convertible-cooling-for-changing-room-needs/",
+        "https://www.lg.com/in/magazine/wish-to-get-the-best-refrigerator-for-your-home-look-out-for-the/"
+      ],
+      "updated_at": "2026-06-14T05:08:09.501707+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.909,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6370,
+      "avg_csr_chars": 6863,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/tncs/air-conditioner-products-terms-conditions/",
+        "https://www.lg.com/in/promotions/anniversary-celebrations-tnc/",
+        "https://www.lg.com/in/tncs/lg-tv-oct-new-promotion-free-100/",
+        "https://www.lg.com/in/tncs/lg-tv-oct-new-promotion-free-300/",
+        "https://www.lg.com/in/tncs/air-solutions-promotion-free-filter-with-every-air-purifier-hit/",
+        "https://www.lg.com/in/tncs/lg-gram-16-17z90r-promotion-terms-conditions/",
+        "https://www.lg.com/in/tncs/lg-tv-promotion-free-1000/",
+        "https://www.lg.com/in/tncs/it-islandwide-promotion-2-smart-monitors-promotion-terms-and-conditions/",
+        "https://www.lg.com/in/promotions/electronics-it-newbeginnings-sale/",
+        "https://www.lg.com/in/promotions/product-sale/"
+      ],
+      "updated_at": "2026-06-14T05:11:19.011559+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.882,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 13953,
+      "avg_csr_chars": 14417,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/support/contact-us/email/failure/",
+        "https://www.lg.com/in/support/contact-us/web-survey/failure/",
+        "https://www.lg.com/in/support/announcement/INNTC20240528002/",
+        "https://www.lg.com/in/support/title-shop-for-accessory/",
+        "https://www.lg.com/in/support/rac-installation-price-charter/",
+        "https://www.lg.com/in/support/contact-us/email-to-ceo/",
+        "https://www.lg.com/in/support/productissue/",
+        "https://www.lg.com/in/support/announcement/INNTC20241107004/",
+        "https://www.lg.com/in/support/contact-us/inquiry-status/failure/",
+        "https://www.lg.com/in/support/warranty-terms/"
+      ],
+      "updated_at": "2026-06-14T05:14:41.139045+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.447,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 2686,
+      "avg_csr_chars": 10602,
+      "sample_size": 2,
+      "sample_urls": [
+        "https://www.lg.com/in/support/product-support/troubleshoot/help-library/",
+        "https://www.lg.com/in/support/product-support/troubleshoot/"
+      ],
+      "updated_at": "2026-06-14T05:15:16.716513+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.774,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6677,
+      "avg_csr_chars": 8506,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/air-conditioners/lp-c2863ec0/",
+        "https://www.lg.com/in/monitors/w2043c/",
+        "https://www.lg.com/in/laptop/16mq70-gram/",
+        "https://www.lg.com/in/water-purifiers/ww136rpnb-new/",
+        "https://www.lg.com/in/dishwasher/dfb335hm/",
+        "https://www.lg.com/in/water-purifiers/ww146rplb-new/",
+        "https://www.lg.com/in/appliance-accessories/aap75494601/",
+        "https://www.lg.com/in/appliance-accessories/cls31460006/",
+        "https://www.lg.com/in/appliance-accessories/cls32187801/",
+        "https://www.lg.com/in/water-purifiers/ww145npw/"
+      ],
+      "updated_at": "2026-06-14T05:18:13.034045+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.892,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 7974,
+      "avg_csr_chars": 8797,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/in/laptop/",
+        "https://www.lg.com/in/tvs/",
+        "https://www.lg.com/in/monitors/",
+        "https://www.lg.com/in/water-purifiers/",
+        "https://www.lg.com/in/tv-soundbars/",
+        "https://www.lg.com/in/investorrelations/",
+        "https://www.lg.com/in/computer-accessories/",
+        "https://www.lg.com/in/dishwasher/",
+        "https://www.lg.com/in/appliance-accessories/",
+        "https://www.lg.com/in/air-conditioners/"
+      ],
+      "updated_at": "2026-06-14T05:21:05.534826+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - in",
+      "updated_at": "2026-06-14T05:21:05.537676+00:00",
+      "took_sec": 1604.2,
+      "sample_total": 83,
+      "types": [
+        "home",
+        "about",
+        "buying_guide",
+        "microsite",
+        "content",
+        "promotion",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_mx": {
+    "home": {
+      "avg_ratio": 0.684,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 10257,
+      "avg_csr_chars": 14996,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/mx/"
+      ],
+      "updated_at": "2026-06-14T03:43:51.456834+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.938,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8060,
+      "avg_csr_chars": 8580,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/audiopremiumlg/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/resultados-financieros-tercer-trimestre/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/hornos-gourmet/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/lg-presenta-monitor-quirurgico-4k/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/design-award-2025/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/lgai/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/ceo-lg1/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/athom/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/lg-musica-transforma-mente-cuerpo-espiritu/",
+        "https://www.lg.com/mx/acerca-de-lg/press-and-media/ifa2019-lg-cinebeam-4k/"
+      ],
+      "updated_at": "2026-06-14T03:48:13.617014+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.937,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 12275,
+      "avg_csr_chars": 12899,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/mx/home-appliances/buying-guide/",
+        "https://www.lg.com/mx/fridge-freezer-buying-guide/",
+        "https://www.lg.com/mx/buying-guides/tv-spec-library/",
+        "https://www.lg.com/mx/buying-guides/monitor-spec-library/",
+        "https://www.lg.com/mx/tv-soundbars/tv-buying-guide/tv-technology/what-is-4k-tv/",
+        "https://www.lg.com/mx/home-appliances/buying-guide/fridge-freezer/feature-performance/",
+        "https://www.lg.com/mx/tv-soundbars/tv-buying-guide/tv-technology/oled-vs-qned/",
+        "https://www.lg.com/mx/buying-guides/tv-lineup-guide/",
+        "https://www.lg.com/mx/tv-soundbars/tv-buying-guide/gaming-tv/",
+        "https://www.lg.com/mx/home-appliances/buying-guide/fridge-freezer/size-volume/"
+      ],
+      "updated_at": "2026-06-14T03:50:43.101937+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.846,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6983,
+      "avg_csr_chars": 8459,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/mx/historias-con-lg/dia-de-las-madres-con-lg/",
+        "https://www.lg.com/mx/historias-con-lg/inspiracion-de-interior-con-lg/",
+        "https://www.lg.com/mx/historias-con-lg/ano-nuevo-nuevo-yo-con-lg/",
+        "https://www.lg.com/mx/lg-experience/helpful-hints/refrigerator-next-to-gas-stove/",
+        "https://www.lg.com/mx/lg-experience/helpful-hints/what-is-smart-washing-and-benefit-with-ai/",
+        "https://www.lg.com/mx/lifesgood/optimism-your-feed/",
+        "https://www.lg.com/mx/historias-con-lg/consejos-refrescantes-con-lg/",
+        "https://www.lg.com/mx/lifesgood/product-story-oled-t/",
+        "https://www.lg.com/mx/lifesgood/",
+        "https://www.lg.com/mx/lg-experience/helpful-hints/best-energy-efficiency-refrigerator/"
+      ],
+      "updated_at": "2026-06-14T03:53:15.896847+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.943,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9828,
+      "avg_csr_chars": 10358,
+      "sample_size": 8,
+      "sample_urls": [
+        "https://www.lg.com/mx/tvs-qned/2022/why-lg-qned/",
+        "https://www.lg.com/mx/tv-soundbars/why-true-wireless/",
+        "https://www.lg.com/mx/microsite-article/hs/kitchen/article-contents/latam/what-is-inverter-technology-and-what-advantages-does-it-offer/",
+        "https://www.lg.com/mx/microsite-article/hs/kitchen/article-contents/latam/best-refrigerator/",
+        "https://www.lg.com/mx/tv-soundbars/why-lg-ai-tv/",
+        "https://www.lg.com/mx/tv-soundbars/why-qned-evo/",
+        "https://www.lg.com/mx/lg-thinq/magazine/how-to-make-sure-your-home-is-ready-for-summer/",
+        "https://www.lg.com/mx/tv-soundbars/why-lg-qned-evo-mini-led/"
+      ],
+      "updated_at": "2026-06-14T03:55:09.585757+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.798,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 2665,
+      "avg_csr_chars": 3347,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/mx/promociones/hs-ref-wm/",
+        "https://www.lg.com/mx/promociones/lg-penafiel/",
+        "https://www.lg.com/mx/promociones/elmejorequipotv/",
+        "https://www.lg.com/mx/promociones/monitores-gaming-regalo/",
+        "https://www.lg.com/mx/promociones/TVs-maxima-experiencia/",
+        "https://www.lg.com/mx/promociones/nosadelantamos/",
+        "https://www.lg.com/mx/promociones/monitorblanco/",
+        "https://www.lg.com/mx/promociones/happyhours/",
+        "https://www.lg.com/mx/promociones/combos_descuento/",
+        "https://www.lg.com/mx/promociones/lineablanca/"
+      ],
+      "updated_at": "2026-06-14T03:57:28.648600+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.862,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5188,
+      "avg_csr_chars": 5934,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/mx/soporte/contactanos/web-survey/success/",
+        "https://www.lg.com/mx/soporte/orden-de-servicio/",
+        "https://www.lg.com/mx/soporte/lg-thinq/magazine/smart-homes-narrowing-digital-divide-for-everyone/",
+        "https://www.lg.com/mx/soporte/soporte-de-producto/registrar-un-producto/",
+        "https://www.lg.com/mx/soporte/contactanos/estatus-de-la-consulta/failure/",
+        "https://www.lg.com/mx/soporte/noticias-soporte/MXNTC20211111151781/",
+        "https://www.lg.com/mx/soporte/noticias-soporte/aviso-accuweather/",
+        "https://www.lg.com/mx/soporte/",
+        "https://www.lg.com/mx/soporte/lg-a-tu-lado/cleaning/MSEWM12C250900003/",
+        "https://www.lg.com/mx/soporte/preguntas-garantias/"
+      ],
+      "updated_at": "2026-06-14T03:59:55.244197+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.209,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 2910,
+      "avg_csr_chars": 13901,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/mx/soporte/soporte-de-producto/solucion-de-problemas/help-library/"
+      ],
+      "updated_at": "2026-06-14T04:00:10.191852+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.705,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5281,
+      "avg_csr_chars": 7504,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/mx/accesorios-filtros-lavadoras/mds38265303/",
+        "https://www.lg.com/mx/proyectores/ph30n/",
+        "https://www.lg.com/mx/tv-soundbars/60ln5400/",
+        "https://www.lg.com/mx/accesorios-audio-video/coa01255162/",
+        "https://www.lg.com/mx/accesorios-audio-video/coa01259102/",
+        "https://www.lg.com/mx/tv-soundbars/50um7400pua/",
+        "https://www.lg.com/mx/soundbars/s75qr-xg5qbk/",
+        "https://www.lg.com/mx/cooktops/lrgl5847s/",
+        "https://www.lg.com/mx/accesorios-para-aspiradoras/ajl75316350/",
+        "https://www.lg.com/mx/accesorios-filtros-lavadoras/eam62492313/"
+      ],
+      "updated_at": "2026-06-14T04:02:09.585736+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.83,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4014,
+      "avg_csr_chars": 4821,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/mx/accesorios-audio-video/",
+        "https://www.lg.com/mx/accesorios-compresores-refrigerador-aire/",
+        "https://www.lg.com/mx/lavavajillas/",
+        "https://www.lg.com/mx/aire-acondicionado/",
+        "https://www.lg.com/mx/accesorios-para-aspiradoras/",
+        "https://www.lg.com/mx/monitores/",
+        "https://www.lg.com/mx/accesorios-filtros-lavadoras/",
+        "https://www.lg.com/mx/accesorios-hornos-estufas/",
+        "https://www.lg.com/mx/all-soundsuite/",
+        "https://www.lg.com/mx/video/"
+      ],
+      "updated_at": "2026-06-14T04:04:17.488517+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - mx",
+      "updated_at": "2026-06-14T04:04:17.492537+00:00",
+      "took_sec": 1267.7,
+      "sample_total": 80,
+      "types": [
+        "home",
+        "about",
+        "buying_guide",
+        "content",
+        "microsite",
+        "promotion",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_us": {
+    "home": {
+      "avg_ratio": 0.953,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 28013,
+      "avg_csr_chars": 29408,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/us"
+      ],
+      "updated_at": "2026-06-14T04:04:56.565634+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 1.0,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9577,
+      "avg_csr_chars": 9477,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/us/monitors/ultragear-buying-guide/work-and-play",
+        "https://www.lg.com/us/tv-buying-guide",
+        "https://www.lg.com/us/monitors/ultragear-buying-guide",
+        "https://www.lg.com/us/monitors/ultragear-buying-guide/resolution",
+        "https://www.lg.com/us/tv-buying-guide/which-lg-tv-panel-type-is-best",
+        "https://www.lg.com/us/tv-buying-guide/which-lg-tv-resolution-is-best",
+        "https://www.lg.com/us/tv-buying-guide/best-tv-for-your-lifestyle",
+        "https://www.lg.com/us/tv-buying-guide/which-lg-tv-is-best",
+        "https://www.lg.com/us/monitors/ultragear-buying-guide/refresh-rate",
+        "https://www.lg.com/us/refrigerator-buying-guide"
+      ],
+      "updated_at": "2026-06-14T04:07:56.270581+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.99,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5444,
+      "avg_csr_chars": 5269,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/us/lg-signature-air-purifiers",
+        "https://www.lg.com/us/fhd-monitors",
+        "https://www.lg.com/us/collections/inflation-reduction-act-appliance-rebates",
+        "https://www.lg.com/us/collections/75-inch-tvs",
+        "https://www.lg.com/us/craft-ice-refrigerators",
+        "https://www.lg.com/us/dryer-lint-filters",
+        "https://www.lg.com/us/lgs-gaming-portal-is-arriving-on-the-companys-webos-powered-screens",
+        "https://www.lg.com/us/discover-smart-monitors",
+        "https://www.lg.com/us/xboom",
+        "https://www.lg.com/us/lg-gram-style-notebook-laptops"
+      ],
+      "updated_at": "2026-06-14T04:10:27.993413+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.467,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 3465,
+      "avg_csr_chars": 9207,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/us/laptops/lg-14z90q-k.aab6u1-gram-laptop",
+        "https://www.lg.com/us/sound-bars/lg-qp5-eclair-sound-bar",
+        "https://www.lg.com/us/laptops/lg-17z90p-k.aab8u1-ultra-slim-laptop",
+        "https://www.lg.com/us/kitchen-packages/lg-srfb27w3-sdwb24w3-lses6338n-mhes1738n",
+        "https://www.lg.com/us/refrigerators/lg-LFCS22520B-french-3-door-refrigerator",
+        "https://www.lg.com/us/refrigerators/lg-LMXC23746S-french-4-door-refrigerator",
+        "https://www.lg.com/us/wireless_headphones/lg-hbs-760 white",
+        "https://www.lg.com/us/monitors/lg-29wp500-b-ultrawide-monitor",
+        "https://www.lg.com/us/monitors/lg-29UM55-P-ultrawide-monitor",
+        "https://www.lg.com/us/tvs/lg-43UH610A-4k-uhd-tv"
+      ],
+      "updated_at": "2026-06-14T04:12:56.039042+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 1.0,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8269,
+      "avg_csr_chars": 8095,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/us/residential-hvac/heat-pump/how-it-works",
+        "https://www.lg.com/us/experience/best-lg-travel-gadgets",
+        "https://www.lg.com/us/experience/how-to-find-the-correct-lg-refrigerator-filter-for-your-model",
+        "https://www.lg.com/us/residential-hvac/why-lg/sustainability",
+        "https://www.lg.com/us/experience/when-to-change-lg-refrigerator-water-filter",
+        "https://www.lg.com/us/top-control-dishwashers",
+        "https://www.lg.com/us/experience/how-to-measure-and-read-tv-sizes",
+        "https://www.lg.com/us/top-freezer-refrigerators",
+        "https://www.lg.com/us/experience/best-lg-laptop-for-writers",
+        "https://www.lg.com/us/residential-hvac/solutions-applications/blog"
+      ],
+      "updated_at": "2026-06-14T04:15:16.104266+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.865,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 2593,
+      "avg_csr_chars": 2997,
+      "sample_size": 3,
+      "sample_urls": [
+        "https://www.lg.com/us/lifesgood/product-story-instaview",
+        "https://www.lg.com/us/lifesgood",
+        "https://www.lg.com/us/lifesgood/product-story-washtower"
+      ],
+      "updated_at": "2026-06-14T04:15:57.320315+00:00"
+    },
+    "newsroom": {
+      "avg_ratio": 0.952,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8236,
+      "avg_csr_chars": 8639,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/us/press-release/signature-kitchen-suite-spotlights-technicurean-lifestyle-advanced-technologies-functionality-2022-nahb-ibsx-showcase-home",
+        "https://www.lg.com/us/press-release/lg-dishwashers-earn-energy-star-most-efficient-2023-designation",
+        "https://www.lg.com/us/press-release/lg-launches-new-broadcast-virtual-production-extended-reality-solutions-at-nab-2023",
+        "https://www.lg.com/us/press-release/lg-electronics-introduces-2026-lg-gram-lineup-elevated-by-aerominum",
+        "https://www.lg.com/us/press-release/lg_pro_builder_pcbc_2024",
+        "https://www.lg.com/us/press-release/lg-pursues-connect-innov-ate-elev-ate-customer-engagement-strategy-at-infocomm",
+        "https://www.lg.com/us/press-release/lg-gram-pro-boasts-ultra-slim-light-weight-design-and-powerful-performance-with-ai",
+        "https://www.lg.com/us/press-release/lg-brings-color-and-convenenience-to-the-refrigerator-with-its-innovative-moodup-technology-at-ifa-2022",
+        "https://www.lg.com/us/press-release/signature-kitchen-suite-spotlight-technicurean-lifestyle-with-advanced-technologies-and-functionality-at-2022-nahb-ibsx-showcase-home",
+        "https://www.lg.com/us/press-release/lg-electronics-usa-debuts-its-new-cinebeam-smart-portable-projector"
+      ],
+      "updated_at": "2026-06-14T04:18:03.246714+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.999,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4377,
+      "avg_csr_chars": 3948,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/us/promotions/wall-oven-cooktop-bundle-savings",
+        "https://www.lg.com/us/promotions/home-appliance-savings",
+        "https://www.lg.com/us/promotions/monitor-flash-sale",
+        "https://www.lg.com/us/promotions/room-air-conditioner-bundle-savings",
+        "https://www.lg.com/us/promotions/rinse-laundry-service-offer",
+        "https://www.lg.com/us/promotions/best-selling-tvs-sound-bars-audio-video",
+        "https://www.lg.com/us/promotions/member-exclusive-rewards",
+        "https://www.lg.com/us/promotions/black-friday-deals",
+        "https://www.lg.com/us/promotions",
+        "https://www.lg.com/us/promotions/tv-deals-installation-offer"
+      ],
+      "updated_at": "2026-06-14T04:20:02.106295+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.898,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4373,
+      "avg_csr_chars": 4634,
+      "sample_size": 7,
+      "sample_urls": [
+        "https://www.lg.com/us/support/repair-service/schedule-repair",
+        "https://www.lg.com/us/support/parts-accessories",
+        "https://www.lg.com/us/support/lg-direct-service",
+        "https://www.lg.com/us/support/connect-device-to-tv-guide",
+        "https://www.lg.com/us/support/repair-service/track-repair",
+        "https://www.lg.com/us/support",
+        "https://www.lg.com/us/support/find-service-center"
+      ],
+      "updated_at": "2026-06-14T04:21:45.480114+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 1.0,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 3446,
+      "avg_csr_chars": 2967,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/us/support/help-library"
+      ],
+      "updated_at": "2026-06-14T04:21:57.018675+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - us",
+      "updated_at": "2026-06-14T04:21:57.021732+00:00",
+      "took_sec": 1059.5,
+      "sample_total": 72,
+      "types": [
+        "home",
+        "buying_guide",
+        "plp",
+        "pdp",
+        "microsite",
+        "content",
+        "newsroom",
+        "promotion",
+        "support",
+        "support_troubleshoot"
+      ],
+      "in_progress": false
+    }
+  },
+  "grp_lg_vn": {
+    "home": {
+      "avg_ratio": 0.611,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9529,
+      "avg_csr_chars": 15583,
+      "sample_size": 1,
+      "sample_urls": [
+        "https://www.lg.com/vn/"
+      ],
+      "updated_at": "2026-06-14T04:22:41.904458+00:00"
+    },
+    "buying_guide": {
+      "avg_ratio": 0.832,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5253,
+      "avg_csr_chars": 6245,
+      "sample_size": 3,
+      "sample_urls": [
+        "https://www.lg.com/vn/qned-tvs/2021/qned-buying-guide/",
+        "https://www.lg.com/vn/tivi/oled/oled-buying-guide/",
+        "https://www.lg.com/vn/buying-guide/"
+      ],
+      "updated_at": "2026-06-14T04:23:27.012498+00:00"
+    },
+    "about": {
+      "avg_ratio": 0.868,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6645,
+      "avg_csr_chars": 7635,
+      "sample_size": 9,
+      "sample_urls": [
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/ve-sinh-thay-mang-loc-dinh-ky-mang-lai-nhieu-loi-ich-bat-ngo/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/trai-nghiem-man-hinh-khung-lg-g4-stylus-voi-muc-gia-uu-dai/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/lg-ra-mat-may-giat-long-dung-hoi-nuoc-dd-mang-toi-trai-nghiem-giat-giu-hoan-hao/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/lg-gioi-thieu-another-saigon/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/lg-mang-den-bo-su-tap-objet-tai-tuan-le-thiet-ke-viet-nam-vmark/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/he-sinh-thai-lg-hut-khach-tai-tech-awards-2022/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/lg-dual-vane-cassette/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/lg-dong-hanh-hiep-hoi-doanh-nghiep-han-quoc-trao-tang-hoc-bong-sinh-vein-tai-nang/",
+        "https://www.lg.com/vn/gioi-thieu-lg/tin-tuc-va-truyen-thong/thiet-bi-lg-ho-tro-loai-bo-tac-nhan-gay-benh/"
+      ],
+      "updated_at": "2026-06-14T04:25:59.933021+00:00"
+    },
+    "promotion": {
+      "avg_ratio": 0.845,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 7313,
+      "avg_csr_chars": 8552,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/vn/khuyen-mai/the-le-chuong-trinh-LG-memberdays/",
+        "https://www.lg.com/vn/tncs/5-year-extended-warranty/",
+        "https://www.lg.com/vn/khuyen-mai/uu-dai-cho-chu-the/",
+        "https://www.lg.com/vn/tncs/oled-tv-service-promotion-terms-and-conditions/",
+        "https://www.lg.com/vn/tncs/appliances-islandwide-promotion-terms-and-conditions/",
+        "https://www.lg.com/vn/tncs/air-solutions-promotion-terms-and-conditions/",
+        "https://www.lg.com/vn/khuyen-mai/uu-dai-dieu-hoa/",
+        "https://www.lg.com/vn/khuyen-mai/",
+        "https://www.lg.com/vn/tncs/lg-10-10-delivered-sales-promotion/",
+        "https://www.lg.com/vn/khuyen-mai/uu-dai-tu-lanh-may-rua-bat-lg/"
+      ],
+      "updated_at": "2026-06-14T04:28:16.465260+00:00"
+    },
+    "content": {
+      "avg_ratio": 0.834,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 9625,
+      "avg_csr_chars": 11498,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/vn/lg-experience/huong-dan-mua-hang/huong-dan-mua-laptop/",
+        "https://www.lg.com/vn/lg-experience/huong-dan-mua-hang/huong-dan-mua-may-rua-bat/",
+        "https://www.lg.com/vn/lg-experience/goi-y-va-meo/cach-su-dung-may-giat-tu-dong/",
+        "https://www.lg.com/vn/lg-experience/goi-y-va-meo/goi-y-mon-an-lam-bang-lo-vi-song-lg/",
+        "https://www.lg.com/vn/lg-experience/goi-y-va-meo/loi-ich-noi-bat-khi-so-huu-may-giat/",
+        "https://www.lg.com/vn/lg-experience/huong-dan-mua-hang/huong-dan-mua-may-giat/",
+        "https://www.lg.com/vn/lg-experience/do-dung-cong-nghe-cuoi-tuan/",
+        "https://www.lg.com/vn/lg-experience/goi-y-va-meo/cach-dieu-chinh-nhiet-do-ngan-mat-ngan-da-tu-lanh/",
+        "https://www.lg.com/vn/lg-experience/qua-tang-cong-nghe-dinh-cao-cho-nua-kia-cua-ban/",
+        "https://www.lg.com/vn/lg-experience/huong-dan-mua-hang/huong-dan-ve-sinh-tv/"
+      ],
+      "updated_at": "2026-06-14T04:30:49.460986+00:00"
+    },
+    "microsite": {
+      "avg_ratio": 0.865,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8096,
+      "avg_csr_chars": 9389,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/vn/lg-thinq/magazine/how-to-make-sure-your-home-is-ready-for-summer/",
+        "https://www.lg.com/vn/why-lgoled/display/",
+        "https://www.lg.com/vn/why-lg-oled/design/",
+        "https://www.lg.com/vn/why-lgoled/cinema/",
+        "https://www.lg.com/vn/tivi/why-lgoled/10years-world-no1-oled/",
+        "https://www.lg.com/vn/why-lgoled/sustainability/",
+        "https://www.lg.com/vn/why-lg-oled/cinema/",
+        "https://www.lg.com/vn/lg-thinq/news/how-smart-appliances-can-help-save-energy-and-the-planet/",
+        "https://www.lg.com/vn/why-lgoled/game/",
+        "https://www.lg.com/vn/tivi/why-lgoled/sustainability/"
+      ],
+      "updated_at": "2026-06-14T04:33:19.898547+00:00"
+    },
+    "support": {
+      "avg_ratio": 0.797,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 5123,
+      "avg_csr_chars": 6271,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/vn/support/product-support/product-registration/registration-failed/",
+        "https://www.lg.com/vn/support/error-pages/down-time-check/",
+        "https://www.lg.com/vn/tro-giup/additional-support/",
+        "https://www.lg.com/vn/tro-giup/lien-he-voi-chung-toi/tinh-trang-cac-yeu-cau/inquiry-result/",
+        "https://www.lg.com/vn/tro-giup/thong-bao/",
+        "https://www.lg.com/vn/support/error-pages/",
+        "https://www.lg.com/vn/tro-giup/lg-here4u/",
+        "https://www.lg.com/vn/tro-giup/ho-tro-san-pham/dat-lich-sua-chua/",
+        "https://www.lg.com/vn/support/order-support/track-my-order/",
+        "https://www.lg.com/vn/support/product-support/warranty/warranty-consumer/"
+      ],
+      "updated_at": "2026-06-14T04:35:38.815432+00:00"
+    },
+    "support_troubleshoot": {
+      "avg_ratio": 0.621,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 4165,
+      "avg_csr_chars": 6819,
+      "sample_size": 3,
+      "sample_urls": [
+        "https://www.lg.com/vn/support/product-support/troubleshoot/",
+        "https://www.lg.com/vn/support/product-support/troubleshoot/help-liberary/",
+        "https://www.lg.com/vn/tro-giup/ho-tro-san-pham/khac-phuc-su-co/help-library/"
+      ],
+      "updated_at": "2026-06-14T04:36:23.058456+00:00"
+    },
+    "pdp": {
+      "avg_ratio": 0.726,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 8557,
+      "avg_csr_chars": 11304,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/vn/laptop-lg-gram/16z90-oled65/",
+        "https://www.lg.com/vn/dieu-hoa/b13ena/",
+        "https://www.lg.com/vn/dieu-hoa/h24enb/",
+        "https://www.lg.com/vn/phu-kien-tv/akb76045006/",
+        "https://www.lg.com/vn/dieu-hoa/h24ena/",
+        "https://www.lg.com/vn/laptop-lg-gram/14zd90r-g-ax51a5/",
+        "https://www.lg.com/vn/laptop-lg-gram/16z90u-g-32gb/",
+        "https://www.lg.com/vn/dieu-hoa/v10enc/",
+        "https://www.lg.com/vn/dieu-hoa/v13apq/",
+        "https://www.lg.com/vn/laptop-lg-gram/17ah78-27up8/"
+      ],
+      "updated_at": "2026-06-14T04:38:21.807532+00:00"
+    },
+    "plp": {
+      "avg_ratio": 0.803,
+      "avg_score": 0.0,
+      "tier": null,
+      "avg_ssr_chars": 6214,
+      "avg_csr_chars": 7616,
+      "sample_size": 10,
+      "sample_urls": [
+        "https://www.lg.com/vn/phu-kien-may-hut-bui-may-rua-bat/",
+        "https://www.lg.com/vn/may-hut-bui/",
+        "https://www.lg.com/vn/giat-say/",
+        "https://www.lg.com/vn/may-rua-bat/",
+        "https://www.lg.com/vn/phu-kien-tv/",
+        "https://www.lg.com/vn/phu-kien-dieu-hoa-may-loc-khong-khi/",
+        "https://www.lg.com/vn/laptop-lg-gram/",
+        "https://www.lg.com/vn/dan-am-thanh/",
+        "https://www.lg.com/vn/tv-va-loa-thanh/",
+        "https://www.lg.com/vn/dieu-hoa/"
+      ],
+      "updated_at": "2026-06-14T04:40:25.114220+00:00"
+    },
+    "_meta": {
+      "group_name": "LG Sitemap - vn",
+      "updated_at": "2026-06-14T04:40:25.118311+00:00",
+      "took_sec": 1108.1,
+      "sample_total": 76,
+      "types": [
+        "home",
+        "buying_guide",
+        "about",
+        "promotion",
+        "content",
+        "microsite",
+        "support",
+        "support_troubleshoot",
+        "pdp",
+        "plp"
+      ],
+      "in_progress": false
+    }
   }
 }
