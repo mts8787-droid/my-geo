@@ -624,7 +624,7 @@
         "rule": {
           "type": "css_count",
           "params": {
-            "selector": ".c-summary-gallery img, .c-gallery img, .swiper-wrapper .swiper-slide img",
+            "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'] img, .c-summary-gallery img, .c-gallery img, .swiper-wrapper .swiper-slide img",
             "operator": ">=",
             "value": 3
           }
@@ -646,23 +646,23 @@
             "groups": [
               {
                 "label": "제품명",
-                "selector": "h1.cmp-text, h1"
+                "selector": "h1.cmp-text, h1, [class*='Product-MainTitle']"
               },
               {
                 "label": "가격",
-                "selector": "[class*='price-area'], .info-sticky--price"
+                "selector": "[class*='Product-Price'], [class*='price-area'], .info-sticky--price"
               },
               {
                 "label": "갤러리",
-                "selector": ".c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"
+                "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'], .c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"
               },
               {
                 "label": "사양",
-                "selector": ".c-specs-summary, .c-all-specs-area, .c-specs-dimensions"
+                "selector": "[class*='Product-KeyFeatures'], [class*='Product-Features'], .c-specs-summary, .c-all-specs-area, .c-specs-dimensions"
               },
               {
                 "label": "CTA",
-                "selector": ".c-cta, .c-wrapper, .button-bomE"
+                "selector": "[class*='Product-Button'], [class*='Product-WishList'], .c-cta, .c-wrapper, .button-bomE"
               }
             ]
           }

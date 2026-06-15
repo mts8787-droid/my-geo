@@ -37,7 +37,7 @@ my-geo-audit/
 | `performance`   | 25 | 11 | 8 (LCP/CLS/INP는 PSI API 필요로 비활성) |
 | `accessibility` | 15 | 4  | 4 |
 | `seo`           | 20 | 8  | 8 (#17은 meta robots + X-Robots-Tag로 분리) |
-| `ai_readiness`  | 40 | 26 | 26 (#39 핵심 element는 임시 placeholder) |
+| `ai_readiness`  | 40 | 26 | 26 |
 
 기준 원본: [docs/audit-criteria.md](docs/audit-criteria.md) — 어드민 "Audit 기준 문서" 메뉴에서도 조회 가능.
 
@@ -230,7 +230,7 @@ POST /analyze { "url": "...", "scope": "all" }
 ## 알려진 제약 / TODO
 
 - **PSI API**: LCP/CLS/INP는 enabled:false 상태. 활성화 시 `psi_metric` 룰 타입 신규 + Google API 키 + 분당 25회 rate limit 핸들링 필요.
-- **PDP 핵심 element (#39)**: 임시 placeholder selector 사용 중. LG팀 정의 후 어드민에서 교체.
+- **PDP #38/#39 selector**: US(React/MUI) PDP 기준(`Product-*`, `img[src*=PDPGalleryThumbnail]`) + 구 AEM(`.c-*`) fallback 병기. 다른 국가가 별도 템플릿이면 어드민에서 selector 추가 필요.
 - **Soft 404 (#43)**: 본문 길이 임계값(200자)은 도메인별 튜닝 필요할 수 있음.
 
 ## 정기 Audit 실행기 (구현됨)
