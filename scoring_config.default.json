@@ -164,7 +164,8 @@
           "type": "css_all_have_attr",
           "params": {
             "selector": "img",
-            "attr": "alt"
+            "attr": "alt",
+            "ignore_src_contains": "adnxs.com,ads.linkedin.com,doubleclick,googletagmanager,google-analytics,facebook.com/tr,/pixel,/collect,scorecardresearch,demdex,everesttech,bat.bing"
           }
         }
       },
@@ -178,7 +179,7 @@
           "type": "landmark_count_min",
           "params": {
             "min_landmarks": 3,
-            "require_main": "yes"
+            "require_main": "no"
           }
         }
       },
@@ -678,7 +679,7 @@
         "rule": {
           "type": "css_exists",
           "params": {
-            "selector": "[class*='summary'], [id*='summary'], [class*='overview'], [class*='highlight']"
+            "selector": "[class*='summary'], [class*='Summary'], [id*='summary'], [class*='overview'], [class*='Overview'], [class*='highlight'], [class*='Product-KeyFeatures'], [class*='Product-Features']"
           }
         }
       },
@@ -752,8 +753,8 @@
       },
       {
         "id": "ai_schema_website",
-        "name": "#40 Schema: WebSite",
-        "spec_id": "#40",
+        "name": "#49 Schema: WebSite",
+        "spec_id": "#49",
         "points": 1,
         "enabled": true,
         "applies_to_page_types": [

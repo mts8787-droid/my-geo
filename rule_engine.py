@@ -414,8 +414,16 @@ def _eval_css_all_have_attr(params: dict, ctx: dict) -> dict:
         return {"pass": False, "value": None, "hint": "HTML 파싱 실패"}
     selector = params.get("selector", "")
     attr = params.get("attr", "")
+    ignore_raw = params.get("ignore_src_contains", "") or ""
+    ignore_tokens = [t.strip().lower() for t in ignore_raw.split(",") if t.strip()]
 
     els = soup.select(selector)
+    if ignore_tokens:
+        def _is_tracking(el):
+            src = (el.get("src") or "").lower()
+            return any(tok in src for tok in ignore_tokens)
+        els = [el for el in els if not _is_tracking(el)]
+
     if not els:
         return {"pass": True, "value": "해당 요소 없음", "hint": None}
 
@@ -774,14 +782,21 @@ def _eval_landmark_count_min(params: dict, ctx: dict) -> dict:
 
     landmarks = ["main", "nav", "header", "footer", "article", "section", "aside"]
     counts = {tag: len(soup.find_all(tag)) for tag in landmarks}
-    total = sum(counts.values())
+    heading_count = len(soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6"]))
+    total = sum(counts.values()) + heading_count
 
     main_ok = (counts["main"] >= 1) if require_main else True
     passed = main_ok and total >= min_landmarks
+    if require_main and not main_ok:
+        hint = f"main {counts['main']}개 — main 태그 1+ 필요"
+    elif not passed:
+        hint = f"헤딩 {heading_count} + 랜드마크 {sum(counts.values())} = {total} — 의미 구조 {min_landmarks}+ 필요"
+    else:
+        hint = None
     return {
         "pass": passed,
-        "value": f"main={counts['main']}, 합계={total}",
-        "hint": None if passed else f"main {counts['main']}개, 랜드마크 합계 {total} — main 1+ AND 합계 {min_landmarks}+ 필요",
+        "value": f"헤딩={heading_count}, 랜드마크={sum(counts.values())}, 합계={total}",
+        "hint": hint,
     }
 
 
