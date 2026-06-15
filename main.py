@@ -905,6 +905,19 @@ async def get_classify_for_group(group_id: str, request: Request):
     }
 
 
+@app.get("/admin/gnb/discover/{group_id}")
+async def discover_gnb_for_group(group_id: str, request: Request, classify: bool = True):
+    """홈페이지 GNB(header/nav) 링크 파싱 → sitemap 미포함 신규 URL 발견 + 분류.
+
+    read-only 반환. 병합/영속화는 호출 측에서 url-classifications-raw PUT으로 처리.
+    httpx만 사용 (Playwright 불필요) — Render 메모리 안전.
+    """
+    if not _verify_admin(request):
+        raise HTTPException(status_code=401, detail="인증이 필요합니다.")
+    from gnb_parser import discover_gnb
+    return await discover_gnb(group_id, classify_new=classify)
+
+
 @app.get("/admin/classify")
 async def get_classify_all(request: Request):
     """전체 그룹의 분류 summary 일괄 조회. 큰 classifications dict는 제외."""
