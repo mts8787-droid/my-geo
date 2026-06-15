@@ -640,28 +640,38 @@
             "groups": [
               {
                 "label": "제품명",
-                "selector": "h1.cmp-text, h1, [class*='Product-MainTitle']"
+                "selector": "h1.cmp-text, h1, [class*='Product-MainTitle']",
+                "jsonld_any": ["\"name\""],
+                "raw_any": ["\"productname\"", "\"modelname\""]
               },
               {
                 "label": "가격",
-                "selector": "[class*='Product-Price'], [class*='price-area'], .info-sticky--price"
+                "selector": "[class*='Product-Price'], [class*='price-area'], .info-sticky--price",
+                "jsonld_any": ["pricecurrency", "\"price\"", "pricespecification"],
+                "raw_any": ["pricecurrency", "\"offers\""]
               },
               {
                 "label": "갤러리",
-                "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'], .c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img"
+                "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'], .c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img",
+                "jsonld_any": ["\"image\""],
+                "raw_any": ["pdpgallerythumbnail"]
               },
               {
                 "label": "사양",
-                "selector": "[class*='Product-KeyFeatures'], [class*='Product-Features'], .c-specs-summary, .c-all-specs-area, .c-specs-dimensions"
+                "selector": "[class*='Product-KeyFeatures'], [class*='Product-Features'], .c-specs-summary, .c-all-specs-area, .c-specs-dimensions",
+                "jsonld_any": ["additionalproperty"],
+                "raw_any": ["\"specification\"", "\"keyfeature\"", "\"feature\""]
               },
               {
-                "label": "CTA",
-                "selector": "[class*='Product-Button'], [class*='Product-WishList'], .c-cta, .c-wrapper, .button-bomE"
+                "label": "리뷰",
+                "selector": "[data-bv-show], [class*='Product-Review'], [class*='review'], [class*='Review'], [class*='rating'], [class*='Rating']",
+                "jsonld_any": ["aggregaterating", "\"review\""],
+                "raw_any": ["data-bv-show", "rating_summary", "\"reviewcount\""]
               }
             ]
           }
         },
-        "note": "LG SG PDP 3개(cooking/refrig/washing) dom 조사 기반 selector. 다른 국가/스킨은 어드민에서 추가 가능."
+        "note": "US/React PDP: DOM 위젯은 CSR이지만 데이터는 SSR(JSON-LD/__NEXT_DATA__)로 존재. DOM OR JSON-LD OR raw embedded 중 하나라도 있으면 해당 영역 SSR 인정. 5개 영역 중 3개 이상 PASS."
       },
       {
         "id": "ai_summary_ssr",

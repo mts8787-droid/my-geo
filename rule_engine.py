@@ -1340,11 +1340,16 @@ def _eval_schema_any_of(params: dict, ctx: dict) -> dict:
 
 
 def _eval_area_coverage(params: dict, ctx: dict) -> dict:
-    """여러 selector 영역 중 N개 이상에서 요소가 존재하면 PASS.
+    """여러 영역 중 N개 이상이 SSR에 존재하면 PASS.
+
+    영역은 다음 중 '하나라도' 충족하면 매칭으로 본다 (데이터 형태 무관):
+      - selector   : 렌더된 DOM 요소(CSS)
+      - jsonld_any : JSON-LD 원본에 등장하는 토큰(가격/사양/리뷰 구조화 데이터)
+      - raw_any    : raw HTML 토큰(__NEXT_DATA__ 등 임베디드 JSON)
 
     params:
-      groups: list of {"label": str, "selector": str} — 각 영역
-      min_groups: int — 최소 매칭 그룹 수
+      groups: list of {"label", "selector"?, "jsonld_any"?[], "raw_any"?[]}
+      min_groups: int — 최소 매칭 영역 수
     """
     soup = ctx.get("soup")
     if soup is None:
@@ -1352,18 +1357,34 @@ def _eval_area_coverage(params: dict, ctx: dict) -> dict:
     groups = params.get("groups") or []
     min_groups = int(params.get("min_groups", 1))
 
+    import json as _json
+    jsonld_text = _json.dumps(ctx.get("jsonld_raw") or [], ensure_ascii=False).lower()
+    raw_html = ((ctx.get("page_data") or {}).get("raw_html") or "").lower()
+
+    def _hit(tokens, haystack):
+        for t in tokens or []:
+            t = (t or "").strip().lower()
+            if t and t in haystack:
+                return t
+        return None
+
     matched_labels, missing_labels = [], []
     for g in groups:
         label = (g.get("label") or "?").strip()
         sel = (g.get("selector") or "").strip()
-        if not sel:
-            continue
-        try:
-            count = len(soup.select(sel))
-        except Exception:
-            count = 0
-        if count > 0:
-            matched_labels.append(f"{label}({count})")
+        src = None
+        if sel:
+            try:
+                if len(soup.select(sel)) > 0:
+                    src = "dom"
+            except Exception:
+                pass
+        if not src and _hit(g.get("jsonld_any"), jsonld_text):
+            src = "jsonld"
+        if not src and _hit(g.get("raw_any"), raw_html):
+            src = "raw"
+        if src:
+            matched_labels.append(f"{label}({src})")
         else:
             missing_labels.append(label)
 
