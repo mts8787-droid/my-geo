@@ -1027,6 +1027,21 @@ async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict
                     "na": True,
                 }
                 continue
+            # applies_when: 특정 콘텐츠(CSS selector)가 있을 때만 평가. 없으면 N/A.
+            applies_when = cr.get("applies_when")
+            if applies_when:
+                sel = applies_when.get("selector")
+                soup = context.get("soup")
+                if sel and soup and not soup.select(sel):
+                    items[cr["id"]] = {
+                        "label": cr.get("name", cr["id"]),
+                        "pass":  None,
+                        "value": None,
+                        "hint":  applies_when.get("na_hint", "해당 콘텐츠가 없어 평가 대상이 아닙니다."),
+                        "rule_type": rule.get("type"),
+                        "na": True,
+                    }
+                    continue
             result = await evaluate_rule_async(rule, context)
             passed = result.get("pass", False)
             if passed:

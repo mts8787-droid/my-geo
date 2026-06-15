@@ -441,12 +441,10 @@
             "fields": "url,name,description,uploadDate"
           }
         },
-        "applies_to_page_types": [
-          "pdp",
-          "content",
-          "newsroom",
-          "microsite"
-        ]
+        "applies_when": {
+          "selector": "figure img, article img, picture img, [class*='content'] img, [class*='Content'] img, [class*='editorial'] img, [class*='gallery'] img, [class*='Gallery'] img, [class*='Product-ImageGrid'] img, img[src*='PDPGalleryThumbnail'], .cmp-image img",
+          "na_hint": "본문 콘텐츠 이미지가 없어 ImageObject 평가 대상이 아닙니다."
+        }
       },
       {
         "id": "ai_schema_video",
@@ -461,12 +459,10 @@
             "fields": "url,name,description,thumbnailUrl"
           }
         },
-        "applies_to_page_types": [
-          "pdp",
-          "content",
-          "newsroom",
-          "microsite"
-        ]
+        "applies_when": {
+          "selector": "video, source[type^='video'], iframe[src*='youtube'], iframe[src*='youtu.be'], iframe[src*='vimeo'], iframe[src*='player.'], [class*='video'] iframe, [class*='Video'] iframe, [data-video]",
+          "na_hint": "비디오가 삽입되지 않아 VideoObject 평가 대상이 아닙니다."
+        }
       },
       {
         "id": "ai_schema_howto",
@@ -482,10 +478,7 @@
           }
         },
         "applies_to_page_types": [
-          "pdp",
-          "support_troubleshoot",
-          "buying_guide",
-          "microsite"
+          "support_troubleshoot"
         ]
       },
       {
