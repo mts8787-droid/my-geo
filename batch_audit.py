@@ -119,9 +119,11 @@ def _to_bq_row(
             "max_score": None,
             "grade": None,
             "error": error or "no result",
+            "csr_ratio": None,
             "breakdown": [],
         }
     score = result.get("score", {}) or {}
+    csr = result.get("csr_ratio", {}) or {}
     breakdown_raw = score.get("breakdown", {}) or {}
     breakdown_rows = []
     for cat_key, cat in breakdown_raw.items():
@@ -152,6 +154,12 @@ def _to_bq_row(
         "max_score": score.get("max"),
         "grade": score.get("grade"),
         "error": None,
+        "csr_ratio": {
+            "status": csr.get("status"),
+            "ssr_chars": csr.get("ssr_chars"),
+            "csr_chars": csr.get("csr_chars"),
+            "ratio": csr.get("ratio"),
+        },
         "breakdown": breakdown_rows,
     }
 

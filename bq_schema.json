@@ -8,6 +8,17 @@
   {"name": "grade", "type": "STRING", "mode": "NULLABLE"},
   {"name": "error", "type": "STRING", "mode": "NULLABLE"},
   {
+    "name": "csr_ratio",
+    "type": "RECORD",
+    "mode": "NULLABLE",
+    "fields": [
+      {"name": "status", "type": "STRING", "mode": "NULLABLE"},
+      {"name": "ssr_chars", "type": "INT64", "mode": "NULLABLE"},
+      {"name": "csr_chars", "type": "INT64", "mode": "NULLABLE"},
+      {"name": "ratio", "type": "FLOAT64", "mode": "NULLABLE"}
+    ]
+  },
+  {
     "name": "breakdown",
     "type": "RECORD",
     "mode": "REPEATED",
