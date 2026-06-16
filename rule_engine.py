@@ -808,17 +808,15 @@ def _eval_heading_no_jump(params: dict, ctx: dict) -> dict:
     levels = [int(h.name[1]) for h in headings]
     if not levels:
         return {"pass": False, "value": "헤딩 없음", "hint": "헤딩 태그가 없습니다."}
-    jumps = 0
-    last = 0
-    for lv in levels:
-        if last > 0 and lv - last > 1:
-            jumps += 1
-        last = lv
-    passed = jumps == 0
+    # #11 완화: 레벨 건너뛰기(h1→h3 처럼 깊이로 점프)는 허용 — 실제 역순(reversed)만 실패.
+    # 역순 = 첫 헤딩보다 얕은(상위) 레벨이 뒤에 등장 (예: h2…→h1 — 본문 제목이 하위 섹션 뒤).
+    first = levels[0]
+    inversions = sum(1 for lv in levels[1:] if lv < first)
+    passed = inversions == 0
     return {
         "pass": passed,
-        "value": f"{len(levels)}개 헤딩, 점프 {jumps}건",
-        "hint": None if passed else f"레벨 점프 {jumps}건 발견 (예: h1→h3)",
+        "value": f"{len(levels)}개 헤딩, 첫 레벨 h{first}, 역순 {inversions}건",
+        "hint": None if passed else f"헤딩 역순 {inversions}건 — 첫 헤딩(h{first})보다 상위 레벨이 뒤에 등장",
     }
 
 
@@ -1152,33 +1150,43 @@ def _eval_image_filename_keyword(params: dict, ctx: dict) -> dict:
     }
 
 
-def _eval_author_or_source(params: dict, ctx: dict) -> dict:
-    soup = ctx.get("soup")
-    if not soup:
-        return {"pass": False, "value": None, "hint": "HTML 파싱 실패"}
+def _walk_jsonld_all(data, results: list):
+    """JSON-LD 트리의 모든 dict 노드 수집 (@type 무관)."""
+    if isinstance(data, dict):
+        results.append(data)
+        for v in data.values():
+            _walk_jsonld_all(v, results)
+    elif isinstance(data, list):
+        for item in data:
+            _walk_jsonld_all(item, results)
 
-    # 1) meta[name=author]
-    if soup.select_one("meta[name='author' i]") and (soup.select_one("meta[name='author' i]").get("content") or "").strip():
-        return {"pass": True, "value": "meta[name=author] 발견", "hint": None}
-    # 2) byline/author class
-    for sel in [".byline", ".author", "[rel='author']", "[itemprop='author']"]:
-        el = soup.select_one(sel)
-        if el and el.get_text(strip=True):
-            return {"pass": True, "value": f"{sel} 발견", "hint": None}
-    # 3) datePublished + source 조합
-    has_date = bool(
-        soup.select_one("[itemprop='datePublished']")
-        or soup.select_one("time[datetime]")
-        or soup.select_one("meta[property='article:published_time']")
-    )
-    has_source = bool(soup.select_one(".source, [data-source], cite"))
-    if has_date and has_source:
-        return {"pass": True, "value": "출처+날짜 조합 발견", "hint": None}
+
+def _eval_author_or_source(params: dict, ctx: dict) -> dict:
+    # #34 스키마 기반 — JSON-LD 의 author(Person/Organization) 또는 (datePublished + publisher/source).
+    raw = ctx.get("jsonld_raw") or []
+    nodes: list = []
+    for d in raw:
+        _walk_jsonld_all(d, nodes)
+    if not nodes:
+        return {"pass": False, "value": None, "hint": "JSON-LD 노드 없음 (author/source 스키마 검증 불가)"}
+
+    # 1) author 필드 (Person/Organization name 또는 문자열)
+    for node in nodes:
+        if _has_dotted_path(node, "author"):
+            return {"pass": True, "value": "JSON-LD author 발견", "hint": None}
+    # 2) datePublished + (publisher | sourceOrganization | source)
+    for node in nodes:
+        if _has_dotted_path(node, "datePublished") and (
+            _has_dotted_path(node, "publisher")
+            or _has_dotted_path(node, "sourceOrganization")
+            or _has_dotted_path(node, "source")
+        ):
+            return {"pass": True, "value": "JSON-LD datePublished+publisher 조합 발견", "hint": None}
 
     return {
         "pass": False,
-        "value": None,
-        "hint": "저자(meta/byline) 또는 (출처+datePublished) 조합 없음",
+        "value": f"JSON-LD {len(nodes)}개 노드",
+        "hint": "JSON-LD author 또는 (datePublished+publisher) 조합 없음",
     }
 
 

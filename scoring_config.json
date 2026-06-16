@@ -389,6 +389,7 @@
         },
         "applies_to_page_types": [
           "pdp",
+          "plp",
           "buying_guide",
           "microsite"
         ]
