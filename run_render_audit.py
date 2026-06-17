@@ -19,6 +19,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 import time
 import uuid
@@ -111,6 +112,12 @@ def main():
     code = args.code.lower()
     csv_path = os.path.join(HERE, "reports", f"lg_urls_{code}.csv")
     urls = [r[0].strip() for r in csv.reader(open(csv_path)) if r and r[0].strip() != "url"]
+    # sitemap에 공백/제어문자가 든 잘못된 URL이 섞이면 Render bulk가 청크 전체를
+    # 400 처리(50건 동반 거부)한다 → 사전 제거.
+    bad = [u for u in urls if (not u.startswith("http")) or re.search(r"\s", u)]
+    if bad:
+        print(f"[render-audit] invalid URL {len(bad)}건 제외 (공백/형식 오류). 예: {bad[0]}")
+        urls = [u for u in urls if u not in set(bad)]
     if not args.full:
         urls = _sample_by_page_type(urls, args.per_type)
     if args.limit:
