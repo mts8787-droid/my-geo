@@ -182,7 +182,19 @@ def main():
     _save("ok")
     ok = sum(1 for it in summary if (it.get('result') or {}).get('score'))
     print(f"[render-audit] 완료: {len(summary)}건 (성공 {ok}) → {out_path}")
+    _refresh_report()
     return 0
+
+
+def _refresh_report():
+    """감사 완료 시 감점 사유 종합 리포트(reports/audit_report.txt)를 자동 갱신.
+
+    리포트 생성 실패는 감사 결과에 영향 주지 않도록 흡수한다."""
+    try:
+        import gen_audit_report
+        gen_audit_report.gen()
+    except Exception as e:
+        print(f"[render-audit] 리포트 자동 갱신 건너뜀: {type(e).__name__}: {e}")
 
 
 if __name__ == "__main__":
