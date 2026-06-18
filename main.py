@@ -373,8 +373,12 @@ async def analyze(request: Request, body: AnalyzeRequest):
             log.exception("worker /analyze 연결 실패: %s", e)
             raise HTTPException(status_code=502, detail="워커 연결 실패")
 
+    # 워커 없이 Render 로컬에서 직접 실행하는 경로. 풀 모드(CSR)는 512MB OOM →
+    # 워커 미설정 시 자동으로 lightweight로 강등(크래시 방지). 워커 설정 후엔
+    # 위 프록시 분기로 빠져 실제 CSR이 복원된다.
+    effective_lightweight = body.lightweight or not _WORKER_URL
     try:
-        result = await analyze_url(url, scope=scope, lightweight=body.lightweight)
+        result = await analyze_url(url, scope=scope, lightweight=effective_lightweight)
         return result
     except Exception as e:
         log.exception("/analyze 실패: url=%s err=%s", url, e)
