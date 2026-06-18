@@ -134,11 +134,11 @@
 - **PoC**: Y
 
 ### #11 — Heading Hierarchy *(a11y)*
-- **PASS**: 헤딩 레벨 점프 **0건** (h1→h2→h3 순)
-- **FAIL**: 점프 1건 이상 (예: h1 다음 h3)
-- **측정 방법**: 모든 h1–h6을 문서 순서대로 추출 후 인접 레벨 차이 검사
+- **PASS**: 헤딩 **역순 0건** — 첫 헤딩보다 상위(얕은) 레벨이 뒤에 등장하지 않음
+- **FAIL**: 역순 1건 이상 (예: 첫 헤딩 h3 → 이후 h1/h2 등장)
+- **측정 방법**: 모든 h1–h6을 문서 순서대로 추출 후, 첫 헤딩 레벨보다 얕은(번호가 작은) 레벨이 뒤에 나오는지 검사
 - **측정 레벨**: 페이지
-- **구현**: 순차 탐색하며 `current_level - prev_level > 1` 발생 시 위반 카운트
+- **구현**: `first = levels[0]`, `inversions = Σ(lv < first for lv in levels[1:])`, `inversions == 0`이면 PASS. 레벨 건너뛰기(h1→h3 같은 깊이 점프)는 허용하고 **역순만** 위반으로 본다.
 - **PoC**: Y
 
 ### #12 — ARIA Labels *(a11y)*
@@ -426,7 +426,7 @@
 | 11 | INP | ≤ 500ms | 페이지 | N |
 | 9 (a11y) | Image Alt | 누락 0 | 페이지 | Y |
 | 10 (a11y) | Semantic HTML | main + 랜드마크 ≥ 3 | 페이지 | Y |
-| 11 (a11y) | Heading Hierarchy | 점프 위반 0 | 페이지 | Y |
+| 11 (a11y) | Heading Hierarchy | 역순 0 (첫 헤딩보다 상위 레벨 후행 없음) | 페이지 | Y |
 | 12 (a11y) | ARIA Labels | 누락 < 10% | 페이지 | Y |
 | 13 | Title | 존재 | 페이지 | Y |
 | 14 | Meta Description | 존재 | 페이지 | Y |
