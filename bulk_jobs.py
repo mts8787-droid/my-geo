@@ -61,22 +61,24 @@ async def _run(job_id: str, urls: List[str], scope: str, lightweight: bool) -> N
             except Exception as e:
                 return {"url": url, "result": None, "error": f"{type(e).__name__}: {str(e)[:120]}"}
 
+    # 스트리밍 풀: 항상 _JOB_CONCURRENCY 개가 떠있도록 세마포어로 제한하고
+    # 완료되는 대로 progress 갱신 (배치 head-of-line 블로킹 제거).
+    tasks = [asyncio.create_task(_one(u)) for u in urls]
     try:
-        # 항목별로 progress 갱신 — 동시성 단위로 묶어 gather (배치 크기 = 동시성).
-        for i in range(0, len(urls), _JOB_CONCURRENCY):
-            batch = urls[i:i + _JOB_CONCURRENCY]
-            results = await asyncio.gather(*(_one(u) for u in batch))
+        for fut in asyncio.as_completed(tasks):
+            res = await fut
             async with _lock:
                 if job.get("status") == "cancelled":
-                    return
-                job["items"].extend(results)
+                    break
+                job["items"].append(res)
                 job["completed"] = len(job["items"])
-        async with _lock:
-            if scope == "all":
-                scores = [it["result"]["score"]["total"] for it in job["items"] if it["result"]]
-                job["average"] = round(sum(scores) / len(scores), 1) if scores else 0
-            job["status"] = "done"
-            job["finished_at"] = _now()
+        if job.get("status") != "cancelled":
+            async with _lock:
+                if scope == "all":
+                    scores = [it["result"]["score"]["total"] for it in job["items"] if it["result"]]
+                    job["average"] = round(sum(scores) / len(scores), 1) if scores else 0
+                job["status"] = "done"
+                job["finished_at"] = _now()
     except asyncio.CancelledError:
         async with _lock:
             job["status"] = "cancelled"
@@ -87,6 +89,10 @@ async def _run(job_id: str, urls: List[str], scope: str, lightweight: bool) -> N
             job["status"] = "error"
             job["error"] = f"{type(e).__name__}: {e}"
             job["finished_at"] = _now()
+    finally:
+        for t in tasks:
+            if not t.done():
+                t.cancel()
 
 
 def submit(urls: List[str], scope: str = "all", lightweight: bool = True) -> str:
