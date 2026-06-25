@@ -27,7 +27,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 _MAX_JOBS = 50
-_JOB_CONCURRENCY = int(os.environ.get("BULK_JOB_CONCURRENCY", "5"))
+_JOB_CONCURRENCY = int(os.environ.get("BULK_JOB_CONCURRENCY", "20"))
 _jobs: dict = {}            # job_id → status dict
 _tasks: dict = {}           # job_id → asyncio.Task
 _lock = asyncio.Lock()
