@@ -10,3 +10,5 @@ services:
         value: 10000
       - key: ALLOWED_ORIGINS
         value: https://geo-audit.onrender.com,https://geoaudit.dev
+      - key: BULK_JOB_CONCURRENCY
+        value: 20

@@ -21,11 +21,13 @@ API:
 보관 정책: 최근 50개 job. 그 이전은 제거 (메모리 보호).
 """
 import asyncio
+import os
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
 
 _MAX_JOBS = 50
+_JOB_CONCURRENCY = int(os.environ.get("BULK_JOB_CONCURRENCY", "5"))
 _jobs: dict = {}            # job_id → status dict
 _tasks: dict = {}           # job_id → asyncio.Task
 _lock = asyncio.Lock()
@@ -48,7 +50,7 @@ def _trim_old_jobs() -> None:
 async def _run(job_id: str, urls: List[str], scope: str, lightweight: bool) -> None:
     from analyzer import analyze_url  # 순환 import 회피
     job = _jobs[job_id]
-    sem = asyncio.Semaphore(5)
+    sem = asyncio.Semaphore(_JOB_CONCURRENCY)
 
     async def _one(url: str) -> dict:
         async with sem:
@@ -60,9 +62,9 @@ async def _run(job_id: str, urls: List[str], scope: str, lightweight: bool) -> N
                 return {"url": url, "result": None, "error": f"{type(e).__name__}: {str(e)[:120]}"}
 
     try:
-        # 항목별로 progress 갱신 — 클라이언트 polling이 매 5개 단위로 의미 있는 갱신을 받도록
-        for i in range(0, len(urls), 5):
-            batch = urls[i:i + 5]
+        # 항목별로 progress 갱신 — 동시성 단위로 묶어 gather (배치 크기 = 동시성).
+        for i in range(0, len(urls), _JOB_CONCURRENCY):
+            batch = urls[i:i + _JOB_CONCURRENCY]
             results = await asyncio.gather(*(_one(u) for u in batch))
             async with _lock:
                 if job.get("status") == "cancelled":
