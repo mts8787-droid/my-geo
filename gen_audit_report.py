@@ -14,8 +14,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 RUNS = os.path.join(HERE, "data", "run_results")
 OUT = os.path.join(HERE, "reports", "audit_report.txt")
 
-# 신 배포(2026-06-17 재배포: #11 역순 / #23 plp / #34 author) 기준으로 채점된 run
-NEW_CONFIG_RUNS = {"us_2026-06-17_run_806dddbee389.json"}
+# 신 배포 컷오프 — 2026-06-17 Render 재배포(#11 역순 / #23 plp / #34 author) 이후
+# 채점된 run 은 신(新) 기준. run 파일명의 날짜로 판정(하드코딩 allowlist 대체).
+NEW_CONFIG_DATE = "2026-06-17"
+
+
+def _run_date(fn):
+    m = re.match(r"^[a-z]{2}_(\d{4}-\d{2}-\d{2})_run_", fn)
+    return m.group(1) if m else "0000-00-00"
 
 
 def item_meta():
@@ -91,17 +97,23 @@ def gen():
     w(f"생성: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     w(f"대상: {len(runs)}개국 최신 run / 국가별 page_type ≤100 샘플")
     w("")
+    new_codes = [c for c, fn in runs.items() if _run_date(fn) >= NEW_CONFIG_DATE]
+    old_codes = [c for c, fn in runs.items() if _run_date(fn) < NEW_CONFIG_DATE]
     w("[채점 기준 주의] 2026-06-17 Render 재배포로 #11(헤딩 역순)·#23(FAQ plp)·")
-    w("#34(author 스키마) 로직이 바뀌었습니다. 아래 US 만 신(新) 기준으로 채점됐고,")
-    w("나머지 국가는 재배포 이전(구 기준) run 입니다 — #11/#23/#34 항목은 국가 간")
-    w("직접 비교가 부적절합니다(각 국가 헤더에 [config] 표기).")
+    w("#34(author 스키마) 로직이 바뀌었습니다.")
+    if old_codes:
+        w(f"신(新) 기준: {', '.join(c.upper() for c in new_codes) or '없음'}")
+        w(f"구(舊) 기준: {', '.join(c.upper() for c in old_codes)}")
+        w("→ #11/#23/#34 항목은 신/구 국가 간 직접 비교가 부적절합니다(각 국가 헤더 [config] 표기).")
+    else:
+        w(f"전 국가({len(new_codes)}개) 신(新) 기준으로 채점됨 — 국가 간 직접 비교 가능(각 국가 헤더 [config] 표기).")
     w("=" * 78)
     w("")
 
     for code, fn in runs.items():
         d = json.load(open(os.path.join(RUNS, fn)))
         summ = d.get("summary", [])
-        cfgtag = "신(2026-06-17 재배포)" if fn in NEW_CONFIG_RUNS else "구(재배포 이전)"
+        cfgtag = "신(2026-06-17 재배포)" if _run_date(fn) >= NEW_CONFIG_DATE else "구(재배포 이전)"
 
         # fetch 실패 분리 + 등급 분포(성공 페이지 기준)
         gd = Counter()
