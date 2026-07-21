@@ -18,7 +18,10 @@
       "detection": {
         "meta_template": ["pdp-page", "product-page"],
         "body_class":    ["productpage", "pdp"],
-        "url_pattern":   ["/us/(?!support|business|press)[^/]+/lg-[a-zA-Z0-9]"]
+        "url_pattern":   [
+          "/us/(?!support|business|press)[^/]+/lg-[a-zA-Z0-9]",
+          "/(?!us/)[a-z]{2}(?:[_-][a-z]{2})?/(?!(?:support|soporte|suporte|tro-giup|business|about-lg|about|acerca-de-lg|sobre-a-lg|uber-lg|ueber-lg|gioi-thieu-lg|promotion|promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai|tncs|lifesgood|magazine|lg-experience|experience|discover|monthly-lg|blog|press-release|press-media|newsroom|historias-con-lg|historias-com-lg|contact-us)(?:/|\\?|$))(?!.*-vs-)(?!.*buying-guides?(?:/|$))(?!.*/(?:why|what|how|best|top|which|when|where)-)(?:[a-z0-9-]+/){1,4}[a-z0-9]*\\d[a-z0-9-]*/?(?:[?#].*)?$"
+        ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "Product", "Offer", "AggregateRating", "Review", "FAQPage", "HowTo", "ImageObject", "VideoObject"],
       "recommended_schemas": []
@@ -32,7 +35,8 @@
         "url_pattern":   [
           "^https?://[^/]+/us/(?!(?:support|business|about-lg|about|promotion|promotions|tncs|lifesgood|magazine|lg-experience|experience|discover|monthly-lg|blog|press-release|press-media|newsroom)(?:/|\\?|$))(?!(?:why|what|how|best|top|which|when|where)-)(?!.*-vs-)(?!.*buying-guides?(?:/|$))[a-z0-9-]+/?$",
           "/us/collections/",
-          "/us/[^/]+/discontinued(/|$)"
+          "/us/[^/]+/discontinued(/|$)",
+          "/(?!us/)[a-z]{2}(?:[_-][a-z]{2})?/(?!(?:support|soporte|suporte|tro-giup|business|about-lg|about|acerca-de-lg|sobre-a-lg|uber-lg|ueber-lg|gioi-thieu-lg|promotion|promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai|tncs|lifesgood|magazine|lg-experience|experience|discover|monthly-lg|blog|press-release|press-media|newsroom|historias-con-lg|historias-com-lg|contact-us)(?:/|\\?|$))(?!.*-vs-)(?!.*buying-guides?(?:/|$))(?!.*/(?:why|what|how|best|top|which|when|where)-)(?:[a-z0-9-]+/){0,3}[a-z][a-z-]*/?(?:[?#].*)?$"
         ]
       },
       "expected_schemas":    ["Organization", "BreadcrumbList", "ItemList", "CollectionPage"],
