@@ -98,6 +98,28 @@ def _run_chunk(urls):
     return [], "timeout", f"job {job_id} 폴링 타임아웃"
 
 
+def _run_chunk_local(urls):
+    """Render 대신 로컬 analyze_url(lightweight)로 청크 처리. IP차단 국가(AU/IN) 우회용.
+    Render 데이터센터 IP는 Akamai 403을 받지만 Mac Mini 주거용 IP는 통과한다(실측 확인)."""
+    import asyncio
+    from analyzer import analyze_url  # httpx 필요 — /usr/bin/python3 env 에서만 동작
+    conc = int(os.environ.get("LOCAL_AUDIT_CONCURRENCY", "5"))
+
+    async def _run():
+        sem = asyncio.Semaphore(conc)
+
+        async def one(u):
+            async with sem:
+                try:
+                    return {"url": u, "result": await analyze_url(u, lightweight=True)}
+                except Exception as e:
+                    return {"url": u, "result": None, "error": f"{type(e).__name__}: {str(e)[:120]}"}
+
+        return await asyncio.gather(*[one(u) for u in urls])
+
+    return asyncio.run(_run()), "done", None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("code", nargs="?", default="us")
@@ -107,6 +129,8 @@ def main():
                     help="page_type별 최대 감사 수 (다른 국가와 동일한 샘플 방식, 기본 100)")
     ap.add_argument("--full", action="store_true",
                     help="전수 감사(비권장). 미지정 시 반드시 page_type별 샘플만 감사.")
+    ap.add_argument("--local", action="store_true",
+                    help="Render 대신 로컬 analyze_url(lightweight)로 감사. IP차단 국가(AU/IN) 우회용. /usr/bin/python3 필요.")
     args = ap.parse_args()
 
     code = args.code.lower()
@@ -163,12 +187,13 @@ def main():
     last_submit = 0.0
     for i in range(0, len(todo), args.chunk):
         batch = todo[i:i + args.chunk]
-        gap = MIN_SUBMIT_GAP - (time.time() - last_submit)
-        if gap > 0:
-            time.sleep(gap)
+        if not args.local:  # 로컬 모드는 Render rate limit 무관 → 제출 간격 불필요
+            gap = MIN_SUBMIT_GAP - (time.time() - last_submit)
+            if gap > 0:
+                time.sleep(gap)
         last_submit = time.time()
         try:
-            items, st, err = _run_chunk(batch)
+            items, st, err = (_run_chunk_local if args.local else _run_chunk)(batch)
         except Exception as e:
             items, st, err = [], "failed", f"{type(e).__name__}: {e}"
         if st != "done":
