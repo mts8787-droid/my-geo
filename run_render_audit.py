@@ -220,6 +220,11 @@ def _refresh_report():
         gen_audit_report.gen()
     except Exception as e:
         print(f"[render-audit] 리포트 자동 갱신 건너뜀: {type(e).__name__}: {e}")
+    try:
+        import gen_dashboard_data
+        gen_dashboard_data.main()
+    except Exception as e:
+        print(f"[render-audit] 대시보드 데이터 갱신 건너뜀: {type(e).__name__}: {e}")
 
 
 if __name__ == "__main__":

@@ -31,3 +31,4 @@ geo-audit-batch*.json
 .gcp/
 data/geoaudit.*.log
 data/*.log
+reports/dashboard_data.json
