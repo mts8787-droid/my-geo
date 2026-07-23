@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO Audit — MCP 접속 & Raw JSON 수령 가이드</title>
+<style>
+  :root {
+    --bg:#0f1117; --card:#1a1d27; --line:#2a2f3d; --fg:#e6e8ee; --mut:#9aa3b2;
+    --acc:#7aa2ff; --acc2:#4ade80; --warn:#fbbf24; --code:#0b0d13;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo",sans-serif;
+    line-height:1.65; }
+  .wrap { max-width:960px; margin:0 auto; padding:48px 24px 96px; }
+  h1 { font-size:28px; margin:0 0 6px; letter-spacing:-.02em; }
+  .sub { color:var(--mut); margin:0 0 32px; font-size:14px; }
+  h2 { font-size:19px; margin:40px 0 14px; padding-top:14px; border-top:1px solid var(--line);
+    display:flex; align-items:center; gap:10px; }
+  h2 .n { background:var(--acc); color:#0b0d13; width:24px; height:24px; border-radius:6px;
+    display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex:0 0 auto; }
+  h3 { font-size:15px; margin:22px 0 8px; color:var(--acc); }
+  p { margin:8px 0; }
+  code { background:var(--code); padding:2px 6px; border-radius:4px; font-size:13px;
+    font-family:"SF Mono",Menlo,Consolas,monospace; color:#d7dae2; }
+  pre { background:var(--code); border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; overflow-x:auto; font-size:12.5px; line-height:1.55;
+    font-family:"SF Mono",Menlo,Consolas,monospace; }
+  pre .k { color:var(--acc); } pre .s { color:var(--acc2); } pre .c { color:var(--mut); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:13.5px; }
+  th,td { text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--mut); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.03em; }
+  td code { font-size:12.5px; }
+  .kv { display:grid; grid-template-columns:130px 1fr; gap:6px 16px; font-size:13.5px; margin:6px 0; }
+  .kv dt { color:var(--mut); } .kv dd { margin:0; }
+  .pill { display:inline-block; background:#20283a; color:var(--acc); border:1px solid #2f3b57;
+    padding:1px 8px; border-radius:20px; font-size:12px; font-family:monospace; }
+  .note { border-left:3px solid var(--warn); background:#211d10; padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0; font-size:13.5px; }
+  .ok { border-left:3px solid var(--acc2); background:#0f1e15; padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0; font-size:13.5px; }
+  a { color:var(--acc); }
+  .foot { margin-top:48px; color:var(--mut); font-size:12px; border-top:1px solid var(--line); padding-top:16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>GEO Audit 대시보드 — MCP 접속 &amp; Raw JSON 수령 가이드</h1>
+  <p class="sub">서버: <span class="pill">geo-audit-dashboard</span> · 전략 10국 GEO/AI Readability 감사 집계 · 데이터는 월간 감사 시 자동 갱신</p>
+
+  <div class="ok">
+    <b>한 줄 요약</b> — 이 MCP 서버는 <code>reports/dashboard_data.json</code>(10국 집계)을 노출합니다.
+    <b>완전한 raw JSON</b>이 필요하면 <code>get_raw</code> 도구 하나면 됩니다. 파일을 직접 읽어도 동일합니다.
+  </div>
+
+  <!-- 1 -->
+  <h2><span class="n">1</span> MCP 접속 포인트</h2>
+  <p>이미 <code>~/.claude.json</code> 의 <code>mcpServers</code> 에 등록되어 있습니다. Claude Code를 재시작하면 도구가 활성화됩니다.</p>
+  <div class="card">
+    <dl class="kv">
+      <dt>서버 이름</dt><dd><code>geo-audit-dashboard</code></dd>
+      <dt>전송 방식</dt><dd><code>stdio</code> (표준 입출력 · JSON-RPC 2.0)</dd>
+      <dt>실행 명령</dt><dd><code>/usr/bin/python3 /Users/dubaba/my-geo-project/my-geo-audit/mcp_dashboard_server.py</code></dd>
+      <dt>의존성</dt><dd>없음 (Python 표준 라이브러리만 — pip 설치 불필요)</dd>
+      <dt>Claude 내 도구명</dt><dd><code>mcp__geo-audit-dashboard__&lt;도구&gt;</code></dd>
+    </dl>
+  </div>
+  <h3>등록 설정 (참고 — 이미 적용됨)</h3>
+  <pre><span class="c">// ~/.claude.json → mcpServers</span>
+{
+  <span class="k">"geo-audit-dashboard"</span>: {
+    <span class="k">"type"</span>: <span class="s">"stdio"</span>,
+    <span class="k">"command"</span>: <span class="s">"/usr/bin/python3"</span>,
+    <span class="k">"args"</span>: [<span class="s">"/Users/dubaba/my-geo-project/my-geo-audit/mcp_dashboard_server.py"</span>],
+    <span class="k">"env"</span>: {}
+  }
+}</pre>
+  <p class="sub">다른 MCP 클라이언트(Claude Desktop 등)에서도 동일한 <code>command</code>/<code>args</code>로 등록하면 접속됩니다.</p>
+
+  <!-- 2 -->
+  <h2><span class="n">2</span> 제공 도구 (5개)</h2>
+  <table>
+    <thead><tr><th>도구</th><th>인자</th><th>반환</th></tr></thead>
+    <tbody>
+      <tr><td><code>get_raw</code></td><td>—</td><td><b>완전한 raw JSON 전체</b> (10국 × 카테고리 × 항목 + overall). 가공 없음.</td></tr>
+      <tr><td><code>list_countries</code></td><td>—</td><td>10국 요약(총점·표본·파싱실패·감사일), 총점 내림차순</td></tr>
+      <tr><td><code>get_scorecard</code></td><td><code>country</code></td><td>한 국가 전체 — 4카테고리 획득률 + 항목별 pass율</td></tr>
+      <tr><td><code>get_item_passrates</code></td><td><code>country?</code>, <code>category?</code></td><td>항목별 pass율(약점 순). 필터 가능</td></tr>
+      <tr><td><code>get_overall</code></td><td>—</td><td>전체 요약(국가수·총표본·가중 총점평균)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 3 -->
+  <h2><span class="n">3</span> 완전한 Raw JSON 받아가는 3가지 방법</h2>
+
+  <h3>방법 A — MCP <code>get_raw</code> 도구 (권장)</h3>
+  <p>Claude(또는 MCP 클라이언트)에서 <code>get_raw</code> 를 호출하면 파일 전체가 그대로 반환됩니다.</p>
+  <pre><span class="c">// JSON-RPC 요청</span>
+{<span class="k">"jsonrpc"</span>:<span class="s">"2.0"</span>,<span class="k">"id"</span>:1,<span class="k">"method"</span>:<span class="s">"tools/call"</span>,
+ <span class="k">"params"</span>:{<span class="k">"name"</span>:<span class="s">"get_raw"</span>,<span class="k">"arguments"</span>:{}}}
+
+<span class="c">// 응답 content[0].text 안에 dashboard_data.json 전체가 문자열로 담겨 옴</span></pre>
+  <p class="sub">대화에서는 그냥 <i>"geo-audit 전체 raw JSON 줘"</i> 라고 하면 이 도구가 호출됩니다.</p>
+
+  <h3>방법 B — 파일 직접 읽기 (MCP 불필요)</h3>
+  <p>서버를 거치지 않고 캐노니컬 파일을 직접 읽는 게 가장 단순합니다.</p>
+  <pre><span class="c"># 경로</span>
+/Users/dubaba/my-geo-project/my-geo-audit/reports/dashboard_data.json  <span class="c"># ~84KB</span>
+
+<span class="c"># 예: 그대로 출력</span>
+cat reports/dashboard_data.json
+
+<span class="c"># 예: Python</span>
+import json
+data = json.load(open("reports/dashboard_data.json"))</pre>
+
+  <h3>방법 C — stdio로 직접 파이프 (스크립트/CI)</h3>
+  <p>클라이언트 없이 셸에서 서버를 직접 호출:</p>
+  <pre>printf '%s\n' \
+ '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{}}}' \
+ '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"get_raw","arguments":{}}}' \
+ | /usr/bin/python3 mcp_dashboard_server.py</pre>
+
+  <!-- 4 -->
+  <h2><span class="n">4</span> Raw JSON 스키마</h2>
+  <p>최상위는 <code>countries</code>(국가코드 → 집계)와 <code>overall</code> 두 키입니다. 국가별 구조는 동일합니다.</p>
+  <pre>{
+  <span class="k">"countries"</span>: {
+    <span class="k">"au"</span>: {
+      <span class="k">"sample_size"</span>: <span class="s">919</span>,          <span class="c">// 감사 URL 수</span>
+      <span class="k">"parse_fail_rate"</span>: <span class="s">0.0011</span>,     <span class="c">// HTML 파싱 실패 비율(차단 지표)</span>
+      <span class="k">"total_avg"</span>: <span class="s">68.05</span>,          <span class="c">// 총점 평균 / 100</span>
+      <span class="k">"max"</span>: <span class="s">100</span>,
+      <span class="k">"grade_dist"</span>: { <span class="k">"Good"</span>:<span class="s">3</span>, <span class="k">"Need Improvement"</span>:<span class="s">865</span>, <span class="k">"Poor"</span>:<span class="s">51</span> },
+      <span class="k">"date"</span>: <span class="s">"2026-07-19"</span>,       <span class="c">// 감사일</span>
+      <span class="k">"run_file"</span>: <span class="s">"au_2026-07-19_run_74cf2c171a29.json"</span>,
+      <span class="k">"breakdown"</span>: {              <span class="c">// 카테고리별 (0~100 정규화)</span>
+        <span class="k">"performance"</span>:   { <span class="k">"points_avg"</span>:<span class="s">58.3</span>,  <span class="k">"max"</span>:<span class="s">100</span>, <span class="k">"pass_rate"</span>:<span class="s">0.5858</span> },
+        <span class="k">"accessibility"</span>: { <span class="k">"points_avg"</span>:<span class="s">89.83</span>, <span class="k">"max"</span>:<span class="s">100</span>, <span class="k">"pass_rate"</span>:<span class="s">0.8983</span> },
+        <span class="k">"seo"</span>:           { <span class="k">"points_avg"</span>:<span class="s">80.61</span>, <span class="k">"max"</span>:<span class="s">100</span>, <span class="k">"pass_rate"</span>:<span class="s">0.8036</span> },
+        <span class="k">"ai_readiness"</span>:  { <span class="k">"points_avg"</span>:<span class="s">60.28</span>, <span class="k">"max"</span>:<span class="s">100</span>, <span class="k">"pass_rate"</span>:<span class="s">0.6028</span> }
+      },
+      <span class="k">"items"</span>: {                  <span class="c">// 항목(49개 기준)별 pass율</span>
+        <span class="k">"perf_ttfb"</span>: { <span class="k">"label"</span>:<span class="s">"#1 TTFB &lt; 600ms"</span>, <span class="k">"category"</span>:<span class="s">"performance"</span>,
+                       <span class="k">"pass_rate"</span>:<span class="s">0.0588</span>, <span class="k">"applicable_n"</span>:<span class="s">919</span> }
+        <span class="c">// ... 나머지 항목</span>
+      }
+    }
+    <span class="c">// ... us, uk, de, es, ca, br, mx, in, vn (동일 구조)</span>
+  },
+  <span class="k">"overall"</span>: {
+    <span class="k">"countries"</span>: <span class="s">10</span>,
+    <span class="k">"sample_total"</span>: <span class="s">7370</span>,
+    <span class="k">"total_avg_weighted"</span>: <span class="s">65.19</span>,  <span class="c">// 표본 가중 총점 평균</span>
+    <span class="k">"missing"</span>: []
+  }
+}</pre>
+
+  <div class="note">
+    <b>주의 — <code>breakdown.max</code> 는 항상 100입니다.</b> 각 카테고리 점수는 0~100으로 정규화 저장됩니다
+    (실제 배점 가중치 performance 25 / accessibility 15 / seo 20 / ai_readiness 40 은 <code>total_avg</code> 계산에만 반영).
+    카테고리 획득률은 <code>pass_rate</code> 또는 <code>points_avg/100</code> 로 보세요.
+  </div>
+
+  <!-- 5 -->
+  <h2><span class="n">5</span> 데이터 갱신 &amp; 운영</h2>
+  <div class="kv">
+    <dt>생성기</dt><dd><code>gen_dashboard_data.py</code> → <code>reports/dashboard_data.json</code></dd>
+    <dt>자동 갱신</dt><dd>감사 완료 시 <code>run_render_audit._refresh_report()</code> 에서 자동 재생성</dd>
+    <dt>월간 배치</dt><dd>launchd <code>com.geoaudit.monthly</code> · 매월 1일 02:00 (10국 감사 후 갱신)</dd>
+    <dt>수동 갱신</dt><dd><code>/usr/bin/python3 gen_dashboard_data.py</code></dd>
+  </div>
+  <p class="sub">즉 MCP는 항상 <b>최신 월간 감사 결과</b>를 반영합니다 — 서버가 요청 시점의 파일을 그대로 읽어가기 때문입니다.</p>
+
+  <div class="foot">
+    geo-audit-dashboard MCP · 서버 소스: <code>mcp_dashboard_server.py</code> · 데이터: <code>reports/dashboard_data.json</code><br>
+    적용하려면 Claude Code를 재시작하세요. 문서 생성: my-geo-audit.
+  </div>
+
+</div>
+</body>
+</html>

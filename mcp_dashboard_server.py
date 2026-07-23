@@ -86,6 +86,11 @@ def tool_get_overall(_args: dict) -> dict:
     return _load_data()["overall"]
 
 
+def tool_get_raw(_args: dict) -> dict:
+    """dashboard_data.json 전체를 가공 없이 그대로 반환."""
+    return _load_data()
+
+
 TOOLS = {
     "list_countries": {
         "fn": tool_list_countries,
@@ -115,6 +120,11 @@ TOOLS = {
     "get_overall": {
         "fn": tool_get_overall,
         "description": "전체 요약: 국가수·총표본·표본가중 총점 평균·누락 국가.",
+        "schema": {"type": "object", "properties": {}},
+    },
+    "get_raw": {
+        "fn": tool_get_raw,
+        "description": "dashboard_data.json 전체(10국 x 카테고리 x 항목 + overall)를 가공 없이 그대로 반환. 완전한 raw JSON.",
         "schema": {"type": "object", "properties": {}},
     },
 }
