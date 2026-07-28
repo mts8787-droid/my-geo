@@ -25,4 +25,12 @@ for c in $LOCAL_COUNTRIES; do
   echo "===== ${c} (local) $(date +%H:%M:%S) =====" >> "$LOG"
   "$PY" run_render_audit.py "$c" --local >> "$LOG" 2>&1 || echo "[monthly-audit] WARN ${c} exit $?" >> "$LOG"
 done
+# 갱신된 대시보드 집계를 Render로 반영(원격 /mcp 엔드포인트가 최신 데이터 서빙).
+# best-effort: 변경 없거나 push 실패해도 감사 결과엔 영향 없음.
+if ! git diff --quiet reports/dashboard_data.json 2>/dev/null; then
+  git add reports/dashboard_data.json >> "$LOG" 2>&1
+  git commit -m "data(dashboard): 월간 감사 집계 갱신 $(date +%Y-%m)" >> "$LOG" 2>&1
+  git push origin master >> "$LOG" 2>&1 && echo "[monthly-audit] dashboard_data push OK" >> "$LOG" \
+    || echo "[monthly-audit] WARN dashboard push 실패" >> "$LOG"
+fi
 echo "[monthly-audit] done $(date +%Y%m%d_%H%M%S)" >> "$LOG"
