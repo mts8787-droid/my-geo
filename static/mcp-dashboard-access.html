@@ -54,9 +54,36 @@
     <b>완전한 raw JSON</b>이 필요하면 <code>get_raw</code> 도구 하나면 됩니다. 파일을 직접 읽어도 동일합니다.
   </div>
 
+  <div class="card" style="border-color:#2f3b57;background:#141b2b">
+    <h3 style="margin-top:0">🔗 원격 MCP 엔드포인트 (URL)</h3>
+    <p style="margin:4px 0">다른 사람 · 원격 클라이언트 · claude.ai 커넥터에서 접속할 <b>엔드포인트 URL</b>:</p>
+    <pre style="margin:8px 0"><span class="s">https://my-geo-89ft.onrender.com/mcp</span>   <span class="c"># Streamable HTTP · JSON-RPC 2.0 (POST)</span></pre>
+    <p class="sub" style="margin:4px 0">공유/원격이면 이 <b>HTTP 엔드포인트</b>(1절), 이 PC 전용이면 <b>stdio</b>(2절)를 쓰세요. 도구·데이터는 동일합니다.</p>
+  </div>
+
   <!-- 1 -->
-  <h2><span class="n">1</span> MCP 접속 포인트</h2>
-  <p>이미 <code>~/.claude.json</code> 의 <code>mcpServers</code> 에 등록되어 있습니다. Claude Code를 재시작하면 도구가 활성화됩니다.</p>
+  <h2><span class="n">1</span> 원격 접속 — HTTP 엔드포인트</h2>
+  <p>URL 하나로 접속하는 방식. claude.ai/Desktop의 "커스텀 커넥터(MCP 서버 URL)"에 아래 URL을 넣으면 됩니다.</p>
+  <div class="card">
+    <dl class="kv">
+      <dt>엔드포인트</dt><dd><code>https://my-geo-89ft.onrender.com/mcp</code></dd>
+      <dt>전송 방식</dt><dd><code>Streamable HTTP</code> (JSON-RPC 2.0 · POST)</dd>
+      <dt>인증</dt><dd>없음(공개) — 감사 집계 조회 전용, 쓰기 없음</dd>
+      <dt>안내(GET)</dt><dd><code>GET /mcp</code> → 서버·도구 목록 JSON</dd>
+    </dl>
+  </div>
+  <h3>동작 확인 (curl)</h3>
+  <pre><span class="c"># 도구 목록</span>
+curl -s https://my-geo-89ft.onrender.com/mcp
+
+<span class="c"># get_raw 호출 — 전체 JSON</span>
+curl -s -X POST https://my-geo-89ft.onrender.com/mcp \
+  -H <span class="s">'Content-Type: application/json'</span> \
+  -d <span class="s">'{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_raw","arguments":{}}}'</span></pre>
+
+  <!-- 2 -->
+  <h2><span class="n">2</span> 로컬 접속 — stdio (이 PC 전용)</h2>
+  <p>이 Mac Mini의 Claude Code용. 이미 <code>~/.claude.json</code> 의 <code>mcpServers</code> 에 등록되어 있습니다. Claude Code를 재시작하면 도구가 활성화됩니다.</p>
   <div class="card">
     <dl class="kv">
       <dt>서버 이름</dt><dd><code>geo-audit-dashboard</code></dd>
@@ -79,7 +106,7 @@
   <p class="sub">다른 MCP 클라이언트(Claude Desktop 등)에서도 동일한 <code>command</code>/<code>args</code>로 등록하면 접속됩니다.</p>
 
   <!-- 2 -->
-  <h2><span class="n">2</span> 제공 도구 (5개)</h2>
+  <h2><span class="n">3</span> 제공 도구 (5개)</h2>
   <table>
     <thead><tr><th>도구</th><th>인자</th><th>반환</th></tr></thead>
     <tbody>
@@ -92,7 +119,7 @@
   </table>
 
   <!-- 3 -->
-  <h2><span class="n">3</span> 완전한 Raw JSON 받아가는 3가지 방법</h2>
+  <h2><span class="n">4</span> 완전한 Raw JSON 받아가는 3가지 방법</h2>
 
   <h3>방법 A — MCP <code>get_raw</code> 도구 (권장)</h3>
   <p>Claude(또는 MCP 클라이언트)에서 <code>get_raw</code> 를 호출하면 파일 전체가 그대로 반환됩니다.</p>
@@ -123,7 +150,7 @@ data = json.load(open("reports/dashboard_data.json"))</pre>
  | /usr/bin/python3 mcp_dashboard_server.py</pre>
 
   <!-- 4 -->
-  <h2><span class="n">4</span> Raw JSON 스키마</h2>
+  <h2><span class="n">5</span> Raw JSON 스키마</h2>
   <p>최상위는 <code>countries</code>(국가코드 → 집계)와 <code>overall</code> 두 키입니다. 국가별 구조는 동일합니다.</p>
   <pre>{
   <span class="k">"countries"</span>: {
@@ -164,7 +191,7 @@ data = json.load(open("reports/dashboard_data.json"))</pre>
   </div>
 
   <!-- 5 -->
-  <h2><span class="n">5</span> 데이터 갱신 &amp; 운영</h2>
+  <h2><span class="n">6</span> 데이터 갱신 &amp; 운영</h2>
   <div class="kv">
     <dt>생성기</dt><dd><code>gen_dashboard_data.py</code> → <code>reports/dashboard_data.json</code></dd>
     <dt>자동 갱신</dt><dd>감사 완료 시 <code>run_render_audit._refresh_report()</code> 에서 자동 재생성</dd>

@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from slowapi import Limiter
@@ -348,6 +348,41 @@ class AnalyzeBulkRequest(BaseModel):
 @app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     return FileResponse("static/index.html")
+
+
+# ── MCP HTTP 엔드포인트 (Streamable HTTP) ────────────────────────────────────
+# stdio 서버(mcp_dashboard_server)의 _handle을 재사용해 원격 MCP 클라이언트가
+# URL로 접속 가능한 엔드포인트를 제공한다. 도구: list_countries/get_scorecard/
+# get_item_passrates/get_overall/get_raw (감사 집계 데이터).
+import mcp_dashboard_server as _mcp
+
+@app.get("/mcp")
+async def mcp_info():
+    """사람/프로브용 안내. 실제 통신은 POST(JSON-RPC 2.0)."""
+    return {
+        "server": "geo-audit-dashboard",
+        "transport": "streamable-http",
+        "usage": "POST JSON-RPC 2.0 to this URL (initialize → tools/list → tools/call)",
+        "tools": list(_mcp.TOOLS.keys()),
+    }
+
+@app.post("/mcp")
+async def mcp_endpoint(request: Request):
+    """MCP Streamable HTTP: JSON-RPC 요청(단건/배치) → 응답 JSON."""
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse(
+            {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error"}},
+            status_code=400,
+        )
+    if isinstance(body, list):  # JSON-RPC 배치
+        out = [r for r in (_mcp._handle(m) for m in body) if r is not None]
+        return JSONResponse(out) if out else Response(status_code=202)
+    resp = _mcp._handle(body)
+    if resp is None:  # 알림(notification) — 응답 본문 없음
+        return Response(status_code=202)
+    return JSONResponse(resp)
 
 
 @app.post("/analyze")
