@@ -2,59 +2,58 @@
   "countries": {
     "us": {
       "sample_size": 488,
-      "parse_fail_rate": 0.0,
-      "total_avg": 66.38,
+      "parse_fail_rate": 0.0082,
+      "total_avg": 66.22,
       "max": 100,
       "grade_dist": {
         "Need Improvement": 426,
-        "Poor": 61,
-        "Good": 1
+        "Poor": 62
       },
       "breakdown": {
         "performance": {
-          "points_avg": 59.77,
+          "points_avg": 58.35,
           "max": 100,
-          "pass_rate": 0.6009
+          "pass_rate": 0.5871
         },
         "accessibility": {
-          "points_avg": 79.66,
+          "points_avg": 78.79,
           "max": 100,
-          "pass_rate": 0.7966
+          "pass_rate": 0.7879
         },
         "seo": {
-          "points_avg": 88.99,
+          "points_avg": 88.3,
           "max": 100,
-          "pass_rate": 0.887
+          "pass_rate": 0.8804
         },
         "ai_readiness": {
-          "points_avg": 53.37,
+          "points_avg": 54.25,
           "max": 100,
-          "pass_rate": 0.54
+          "pass_rate": 0.5498
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.084,
+          "pass_rate": 0.0041,
           "applicable_n": 488
         },
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.9959,
+          "pass_rate": 0.9877,
           "applicable_n": 488
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 1.0,
+          "pass_rate": 0.9918,
           "applicable_n": 488
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.7234,
+          "pass_rate": 0.7193,
           "applicable_n": 488
         },
         "perf_html_size": {
@@ -66,13 +65,13 @@
         "perf_redirect": {
           "label": "#6 Redirect ≤ 1",
           "category": "performance",
-          "pass_rate": 1.0,
+          "pass_rate": 0.998,
           "applicable_n": 488
         },
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9959,
+          "pass_rate": 0.9877,
           "applicable_n": 488
         },
         "perf_render_block": {
@@ -84,55 +83,55 @@
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.9631,
+          "pass_rate": 0.9549,
           "applicable_n": 488
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9959,
+          "pass_rate": 0.9877,
           "applicable_n": 488
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.2336,
+          "pass_rate": 0.2234,
           "applicable_n": 488
         },
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9939,
+          "pass_rate": 0.9857,
           "applicable_n": 488
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.9385,
+          "pass_rate": 0.9303,
           "applicable_n": 488
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.9139,
+          "pass_rate": 0.9057,
           "applicable_n": 488
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.7725,
+          "pass_rate": 0.7459,
           "applicable_n": 488
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.9734,
+          "pass_rate": 0.9672,
           "applicable_n": 488
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 1.0,
+          "pass_rate": 0.9918,
           "applicable_n": 488
         },
         "seo_robots_hdr": {
@@ -144,7 +143,7 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.498,
+          "pass_rate": 0.502,
           "applicable_n": 488
         },
         "seo_sitemap": {
@@ -156,7 +155,7 @@
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.4283,
+          "pass_rate": 0.4324,
           "applicable_n": 488
         },
         "ai_schema_faq": {
@@ -168,8 +167,8 @@
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 0.4356,
-          "applicable_n": 101
+          "pass_rate": 0.46,
+          "applicable_n": 100
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
@@ -181,13 +180,13 @@
           "label": "#26 Schema: ImageObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 382
+          "applicable_n": 423
         },
         "ai_schema_video": {
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 58
+          "applicable_n": 62
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -199,18 +198,18 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 53
+          "applicable_n": 54
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.5738,
+          "pass_rate": 0.5758,
           "applicable_n": 488
         },
         "ai_definition": {
           "label": "#33 Definition Paragraph",
           "category": "ai_readiness",
-          "pass_rate": 0.2049,
+          "pass_rate": 0.1967,
           "applicable_n": 488
         },
         "ai_author_source": {
@@ -222,13 +221,13 @@
         "ai_summary_box": {
           "label": "#35 Summary Box (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.6127,
+          "pass_rate": 0.6148,
           "applicable_n": 488
         },
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.0861,
+          "pass_rate": 0.3156,
           "applicable_n": 488
         },
         "ai_ssr_ratio": {
@@ -240,31 +239,31 @@
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
+          "pass_rate": 0.96,
           "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
+          "pass_rate": 0.96,
           "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.5738,
+          "pass_rate": 0.5758,
           "applicable_n": 488
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9959,
+          "pass_rate": 0.9877,
           "applicable_n": 488
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9959,
+          "pass_rate": 0.9877,
           "applicable_n": 488
         },
         "ai_soft_404": {
@@ -288,73 +287,74 @@
         "ai_schema_offer": {
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
-          "pass_rate": 0.7519,
+          "pass_rate": 0.7218,
           "applicable_n": 133
         }
       },
-      "date": "2026-06-17",
-      "run_file": "us_2026-06-17_run_806dddbee389.json"
+      "date": "2026-07-31",
+      "run_file": "us_2026-07-31_run_765d1a7d5451.json"
     },
     "uk": {
       "sample_size": 871,
-      "parse_fail_rate": 0.023,
-      "total_avg": 64.5,
+      "parse_fail_rate": 0.0,
+      "total_avg": 68.34,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 811,
-        "Poor": 60
+        "Need Improvement": 845,
+        "Poor": 24,
+        "Good": 2
       },
       "breakdown": {
         "performance": {
-          "points_avg": 54.9,
+          "points_avg": 54.57,
           "max": 100,
-          "pass_rate": 0.5512
+          "pass_rate": 0.5474
         },
         "accessibility": {
-          "points_avg": 88.78,
+          "points_avg": 90.64,
           "max": 100,
-          "pass_rate": 0.8878
+          "pass_rate": 0.9064
         },
         "seo": {
-          "points_avg": 76.65,
+          "points_avg": 92.8,
           "max": 100,
-          "pass_rate": 0.7642
+          "pass_rate": 0.9278
         },
         "ai_readiness": {
-          "points_avg": 55.82,
+          "points_avg": 55.7,
           "max": 100,
-          "pass_rate": 0.5596
+          "pass_rate": 0.5583
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.0207,
+          "pass_rate": 0.0126,
           "applicable_n": 871
         },
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.977,
+          "pass_rate": 1.0,
           "applicable_n": 871
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 0.977,
+          "pass_rate": 1.0,
           "applicable_n": 871
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.4409,
+          "pass_rate": 0.3467,
           "applicable_n": 871
         },
         "perf_html_size": {
           "label": "#5 HTML < 100KB",
           "category": "performance",
-          "pass_rate": 0.0184,
+          "pass_rate": 0.0195,
           "applicable_n": 871
         },
         "perf_redirect": {
@@ -366,67 +366,67 @@
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9759,
+          "pass_rate": 0.9989,
           "applicable_n": 871
         },
         "perf_render_block": {
           "label": "#8 Render Blocking 0",
           "category": "performance",
-          "pass_rate": 0.0103,
+          "pass_rate": 0.0115,
           "applicable_n": 871
         },
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.9208,
+          "pass_rate": 0.946,
           "applicable_n": 871
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9656,
+          "pass_rate": 0.9874,
           "applicable_n": 871
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.6889,
+          "pass_rate": 0.6935,
           "applicable_n": 871
         },
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9759,
+          "pass_rate": 0.9989,
           "applicable_n": 871
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.8794,
+          "pass_rate": 0.9885,
           "applicable_n": 871
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.8197,
+          "pass_rate": 0.8416,
           "applicable_n": 871
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.9656,
+          "pass_rate": 0.9874,
           "applicable_n": 871
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.7348,
+          "pass_rate": 0.7589,
           "applicable_n": 871
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 0.977,
+          "pass_rate": 1.0,
           "applicable_n": 871
         },
         "seo_robots_hdr": {
@@ -438,50 +438,50 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.7371,
+          "pass_rate": 0.8462,
           "applicable_n": 871
         },
         "seo_sitemap": {
           "label": "#19 Sitemap (1개월 내)",
           "category": "seo",
-          "pass_rate": 0.0,
+          "pass_rate": 1.0,
           "applicable_n": 871
         },
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.9587,
+          "pass_rate": 0.9805,
           "applicable_n": 871
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.2965,
-          "applicable_n": 199
+          "pass_rate": 0.2868,
+          "applicable_n": 258
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 0.9744,
-          "applicable_n": 39
+          "pass_rate": 0.5204,
+          "applicable_n": 98
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 190
+          "applicable_n": 200
         },
         "ai_schema_image": {
           "label": "#26 Schema: ImageObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 855
+          "applicable_n": 854
         },
         "ai_schema_video": {
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 99
+          "applicable_n": 77
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -493,12 +493,12 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 166
+          "applicable_n": 156
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2962,
+          "pass_rate": 0.3146,
           "applicable_n": 871
         },
         "ai_definition": {
@@ -510,55 +510,55 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.225,
+          "pass_rate": 0.1217,
           "applicable_n": 871
         },
         "ai_summary_box": {
           "label": "#35 Summary Box (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.24,
+          "pass_rate": 0.2514,
           "applicable_n": 871
         },
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.5913,
+          "pass_rate": 0.5959,
           "applicable_n": 871
         },
         "ai_ssr_ratio": {
           "label": "#37 JS HTML Text Ratio ≥ 60%",
           "category": "ai_readiness",
-          "pass_rate": 0.5522,
+          "pass_rate": 0.5408,
           "applicable_n": 871
         },
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 90
+          "pass_rate": 0.99,
+          "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 90
+          "pass_rate": 0.99,
+          "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.9667,
+          "pass_rate": 0.9885,
           "applicable_n": 871
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9587,
+          "pass_rate": 0.9805,
           "applicable_n": 871
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9667,
+          "pass_rate": 0.9885,
           "applicable_n": 871
         },
         "ai_soft_404": {
@@ -577,73 +577,73 @@
           "label": "#49 Schema: WebSite",
           "category": "ai_readiness",
           "pass_rate": 1.0,
-          "applicable_n": 6
+          "applicable_n": 7
         },
         "ai_schema_offer": {
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 290
+          "applicable_n": 300
         }
       },
-      "date": "2026-06-28",
-      "run_file": "uk_2026-06-28_run_2a763b7039c3.json"
+      "date": "2026-07-31",
+      "run_file": "uk_2026-07-31_run_f9c1aed6cab6.json"
     },
     "de": {
       "sample_size": 852,
-      "parse_fail_rate": 0.0106,
-      "total_avg": 66.04,
+      "parse_fail_rate": 0.0035,
+      "total_avg": 68.81,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 730,
-        "Poor": 121,
-        "Good": 1
+        "Need Improvement": 813,
+        "Poor": 36,
+        "Good": 3
       },
       "breakdown": {
         "performance": {
-          "points_avg": 56.01,
+          "points_avg": 56.21,
           "max": 100,
-          "pass_rate": 0.5622
+          "pass_rate": 0.5643
         },
         "accessibility": {
-          "points_avg": 87.09,
+          "points_avg": 87.59,
           "max": 100,
-          "pass_rate": 0.8709
+          "pass_rate": 0.8759
         },
         "seo": {
-          "points_avg": 79.51,
+          "points_avg": 92.32,
           "max": 100,
-          "pass_rate": 0.7925
+          "pass_rate": 0.9227
         },
         "ai_readiness": {
-          "points_avg": 57.86,
+          "points_avg": 57.23,
           "max": 100,
-          "pass_rate": 0.5804
+          "pass_rate": 0.5727
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.0235,
+          "pass_rate": 0.0106,
           "applicable_n": 852
         },
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.9847,
+          "pass_rate": 0.9918,
           "applicable_n": 852
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 0.9906,
+          "pass_rate": 0.9965,
           "applicable_n": 852
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.4566,
+          "pass_rate": 0.4648,
           "applicable_n": 852
         },
         "perf_html_size": {
@@ -661,25 +661,25 @@
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9894,
+          "pass_rate": 0.9965,
           "applicable_n": 852
         },
         "perf_render_block": {
           "label": "#8 Render Blocking 0",
           "category": "performance",
-          "pass_rate": 0.0258,
+          "pass_rate": 0.027,
           "applicable_n": 852
         },
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.8357,
+          "pass_rate": 0.8427,
           "applicable_n": 852
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9636,
+          "pass_rate": 0.9695,
           "applicable_n": 852
         },
         "a11y_heading_hier": {
@@ -691,37 +691,37 @@
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9894,
+          "pass_rate": 0.9965,
           "applicable_n": 852
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.9636,
+          "pass_rate": 0.9695,
           "applicable_n": 852
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.7523,
+          "pass_rate": 0.7582,
           "applicable_n": 852
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.9601,
+          "pass_rate": 0.966,
           "applicable_n": 852
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.7688,
+          "pass_rate": 0.7782,
           "applicable_n": 852
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 0.9894,
+          "pass_rate": 0.9965,
           "applicable_n": 852
         },
         "seo_robots_hdr": {
@@ -733,50 +733,50 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.9061,
+          "pass_rate": 0.9131,
           "applicable_n": 852
         },
         "seo_sitemap": {
           "label": "#19 Sitemap (1개월 내)",
           "category": "seo",
-          "pass_rate": 0.0,
+          "pass_rate": 1.0,
           "applicable_n": 852
         },
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.8415,
+          "pass_rate": 0.8486,
           "applicable_n": 852
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.1774,
-          "applicable_n": 186
+          "pass_rate": 0.1674,
+          "applicable_n": 227
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 49
+          "pass_rate": 0.5657,
+          "applicable_n": 99
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 202
+          "applicable_n": 200
         },
         "ai_schema_image": {
           "label": "#26 Schema: ImageObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 826
+          "applicable_n": 825
         },
         "ai_schema_video": {
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 69
+          "applicable_n": 63
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -788,12 +788,12 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 136
+          "applicable_n": 128
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2289,
+          "pass_rate": 0.2394,
           "applicable_n": 852
         },
         "ai_definition": {
@@ -805,55 +805,55 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.2488,
+          "pass_rate": 0.1397,
           "applicable_n": 852
         },
         "ai_summary_box": {
           "label": "#35 Summary Box (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2359,
+          "pass_rate": 0.243,
           "applicable_n": 852
         },
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.8462,
+          "pass_rate": 0.8603,
           "applicable_n": 852
         },
         "ai_ssr_ratio": {
           "label": "#37 JS HTML Text Ratio ≥ 60%",
           "category": "ai_readiness",
-          "pass_rate": 0.7641,
+          "pass_rate": 0.7653,
           "applicable_n": 852
         },
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 101
+          "pass_rate": 0.9,
+          "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 101
+          "pass_rate": 0.9,
+          "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.9566,
+          "pass_rate": 0.9624,
           "applicable_n": 852
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9589,
+          "pass_rate": 0.9648,
           "applicable_n": 852
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9589,
+          "pass_rate": 0.9648,
           "applicable_n": 852
         },
         "ai_soft_404": {
@@ -878,67 +878,67 @@
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 301
+          "applicable_n": 299
         }
       },
-      "date": "2026-06-28",
-      "run_file": "de_2026-06-28_run_55bbb4e85506.json"
+      "date": "2026-07-31",
+      "run_file": "de_2026-07-31_run_2c9b139f2e68.json"
     },
     "es": {
       "sample_size": 825,
-      "parse_fail_rate": 0.0194,
-      "total_avg": 64.34,
+      "parse_fail_rate": 0.0061,
+      "total_avg": 67.38,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 727,
-        "Poor": 97,
-        "Good": 1
+        "Need Improvement": 764,
+        "Poor": 55,
+        "Good": 6
       },
       "breakdown": {
         "performance": {
-          "points_avg": 57.25,
+          "points_avg": 57.5,
           "max": 100,
-          "pass_rate": 0.5747
+          "pass_rate": 0.5773
         },
         "accessibility": {
-          "points_avg": 85.91,
+          "points_avg": 87.06,
           "max": 100,
-          "pass_rate": 0.8591
+          "pass_rate": 0.8706
         },
         "seo": {
-          "points_avg": 74.22,
+          "points_avg": 87.36,
           "max": 100,
-          "pass_rate": 0.74
+          "pass_rate": 0.8732
         },
         "ai_readiness": {
-          "points_avg": 56.48,
+          "points_avg": 55.97,
           "max": 100,
-          "pass_rate": 0.5664
+          "pass_rate": 0.5607
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.0436,
+          "pass_rate": 0.0145,
           "applicable_n": 825
         },
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.9806,
+          "pass_rate": 0.9939,
           "applicable_n": 825
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 0.9806,
+          "pass_rate": 0.9939,
           "applicable_n": 825
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.5139,
+          "pass_rate": 0.5236,
           "applicable_n": 825
         },
         "perf_html_size": {
@@ -956,7 +956,7 @@
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9806,
+          "pass_rate": 0.9939,
           "applicable_n": 825
         },
         "perf_render_block": {
@@ -968,55 +968,55 @@
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.8497,
+          "pass_rate": 0.863,
           "applicable_n": 825
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9309,
+          "pass_rate": 0.9442,
           "applicable_n": 825
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.6752,
+          "pass_rate": 0.6812,
           "applicable_n": 825
         },
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9806,
+          "pass_rate": 0.9939,
           "applicable_n": 825
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.9309,
+          "pass_rate": 0.9442,
           "applicable_n": 825
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.7115,
+          "pass_rate": 0.7164,
           "applicable_n": 825
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.9248,
+          "pass_rate": 0.937,
           "applicable_n": 825
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.6461,
+          "pass_rate": 0.6594,
           "applicable_n": 825
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 0.9709,
+          "pass_rate": 0.9842,
           "applicable_n": 825
         },
         "seo_robots_hdr": {
@@ -1028,38 +1028,38 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.7358,
+          "pass_rate": 0.7442,
           "applicable_n": 825
         },
         "seo_sitemap": {
           "label": "#19 Sitemap (1개월 내)",
           "category": "seo",
-          "pass_rate": 0.0,
+          "pass_rate": 1.0,
           "applicable_n": 825
         },
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.8085,
+          "pass_rate": 0.8218,
           "applicable_n": 825
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.1768,
-          "applicable_n": 198
+          "pass_rate": 0.1568,
+          "applicable_n": 236
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 66
+          "pass_rate": 0.76,
+          "applicable_n": 100
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 190
+          "applicable_n": 200
         },
         "ai_schema_image": {
           "label": "#26 Schema: ImageObject",
@@ -1071,7 +1071,7 @@
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 125
+          "applicable_n": 107
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -1083,12 +1083,12 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 142
+          "applicable_n": 136
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2158,
+          "pass_rate": 0.2267,
           "applicable_n": 825
         },
         "ai_definition": {
@@ -1100,19 +1100,19 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.2376,
+          "pass_rate": 0.1285,
           "applicable_n": 825
         },
         "ai_summary_box": {
           "label": "#35 Summary Box (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2048,
+          "pass_rate": 0.2133,
           "applicable_n": 825
         },
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.857,
+          "pass_rate": 0.8461,
           "applicable_n": 825
         },
         "ai_ssr_ratio": {
@@ -1124,31 +1124,31 @@
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 90
+          "pass_rate": 0.94,
+          "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 90
+          "pass_rate": 0.94,
+          "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.9285,
+          "pass_rate": 0.9418,
           "applicable_n": 825
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9297,
+          "pass_rate": 0.943,
           "applicable_n": 825
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9309,
+          "pass_rate": 0.9442,
           "applicable_n": 825
         },
         "ai_soft_404": {
@@ -1173,66 +1173,67 @@
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 277
+          "applicable_n": 287
         }
       },
-      "date": "2026-06-28",
-      "run_file": "es_2026-06-28_run_64eec9923e60.json"
+      "date": "2026-07-31",
+      "run_file": "es_2026-07-31_run_5e624d993ae4.json"
     },
     "ca": {
       "sample_size": 314,
-      "parse_fail_rate": 0.0605,
-      "total_avg": 62.33,
+      "parse_fail_rate": 0.0701,
+      "total_avg": 64.15,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 250,
-        "Poor": 64
+        "Need Improvement": 264,
+        "Poor": 46,
+        "Good": 4
       },
       "breakdown": {
         "performance": {
-          "points_avg": 55.64,
+          "points_avg": 54.92,
           "max": 100,
-          "pass_rate": 0.5589
+          "pass_rate": 0.5518
         },
         "accessibility": {
-          "points_avg": 79.06,
+          "points_avg": 78.82,
           "max": 100,
-          "pass_rate": 0.7906
+          "pass_rate": 0.7882
         },
         "seo": {
-          "points_avg": 72.99,
+          "points_avg": 83.55,
           "max": 100,
-          "pass_rate": 0.7273
+          "pass_rate": 0.8348
         },
         "ai_readiness": {
-          "points_avg": 55.96,
+          "points_avg": 55.07,
           "max": 100,
-          "pass_rate": 0.564
+          "pass_rate": 0.5459
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.0414,
+          "pass_rate": 0.035,
           "applicable_n": 314
         },
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.9395,
+          "pass_rate": 0.9299,
           "applicable_n": 314
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 0.9395,
+          "pass_rate": 0.9299,
           "applicable_n": 314
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.5382,
+          "pass_rate": 0.5191,
           "applicable_n": 314
         },
         "perf_html_size": {
@@ -1250,67 +1251,67 @@
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9395,
+          "pass_rate": 0.9299,
           "applicable_n": 314
         },
         "perf_render_block": {
           "label": "#8 Render Blocking 0",
           "category": "performance",
-          "pass_rate": 0.035,
+          "pass_rate": 0.0318,
           "applicable_n": 314
         },
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.9076,
+          "pass_rate": 0.9045,
           "applicable_n": 314
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9013,
+          "pass_rate": 0.8917,
           "applicable_n": 314
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.414,
+          "pass_rate": 0.4268,
           "applicable_n": 314
         },
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9395,
+          "pass_rate": 0.9299,
           "applicable_n": 314
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.8535,
+          "pass_rate": 0.8217,
           "applicable_n": 314
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.7357,
+          "pass_rate": 0.707,
           "applicable_n": 314
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.8949,
+          "pass_rate": 0.8854,
           "applicable_n": 314
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.6369,
+          "pass_rate": 0.6115,
           "applicable_n": 314
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 0.9363,
+          "pass_rate": 0.9236,
           "applicable_n": 314
         },
         "seo_robots_hdr": {
@@ -1322,38 +1323,38 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.7611,
+          "pass_rate": 0.7293,
           "applicable_n": 314
         },
         "seo_sitemap": {
           "label": "#19 Sitemap (1개월 내)",
           "category": "seo",
-          "pass_rate": 0.0,
+          "pass_rate": 1.0,
           "applicable_n": 314
         },
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.9013,
+          "pass_rate": 0.8917,
           "applicable_n": 314
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.0478,
-          "applicable_n": 209
+          "pass_rate": 0.0699,
+          "applicable_n": 229
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 0.7903,
-          "applicable_n": 62
+          "pass_rate": 0.48,
+          "applicable_n": 100
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 89
+          "applicable_n": 100
         },
         "ai_schema_image": {
           "label": "#26 Schema: ImageObject",
@@ -1365,7 +1366,7 @@
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 53
+          "applicable_n": 56
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -1377,12 +1378,12 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 64
+          "applicable_n": 35
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.3694,
+          "pass_rate": 0.3535,
           "applicable_n": 314
         },
         "ai_definition": {
@@ -1394,55 +1395,55 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.0096,
+          "pass_rate": 0.035,
           "applicable_n": 314
         },
         "ai_summary_box": {
           "label": "#35 Summary Box (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.3153,
+          "pass_rate": 0.2898,
           "applicable_n": 314
         },
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.8854,
+          "pass_rate": 0.8535,
           "applicable_n": 314
         },
         "ai_ssr_ratio": {
           "label": "#37 JS HTML Text Ratio ≥ 60%",
           "category": "ai_readiness",
-          "pass_rate": 0.7102,
+          "pass_rate": 0.6752,
           "applicable_n": 314
         },
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 89
+          "pass_rate": 0.85,
+          "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 89
+          "pass_rate": 0.8,
+          "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.9013,
+          "pass_rate": 0.8917,
           "applicable_n": 314
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9013,
+          "pass_rate": 0.8917,
           "applicable_n": 314
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9013,
+          "pass_rate": 0.8917,
           "applicable_n": 314
         },
         "ai_soft_404": {
@@ -1467,49 +1468,49 @@
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 89
+          "applicable_n": 100
         }
       },
-      "date": "2026-06-29",
-      "run_file": "ca_2026-06-29_run_ea1f073d9db7.json"
+      "date": "2026-07-31",
+      "run_file": "ca_2026-07-31_run_53a6d6122257.json"
     },
     "au": {
       "sample_size": 919,
       "parse_fail_rate": 0.0011,
-      "total_avg": 68.05,
+      "total_avg": 68.03,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 865,
+        "Need Improvement": 863,
         "Poor": 51,
-        "Good": 3
+        "Good": 5
       },
       "breakdown": {
         "performance": {
-          "points_avg": 58.3,
+          "points_avg": 58.12,
           "max": 100,
-          "pass_rate": 0.5858
+          "pass_rate": 0.5841
         },
         "accessibility": {
-          "points_avg": 89.83,
+          "points_avg": 89.88,
           "max": 100,
-          "pass_rate": 0.8983
+          "pass_rate": 0.8988
         },
         "seo": {
-          "points_avg": 80.61,
+          "points_avg": 80.64,
           "max": 100,
-          "pass_rate": 0.8036
+          "pass_rate": 0.8039
         },
         "ai_readiness": {
-          "points_avg": 60.28,
+          "points_avg": 60.29,
           "max": 100,
-          "pass_rate": 0.6028
+          "pass_rate": 0.603
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.0588,
+          "pass_rate": 0.0468,
           "applicable_n": 919
         },
         "perf_compression": {
@@ -1539,7 +1540,7 @@
         "perf_redirect": {
           "label": "#6 Redirect ≤ 1",
           "category": "performance",
-          "pass_rate": 0.9978,
+          "pass_rate": 0.9956,
           "applicable_n": 919
         },
         "perf_mixed_content": {
@@ -1569,7 +1570,7 @@
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.6834,
+          "pass_rate": 0.6855,
           "applicable_n": 919
         },
         "a11y_aria_labels": {
@@ -1587,7 +1588,7 @@
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.7584,
+          "pass_rate": 0.7606,
           "applicable_n": 919
         },
         "seo_canonical": {
@@ -1635,7 +1636,7 @@
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.1352,
+          "pass_rate": 0.1384,
           "applicable_n": 318
         },
         "ai_schema_collection": {
@@ -1660,7 +1661,7 @@
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 55
+          "applicable_n": 57
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -1677,7 +1678,7 @@
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2818,
+          "pass_rate": 0.2829,
           "applicable_n": 919
         },
         "ai_definition": {
@@ -1701,7 +1702,7 @@
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.9369,
+          "pass_rate": 0.938,
           "applicable_n": 919
         },
         "ai_ssr_ratio": {
@@ -1765,39 +1766,39 @@
           "applicable_n": 300
         }
       },
-      "date": "2026-07-19",
-      "run_file": "au_2026-07-19_run_74cf2c171a29.json"
+      "date": "2026-07-31",
+      "run_file": "au_2026-07-31_run_39d08baa97d8.json"
     },
     "br": {
       "sample_size": 757,
-      "parse_fail_rate": 0.0132,
-      "total_avg": 64.83,
+      "parse_fail_rate": 0.0026,
+      "total_avg": 68.19,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 676,
-        "Poor": 80,
+        "Need Improvement": 712,
+        "Poor": 44,
         "Good": 1
       },
       "breakdown": {
         "performance": {
-          "points_avg": 55.31,
+          "points_avg": 55.75,
           "max": 100,
-          "pass_rate": 0.555
+          "pass_rate": 0.5593
         },
         "accessibility": {
-          "points_avg": 92.24,
+          "points_avg": 93.2,
           "max": 100,
-          "pass_rate": 0.9224
+          "pass_rate": 0.932
         },
         "seo": {
-          "points_avg": 77.71,
+          "points_avg": 90.82,
           "max": 100,
-          "pass_rate": 0.7749
+          "pass_rate": 0.907
         },
         "ai_readiness": {
-          "points_avg": 55.21,
+          "points_avg": 55.42,
           "max": 100,
-          "pass_rate": 0.5522
+          "pass_rate": 0.5529
         }
       },
       "items": {
@@ -1810,97 +1811,97 @@
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.9868,
+          "pass_rate": 0.9974,
           "applicable_n": 757
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 0.9868,
+          "pass_rate": 0.9974,
           "applicable_n": 757
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.3989,
+          "pass_rate": 0.4055,
           "applicable_n": 757
         },
         "perf_html_size": {
           "label": "#5 HTML < 100KB",
           "category": "performance",
-          "pass_rate": 0.037,
+          "pass_rate": 0.0357,
           "applicable_n": 757
         },
         "perf_redirect": {
           "label": "#6 Redirect ≤ 1",
           "category": "performance",
-          "pass_rate": 0.996,
+          "pass_rate": 0.9947,
           "applicable_n": 757
         },
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9868,
+          "pass_rate": 0.9974,
           "applicable_n": 757
         },
         "perf_render_block": {
           "label": "#8 Render Blocking 0",
           "category": "performance",
-          "pass_rate": 0.0343,
+          "pass_rate": 0.033,
           "applicable_n": 757
         },
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.9775,
+          "pass_rate": 0.9868,
           "applicable_n": 757
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9524,
+          "pass_rate": 0.9643,
           "applicable_n": 757
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.7728,
+          "pass_rate": 0.7794,
           "applicable_n": 757
         },
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9868,
+          "pass_rate": 0.9974,
           "applicable_n": 757
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.9511,
+          "pass_rate": 0.963,
           "applicable_n": 757
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.7939,
+          "pass_rate": 0.8018,
           "applicable_n": 757
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.9458,
+          "pass_rate": 0.9577,
           "applicable_n": 757
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.6143,
+          "pass_rate": 0.6235,
           "applicable_n": 757
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 0.9802,
+          "pass_rate": 0.9881,
           "applicable_n": 757
         },
         "seo_robots_hdr": {
@@ -1912,50 +1913,50 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.9141,
+          "pass_rate": 0.9221,
           "applicable_n": 757
         },
         "seo_sitemap": {
           "label": "#19 Sitemap (1개월 내)",
           "category": "seo",
-          "pass_rate": 0.0,
+          "pass_rate": 1.0,
           "applicable_n": 757
         },
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.9498,
+          "pass_rate": 0.9617,
           "applicable_n": 757
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.0964,
-          "applicable_n": 197
+          "pass_rate": 0.1083,
+          "applicable_n": 240
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 0.9811,
-          "applicable_n": 53
+          "pass_rate": 0.65,
+          "applicable_n": 100
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 193
+          "applicable_n": 200
         },
         "ai_schema_image": {
           "label": "#26 Schema: ImageObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 729
+          "applicable_n": 730
         },
         "ai_schema_video": {
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 45
+          "applicable_n": 36
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -1967,12 +1968,12 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 151
+          "applicable_n": 140
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.1704,
+          "pass_rate": 0.1797,
           "applicable_n": 757
         },
         "ai_definition": {
@@ -1984,55 +1985,55 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.2338,
+          "pass_rate": 0.2391,
           "applicable_n": 757
         },
         "ai_summary_box": {
           "label": "#35 Summary Box (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.1466,
+          "pass_rate": 0.148,
           "applicable_n": 757
         },
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.5376,
+          "pass_rate": 0.539,
           "applicable_n": 757
         },
         "ai_ssr_ratio": {
           "label": "#37 JS HTML Text Ratio ≥ 60%",
           "category": "ai_readiness",
-          "pass_rate": 0.7411,
+          "pass_rate": 0.7318,
           "applicable_n": 757
         },
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 93
+          "pass_rate": 0.93,
+          "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 93
+          "pass_rate": 0.93,
+          "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.9524,
+          "pass_rate": 0.9643,
           "applicable_n": 757
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9498,
+          "pass_rate": 0.9617,
           "applicable_n": 757
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9524,
+          "pass_rate": 0.9643,
           "applicable_n": 757
         },
         "ai_soft_404": {
@@ -2057,26 +2058,26 @@
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 293
+          "applicable_n": 300
         }
       },
-      "date": "2026-06-29",
-      "run_file": "br_2026-06-29_run_61d060a216ed.json"
+      "date": "2026-07-31",
+      "run_file": "br_2026-07-31_run_9c23bc993a49.json"
     },
     "mx": {
       "sample_size": 782,
-      "parse_fail_rate": 0.0038,
-      "total_avg": 64.1,
+      "parse_fail_rate": 0.0,
+      "total_avg": 66.02,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 663,
-        "Poor": 119
+        "Need Improvement": 724,
+        "Poor": 58
       },
       "breakdown": {
         "performance": {
-          "points_avg": 57.32,
+          "points_avg": 55.95,
           "max": 100,
-          "pass_rate": 0.5756
+          "pass_rate": 0.5612
         },
         "accessibility": {
           "points_avg": 89.35,
@@ -2084,45 +2085,45 @@
           "pass_rate": 0.8935
         },
         "seo": {
-          "points_avg": 76.74,
+          "points_avg": 88.19,
           "max": 100,
-          "pass_rate": 0.7658
+          "pass_rate": 0.8804
         },
         "ai_readiness": {
-          "points_avg": 53.39,
+          "points_avg": 52.41,
           "max": 100,
-          "pass_rate": 0.5365
+          "pass_rate": 0.526
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.0179,
+          "pass_rate": 0.0077,
           "applicable_n": 782
         },
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.9962,
+          "pass_rate": 1.0,
           "applicable_n": 782
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 0.9962,
+          "pass_rate": 1.0,
           "applicable_n": 782
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.5192,
+          "pass_rate": 0.3926,
           "applicable_n": 782
         },
         "perf_html_size": {
           "label": "#5 HTML < 100KB",
           "category": "performance",
-          "pass_rate": 0.0358,
+          "pass_rate": 0.0409,
           "applicable_n": 782
         },
         "perf_redirect": {
@@ -2134,67 +2135,67 @@
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9962,
+          "pass_rate": 1.0,
           "applicable_n": 782
         },
         "perf_render_block": {
           "label": "#8 Render Blocking 0",
           "category": "performance",
-          "pass_rate": 0.0435,
+          "pass_rate": 0.0486,
           "applicable_n": 782
         },
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.9859,
+          "pass_rate": 0.9898,
           "applicable_n": 782
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9616,
+          "pass_rate": 0.9604,
           "applicable_n": 782
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.6304,
+          "pass_rate": 0.624,
           "applicable_n": 782
         },
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9962,
+          "pass_rate": 1.0,
           "applicable_n": 782
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.9616,
+          "pass_rate": 0.9604,
           "applicable_n": 782
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.7148,
+          "pass_rate": 0.7174,
           "applicable_n": 782
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.9565,
+          "pass_rate": 0.9552,
           "applicable_n": 782
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.5793,
+          "pass_rate": 0.4974,
           "applicable_n": 782
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 0.9962,
+          "pass_rate": 1.0,
           "applicable_n": 782
         },
         "seo_robots_hdr": {
@@ -2206,50 +2207,50 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.9182,
+          "pass_rate": 0.913,
           "applicable_n": 782
         },
         "seo_sitemap": {
           "label": "#19 Sitemap (1개월 내)",
           "category": "seo",
-          "pass_rate": 0.0,
+          "pass_rate": 1.0,
           "applicable_n": 782
         },
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.9437,
+          "pass_rate": 0.9425,
           "applicable_n": 782
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.1231,
-          "applicable_n": 195
+          "pass_rate": 0.1174,
+          "applicable_n": 230
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 52
+          "pass_rate": 0.62,
+          "applicable_n": 100
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 194
+          "applicable_n": 200
         },
         "ai_schema_image": {
           "label": "#26 Schema: ImageObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 754
+          "applicable_n": 750
         },
         "ai_schema_video": {
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 61
+          "applicable_n": 55
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -2261,12 +2262,12 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 114
+          "applicable_n": 95
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2967,
+          "pass_rate": 0.2992,
           "applicable_n": 782
         },
         "ai_definition": {
@@ -2278,7 +2279,7 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.2519,
+          "pass_rate": 0.1343,
           "applicable_n": 782
         },
         "ai_summary_box": {
@@ -2290,7 +2291,7 @@
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.0396,
+          "pass_rate": 0.0435,
           "applicable_n": 782
         },
         "ai_ssr_ratio": {
@@ -2302,31 +2303,31 @@
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 94
+          "pass_rate": 0.94,
+          "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 94
+          "pass_rate": 0.94,
+          "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.9616,
+          "pass_rate": 0.9604,
           "applicable_n": 782
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9604,
+          "pass_rate": 0.9591,
           "applicable_n": 782
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9616,
+          "pass_rate": 0.9604,
           "applicable_n": 782
         },
         "ai_soft_404": {
@@ -2351,48 +2352,49 @@
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 279
+          "applicable_n": 285
         }
       },
-      "date": "2026-06-29",
-      "run_file": "mx_2026-06-29_run_3c253bf23348.json"
+      "date": "2026-07-31",
+      "run_file": "mx_2026-07-31_run_eb9b2f21456b.json"
     },
     "in": {
       "sample_size": 831,
       "parse_fail_rate": 0.0012,
-      "total_avg": 65.15,
+      "total_avg": 65.45,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 755,
-        "Poor": 76
+        "Need Improvement": 753,
+        "Poor": 77,
+        "Good": 1
       },
       "breakdown": {
         "performance": {
-          "points_avg": 57.79,
+          "points_avg": 57.87,
           "max": 100,
-          "pass_rate": 0.5802
+          "pass_rate": 0.5809
         },
         "accessibility": {
-          "points_avg": 90.91,
+          "points_avg": 91.52,
           "max": 100,
-          "pass_rate": 0.9091
+          "pass_rate": 0.9152
         },
         "seo": {
-          "points_avg": 80.76,
+          "points_avg": 81.18,
           "max": 100,
-          "pass_rate": 0.8048
+          "pass_rate": 0.809
         },
         "ai_readiness": {
-          "points_avg": 53.16,
+          "points_avg": 53.47,
           "max": 100,
-          "pass_rate": 0.5319
+          "pass_rate": 0.5348
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.071,
+          "pass_rate": 0.0878,
           "applicable_n": 831
         },
         "perf_compression": {
@@ -2416,13 +2418,13 @@
         "perf_html_size": {
           "label": "#5 HTML < 100KB",
           "category": "performance",
-          "pass_rate": 0.0241,
+          "pass_rate": 0.0193,
           "applicable_n": 831
         },
         "perf_redirect": {
           "label": "#6 Redirect ≤ 1",
           "category": "performance",
-          "pass_rate": 0.9988,
+          "pass_rate": 0.9976,
           "applicable_n": 831
         },
         "perf_mixed_content": {
@@ -2434,7 +2436,7 @@
         "perf_render_block": {
           "label": "#8 Render Blocking 0",
           "category": "performance",
-          "pass_rate": 0.0229,
+          "pass_rate": 0.0181,
           "applicable_n": 831
         },
         "a11y_image_alt": {
@@ -2446,13 +2448,13 @@
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9735,
+          "pass_rate": 0.9783,
           "applicable_n": 831
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.6727,
+          "pass_rate": 0.6919,
           "applicable_n": 831
         },
         "a11y_aria_labels": {
@@ -2464,25 +2466,25 @@
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.9759,
+          "pass_rate": 0.9807,
           "applicable_n": 831
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.8604,
+          "pass_rate": 0.8652,
           "applicable_n": 831
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.9723,
+          "pass_rate": 0.9771,
           "applicable_n": 831
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.6763,
+          "pass_rate": 0.6968,
           "applicable_n": 831
         },
         "seo_robots": {
@@ -2500,7 +2502,7 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.9543,
+          "pass_rate": 0.9531,
           "applicable_n": 831
         },
         "seo_sitemap": {
@@ -2512,19 +2514,19 @@
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.9747,
+          "pass_rate": 0.9795,
           "applicable_n": 831
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.4244,
+          "pass_rate": 0.4613,
           "applicable_n": 271
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 0.6618,
+          "pass_rate": 0.6471,
           "applicable_n": 136
         },
         "ai_schema_product": {
@@ -2537,13 +2539,13 @@
           "label": "#26 Schema: ImageObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 811
+          "applicable_n": 815
         },
         "ai_schema_video": {
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 67
+          "applicable_n": 72
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -2560,7 +2562,7 @@
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2467,
+          "pass_rate": 0.2587,
           "applicable_n": 831
         },
         "ai_definition": {
@@ -2572,7 +2574,7 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.1805,
+          "pass_rate": 0.1817,
           "applicable_n": 831
         },
         "ai_summary_box": {
@@ -2584,7 +2586,7 @@
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.0457,
+          "pass_rate": 0.0517,
           "applicable_n": 831
         },
         "ai_ssr_ratio": {
@@ -2608,19 +2610,19 @@
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.9759,
+          "pass_rate": 0.9807,
           "applicable_n": 831
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.9747,
+          "pass_rate": 0.9795,
           "applicable_n": 831
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9771,
+          "pass_rate": 0.9819,
           "applicable_n": 831
         },
         "ai_soft_404": {
@@ -2648,69 +2650,69 @@
           "applicable_n": 217
         }
       },
-      "date": "2026-07-19",
-      "run_file": "in_2026-07-19_run_f2572f3a20c9.json"
+      "date": "2026-07-31",
+      "run_file": "in_2026-07-31_run_bb535c8d2fa8.json"
     },
     "vn": {
       "sample_size": 731,
-      "parse_fail_rate": 0.0274,
-      "total_avg": 64.43,
+      "parse_fail_rate": 0.0041,
+      "total_avg": 67.92,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 648,
-        "Poor": 83
+        "Need Improvement": 693,
+        "Poor": 38
       },
       "breakdown": {
         "performance": {
-          "points_avg": 55.62,
+          "points_avg": 56.49,
           "max": 100,
-          "pass_rate": 0.5587
+          "pass_rate": 0.5674
         },
         "accessibility": {
-          "points_avg": 88.3,
+          "points_avg": 90.18,
           "max": 100,
-          "pass_rate": 0.883
+          "pass_rate": 0.9018
         },
         "seo": {
-          "points_avg": 77.52,
+          "points_avg": 91.59,
           "max": 100,
-          "pass_rate": 0.7733
+          "pass_rate": 0.915
         },
         "ai_readiness": {
-          "points_avg": 54.84,
+          "points_avg": 54.55,
           "max": 100,
-          "pass_rate": 0.5504
+          "pass_rate": 0.5467
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms",
           "category": "performance",
-          "pass_rate": 0.0205,
+          "pass_rate": 0.0123,
           "applicable_n": 731
         },
         "perf_compression": {
           "label": "#2 Compression",
           "category": "performance",
-          "pass_rate": 0.9726,
+          "pass_rate": 0.9959,
           "applicable_n": 731
         },
         "perf_http_protocol": {
           "label": "#3 HTTP/2+",
           "category": "performance",
-          "pass_rate": 0.9726,
+          "pass_rate": 0.9959,
           "applicable_n": 731
         },
         "perf_cache_control": {
           "label": "#4 Cache-Control max-age",
           "category": "performance",
-          "pass_rate": 0.5075,
+          "pass_rate": 0.5185,
           "applicable_n": 731
         },
         "perf_html_size": {
           "label": "#5 HTML < 100KB",
           "category": "performance",
-          "pass_rate": 0.0246,
+          "pass_rate": 0.0233,
           "applicable_n": 731
         },
         "perf_redirect": {
@@ -2722,67 +2724,67 @@
         "perf_mixed_content": {
           "label": "#7 Mixed Content 0",
           "category": "performance",
-          "pass_rate": 0.9603,
+          "pass_rate": 0.9836,
           "applicable_n": 731
         },
         "perf_render_block": {
           "label": "#8 Render Blocking 0",
           "category": "performance",
-          "pass_rate": 0.0123,
+          "pass_rate": 0.0109,
           "applicable_n": 731
         },
         "a11y_image_alt": {
           "label": "#9 Image Alt 누락 0",
           "category": "accessibility",
-          "pass_rate": 0.9644,
+          "pass_rate": 0.985,
           "applicable_n": 731
         },
         "a11y_semantic": {
           "label": "#10 Semantic HTML",
           "category": "accessibility",
-          "pass_rate": 0.9576,
+          "pass_rate": 0.9822,
           "applicable_n": 731
         },
         "a11y_heading_hier": {
           "label": "#11 Heading Hierarchy",
           "category": "accessibility",
-          "pass_rate": 0.6389,
+          "pass_rate": 0.6457,
           "applicable_n": 731
         },
         "a11y_aria_labels": {
           "label": "#12 ARIA 누락 < 10%",
           "category": "accessibility",
-          "pass_rate": 0.9713,
+          "pass_rate": 0.9945,
           "applicable_n": 731
         },
         "seo_title": {
           "label": "#13 Title 존재",
           "category": "seo",
-          "pass_rate": 0.959,
+          "pass_rate": 0.9836,
           "applicable_n": 731
         },
         "seo_meta_desc": {
           "label": "#14 Meta Description",
           "category": "seo",
-          "pass_rate": 0.7524,
+          "pass_rate": 0.7702,
           "applicable_n": 731
         },
         "seo_canonical": {
           "label": "#15 Canonical self-ref",
           "category": "seo",
-          "pass_rate": 0.9439,
+          "pass_rate": 0.9685,
           "applicable_n": 731
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
           "category": "seo",
-          "pass_rate": 0.632,
+          "pass_rate": 0.6525,
           "applicable_n": 731
         },
         "seo_robots": {
           "label": "#17 indexing 허용",
           "category": "seo",
-          "pass_rate": 0.9713,
+          "pass_rate": 0.9945,
           "applicable_n": 731
         },
         "seo_robots_hdr": {
@@ -2794,50 +2796,50 @@
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
-          "pass_rate": 0.9275,
+          "pass_rate": 0.9508,
           "applicable_n": 731
         },
         "seo_sitemap": {
           "label": "#19 Sitemap (1개월 내)",
           "category": "seo",
-          "pass_rate": 0.0,
+          "pass_rate": 1.0,
           "applicable_n": 731
         },
         "ai_schema_breadcrumb": {
           "label": "#21 Schema: BreadcrumbList",
           "category": "ai_readiness",
-          "pass_rate": 0.948,
+          "pass_rate": 0.9726,
           "applicable_n": 731
         },
         "ai_schema_faq": {
           "label": "#23 Schema: FAQPage",
           "category": "ai_readiness",
-          "pass_rate": 0.1026,
-          "applicable_n": 156
+          "pass_rate": 0.0865,
+          "applicable_n": 208
         },
         "ai_schema_collection": {
           "label": "#24 Schema: CollectionPage (PLP)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 51
+          "pass_rate": 0.6768,
+          "applicable_n": 99
         },
         "ai_schema_product": {
           "label": "#25 Schema: Product 풀세트 (PDP)",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 187
+          "applicable_n": 200
         },
         "ai_schema_image": {
           "label": "#26 Schema: ImageObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 713
+          "applicable_n": 714
         },
         "ai_schema_video": {
           "label": "#27 Schema: VideoObject",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 107
+          "applicable_n": 94
         },
         "ai_schema_howto": {
           "label": "#28 Schema: HowTo",
@@ -2849,12 +2851,12 @@
           "label": "#29 Schema: Article",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 90
+          "applicable_n": 81
         },
         "ai_faq_block": {
           "label": "#32 FAQ Block (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.2886,
+          "pass_rate": 0.301,
           "applicable_n": 731
         },
         "ai_definition": {
@@ -2866,19 +2868,19 @@
         "ai_author_source": {
           "label": "#34 Author 또는 출처+날짜",
           "category": "ai_readiness",
-          "pass_rate": 0.2517,
+          "pass_rate": 0.1218,
           "applicable_n": 731
         },
         "ai_summary_box": {
           "label": "#35 Summary Box (콘텐츠)",
           "category": "ai_readiness",
-          "pass_rate": 0.264,
+          "pass_rate": 0.275,
           "applicable_n": 731
         },
         "ai_citable": {
           "label": "#36 Citable Sentence ≥ 10%",
           "category": "ai_readiness",
-          "pass_rate": 0.1587,
+          "pass_rate": 0.1642,
           "applicable_n": 731
         },
         "ai_ssr_ratio": {
@@ -2890,31 +2892,31 @@
         "ai_pdp_thumbnails": {
           "label": "#38 PDP 썸네일 3장 이상 SSR",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 87
+          "pass_rate": 0.95,
+          "applicable_n": 100
         },
         "ai_core_element": {
           "label": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
           "category": "ai_readiness",
-          "pass_rate": 1.0,
-          "applicable_n": 87
+          "pass_rate": 0.95,
+          "applicable_n": 100
         },
         "ai_summary_ssr": {
           "label": "#40 Summary Content SSR",
           "category": "ai_readiness",
-          "pass_rate": 0.959,
+          "pass_rate": 0.9836,
           "applicable_n": 731
         },
         "ai_image_filename": {
           "label": "#41 Image File Name 브랜드 포함",
           "category": "ai_readiness",
-          "pass_rate": 0.948,
+          "pass_rate": 0.9726,
           "applicable_n": 731
         },
         "ai_status_200": {
           "label": "#42 Status Code 200",
           "category": "ai_readiness",
-          "pass_rate": 0.9603,
+          "pass_rate": 0.985,
           "applicable_n": 731
         },
         "ai_soft_404": {
@@ -2939,17 +2941,17 @@
           "label": "#43 Schema: Offer",
           "category": "ai_readiness",
           "pass_rate": 0.0,
-          "applicable_n": 236
+          "applicable_n": 249
         }
       },
-      "date": "2026-06-29",
-      "run_file": "vn_2026-06-29_run_9d17cca2f252.json"
+      "date": "2026-07-31",
+      "run_file": "vn_2026-07-31_run_db9329a40d4f.json"
     }
   },
   "overall": {
     "countries": 10,
     "sample_total": 7370,
-    "total_avg_weighted": 65.19,
+    "total_avg_weighted": 67.3,
     "missing": []
   }
 }
