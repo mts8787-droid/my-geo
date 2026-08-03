@@ -195,7 +195,7 @@ data = json.load(open("reports/dashboard_data.json"))</pre>
   <div class="kv">
     <dt>생성기</dt><dd><code>gen_dashboard_data.py</code> → <code>reports/dashboard_data.json</code></dd>
     <dt>자동 갱신</dt><dd>감사 완료 시 <code>run_render_audit._refresh_report()</code> 에서 자동 재생성</dd>
-    <dt>월간 배치</dt><dd>launchd <code>com.geoaudit.monthly</code> · 매월 1일 02:00 (10국 감사 후 갱신)</dd>
+    <dt>월간 배치</dt><dd>launchd <code>com.geoaudit.monthly</code> · 매월 25일 02:00 (10국 감사 후 갱신)</dd>
     <dt>수동 갱신</dt><dd><code>/usr/bin/python3 gen_dashboard_data.py</code></dd>
   </div>
   <p class="sub">즉 MCP는 항상 <b>최신 월간 감사 결과</b>를 반영합니다 — 서버가 요청 시점의 파일을 그대로 읽어가기 때문입니다.</p>

@@ -1,6 +1,6 @@
 #!/bin/bash
 # 매월 전략 10국 GEO/AI Readability 감사 배치.
-# launchd com.geoaudit.monthly (매월 1일)가 호출한다.
+# launchd com.geoaudit.monthly (매월 25일)가 호출한다.
 # 각 국가: run_render_audit.py <code> → data/run_results/<code>_<date>_run_*.json
 #          완료 시 reports/audit_report.txt 자동 갱신(run_render_audit 내부).
 # 한 국가가 실패해도 나머지는 계속 진행.
