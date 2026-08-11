@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LG Virtual Feed Generator</title>
+  <script>
+    if (window.location.protocol === 'file:') {
+      window.location.replace('http://127.0.0.1:8765/');
+    }
+  </script>
+  <style>
+    :root { --ink:#14213d; --muted:#667085; --line:#d8dee9; --paper:#fff; --soft:#f5f7fb; --blue:#1769e0; --navy:#102b4e; --green:#067647; --amber:#b54708; --red:#b42318; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, Pretendard, "Segoe UI", sans-serif; color:var(--ink); background:linear-gradient(135deg,#f8fafc,#edf3fb); }
+    .shell { max-width:1280px; margin:0 auto; padding:34px 24px 60px; }
+    header { display:flex; justify-content:space-between; gap:24px; align-items:flex-end; margin-bottom:24px; }
+    h1 { margin:0 0 8px; font-size:30px; letter-spacing:-.7px; }
+    .subtitle { color:var(--muted); margin:0; }
+    .badge { padding:8px 12px; border-radius:999px; background:#e8f1ff; color:#175cd3; font-size:13px; font-weight:700; white-space:nowrap; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; align-items:stretch; }
+    .card { background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:0 12px 30px rgba(16,43,78,.06); }
+    h2 { font-size:18px; margin:0 0 6px; }
+    .hint { color:var(--muted); font-size:13px; margin:0 0 14px; line-height:1.5; }
+    textarea { width:100%; min-height:270px; resize:vertical; border:1px solid #b9c4d3; border-radius:10px; padding:12px; font:12px/1.55 Consolas, monospace; color:#26324a; background:#fbfcfe; }
+    button, .file-label { appearance:none; border:0; border-radius:9px; padding:10px 15px; font-weight:700; cursor:pointer; font-size:14px; }
+    button.primary { background:var(--blue); color:white; }
+    button.secondary, .file-label { background:#eef2f7; color:#344054; }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }
+    input[type=file] { display:none; }
+    .url-input { width:100%; border:1px solid #9eb0c7; border-radius:10px; padding:14px; font-size:15px; background:#fbfcfe; }
+    details { margin-top:18px; border-top:1px solid var(--line); padding-top:14px; }
+    summary { cursor:pointer; color:#344054; font-weight:700; font-size:13px; }
+    .settings { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+    label.field { color:#344054; font-size:12px; font-weight:700; }
+    label.field input, label.field select { display:block; width:100%; margin-top:6px; border:1px solid #b9c4d3; border-radius:8px; padding:9px 10px; background:white; }
+    .status-box { border-radius:11px; background:var(--soft); padding:15px; margin-top:15px; }
+    .meter { height:8px; background:#dfe6ef; border-radius:999px; overflow:hidden; margin:10px 0 8px; }
+    .meter > div { height:100%; width:0; background:linear-gradient(90deg,#1769e0,#38bdf8); transition:width .25s; }
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+    .stat { background:white; border:1px solid var(--line); border-radius:10px; padding:10px; }
+    .stat b { display:block; font-size:19px; }
+    .stat span { color:var(--muted); font-size:11px; }
+    .notice { border-left:3px solid #f79009; padding:9px 11px; background:#fffaeb; color:#7a2e0e; font-size:12px; line-height:1.5; margin-top:12px; }
+    .full { grid-column:1/-1; }
+    .table-wrap { overflow:auto; max-height:430px; border:1px solid var(--line); border-radius:10px; }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th { position:sticky; top:0; background:var(--navy); color:white; text-align:left; z-index:1; }
+    th, td { padding:10px; border-bottom:1px solid #e7ebf0; vertical-align:top; }
+    td.copy { min-width:230px; }
+    .empty { color:var(--muted); text-align:center; padding:36px; }
+    .pill { display:inline-block; padding:3px 7px; border-radius:999px; background:#fff4e5; color:var(--amber); font-weight:700; }
+    .pill.ok { background:#e8f7ef; color:var(--green); }
+    .download { display:inline-block; text-decoration:none; background:var(--green); color:white; border-radius:9px; padding:10px 15px; font-weight:700; opacity:.42; pointer-events:none; } .download.ready { opacity:1; pointer-events:auto; }
+    @media(max-width:850px){ .grid{grid-template-columns:1fr} header{align-items:flex-start;flex-direction:column}.settings{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr} }
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header>
+    <div><h1>Virtual Feed Generator</h1><p class="subtitle">제품 모델명 또는 PDP URL을 기반으로 Virtual Feed를 생성합니다.</p></div>
+    <div class="badge" id="providerBadge">생성 방식 확인 중</div>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <h2>1. 제품 입력</h2>
+      <p class="hint">국가를 선택한 뒤 모델명 또는 PDP URL을 한 줄에 하나씩 입력하세요.</p>
+      <label class="field">국가
+        <select class="url-input" id="singleCountry"><option value="">국가 및 언어 불러오는 중</option></select>
+      </label>
+      <label class="field" style="margin-top:12px">모델명 또는 PDP URL
+        <textarea id="inputText" placeholder="GSXV91MCAE&#10;F4Y913BCTA1&#10;OLED65G54LW&#10;39GX950B-B"></textarea>
+      </label>
+      <div class="actions">
+        <label class="file-label" for="fileInput">CSV/XLSX 업로드</label><input type="file" id="fileInput" accept=".csv,.xlsx">
+        <span class="hint" id="fileName" style="margin:0"></span>
+      </div>
+      <div class="actions"><button class="primary" id="runBtn" disabled>Feed 생성</button></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Feed 생성 설정</h2>
+      <div class="settings">
+        <label class="field">SKU당 최대 Feed<input id="maxFeeds" type="number" min="1" max="8" value="5"></label>
+        <label class="field">동시 처리 수<input id="concurrency" type="number" min="1" max="10" value="4"></label>
+        <label class="field">Title 글자수 제한<input id="titleLimit" type="number" min="10" max="100" value="30"></label>
+        <label class="field">Description 글자수 제한<input id="bodyLimit" type="number" min="20" max="300" value="60"></label>
+        <label class="field" style="grid-column:1/-1">생성 방식<select id="generatorMode"><option value="auto">자동 — API가 있으면 AI, 없으면 검토용 규칙 초안</option><option value="openai">OpenAI만 사용</option><option value="rules">검토용 규칙 초안 — AI 아님</option></select></label>
+      </div>
+      <div class="status-box" id="jobBox">
+        <b id="jobMessage">입력을 먼저 확인해 주세요.</b>
+        <div class="meter"><div id="progressBar"></div></div>
+        <div class="stats"><div class="stat"><b id="doneStat">0/0</b><span>처리</span></div><div class="stat"><b id="feedStat">0</b><span>Feeds</span></div><div class="stat"><b id="errorStat">0</b><span>Errors</span></div></div>
+      </div>
+      <div class="actions" style="margin-top:16px"><a class="download" id="downloadBtn">Excel 결과 다운로드</a></div>
+    </div>
+
+    <div class="card full">
+      <h2>3. 결과 미리보기</h2>
+      <div class="table-wrap"><table><thead><tr><th>Virtual SKU</th><th>Intent</th><th>Title</th><th>Description</th><th>Status</th></tr></thead><tbody id="previewBody"><tr><td class="empty" colspan="5">아직 생성된 결과가 없습니다.</td></tr></tbody></table></div>
+    </div>
+  </section>
+</main>
+<script>
+let items = [];
+const EXPECTED_APP_VERSION = '0.7.17';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function getJSON(url, options={}) { const r = await fetch(url, options); const j = await r.json(); if(!r.ok) throw new Error(j.error || '요청 실패'); return j; }
+
+async function loadConfig(){
+  const c = await getJSON('/api/config');
+  if(c.app_version !== EXPECTED_APP_VERSION){
+    $('providerBadge').textContent = '서버 재시작 필요';
+    $('runBtn').disabled = true;
+    $('jobMessage').textContent = 'PowerShell에서 서버를 Ctrl+C로 종료한 뒤 다시 실행해 주세요.';
+    return;
+  }
+  const generator = c.openai_enabled ? `AI 생성 준비됨 · ${c.openai_model}` : '규칙 기반 초안 · API 키 없음';
+  const browser = c.browser_fallback_enabled ? '브라우저 PDP 탐색 준비됨' : '브라우저 탐색 없음';
+  const taxonomy = c.taxonomy_config_connected ? 'Taxonomy Excel 연결됨' : 'Taxonomy Excel 없음';
+  $('providerBadge').textContent = `${generator} · ${browser} · ${taxonomy}`;
+  const select = $('singleCountry');
+  select.innerHTML = (c.country_sites || []).map(site => `<option value="${esc(site.site_key)}" data-language="${esc(site.language_code)}">${esc(site.display_name)} · lg.com/${esc(site.lg_site_code)}</option>`).join('');
+  if(!select.options.length) select.innerHTML = '<option value="">사용 가능한 국가가 없습니다.</option>';
+}
+
+function showItems(newItems){
+  const unique = new Map();
+  newItems.forEach(item => {
+    const key = String(item.url || item.original_sku || item.sku || '').trim().toUpperCase();
+    if(key && !unique.has(key)) unique.set(key, item);
+  });
+  items = [...unique.values()];
+  $('runBtn').disabled = !items.length;
+}
+
+async function parseText(){
+  try { const data = await getJSON('/api/parse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:$('inputText').value})}); showItems(data.items); }
+  catch(e){ alert(e.message); }
+}
+
+let parseTimer;
+$('inputText').addEventListener('input', () => {
+  clearTimeout(parseTimer);
+  parseTimer = setTimeout(parseText, 250);
+});
+
+$('fileInput').onchange = async e => {
+  const file = e.target.files[0]; if(!file) return;
+  try {
+    const data = await getJSON('/api/import',{method:'POST',headers:{'X-Filename':encodeURIComponent(file.name)},body:await file.arrayBuffer()});
+    showItems(data.items);
+    $('inputText').value = data.items.map(x => x.url || x.original_sku || x.sku).filter(Boolean).join('\n');
+    $('fileName').textContent = `업로드됨: ${file.name}`;
+  } catch(err){ alert(err.message); }
+};
+
+$('runBtn').onclick = async () => {
+  if(!items.length) { await parseText(); }
+  if(!items.length) { alert('모델명 또는 PDP URL을 입력해 주세요.'); return; }
+  const market = $('singleCountry').value;
+  const selectedOption = $('singleCountry').selectedOptions[0];
+  const language = selectedOption?.dataset.language || 'en-GB';
+  const runItems = items.map(x => ({...x, country:market, language}));
+  await startJob(runItems, $('runBtn'));
+};
+
+async function startJob(runItems, button){
+  if(!runItems.length) { alert('처리할 제품이 없습니다.'); return; }
+  button.disabled = true; $('downloadBtn').classList.remove('ready'); $('downloadBtn').removeAttribute('href');
+  $('previewBody').innerHTML='<tr><td class="empty" colspan="5">제품 정보를 읽고 있습니다.</td></tr>';
+  try {
+    const settings = {max_feeds:+$('maxFeeds').value, concurrency:+$('concurrency').value, title_limit:+$('titleLimit').value, body_limit:+$('bodyLimit').value, generator_mode:$('generatorMode').value, category_filter:'ALL'};
+    const job = await getJSON('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:runItems,settings})});
+    poll(job.job_id, button);
+  } catch(e){ alert(e.message); button.disabled=false; }
+}
+
+async function poll(jobId, button){
+  try {
+    const j = await getJSON(`/api/jobs/${jobId}`);
+    $('jobMessage').textContent=j.message; $('doneStat').textContent=`${j.completed}/${j.total}`; $('feedStat').textContent=j.feeds; $('errorStat').textContent=j.errors;
+    $('progressBar').style.width = `${j.total ? j.completed/j.total*100 : 0}%`;
+    if(j.preview && j.preview.length) renderPreview(j.preview);
+    if(j.status==='complete'){ $('downloadBtn').href=j.download_url; $('downloadBtn').classList.add('ready'); button.disabled=false; return; }
+    if(j.status==='failed'){ button.disabled=false; alert(j.message); return; }
+    setTimeout(()=>poll(jobId,button),800);
+  } catch(e){ button.disabled=false; alert(e.message); }
+}
+
+function renderPreview(rows){
+  $('previewBody').innerHTML = rows.map(r=>`<tr><td><b>${esc(r.virtual_sku)}</b></td><td>${esc(r.intent)}</td><td class="copy"><b>${esc(r.brand_title)}</b><br><small>${r.title_chars}자</small></td><td class="copy">${esc(r.brand_body_copy)}<br><small>${r.body_chars}자</small></td><td><span class="pill ${r.validation_status==='Supported'?'ok':''}">${esc(r.validation_status)}</span></td></tr>`).join('');
+}
+loadConfig().catch(()=>{$('providerBadge').textContent='설정 확인 실패'});
+
+</script>
+</body>
+</html>

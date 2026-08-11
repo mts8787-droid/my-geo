@@ -1,0 +1,84 @@
+{
+  "version": "0.2",
+  "updated_at": "2026-08-10",
+  "sites": [
+    {
+      "site_key": "UK",
+      "market_code": "UK",
+      "language_code": "en-GB",
+      "language_name": "English",
+      "display_name": "UK · English",
+      "lg_site_code": "uk",
+      "base_url": "https://www.lg.com/uk",
+      "sitemap_url": "https://www.lg.com/uk/sitemap.xml",
+      "is_default": true,
+      "enabled": true,
+      "validation_status": "Tested",
+      "currency": "GBP",
+      "aliases": [
+        "UK",
+        "UK",
+        "UK · English",
+        "uk"
+      ]
+    },
+    {
+      "site_key": "BR",
+      "market_code": "BR",
+      "language_code": "pt-BR",
+      "language_name": "Português",
+      "display_name": "Brazil · Português",
+      "lg_site_code": "br",
+      "base_url": "https://www.lg.com/br",
+      "sitemap_url": "https://www.lg.com/br/sitemap.xml",
+      "is_default": true,
+      "enabled": true,
+      "validation_status": "Pilot",
+      "currency": "BRL",
+      "aliases": [
+        "BR",
+        "BR",
+        "Brazil · Português",
+        "br"
+      ]
+    },
+    {
+      "site_key": "CA_EN",
+      "market_code": "CA",
+      "language_code": "en-CA",
+      "language_name": "English",
+      "display_name": "Canada · English",
+      "lg_site_code": "ca_en",
+      "base_url": "https://www.lg.com/ca_en",
+      "sitemap_url": "https://www.lg.com/ca_en/sitemap.xml",
+      "is_default": true,
+      "enabled": true,
+      "validation_status": "Pilot",
+      "currency": "CAD",
+      "aliases": [
+        "CA_EN",
+        "Canada · English",
+        "ca_en"
+      ]
+    },
+    {
+      "site_key": "CA_FR",
+      "market_code": "CA",
+      "language_code": "fr-CA",
+      "language_name": "Français",
+      "display_name": "Canada · Français",
+      "lg_site_code": "ca_fr",
+      "base_url": "https://www.lg.com/ca_fr",
+      "sitemap_url": "https://www.lg.com/ca_fr/sitemap.xml",
+      "is_default": false,
+      "enabled": true,
+      "validation_status": "Pilot",
+      "currency": "CAD",
+      "aliases": [
+        "CA_FR",
+        "Canada · Français",
+        "ca_fr"
+      ]
+    }
+  ]
+}
