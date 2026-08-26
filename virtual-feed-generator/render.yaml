@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: virtual-feed-generator
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m virtual_feed_mvp.app
+    autoDeploy: true
+    envVars:
+      - key: VF_HOST
+        value: 0.0.0.0
+      - key: VF_TAXONOMY_CONFIG
+        value: virtual_feed_mvp/feed_taxonomy_config.xlsx
+      - key: PYTHON_VERSION
+        value: 3.12.4
