@@ -6,14 +6,14 @@
     "criteria": [
       {
         "id": "perf_ttfb",
-        "name": "#1 TTFB < 600ms",
+        "name": "#1 TTFB < 1800ms",
         "spec_id": "#1",
         "points": 1,
         "enabled": true,
         "rule": {
           "type": "ttfb_under_ms",
           "params": {
-            "max_ms": 600
+            "max_ms": 1800
           }
         }
       },
@@ -99,7 +99,7 @@
         "name": "#8 Render Blocking 0",
         "spec_id": "#8",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "render_blocking_zero",
           "params": {}

@@ -10,11 +10,11 @@
 
 | 카테고리 | 항목 수 | ID 범위 | PoC 추진 |
 | :-- | :-: | :-: | :-: |
-| Performance | 11 | #1 ~ #11 | 8 (Y) / 3 (N — PSI API) |
+| Performance | 11 | #1 ~ #11 | 7 (Y) / 4 (N — PSI API 3 + #8 기준 제외) |
 | Accessibility | 4 | #9 ~ #12 (재시작) | 4 (Y) |
 | SEO | 7 | #13 ~ #19 | 7 (Y) |
 | AI Readiness (GEO 핵심) | 26 | #20 ~ #45 | 25 (Y) / 1 (조건부) |
-| **합계** | **48** | — | **44 / 48** |
+| **합계** | **48** | — | **43 / 48** |
 
 > ⚠️ **ID 중복 주의**: 원본 스프레드시트에서 Accessibility 섹션은 #9부터 다시 매김(#9 Image Alt, #10 Semantic HTML, #11 Heading Hierarchy, #12 ARIA). Performance #9 LCP, #10 CLS, #11 INP와 ID가 겹친다. 본 문서는 원본 ID를 보존하되, 코드 구현 시 카테고리 prefix(`perf_`, `a11y_`, `seo_`, `ai_`)로 구분 권장.
 
@@ -23,8 +23,8 @@
 ## 1. Performance (11개)
 
 ### #1 — TTFB
-- **PASS**: TTFB **< 600ms**
-- **FAIL (NON-PASS)**: TTFB ≥ 600ms 이거나 측정 불가
+- **PASS**: TTFB **< 1800ms**
+- **FAIL (NON-PASS)**: TTFB ≥ 1800ms 이거나 측정 불가
 - **측정 방법**: `Server-Timing`, `X-Response-Time` 응답 헤더 확인 (없으면 fetch round-trip 시간 측정)
 - **측정 레벨**: 도메인
 - **구현**: HTTP 응답에서 헤더 우선 사용, 없으면 `performance.now()` 기반 fallback
@@ -78,13 +78,13 @@
 - **구현**: BeautifulSoup으로 해당 태그 수집 → 속성값 정규식 매칭 (페이지가 https인 경우만 적용)
 - **PoC**: Y
 
-### #8 — Render Blocking
+### #8 — Render Blocking  *(기준 제외 — 채점 대상 아님)*
 - **PASS**: `<head>` 내 blocking script **0개** (defer/async 없는 외부 script)
 - **FAIL**: 1개 이상
 - **측정 방법**: `<head>` 내 `<script src>` 중 `defer`/`async` 속성 없는 것 카운트
 - **측정 레벨**: 페이지
 - **구현**: BS4로 `head > script[src]` 선택 후 속성 검사
-- **PoC**: Y
+- **PoC**: N (기준 제외 — `enabled: false`, 점수 집계에서 빠짐)
 
 ### #9 — LCP (Largest Contentful Paint)
 - **PASS**: LCP **≤ 4,000ms**
@@ -413,14 +413,14 @@
 
 | # | 항목 | PASS 한 줄 요약 | 측정 레벨 | PoC |
 | :-: | :-- | :-- | :-: | :-: |
-| 1 | TTFB | < 600ms | 도메인 | Y |
+| 1 | TTFB | < 1800ms | 도메인 | Y |
 | 2 | Compression | gzip/br/deflate | 페이지 | Y |
 | 3 | HTTP Protocol | HTTP/2+ | 도메인 | Y |
 | 4 | Cache-Control | max-age > 0 | 페이지 | Y |
 | 5 | HTML Size | < 100KB | 페이지 | Y |
 | 6 | Redirect Chain | ≤ 1회 | 페이지 | Y |
 | 7 | Mixed Content | http:// 0개 | 페이지 | Y |
-| 8 | Render Blocking | head blocking script 0 | 페이지 | Y |
+| 8 | Render Blocking | head blocking script 0 | 페이지 | N (기준 제외) |
 | 9 | LCP | ≤ 4,000ms | 페이지 | N |
 | 10 | CLS | ≤ 0.25 | 페이지 | N |
 | 11 | INP | ≤ 500ms | 페이지 | N |

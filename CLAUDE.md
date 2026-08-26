@@ -34,7 +34,7 @@ my-geo-audit/
 
 | 카테고리 (key) | max | 항목 | 활성 |
 | :-- | :-: | :-: | :-: |
-| `performance`   | 25 | 11 | 8 (LCP/CLS/INP는 PSI API 필요로 비활성) |
+| `performance`   | 25 | 11 | 7 (LCP/CLS/INP는 PSI API 필요로 비활성, #8 Render Blocking은 기준 제외) |
 | `accessibility` | 15 | 4  | 4 |
 | `seo`           | 20 | 8  | 8 (#17은 meta robots + X-Robots-Tag로 분리) |
 | `ai_readiness`  | 40 | 26 | 26 |
