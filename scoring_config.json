@@ -6,14 +6,16 @@
     "criteria": [
       {
         "id": "perf_ttfb",
-        "name": "#1 TTFB < 1800ms",
+        "name": "#1 TTFB < 1800ms (PSI Lab)",
         "spec_id": "#1",
         "points": 1,
         "enabled": true,
         "rule": {
-          "type": "ttfb_under_ms",
+          "type": "psi_metric",
           "params": {
-            "max_ms": 1800
+            "metric": "server_response_time_ms",
+            "max_value": 1800,
+            "unit": "ms"
           }
         }
       },

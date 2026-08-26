@@ -145,6 +145,35 @@ RULE_TYPES = {
             "max_ms": {"label": "최대 TTFB (ms)", "type": "number", "placeholder": "600"},
         },
     },
+    "psi_metric": {
+        "label": "PSI(Lighthouse) 지표 임계값",
+        "description": ("psi_collect.py 가 적재한 PageSpeed Insights 캐시에서 지표를 읽어 "
+                        "임계값과 비교합니다. 감사 중 API를 호출하지 않습니다. "
+                        "캐시에 값이 없으면 N/A(채점 제외) 처리됩니다."),
+        "params": {
+            "metric": {"label": "지표", "type": "select", "options": [
+                "server_response_time_ms", "network_server_latency_ms",
+                "lcp_ms", "cls", "tbt_ms", "speed_index_ms",
+                "crux_ttfb_p75_ms", "crux_lcp_p75_ms", "crux_cls_p75",
+                "crux_inp_p75_ms", "crux_fcp_p75_ms",
+            ]},
+            "max_value": {"label": "최대 허용값", "type": "number", "placeholder": "1800"},
+            "unit": {"label": "표시 단위", "type": "text", "placeholder": "ms"},
+        },
+    },
+    "psi_agentic_audit": {
+        "label": "PSI 에이전트형 브라우징 audit",
+        "description": ("Lighthouse agentic-browsing 카테고리의 개별 audit 통과 여부. "
+                        "WebMCP audit 3종은 대상 페이지가 Origin Trial 토큰을 서빙해야 "
+                        "평가되며, 미배포 시 N/A 로 남습니다."),
+        "params": {
+            "audit_id": {"label": "audit ID", "type": "select", "options": [
+                "agent-accessibility-tree", "llms-txt", "cumulative-layout-shift",
+                "webmcp-registered-tools", "webmcp-form-coverage", "webmcp-schema-validity",
+            ]},
+            "min_score": {"label": "최소 score (0~1)", "type": "number", "placeholder": "1"},
+        },
+    },
     "http_protocol_min": {
         "label": "HTTP 프로토콜 버전",
         "description": "HTTP 응답이 지정 버전 이상인지 확인 (HTTP/2, HTTP/3 등)",
@@ -703,6 +732,64 @@ def _eval_ttfb_under_ms(params: dict, ctx: dict) -> dict:
         "pass": passed,
         "value": f"{ttfb}ms",
         "hint": None if passed else f"TTFB {ttfb}ms — {max_ms}ms 미만 필요",
+    }
+
+
+def _eval_psi_metric(params: dict, ctx: dict) -> dict:
+    """PSI 캐시의 지표를 임계값과 비교. 캐시 미보유 URL 은 N/A(pass=None)."""
+    metric = params.get("metric", "server_response_time_ms")
+    unit   = params.get("unit", "ms")
+    try:
+        max_v = float(params.get("max_value", 1800))
+    except (TypeError, ValueError):
+        return {"pass": False, "value": None, "hint": "max_value 설정 오류"}
+
+    rec = ctx.get("psi")
+    if not rec:
+        return {"pass": None, "value": None,
+                "hint": "PSI 미수집 — psi_collect.py 로 수집 후 평가됩니다."}
+    if rec.get("error"):
+        return {"pass": None, "value": None, "hint": f"PSI 수집 실패: {rec['error']}"}
+
+    val = rec.get(metric)
+    if val is None:
+        return {"pass": None, "value": None, "hint": f"PSI 응답에 {metric} 없음"}
+
+    passed = float(val) < max_v
+    shown = f"{float(val):.3f}" if unit == "" else f"{round(float(val))}{unit}"
+    hint = None if passed else f"{metric} {shown} — {round(max_v)}{unit} 미만 필요"
+    # CrUX 지표는 URL 단위 데이터가 없으면 도메인 전체 값으로 대체된다 — 출처를 명시.
+    if metric.startswith("crux_") and rec.get("crux_scope") == "origin":
+        shown += " (도메인 평균)"
+    return {"pass": passed, "value": shown, "hint": hint}
+
+
+def _eval_psi_agentic_audit(params: dict, ctx: dict) -> dict:
+    """agentic-browsing 개별 audit 의 score 가 임계 이상인지."""
+    aid = params.get("audit_id", "agent-accessibility-tree")
+    try:
+        min_s = float(params.get("min_score", 1))
+    except (TypeError, ValueError):
+        min_s = 1.0
+
+    rec = ctx.get("psi")
+    if not rec:
+        return {"pass": None, "value": None,
+                "hint": "PSI 미수집 — psi_collect.py 로 수집 후 평가됩니다."}
+    if rec.get("error"):
+        return {"pass": None, "value": None, "hint": f"PSI 수집 실패: {rec['error']}"}
+
+    score = ((rec.get("agentic") or {}).get("audits") or {}).get(aid)
+    if score is None:
+        na = ("대상 페이지가 WebMCP Origin Trial 토큰을 서빙하지 않아 평가 불가"
+              if aid.startswith("webmcp") else f"audit '{aid}' 결과 없음")
+        return {"pass": None, "value": None, "hint": na}
+
+    passed = float(score) >= min_s
+    return {
+        "pass": passed,
+        "value": f"score {float(score):.2f}",
+        "hint": None if passed else f"{aid} score {float(score):.2f} — {min_s:.2f} 이상 필요",
     }
 
 
@@ -1425,6 +1512,8 @@ _HANDLERS = {
     "header_max_age_min":     _eval_header_max_age_min,
     "header_no_value":        _eval_header_no_value,
     "ttfb_under_ms":          _eval_ttfb_under_ms,
+    "psi_metric":             _eval_psi_metric,
+    "psi_agentic_audit":      _eval_psi_agentic_audit,
     "http_protocol_min":      _eval_http_protocol_min,
     "html_size_under_kb":     _eval_html_size_under_kb,
     "status_code_eq":         _eval_status_code_eq,

@@ -31,3 +31,6 @@ geo-audit-batch*.json
 .gcp/
 data/geoaudit.*.log
 data/*.log
+
+# PSI(PageSpeed Insights) API 키 — 절대 커밋 금지
+.psi_key

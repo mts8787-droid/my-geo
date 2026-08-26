@@ -315,6 +315,7 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
         "current_url":     page_data.get("final_url") or url,
         "csr_ratio_dict":  csr_ratio,
         "page_type":       page_type,
+        "psi":             get_psi_record(page_data.get("final_url") or url),
     }
 
     score = await _calculate_score(context, robots, csr_ratio)
@@ -945,6 +946,31 @@ def _calc_csr_ratio(ssr_chars: int, csr_raw: dict) -> dict:
 
 # ── Score (총합 100점) ────────────────────────────────────────────────────────
 
+# ── PSI 캐시 ──────────────────────────────────────────────────────────────────
+# psi_collect.py 가 적재한 PageSpeed Insights 측정값. 감사 중에는 API를 호출하지
+# 않고 이 캐시만 읽는다 (PSI 1회 호출 ≈ 60초 — 감사 안에 넣으면 못 쓴다).
+# mtime 을 보고 갱신되면 다시 읽는다.
+_PSI_CACHE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "data", "psi_cache.json")
+_psi_cache = {"mtime": None, "data": {}}
+
+
+def get_psi_record(url: str):
+    """URL 의 PSI 측정 레코드. 미수집이면 None."""
+    try:
+        mtime = os.path.getmtime(_PSI_CACHE_PATH)
+    except OSError:
+        return None
+    if _psi_cache["mtime"] != mtime:
+        try:
+            with open(_PSI_CACHE_PATH, encoding="utf-8") as f:
+                _psi_cache["data"] = json.load(f)
+            _psi_cache["mtime"] = mtime
+        except Exception:
+            return None
+    return _psi_cache["data"].get(url)
+
+
 async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict:
     """룰 엔진 기반 채점. context에 soup, page_data, jsonld_types, base_url 포함."""
     cfg       = get_scoring_config()
@@ -1044,6 +1070,18 @@ async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict
                     continue
             result = await evaluate_rule_async(rule, context)
             passed = result.get("pass", False)
+            # 룰이 pass=None 을 반환하면 '평가 불가' — applies_to_page_types 와 같은
+            # N/A 취급으로 채점 분모에서 뺀다 (예: PSI 미수집 URL).
+            if passed is None:
+                items[cr["id"]] = {
+                    "label": cr.get("name", cr["id"]),
+                    "pass":  None,
+                    "value": result.get("value"),
+                    "hint":  result.get("hint"),
+                    "rule_type": rule.get("type"),
+                    "na": True,
+                }
+                continue
             if passed:
                 cat_score += cr.get("points", 0)
             items[cr["id"]] = {
