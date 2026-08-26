@@ -141,8 +141,12 @@ def collect(urls, key, strategy="mobile", concurrency=20, retries=3, save_every=
     if not todo:
         return cache
 
-    eta = len(todo) / 13.88
-    print(f"[psi] 예상 소요 약 {eta/60:.1f}시간 ({eta:.0f}분)")
+    # 동시성별 실측 처리량(건/분). 표에 없는 값은 가장 가까운 항목을 쓴다.
+    # 선형이 아니다 — 10 → 20 구간에서만 크게 뛴다.
+    rates = {2: 2.14, 5: 4.62, 10: 5.42, 20: 13.88, 30: 14.06}
+    rate = rates[min(rates, key=lambda k: abs(k - concurrency))]
+    eta = len(todo) / rate
+    print(f"[psi] 예상 소요 약 {eta/60:.1f}시간 ({eta:.0f}분, 동시성 {concurrency} 실측 {rate}건/분 기준)")
 
     done = {"n": 0, "ok": 0, "fail": 0}
     t0 = time.time()
