@@ -129,59 +129,66 @@ def extract(doc: dict) -> dict:
 
 # ── 수집 ──────────────────────────────────────────────────────────────────────
 
-def collect(urls, key, strategy="mobile", concurrency=20, retries=3, save_every=25):
-    cache = load_cache()
-    # 실패 기록도 캐시에 남는다 — 그대로 두면 재실행해도 영원히 재시도되지 않는다.
-    # PSI 의 500 은 대부분 일시적 페널티 창이라 재실행 시 다시 시도해야 한다.
-    todo = [u for u in urls if u not in cache or cache[u].get("error")]
-    retry_n = sum(1 for u in todo if u in cache)
-    print(f"[psi] 대상 {len(urls)} / 캐시보유 {len(urls) - len(todo)} / 수집 {len(todo)}"
-          f"{f' (이전 실패 재시도 {retry_n})' if retry_n else ''}"
-          f"  동시성={concurrency} strategy={strategy}")
-    if not todo:
-        return cache
+def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4, save_every=25):
+    """수집. 실패는 인라인 재시도 대신 '스윕 반복'으로 회수한다.
 
-    # 동시성별 실측 처리량(건/분). 표에 없는 값은 가장 가까운 항목을 쓴다.
-    # 선형이 아니다 — 10 → 20 구간에서만 크게 뛴다.
+    인라인 재시도(worker 안에서 sleep)는 워커 슬롯을 붙잡아 풀을 굶긴다 —
+    동시성 10에서 8개가 백오프에 들어가면 실질 동시성이 2로 떨어져, 느려짐이
+    다시 실패를 부르는 악순환이 된다. 그래서 워커는 1회만 시도하고 즉시 반환하고,
+    실패분은 다음 스윕에서 쿨다운 후 통째로 재시도한다.
+    """
+    cache = load_cache()
     rates = {2: 2.14, 5: 4.62, 10: 5.42, 20: 13.88, 30: 14.06}
     rate = rates[min(rates, key=lambda k: abs(k - concurrency))]
-    eta = len(todo) / rate
-    print(f"[psi] 예상 소요 약 {eta/60:.1f}시간 ({eta:.0f}분, 동시성 {concurrency} 실측 {rate}건/분 기준)")
 
-    done = {"n": 0, "ok": 0, "fail": 0}
-    t0 = time.time()
+    for sweep in range(1, sweeps + 1):
+        todo = [u for u in urls if u not in cache or cache[u].get("error")]
+        if not todo:
+            break
+        retry_n = sum(1 for u in todo if u in cache)
+        eta = len(todo) / rate
+        print(f"[psi] 스윕 {sweep}/{sweeps} — 대상 {len(urls)} / 수집 {len(todo)}"
+              f"{f' (이전 실패 재시도 {retry_n})' if retry_n else ''}  동시성={concurrency}"
+              f"  예상 {eta/60:.1f}시간", flush=True)
 
-    def worker(u):
-        last = None
-        for attempt in range(retries):
+        done = {"n": 0, "ok": 0, "fail": 0}
+        t0 = time.time()
+
+        def worker(u):
             try:
                 rec = extract(fetch(u, key, strategy))
-                with _lock:
-                    cache[u] = rec
-                    done["n"] += 1; done["ok"] += 1
-                    if done["ok"] % save_every == 0:
-                        save_cache(cache)
-                    _progress(done, len(todo), t0)
-                return
+                err = None
             except urllib.error.HTTPError as e:
-                last = f"HTTP {e.code}"
-                if e.code not in (429, 500, 502, 503, 504):
-                    break
+                rec, err = None, f"HTTP {e.code}"
             except Exception as e:
-                last = f"{type(e).__name__}: {e}"
-            time.sleep(min(120, 20 * (2 ** attempt)))  # 20, 40, 80s
-        with _lock:
-            cache[u] = {"error": last, "fetched_at": datetime.now(timezone.utc).isoformat()}
-            done["n"] += 1; done["fail"] += 1
-            _progress(done, len(todo), t0)
+                rec, err = None, f"{type(e).__name__}: {e}"
+            with _lock:
+                if rec is not None:
+                    cache[u] = rec
+                    done["ok"] += 1
+                else:
+                    cache[u] = {"error": err,
+                                "fetched_at": datetime.now(timezone.utc).isoformat()}
+                    done["fail"] += 1
+                done["n"] += 1
+                if done["n"] % save_every == 0:
+                    save_cache(cache)
+                _progress(done, len(todo), t0)
 
-    with ThreadPoolExecutor(max_workers=concurrency) as ex:
-        list(ex.map(worker, todo))
+        with ThreadPoolExecutor(max_workers=concurrency) as ex:
+            list(ex.map(worker, todo))
+        save_cache(cache)
 
-    save_cache(cache)
-    el = time.time() - t0
-    print(f"\n[psi] 완료: 성공 {done['ok']} · 실패 {done['fail']} · "
-          f"{el/60:.1f}분 ({done['ok']/el*60:.2f}건/분) → {CACHE}")
+        el = time.time() - t0
+        print(f"[psi] 스윕 {sweep} 완료: 성공 {done['ok']} · 실패 {done['fail']} · "
+              f"{el/60:.1f}분 ({done['ok']/el*60:.2f}건/분)", flush=True)
+        if done["fail"] == 0 or sweep == sweeps:
+            break
+        print(f"[psi] 실패 {done['fail']}건 — 5분 쿨다운 후 재스윕", flush=True)
+        time.sleep(300)
+
+    ok = sum(1 for v in cache.values() if not v.get("error"))
+    print(f"\n[psi] 완료: 캐시 {len(cache)}건 (성공 {ok} · 실패 {len(cache)-ok}) → {CACHE}")
     return cache
 
 
