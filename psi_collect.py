@@ -19,7 +19,8 @@ rule_engine 의 psi_* 룰이 호출 없이 캐시만 읽어 판정한다.
   동시성 10 →  5.42건/분
   → 기본 동시성 20. 쿼터는 25,000건/일.
 
-resume: 캐시에 이미 있는 URL은 건너뛴다. 중단 후 재실행하면 이어서 수집한다.
+resume: 캐시에 성공 기록이 있는 URL만 건너뛴다. 중단 후 재실행하면 이어서 수집하고,
+        이전 실행에서 실패한 URL 은 다시 시도한다 (PSI 500 은 대개 일시적).
 
 사용:
   PSI_API_KEY=... python3 psi_collect.py --run data/run_results/us_2026-08-26_run_*.json
@@ -130,8 +131,12 @@ def extract(doc: dict) -> dict:
 
 def collect(urls, key, strategy="mobile", concurrency=20, retries=3, save_every=25):
     cache = load_cache()
-    todo = [u for u in urls if u not in cache]
+    # 실패 기록도 캐시에 남는다 — 그대로 두면 재실행해도 영원히 재시도되지 않는다.
+    # PSI 의 500 은 대부분 일시적 페널티 창이라 재실행 시 다시 시도해야 한다.
+    todo = [u for u in urls if u not in cache or cache[u].get("error")]
+    retry_n = sum(1 for u in todo if u in cache)
     print(f"[psi] 대상 {len(urls)} / 캐시보유 {len(urls) - len(todo)} / 수집 {len(todo)}"
+          f"{f' (이전 실패 재시도 {retry_n})' if retry_n else ''}"
           f"  동시성={concurrency} strategy={strategy}")
     if not todo:
         return cache
