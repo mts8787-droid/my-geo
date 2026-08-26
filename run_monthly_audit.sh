@@ -80,6 +80,31 @@ done
 for c in $LOCAL_COUNTRIES; do
   run_country "$c" --local
 done
+# ── PSI(Lighthouse) 측정값 수집 ───────────────────────────────────────────────
+# 이번 감사에서 새로 수집된 URL의 #1 TTFB / agentic-browsing 값을 채운다.
+# 감사 본체와 분리된 별도 패스다 — 호출당 약 60초라 감사 안에 넣으면 3시간짜리가
+# 17시간이 된다. 5,700건 기준 약 7시간(동시성 20 → 13.9건/분).
+# 키는 커밋되지 않는 .psi_key 에서 읽는다 — launchd 는 셸 env 를 상속하지 않는다.
+if [ -z "${PSI_API_KEY:-}" ] && [ -f .psi_key ]; then
+  PSI_API_KEY=$(tr -d '[:space:]' < .psi_key)
+fi
+if [ -n "${PSI_API_KEY:-}" ]; then
+  # 감사 산출물의 실제 날짜를 쓴다. 감사가 UTC 자정을 넘길 수 있어 date -u 로
+  # 계산하면 어긋날 수 있다.
+  RUN_DATE=$(ls -t data/run_results/*_run_*.json 2>/dev/null | head -1 \
+             | sed -E 's/.*_([0-9]{4}-[0-9]{2}-[0-9]{2})_run_.*/\1/')
+  RUN_DATE=${RUN_DATE:-$(date -u +%Y-%m-%d)}
+  echo "===== psi collect ${RUN_DATE} $(date +%H:%M:%S) =====" >> "$LOG"
+  PSI_API_KEY="$PSI_API_KEY" "$PY" psi_collect.py \
+    --run "data/run_results/*_${RUN_DATE}_run_*.json" --concurrency 20 >> "$LOG" 2>&1 \
+    || echo "[monthly-audit] WARN psi_collect 실패 — #1 은 N/A 로 남음" >> "$LOG"
+  # PSI 값이 들어왔으니 대시보드 재집계 (#1 이 캐시 기준으로 판정된다)
+  "$PY" gen_dashboard_data.py >> "$LOG" 2>&1 \
+    || echo "[monthly-audit] WARN 대시보드 재집계 실패" >> "$LOG"
+else
+  echo "[monthly-audit] WARN .psi_key 없음 — PSI 수집 건너뜀 (#1 은 N/A 로 남음)" >> "$LOG"
+fi
+
 # 갱신된 대시보드 집계를 Render로 반영(원격 /mcp 엔드포인트가 최신 데이터 서빙).
 # best-effort: 변경 없거나 push 실패해도 감사 결과엔 영향 없음.
 if ! git diff --quiet reports/dashboard_data.json 2>/dev/null; then
