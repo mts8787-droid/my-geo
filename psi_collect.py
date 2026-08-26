@@ -127,9 +127,66 @@ def extract(doc: dict) -> dict:
     return out
 
 
+# ── 전역 서킷 브레이커 + 속도 제한 ────────────────────────────────────────────
+
+class Gate:
+    """모든 워커가 공유하는 호출 게이트.
+
+    PSI 는 짧은 버스트는 14건/분까지 받아주지만 지속 부하에는 페널티 창을 건다.
+    창이 열리면 모든 호출이 '즉시 500' 으로 거부되는데, 여기서 계속 때리면
+    Google 네트워크 단위 차단(429 "automated queries", 수 시간 지속)으로 승격된다.
+    2026-08-26 실제로 이 차단을 맞았다 — 워커별 백오프를 없앤 설계가
+    페널티 창 동안 분당 270건을 쏟아부었기 때문이다.
+
+    그래서 두 겹으로 막는다:
+      1. 속도 제한  — 전역으로 초당 호출 간격을 강제 (워커 수와 무관)
+      2. 브레이커   — 연속 실패가 임계를 넘으면 '모든' 워커를 쿨다운 동안 정지
+    """
+
+    def __init__(self, rate_per_min=6.0, trip_after=5, cooldown=900):
+        self.min_interval = 60.0 / max(rate_per_min, 0.1)
+        self.trip_after = trip_after
+        self.cooldown = cooldown
+        self.lock = threading.Lock()
+        self.next_slot = 0.0
+        self.open_until = 0.0
+        self.consec_fail = 0
+        self.trips = 0
+
+    def acquire(self):
+        """호출 직전 호출. 브레이커가 열려 있으면 닫힐 때까지 대기 후 속도 제한 적용."""
+        while True:
+            with self.lock:
+                now = time.time()
+                if now >= self.open_until:
+                    slot = max(now, self.next_slot)
+                    self.next_slot = slot + self.min_interval
+                    delay = slot - now
+                    break
+                remain = self.open_until - now
+            time.sleep(min(10.0, remain))
+        if delay > 0:
+            time.sleep(delay)
+
+    def report(self, ok):
+        """호출 결과 보고. 브레이커가 새로 열렸으면 True."""
+        with self.lock:
+            if ok:
+                self.consec_fail = 0
+                return False
+            self.consec_fail += 1
+            if self.consec_fail >= self.trip_after and time.time() >= self.open_until:
+                self.open_until = time.time() + self.cooldown
+                self.consec_fail = 0
+                self.trips += 1
+                return True
+        return False
+
+
 # ── 수집 ──────────────────────────────────────────────────────────────────────
 
-def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4, save_every=25):
+def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4,
+            rate_per_min=6.0, save_every=25):
     """수집. 실패는 인라인 재시도 대신 '스윕 반복'으로 회수한다.
 
     인라인 재시도(worker 안에서 sleep)는 워커 슬롯을 붙잡아 풀을 굶긴다 —
@@ -138,8 +195,9 @@ def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4, save_every=2
     실패분은 다음 스윕에서 쿨다운 후 통째로 재시도한다.
     """
     cache = load_cache()
+    gate = Gate(rate_per_min=rate_per_min)
     rates = {2: 2.14, 5: 4.62, 10: 5.42, 20: 13.88, 30: 14.06}
-    rate = rates[min(rates, key=lambda k: abs(k - concurrency))]
+    rate = min(rates[min(rates, key=lambda k: abs(k - concurrency))], rate_per_min)
 
     for sweep in range(1, sweeps + 1):
         todo = [u for u in urls if u not in cache or cache[u].get("error")]
@@ -155,6 +213,7 @@ def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4, save_every=2
         t0 = time.time()
 
         def worker(u):
+            gate.acquire()
             try:
                 rec = extract(fetch(u, key, strategy))
                 err = None
@@ -162,6 +221,9 @@ def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4, save_every=2
                 rec, err = None, f"HTTP {e.code}"
             except Exception as e:
                 rec, err = None, f"{type(e).__name__}: {e}"
+            if gate.report(err is None):
+                print(f"[psi] ⚠ 연속 실패 — 브레이커 작동, 전체 {gate.cooldown//60}분 정지 "
+                      f"(누적 {gate.trips}회)", flush=True)
             with _lock:
                 if rec is not None:
                     cache[u] = rec
@@ -236,6 +298,8 @@ def main():
     ap.add_argument("--url", action="append", help="단일 URL (반복 지정 가능)")
     ap.add_argument("--strategy", default="mobile", choices=["mobile", "desktop"])
     ap.add_argument("--concurrency", type=int, default=20)
+    ap.add_argument("--rate", type=float, default=6.0,
+                    help="전역 호출 속도 상한(건/분). PSI 지속 부하 차단 회피용. 기본 6")
     ap.add_argument("--limit", type=int, default=0, help="처리 수 제한(시험용)")
     ap.add_argument("--exclude-page-types", default="business,promotion",
                     help="제외할 page_type (쉼표 구분). 대시보드 제외 대상과 맞춘 기본값. "
@@ -262,7 +326,7 @@ def main():
     if not urls:
         sys.exit("수집할 URL이 없습니다.")
 
-    collect(urls, key, args.strategy, args.concurrency)
+    collect(urls, key, args.strategy, args.concurrency, rate_per_min=args.rate)
     return 0
 
 
