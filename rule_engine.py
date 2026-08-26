@@ -696,8 +696,10 @@ def _eval_header_value_in(params: dict, ctx: dict) -> dict:
 def _eval_header_max_age_min(params: dict, ctx: dict) -> dict:
     min_seconds = int(params.get("min_seconds", 1))
     cc = _get_header(ctx, "cache-control").lower()
-    if not cc or "no-store" in cc or "no-cache" in cc:
-        return {"pass": False, "value": cc or None, "hint": "Cache-Control 부재 또는 no-store/no-cache."}
+    if not cc:
+        return {"pass": False, "value": None, "hint": "Cache-Control 헤더가 없습니다."}
+    # no-cache/no-store 가 섞여도 max-age 가 설정돼 있으면 캐시 정책은 명시된 것으로 본다.
+    # (예전에는 여기서 즉시 FAIL 처리해 max-age 값을 보지도 않았다)
     m = re.search(r"max-age\s*=\s*(\d+)", cc)
     if not m:
         return {"pass": False, "value": cc, "hint": "max-age 디렉티브가 없습니다."}

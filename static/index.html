@@ -339,9 +339,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>
   // ── Category metadata ──────────────────────────────────────────────────────
   const CATEGORY_META = {
-    performance:   { label: 'Performance',   color: '#6366f1', icon: '⚡' },
-    accessibility: { label: 'Accessibility', color: '#10b981', icon: '♿' },
-    seo:           { label: 'SEO',           color: '#3b82f6', icon: '🔍' },
+    performance:     { label: '사이트 성능',      color: '#6366f1', icon: '⚡' },
+    accessibility:   { label: '웹접근성',          color: '#10b981', icon: '♿' },
+    seo:             { label: 'Basic SEO',       color: '#3b82f6', icon: '🔍' },
+    schema_markup:   { label: '스키마마크업',      color: '#f43f5e', icon: '🏷️' },
+    citable_content: { label: '고인용 콘텐츠',     color: '#f59e0b', icon: '💬' },
+    ai_crawlability: { label: 'AI Crawlability', color: '#a855f7', icon: '🤖' },
+    // legacy: ai_readiness 는 schema/citable/crawlability 로 분할됨 (구 데이터 호환)
     ai_readiness:  { label: 'AI Readiness',  color: '#f43f5e', icon: '🤖' },
     // legacy 호환 (구조에 남아 있어도 무시되지 않도록)
     seo_tags:          { label: '기본 SEO 태그',  color: '#15803d' },
@@ -365,14 +369,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // 새 카테고리 카드는 모두 #categoryCards 안에서 동적 렌더되므로 카드 ID 매핑 불필요.
   // 스코프 필터링은 categoryCards 내부 자식 카드에 data-cat 속성으로 적용.
   const SCOPE_TO_CATS = {
-    all:           ['performance','accessibility','seo','ai_readiness'],
+    all:           ['performance','accessibility','seo','schema_markup','citable_content','ai_crawlability'],
     performance:   ['performance'],
     accessibility: ['accessibility'],
     seo:           ['seo'],
-    ai_readiness:  ['ai_readiness'],
-    // 레거시 alias (백엔드 scope 호환)
-    schema:        ['ai_readiness'],
-    faq:           ['ai_readiness'],
+    schema_markup:   ['schema_markup'],
+    citable_content: ['citable_content'],
+    ai_crawlability: ['ai_crawlability'],
+    // 레거시 alias (백엔드 scope 호환) — ai_readiness 는 분할된 3개를 모두 가리킨다
+    ai_readiness:  ['schema_markup','citable_content','ai_crawlability','ai_readiness'],
+    schema:        ['schema_markup','ai_readiness'],
+    faq:           ['citable_content','ai_readiness'],
   };
 
   function setScope(scope) {
@@ -766,7 +773,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
     const breakdown = firstOK.result.score.breakdown;
     const cols = [];  // {key, label}
-    const order = ['performance','accessibility','seo','ai_readiness'];
+    const order = ['performance','accessibility','seo',
+                   'schema_markup','citable_content','ai_crawlability',
+                   'ai_readiness'];  // 마지막은 분할 전 구 데이터 호환
     for (const cat of order) {
       const c = breakdown[cat];
       if (!c?.items) continue;

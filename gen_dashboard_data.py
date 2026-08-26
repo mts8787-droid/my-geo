@@ -1,17 +1,29 @@
 """data/run_results 의 국가별 최신 run 을 읽어 대시보드용 집계 JSON 생성.
 
 gen_audit_report.py 와 동일한 '국가별 최신 run 1개' 선정 로직을 쓴다.
-run_results 의 score.breakdown 구조를 그대로 국가 단위로 집계한다.
-출력: reports/dashboard_data.json (nested: countries → score.breakdown → items)
+출력: reports/dashboard_data.json (countries → breakdown/items)
 
-집계 시 세 가지 보정을 적용한다:
-  1. B2B(business) / 프로모션(promotion) page_type 페이지는 표본에서 제외 (sample_size 에도 미포함).
-  2. 저장된 run 의 항목 결과를 scoring_config.json 의 '현재' 기준으로 재채점 —
-     비활성(enabled:false) 항목은 빼고, 임계값이 바뀐 항목은 저장된 실측값으로 pass 를 재판정.
-     (과거 run 을 다시 돌리지 않고도 기준 변경이 대시보드에 반영되도록)
-  3. 현재 룰이 psi_metric 인 항목(#1 TTFB)은 data/psi_cache.json 의 PSI 측정값으로 판정.
-     미수집 URL 은 N/A 로 분모에서 빠진다 — 수집이 진행될수록 applicable_n 이 늘어난다.
-     같은 캐시의 agentic-browsing 관측치는 채점과 분리해 "agentic" 블록으로 보고한다.
+저장된 run 을 그대로 합산하지 않고 scoring_config.json 의 '현재' 기준으로 재채점한다.
+과거 run 을 다시 돌리지 않고도 기준 변경이 대시보드에 반영되게 하기 위함이다.
+
+재채점 규칙 (우선순위 순):
+  1. 카테고리 재매핑   — 저장된 run 은 옛 4개 카테고리 구조다. 항목 ID 로 현재 설정의
+                        카테고리(6개)에 다시 붙인다. 총점은 passed/total 이라 영향 없고
+                        breakdown 만 바뀐다.
+  2. 비활성 항목 제외  — enabled:false 인 항목(#5, #8 등)은 분모에서 뺀다.
+  3. 페이지타입 제한   — applies_to_page_types 가 있으면 해당 타입에서만 평가 (#34).
+  4. psi_metric        — data/psi_cache.json 의 PSI 측정값으로 판정 (#1). 미수집이면 N/A.
+  5. 임계값 변경       — header_max_age_min(#4) 등은 저장된 value 문자열로 재판정.
+  6. 그 외             — 저장된 pass 를 그대로 쓴다.
+
+집계 대상에서 빠지는 페이지:
+  - B2B(business) / 프로모션(promotion)  — GEO 대상이 아님
+  - 분류불가(unknown) / 홈페이지(home)   — 측정 의미 없음
+  - 비-200 페이지(404·500·fetch 실패)    — 전 체크가 cascade-FAIL 이라 개선 대상이 아님
+  전부 sample_size 에도 포함하지 않는다.
+
+같은 PSI 캐시의 agentic-browsing 관측치는 채점과 분리해 "agentic" 블록으로 보고한다
+(9월 감사부터 채점 예정 — 현재는 수집·관측만).
 """
 import json
 import os
@@ -25,40 +37,45 @@ PSI_CACHE = os.path.join(HERE, "data", "psi_cache.json")
 OUT = os.path.join(HERE, "reports", "dashboard_data.json")
 
 STRATEGIC = ["us", "uk", "de", "es", "ca", "au", "br", "mx", "in", "vn"]
-CATS = ["performance", "accessibility", "seo", "ai_readiness"]
 
-# 대시보드 집계 제외 page_type — B2B(사업자) / 프로모션·약관 페이지
-EXCLUDED_PAGE_TYPES = {"business", "promotion"}
+# 집계 제외 page_type
+EXCLUDED_PAGE_TYPES = {"business", "promotion", "unknown", "home"}
 
-_MS = re.compile(r"(\d+(?:\.\d+)?)\s*ms")
+_MAXAGE = re.compile(r"max-age\s*=\s*(\d+)")
 
 
-def load_criteria():
-    """scoring_config.json → (활성항목 맵, 재판정 맵, PSI 룰 맵, 등급 임계값).
+class Criteria:
+    """scoring_config.json 을 재채점에 필요한 형태로 펼쳐둔 것."""
 
-    활성항목 맵 : {category: {item_id: label}}   — 여기 없는 항목은 집계 제외
-    재판정 맵   : {item_id: max_ms}              — 저장된 value 로 pass 재계산
-    PSI 룰 맵   : {item_id: (metric, max_value)} — PSI 캐시에서 읽어 재판정
-    """
-    cfg = json.load(open(CONFIG, encoding="utf-8"))
-    active, rescore, psi_rules = {}, {}, {}
-    for cat in CATS:
-        active[cat] = {}
-        for cr in cfg.get(cat, {}).get("criteria", []):
-            if not cr.get("enabled", True):
-                continue
-            active[cat][cr["id"]] = cr.get("name", cr["id"])
-            rule = cr.get("rule") or {}
-            params = rule.get("params", {})
-            if rule.get("type") == "ttfb_under_ms":
-                rescore[cr["id"]] = float(params.get("max_ms", 0))
-            elif rule.get("type") == "psi_metric":
-                psi_rules[cr["id"]] = (params.get("metric"), float(params.get("max_value", 0)))
-    return active, rescore, psi_rules, cfg.get("grade", {})
+    def __init__(self, path=CONFIG):
+        cfg = json.load(open(path, encoding="utf-8"))
+        self.cats = [k for k in cfg if k != "grade"]
+        self.grade = cfg.get("grade", {})
+        self.label = {}       # item_id → 표시명
+        self.category = {}    # item_id → 카테고리 키
+        self.applies = {}     # item_id → 평가 대상 page_type 집합
+        self.psi_rules = {}   # item_id → (metric, max_value)
+        self.maxage = {}      # item_id → min_seconds
+        self.cat_label = {c: cfg[c].get("label", c) for c in self.cats}
+
+        for cat in self.cats:
+            for cr in cfg[cat].get("criteria", []):
+                if not cr.get("enabled", True):
+                    continue
+                iid = cr["id"]
+                self.label[iid] = cr.get("name", iid)
+                self.category[iid] = cat
+                if cr.get("applies_to_page_types"):
+                    self.applies[iid] = set(cr["applies_to_page_types"])
+                rule = cr.get("rule") or {}
+                params = rule.get("params", {})
+                if rule.get("type") == "psi_metric":
+                    self.psi_rules[iid] = (params.get("metric"), float(params.get("max_value", 0)))
+                elif rule.get("type") == "header_max_age_min":
+                    self.maxage[iid] = int(params.get("min_seconds", 1))
 
 
 def load_psi_cache():
-    """psi_collect.py 가 적재한 PSI 측정값. 없으면 빈 dict."""
     try:
         with open(PSI_CACHE, encoding="utf-8") as f:
             return json.load(f)
@@ -66,36 +83,142 @@ def load_psi_cache():
         return {}
 
 
-def item_pass(iid, it, url, rescore, psi_rules, psi):
-    """항목 pass 판정. None 이면 N/A — 집계 분모에서 빠진다.
+def item_pass(iid, it, url, page_type, cr, psi):
+    """항목 pass 판정. None 이면 N/A — 집계 분모에서 빠진다."""
+    applies = cr.applies.get(iid)
+    if applies and page_type not in applies:
+        return None
 
-    우선순위:
-      1. 현재 룰이 psi_metric  → PSI 캐시에서 읽어 판정 (미수집이면 None)
-      2. 임계값만 바뀐 항목    → 저장된 value 문자열로 재판정
-      3. 그 외                → 저장된 pass 그대로
-    """
-    if iid in psi_rules:
-        metric, max_v = psi_rules[iid]
+    if iid in cr.psi_rules:
+        metric, max_v = cr.psi_rules[iid]
         rec = psi.get(url)
         if not rec or rec.get("error") or rec.get(metric) is None:
             return None
         return float(rec[metric]) < max_v
 
-    max_ms = rescore.get(iid)
-    if max_ms is not None:
-        m = _MS.search(str(it.get("value") or ""))
-        if m:
-            return float(m.group(1)) < max_ms
+    if iid in cr.maxage:
+        # max-age 디렉티브가 있으면(0 포함) 통과. no-cache/no-store 동반은 무관.
+        m = _MAXAGE.search(str(it.get("value") or ""))
+        return bool(m) and int(m.group(1)) >= cr.maxage[iid]
+
     return it.get("pass")
 
 
-def agentic_summary(results, psi):
-    """에이전트형 브라우징(agentic-browsing) 관측 집계. 채점에는 쓰지 않는다.
+def is_excluded(r):
+    """집계 대상에서 빼야 할 페이지면 사유 문자열, 아니면 None."""
+    pt = (r.get("page_type") or {}).get("id")
+    if pt in EXCLUDED_PAGE_TYPES:
+        return pt
+    if r.get("page_error"):
+        return "non_200"
+    # fetch 는 됐지만 상태코드가 200 이 아닌 경우 — 저장된 #41 항목으로 판별
+    for b in (r.get("score", {}).get("breakdown") or {}).values():
+        st = (b.get("items") or {}).get("ai_status_200")
+        if st and st.get("pass") is False:
+            return "non_200"
+    return None
 
-    scoring_config 의 항목이 아니라 '수집된 사실'로만 보고한다.
-    WebMCP audit 은 대상 페이지가 Origin Trial 토큰을 서빙해야 평가되므로
-    미배포 상태에서는 measured_n=0 으로 남는다.
-    """
+
+def aggregate_country(doc, cr, psi):
+    excluded = defaultdict(int)
+    results = []
+    for x in doc.get("summary", []):
+        r = x.get("result") or {}
+        if not r.get("score"):
+            continue
+        why = is_excluded(r)
+        if why:
+            excluded[why] += 1
+        else:
+            results.append(r)
+
+    n = len(results)
+    if not n:
+        return None
+
+    grade_dist = defaultdict(int)
+    total_sum = 0
+    cat_pts = defaultdict(float)
+    cat_pass = defaultdict(int)
+    cat_total = defaultdict(int)
+    items_agg = {}
+
+    for r in results:
+        pt = (r.get("page_type") or {}).get("id")
+        url = r["url"]
+        # 저장된 카테고리 구조는 무시하고 항목만 모아 현재 카테고리로 재매핑한다
+        stored = {}
+        for b in (r["score"].get("breakdown") or {}).values():
+            stored.update(b.get("items") or {})
+
+        c_passed = defaultdict(int)
+        c_total = defaultdict(int)
+        for iid, it in stored.items():
+            cat = cr.category.get(iid)
+            if cat is None:          # 현재 기준에서 비활성 (#5, #8 등)
+                continue
+            if it.get("pass") is None and iid not in cr.psi_rules:
+                continue             # 저장 시점에 이미 N/A
+            p = item_pass(iid, it, url, pt, cr, psi)
+            if p is None:
+                continue
+            a = items_agg.setdefault(iid, {
+                "label": cr.label[iid], "category": cat, "pass_cnt": 0, "applicable_n": 0})
+            a["applicable_n"] += 1
+            c_total[cat] += 1
+            if p:
+                a["pass_cnt"] += 1
+                c_passed[cat] += 1
+
+        r_passed = sum(c_passed.values())
+        r_total = sum(c_total.values())
+        for cat in cr.cats:
+            cat_pass[cat] += c_passed[cat]
+            cat_total[cat] += c_total[cat]
+            cat_pts[cat] += round(c_passed[cat] / c_total[cat] * 100) if c_total[cat] else 0
+
+        total = round(r_passed / r_total * 100) if r_total else 0
+        total_sum += total
+        grade_dist[
+            "Good" if total >= cr.grade.get("good", 90) else
+            "Need Improvement" if total >= cr.grade.get("need_improvement", 70) else
+            "Poor"
+        ] += 1
+
+    breakdown = {
+        cat: {
+            "label": cr.cat_label[cat],
+            "points_avg": round(cat_pts[cat] / n, 2),
+            "max": 100,
+            "pass_rate": round(cat_pass[cat] / cat_total[cat], 4) if cat_total[cat] else None,
+            "items_n": len([i for i, c in cr.category.items() if c == cat]),
+        }
+        for cat in cr.cats
+    }
+    items = {
+        iid: {
+            "label": a["label"], "category": a["category"],
+            "pass_rate": round(a["pass_cnt"] / a["applicable_n"], 4) if a["applicable_n"] else None,
+            "applicable_n": a["applicable_n"],
+        }
+        for iid, a in items_agg.items()
+    }
+
+    return {
+        "sample_size": n,
+        "excluded": dict(excluded),
+        "excluded_count": sum(excluded.values()),
+        "total_avg": round(total_sum / n, 2),
+        "max": 100,
+        "grade_dist": dict(grade_dist),
+        "breakdown": breakdown,
+        "items": items,
+        "agentic": agentic_summary(results, psi),
+    }
+
+
+def agentic_summary(results, psi):
+    """agentic-browsing 관측 집계. 9월 감사부터 채점 예정 — 지금은 관측만."""
     scores, audits = [], defaultdict(lambda: {"pass": 0, "measured": 0})
     for r in results:
         rec = psi.get(r["url"])
@@ -105,7 +228,7 @@ def agentic_summary(results, psi):
         if ag.get("score") is not None:
             scores.append(ag["score"])
         for aid, sc in (ag.get("audits") or {}).items():
-            if sc is None:          # 평가 불가 — 분모에도 넣지 않는다
+            if sc is None:      # 평가 불가(WebMCP 미배포 등) — 분모에도 넣지 않는다
                 continue
             audits[aid]["measured"] += 1
             if sc >= 1:
@@ -115,116 +238,8 @@ def agentic_summary(results, psi):
     return {
         "measured_n": len(scores),
         "score_avg": round(sum(scores) / len(scores), 4) if scores else None,
-        "audits": {
-            aid: {"pass_rate": round(v["pass"] / v["measured"], 4), "measured_n": v["measured"]}
-            for aid, v in sorted(audits.items())
-        },
-    }
-
-
-def aggregate_country(doc, active, rescore, psi_rules, psi, grade_cfg):
-    """한 국가 run → 집계 dict. 제외 page_type 은 표본에서 뺀다."""
-    excluded = defaultdict(int)
-    results = []
-    for x in doc.get("summary", []):
-        r = x.get("result") or {}
-        if not r.get("score"):
-            continue
-        pt = (r.get("page_type") or {}).get("id")
-        if pt in EXCLUDED_PAGE_TYPES:
-            excluded[pt] += 1
-            continue
-        results.append(r)
-
-    n = len(results)
-    if not n:
-        return None
-
-    parse_fail = sum(
-        1 for r in results
-        if r["score"]["breakdown"].get("seo", {}).get("items", {})
-        .get("seo_title", {}).get("hint") == "HTML 파싱 실패"
-    )
-    grade_dist = defaultdict(int)
-    total_sum = 0
-
-    # 카테고리 집계
-    cat_pts = {c: 0.0 for c in CATS}
-    cat_pass = {c: 0 for c in CATS}
-    cat_items_total = {c: 0 for c in CATS}
-    # 항목 집계: id → {label, category, pass_cnt, applicable_n}
-    items_agg = {}
-
-    for r in results:
-        bd = r["score"]["breakdown"]
-        r_passed = r_total = 0
-        for cat in CATS:
-            b = bd.get(cat)
-            if not b:
-                continue
-            c_passed = c_total = 0
-            for iid, it in (b.get("items") or {}).items():
-                # 현재 기준에서 비활성인 항목은 집계에서 제외 (#8 등)
-                if iid not in active.get(cat, {}):
-                    continue
-                # pass=None 은 '평가 대상 아님'(페이지타입 불일치 / PSI 미수집) → 분모 제외
-                if it.get("pass") is None:
-                    continue
-                p = item_pass(iid, it, r["url"], rescore, psi_rules, psi)
-                if p is None:
-                    continue
-                a = items_agg.setdefault(iid, {
-                    "label": active[cat][iid], "category": cat,
-                    "pass_cnt": 0, "applicable_n": 0,
-                })
-                a["applicable_n"] += 1
-                c_total += 1
-                if p:
-                    a["pass_cnt"] += 1
-                    c_passed += 1
-            cat_pass[cat] += c_passed
-            cat_items_total[cat] += c_total
-            cat_pts[cat] += round(c_passed / c_total * 100) if c_total else 0
-            r_passed += c_passed
-            r_total += c_total
-
-        total = round(r_passed / r_total * 100) if r_total else 0
-        total_sum += total
-        grade_dist[
-            "Good" if total >= grade_cfg.get("good", 90) else
-            "Need Improvement" if total >= grade_cfg.get("need_improvement", 70) else
-            "Poor"
-        ] += 1
-
-    breakdown = {}
-    for cat in CATS:
-        it_tot = cat_items_total[cat]
-        breakdown[cat] = {
-            "points_avg": round(cat_pts[cat] / n, 2),
-            "max": 100,
-            "pass_rate": round(cat_pass[cat] / it_tot, 4) if it_tot else None,
-        }
-
-    items = {}
-    for iid, a in items_agg.items():
-        items[iid] = {
-            "label": a["label"],
-            "category": a["category"],
-            "pass_rate": round(a["pass_cnt"] / a["applicable_n"], 4) if a["applicable_n"] else None,
-            "applicable_n": a["applicable_n"],
-        }
-
-    return {
-        "sample_size": n,
-        "agentic": agentic_summary(results, psi),
-        "excluded_page_types": dict(excluded),
-        "excluded_count": sum(excluded.values()),
-        "parse_fail_rate": round(parse_fail / n, 4),
-        "total_avg": round(total_sum / n, 2),
-        "max": 100,
-        "grade_dist": dict(grade_dist),
-        "breakdown": breakdown,
-        "items": items,
+        "audits": {a: {"pass_rate": round(v["pass"] / v["measured"], 4), "measured_n": v["measured"]}
+                   for a, v in sorted(audits.items())},
     }
 
 
@@ -239,53 +254,65 @@ def pick_latest_runs():
         code, date = m.group(1), m.group(2)
         if code not in best or date > best[code][0]:
             best[code] = (date, fn)
-    return {c: v for c, v in best.items()}
+    return best
 
 
 def main():
-    active, rescore, psi_rules, grade_cfg = load_criteria()
+    cr = Criteria()
     psi = load_psi_cache()
     latest = pick_latest_runs()
-    countries = {}
-    missing = []
+    countries, missing = {}, []
+
     for c in STRATEGIC:
         if c not in latest:
             missing.append(c)
             continue
         date, fn = latest[c]
-        doc = json.load(open(os.path.join(RUNS, fn)))
-        agg = aggregate_country(doc, active, rescore, psi_rules, psi, grade_cfg)
+        agg = aggregate_country(json.load(open(os.path.join(RUNS, fn))), cr, psi)
         if agg is None:
             missing.append(c)
             continue
-        agg["date"] = date
-        agg["run_file"] = fn
+        agg["date"], agg["run_file"] = date, fn
         countries[c] = agg
 
-    # 전체 요약(표본수 가중 평균)
     sample_total = sum(v["sample_size"] for v in countries.values())
     weighted = sum(v["total_avg"] * v["sample_size"] for v in countries.values())
-    overall = {
-        "countries": len(countries),
-        "sample_total": sample_total,
-        "excluded_total": sum(v["excluded_count"] for v in countries.values()),
-        "excluded_page_types": sorted(EXCLUDED_PAGE_TYPES),
-        "total_avg_weighted": round(weighted / sample_total, 2) if sample_total else None,
-        "missing": missing,
-    }
+    excl = defaultdict(int)
+    for v in countries.values():
+        for k, num in v["excluded"].items():
+            excl[k] += num
 
-    out = {"countries": countries, "overall": overall}
+    out = {
+        "countries": countries,
+        "criteria": {
+            "categories": {c: {"label": cr.cat_label[c],
+                               "items_n": len([i for i, k in cr.category.items() if k == c])}
+                           for c in cr.cats},
+            "scored_items": len(cr.category),
+        },
+        "overall": {
+            "countries": len(countries),
+            "sample_total": sample_total,
+            "excluded_total": sum(excl.values()),
+            "excluded_breakdown": dict(excl),
+            "total_avg_weighted": round(weighted / sample_total, 2) if sample_total else None,
+            "missing": missing,
+        },
+    }
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
-    print(f"[dashboard] {len(countries)}국 집계 → {OUT}")
+
+    print(f"[dashboard] {len(countries)}국 · 채점항목 {len(cr.category)}개 "
+          f"({len(cr.cats)}개 카테고리) → {OUT}")
     if missing:
         print(f"[dashboard] 누락: {missing}")
     for c in STRATEGIC:
         v = countries.get(c)
         if v:
             print(f"  {c.upper():<3} {v['total_avg']:5.1f}  n={v['sample_size']:<4} "
-                  f"(제외 {v['excluded_count']})  parse_fail={v['parse_fail_rate']*100:.0f}%  {v['date']}")
-    print(f"  가중평균 {overall['total_avg_weighted']}  (표본 {sample_total}, 제외 {overall['excluded_total']})")
+                  f"(제외 {v['excluded_count']})  {v['date']}")
+    print(f"  가중평균 {out['overall']['total_avg_weighted']}  "
+          f"(표본 {sample_total}, 제외 {sum(excl.values())} {dict(excl)})")
 
 
 if __name__ == "__main__":

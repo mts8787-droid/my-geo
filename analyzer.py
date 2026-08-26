@@ -978,7 +978,9 @@ async def _calculate_score(context: dict, robots: dict, csr_ratio: dict) -> dict
     breakdown = {}
 
     # 새 4개 카테고리 + 레거시 카테고리 호환 (설정에 존재하는 것만 평가)
-    new_cat_keys = ["performance", "accessibility", "seo", "ai_readiness"]
+    new_cat_keys = ["performance", "accessibility", "seo",
+                    "schema_markup", "citable_content", "ai_crawlability",
+                    "ai_readiness"]  # ai_readiness 는 레거시 — 분할 전 설정 호환용
     legacy_cat_keys = ["seo_tags", "robots_txt", "json_ld", "llms_txt", "faq",
                        "summary_box", "heading_structure", "stats_density", "reviews_ssr", "csr_ratio"]
     cat_keys = [k for k in new_cat_keys + legacy_cat_keys if k in cfg]

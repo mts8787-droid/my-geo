@@ -30,14 +30,19 @@ my-geo-audit/
 └── extension/                    # Chrome 확장 (MV3)
 ```
 
-## 카테고리와 항목 (총 49 / 100점)
+## 카테고리와 항목 (채점 41개 / 6 카테고리)
 
-| 카테고리 (key) | max | 항목 | 활성 |
-| :-- | :-: | :-: | :-: |
-| `performance`   | 25 | 11 | 7 (LCP/CLS/INP는 PSI API 필요로 비활성, #8 Render Blocking은 기준 제외) |
-| `accessibility` | 15 | 4  | 4 |
-| `seo`           | 20 | 8  | 8 (#17은 meta robots + X-Robots-Tag로 분리) |
-| `ai_readiness`  | 40 | 26 | 26 |
+| 카테고리 (key) | 라벨 | 채점 | 비고 |
+| :-- | :-- | :-: | :-- |
+| `performance`     | 사이트 성능      | 6  | #1은 PSI Lab. #5·#8 기준 제외, LCP/CLS/INP는 9월 시행 예정 |
+| `accessibility`   | 웹접근성         | 4  | |
+| `seo`             | Basic SEO      | 8  | #17은 meta robots + X-Robots-Tag로 분리 |
+| `schema_markup`   | 스키마마크업     | 10 | #25는 Product + Offer 2개로 채점 |
+| `citable_content` | 고인용 콘텐츠    | 5  | #34는 에디토리얼 page_type에만 적용 |
+| `ai_crawlability` | AI Crawlability | 8 | |
+
+> 총점은 카테고리 가중치 없이 `통과항목 / 전체항목 × 100`. `max` 값은 표시용.
+> 구 `ai_readiness` 카테고리는 위 3개로 분할됨 (구 데이터 호환용으로 키만 남아 있음).
 
 기준 원본: [docs/audit-criteria.md](docs/audit-criteria.md) — 어드민 "Audit 기준 문서" 메뉴에서도 조회 가능.
 

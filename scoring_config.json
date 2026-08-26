@@ -1,8 +1,8 @@
 {
   "performance": {
     "max": 25,
-    "label": "Performance",
-    "description": "AI Readability — Performance (11개)",
+    "label": "사이트 성능",
+    "description": "서버가 페이지를 얼마나 빠르고 안전하게 전달하는가 — 전송 계층",
     "criteria": [
       {
         "id": "perf_ttfb",
@@ -48,14 +48,14 @@
       },
       {
         "id": "perf_cache_control",
-        "name": "#4 Cache-Control max-age",
+        "name": "#4 Cache-Control max-age 설정",
         "spec_id": "#4",
         "points": 1,
         "enabled": true,
         "rule": {
           "type": "header_max_age_min",
           "params": {
-            "min_seconds": 1
+            "min_seconds": 0
           }
         }
       },
@@ -64,7 +64,7 @@
         "name": "#5 HTML < 100KB",
         "spec_id": "#5",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "html_size_under_kb",
           "params": {
@@ -153,8 +153,8 @@
   },
   "accessibility": {
     "max": 15,
-    "label": "Accessibility",
-    "description": "AI Readability — Accessibility (4개)",
+    "label": "웹접근성",
+    "description": "사람과 기계가 문서 구조를 읽어낼 수 있는가",
     "criteria": [
       {
         "id": "a11y_image_alt",
@@ -213,8 +213,8 @@
   },
   "seo": {
     "max": 20,
-    "label": "SEO",
-    "description": "AI Readability — SEO (8개)",
+    "label": "Basic SEO",
+    "description": "검색엔진이 페이지를 수집하고 표시할 수 있는가",
     "criteria": [
       {
         "id": "seo_title",
@@ -329,25 +329,11 @@
       }
     ]
   },
-  "ai_readiness": {
-    "max": 40,
-    "label": "AI Readiness (GEO 핵심)",
-    "description": "AI Readiness — GEO 핵심 (26개)",
+  "schema_markup": {
+    "max": 20,
+    "label": "스키마마크업",
+    "description": "AI가 읽을 수 있는 구조화 데이터가 있는가",
     "criteria": [
-      {
-        "id": "ai_schema_org",
-        "name": "#20 Schema: Organization",
-        "spec_id": "#20",
-        "points": 1,
-        "enabled": false,
-        "rule": {
-          "type": "schema_required_fields",
-          "params": {
-            "type": "Organization",
-            "fields": "contactPoint,address,geo,hasMap"
-          }
-        }
-      },
       {
         "id": "ai_schema_breadcrumb",
         "name": "#21 Schema: BreadcrumbList",
@@ -359,20 +345,6 @@
           "params": {
             "type": "BreadcrumbList",
             "fields": "itemListElement"
-          }
-        }
-      },
-      {
-        "id": "ai_schema_speakable",
-        "name": "#22 Schema: Speakable",
-        "spec_id": "#22",
-        "points": 1,
-        "enabled": false,
-        "rule": {
-          "type": "schema_required_fields",
-          "params": {
-            "type": "SpeakableSpecification",
-            "fields": "cssSelector"
           }
         }
       },
@@ -430,6 +402,25 @@
           "pdp",
           "business"
         ]
+      },
+      {
+        "id": "ai_schema_offer",
+        "name": "#43 Schema: Offer",
+        "spec_id": "#43",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "pdp",
+          "business",
+          "promotion"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Offer",
+            "fields": "price,priceCurrency,availability"
+          }
+        }
       },
       {
         "id": "ai_schema_image",
@@ -504,6 +495,51 @@
         ]
       },
       {
+        "id": "ai_schema_website",
+        "name": "#49 Schema: WebSite",
+        "spec_id": "#49",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "home"
+        ],
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "WebSite",
+            "fields": "name,url"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_org",
+        "name": "#20 Schema: Organization",
+        "spec_id": "#20",
+        "points": 1,
+        "enabled": false,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "Organization",
+            "fields": "contactPoint,address,geo,hasMap"
+          }
+        }
+      },
+      {
+        "id": "ai_schema_speakable",
+        "name": "#22 Schema: Speakable",
+        "spec_id": "#22",
+        "points": 1,
+        "enabled": false,
+        "rule": {
+          "type": "schema_required_fields",
+          "params": {
+            "type": "SpeakableSpecification",
+            "fields": "cssSelector"
+          }
+        }
+      },
+      {
         "id": "ai_schema_digidoc",
         "name": "#30 Schema: DigitalDocument",
         "spec_id": "#30",
@@ -528,249 +564,6 @@
           "params": {
             "type": "Recipe",
             "fields": "name,description,image,author,recipeIngredient,recipeInstructions"
-          }
-        }
-      },
-      {
-        "id": "ai_faq_block",
-        "name": "#32 FAQ Block (콘텐츠)",
-        "spec_id": "#32",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "class_id_contains",
-          "params": {
-            "keywords": "faq,자주 묻는,자주묻는,frequently asked,q&a,qna,questions,질문,answer,accordion",
-            "tags": "div,section,aside,article,details"
-          }
-        }
-      },
-      {
-        "id": "ai_definition",
-        "name": "#33 Definition Paragraph",
-        "spec_id": "#33",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "definition_pattern_min",
-          "params": {
-            "min_count": 1
-          }
-        }
-      },
-      {
-        "id": "ai_author_source",
-        "name": "#34 Author 또는 출처+날짜",
-        "spec_id": "#34",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "author_or_source",
-          "params": {}
-        }
-      },
-      {
-        "id": "ai_summary_box",
-        "name": "#35 Summary Box (콘텐츠)",
-        "spec_id": "#35",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "class_id_contains",
-          "params": {
-            "keywords": "summary,요약,tldr,tl;dr,abstract,highlight,key takeaway,핵심,주요 특징,주요특징,제품 특징,제품특징,overview",
-            "tags": "div,section,aside,article,blockquote,p"
-          }
-        }
-      },
-      {
-        "id": "ai_citable",
-        "name": "#36 Citable Sentence ≥ 10%",
-        "spec_id": "#36",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "citable_density_min",
-          "params": {
-            "min_ratio": 0.1
-          }
-        }
-      },
-      {
-        "id": "ai_ssr_ratio",
-        "name": "#37 JS HTML Text Ratio ≥ 60%",
-        "spec_id": "#37",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "ssr_text_ratio_min",
-          "params": {
-            "min_ratio": 0.6
-          }
-        }
-      },
-      {
-        "id": "ai_pdp_thumbnails",
-        "name": "#38 PDP 썸네일 3장 이상 SSR",
-        "spec_id": "#38",
-        "points": 1,
-        "enabled": true,
-        "applies_to_page_types": [
-          "pdp"
-        ],
-        "rule": {
-          "type": "css_count",
-          "params": {
-            "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'] img, .c-summary-gallery img, .c-gallery img, .swiper-wrapper .swiper-slide img",
-            "operator": ">=",
-            "value": 3
-          }
-        }
-      },
-      {
-        "id": "ai_core_element",
-        "name": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
-        "spec_id": "#39",
-        "points": 1,
-        "enabled": true,
-        "applies_to_page_types": [
-          "pdp"
-        ],
-        "rule": {
-          "type": "area_coverage",
-          "params": {
-            "min_groups": 3,
-            "groups": [
-              {
-                "label": "제품명",
-                "selector": "h1.cmp-text, h1, [class*='Product-MainTitle']",
-                "jsonld_any": ["\"name\""],
-                "raw_any": ["\"productname\"", "\"modelname\""]
-              },
-              {
-                "label": "가격",
-                "selector": "[class*='Product-Price'], [class*='price-area'], .info-sticky--price",
-                "jsonld_any": ["pricecurrency", "\"price\"", "pricespecification"],
-                "raw_any": ["pricecurrency", "\"offers\""]
-              },
-              {
-                "label": "갤러리",
-                "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'], .c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img",
-                "jsonld_any": ["\"image\""],
-                "raw_any": ["pdpgallerythumbnail"]
-              },
-              {
-                "label": "사양",
-                "selector": "[class*='Product-KeyFeatures'], [class*='Product-Features'], .c-specs-summary, .c-all-specs-area, .c-specs-dimensions",
-                "jsonld_any": ["additionalproperty"],
-                "raw_any": ["\"specification\"", "\"keyfeature\"", "\"feature\""]
-              },
-              {
-                "label": "리뷰",
-                "selector": "[data-bv-show], [class*='Product-Review'], [class*='review'], [class*='Review'], [class*='rating'], [class*='Rating']",
-                "jsonld_any": ["aggregaterating", "\"review\""],
-                "raw_any": ["data-bv-show", "rating_summary", "\"reviewcount\""]
-              }
-            ]
-          }
-        },
-        "note": "US/React PDP: DOM 위젯은 CSR이지만 데이터는 SSR(JSON-LD/__NEXT_DATA__)로 존재. DOM OR JSON-LD OR raw embedded 중 하나라도 있으면 해당 영역 SSR 인정. 5개 영역 중 3개 이상 PASS."
-      },
-      {
-        "id": "ai_summary_ssr",
-        "name": "#40 Summary Content SSR",
-        "spec_id": "#40",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "css_exists",
-          "params": {
-            "selector": "[class*='summary'], [class*='Summary'], [id*='summary'], [class*='overview'], [class*='Overview'], [class*='highlight'], [class*='Product-KeyFeatures'], [class*='Product-Features']"
-          }
-        }
-      },
-      {
-        "id": "ai_image_filename",
-        "name": "#41 Image File Name 브랜드 포함",
-        "spec_id": "#41",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "image_filename_keyword",
-          "params": {
-            "keywords": "lg,oled,gram,thinq",
-            "min_ratio": 0
-          }
-        }
-      },
-      {
-        "id": "ai_status_200",
-        "name": "#42 Status Code 200",
-        "spec_id": "#42",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "status_code_eq",
-          "params": {
-            "code": 200
-          }
-        }
-      },
-      {
-        "id": "ai_soft_404",
-        "name": "#43 Soft 404 부재",
-        "spec_id": "#43",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "soft_404_check",
-          "params": {
-            "min_text_length": 200
-          }
-        }
-      },
-      {
-        "id": "ai_llms_txt",
-        "name": "#44 llms.txt 존재",
-        "spec_id": "#44",
-        "points": 1,
-        "enabled": true,
-        "rule": {
-          "type": "http_status",
-          "params": {
-            "path": "/llms.txt",
-            "status": 200
-          }
-        }
-      },
-      {
-        "id": "ai_sitemap_domain",
-        "name": "#45 Sitemap (도메인, 1개월 내)",
-        "spec_id": "#45",
-        "points": 1,
-        "enabled": false,
-        "rule": {
-          "type": "sitemap_recent",
-          "params": {
-            "path": "/sitemap.xml",
-            "max_days": 30
-          }
-        }
-      },
-      {
-        "id": "ai_schema_website",
-        "name": "#49 Schema: WebSite",
-        "spec_id": "#49",
-        "points": 1,
-        "enabled": true,
-        "applies_to_page_types": [
-          "home"
-        ],
-        "rule": {
-          "type": "schema_required_fields",
-          "params": {
-            "type": "WebSite",
-            "fields": "name,url"
           }
         }
       },
@@ -806,25 +599,6 @@
           "params": {
             "type": "WebPage",
             "fields": "name,url"
-          }
-        }
-      },
-      {
-        "id": "ai_schema_offer",
-        "name": "#43 Schema: Offer",
-        "spec_id": "#43",
-        "points": 1,
-        "enabled": true,
-        "applies_to_page_types": [
-          "pdp",
-          "business",
-          "promotion"
-        ],
-        "rule": {
-          "type": "schema_required_fields",
-          "params": {
-            "type": "Offer",
-            "fields": "price,priceCurrency,availability"
           }
         }
       },
@@ -894,6 +668,280 @@
           "type": "schema_any_of",
           "params": {
             "types": "AggregateRating,Review"
+          }
+        }
+      }
+    ]
+  },
+  "citable_content": {
+    "max": 10,
+    "label": "고인용 콘텐츠",
+    "description": "AI가 인용할 만한 서술이 본문에 있는가",
+    "criteria": [
+      {
+        "id": "ai_faq_block",
+        "name": "#32 FAQ Block (콘텐츠)",
+        "spec_id": "#32",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "class_id_contains",
+          "params": {
+            "keywords": "faq,자주 묻는,자주묻는,frequently asked,q&a,qna,questions,질문,answer,accordion",
+            "tags": "div,section,aside,article,details"
+          }
+        }
+      },
+      {
+        "id": "ai_definition",
+        "name": "#33 Definition Paragraph",
+        "spec_id": "#33",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "definition_pattern_min",
+          "params": {
+            "min_count": 1
+          }
+        }
+      },
+      {
+        "id": "ai_author_source",
+        "name": "#34 Author 또는 출처+날짜",
+        "spec_id": "#34",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "author_or_source",
+          "params": {}
+        },
+        "applies_to_page_types": [
+          "newsroom",
+          "buying_guide",
+          "content"
+        ]
+      },
+      {
+        "id": "ai_summary_box",
+        "name": "#35 Summary Box (콘텐츠)",
+        "spec_id": "#35",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "class_id_contains",
+          "params": {
+            "keywords": "summary,요약,tldr,tl;dr,abstract,highlight,key takeaway,핵심,주요 특징,주요특징,제품 특징,제품특징,overview",
+            "tags": "div,section,aside,article,blockquote,p"
+          }
+        }
+      },
+      {
+        "id": "ai_citable",
+        "name": "#36 Citable Sentence ≥ 10%",
+        "spec_id": "#36",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "citable_density_min",
+          "params": {
+            "min_ratio": 0.1
+          }
+        }
+      }
+    ]
+  },
+  "ai_crawlability": {
+    "max": 10,
+    "label": "AI Crawlability",
+    "description": "AI 크롤러가 원문을 실제로 가져갈 수 있는가",
+    "criteria": [
+      {
+        "id": "ai_ssr_ratio",
+        "name": "#37 JS HTML Text Ratio ≥ 60%",
+        "spec_id": "#37",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "ssr_text_ratio_min",
+          "params": {
+            "min_ratio": 0.6
+          }
+        }
+      },
+      {
+        "id": "ai_pdp_thumbnails",
+        "name": "#38 PDP 썸네일 3장 이상 SSR",
+        "spec_id": "#38",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "pdp"
+        ],
+        "rule": {
+          "type": "css_count",
+          "params": {
+            "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'] img, .c-summary-gallery img, .c-gallery img, .swiper-wrapper .swiper-slide img",
+            "operator": ">=",
+            "value": 3
+          }
+        }
+      },
+      {
+        "id": "ai_core_element",
+        "name": "#39 PDP 핵심 element SSR (5개 영역 중 3개 이상)",
+        "spec_id": "#39",
+        "points": 1,
+        "enabled": true,
+        "applies_to_page_types": [
+          "pdp"
+        ],
+        "rule": {
+          "type": "area_coverage",
+          "params": {
+            "min_groups": 3,
+            "groups": [
+              {
+                "label": "제품명",
+                "selector": "h1.cmp-text, h1, [class*='Product-MainTitle']",
+                "jsonld_any": [
+                  "\"name\""
+                ],
+                "raw_any": [
+                  "\"productname\"",
+                  "\"modelname\""
+                ]
+              },
+              {
+                "label": "가격",
+                "selector": "[class*='Product-Price'], [class*='price-area'], .info-sticky--price",
+                "jsonld_any": [
+                  "pricecurrency",
+                  "\"price\"",
+                  "pricespecification"
+                ],
+                "raw_any": [
+                  "pricecurrency",
+                  "\"offers\""
+                ]
+              },
+              {
+                "label": "갤러리",
+                "selector": "img[src*='PDPGalleryThumbnail'], [class*='Product-ImageGrid'], .c-summary-gallery, .c-gallery, .swiper-wrapper .swiper-slide img",
+                "jsonld_any": [
+                  "\"image\""
+                ],
+                "raw_any": [
+                  "pdpgallerythumbnail"
+                ]
+              },
+              {
+                "label": "사양",
+                "selector": "[class*='Product-KeyFeatures'], [class*='Product-Features'], .c-specs-summary, .c-all-specs-area, .c-specs-dimensions",
+                "jsonld_any": [
+                  "additionalproperty"
+                ],
+                "raw_any": [
+                  "\"specification\"",
+                  "\"keyfeature\"",
+                  "\"feature\""
+                ]
+              },
+              {
+                "label": "리뷰",
+                "selector": "[data-bv-show], [class*='Product-Review'], [class*='review'], [class*='Review'], [class*='rating'], [class*='Rating']",
+                "jsonld_any": [
+                  "aggregaterating",
+                  "\"review\""
+                ],
+                "raw_any": [
+                  "data-bv-show",
+                  "rating_summary",
+                  "\"reviewcount\""
+                ]
+              }
+            ]
+          }
+        },
+        "note": "US/React PDP: DOM 위젯은 CSR이지만 데이터는 SSR(JSON-LD/__NEXT_DATA__)로 존재. DOM OR JSON-LD OR raw embedded 중 하나라도 있으면 해당 영역 SSR 인정. 5개 영역 중 3개 이상 PASS."
+      },
+      {
+        "id": "ai_image_filename",
+        "name": "#40 Image File Name 브랜드 포함",
+        "spec_id": "#40",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "image_filename_keyword",
+          "params": {
+            "keywords": "lg,oled,gram,thinq",
+            "min_ratio": 0
+          }
+        }
+      },
+      {
+        "id": "ai_status_200",
+        "name": "#41 Status Code 200",
+        "spec_id": "#41",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "status_code_eq",
+          "params": {
+            "code": 200
+          }
+        }
+      },
+      {
+        "id": "ai_soft_404",
+        "name": "#42 Soft 404 부재",
+        "spec_id": "#42",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "soft_404_check",
+          "params": {
+            "min_text_length": 200
+          }
+        }
+      },
+      {
+        "id": "ai_llms_txt",
+        "name": "#43 llms.txt 존재",
+        "spec_id": "#43",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "http_status",
+          "params": {
+            "path": "/llms.txt",
+            "status": 200
+          }
+        }
+      },
+      {
+        "id": "ai_summary_ssr",
+        "name": "#40 Summary Content SSR",
+        "spec_id": "#40",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "css_exists",
+          "params": {
+            "selector": "[class*='summary'], [class*='Summary'], [id*='summary'], [class*='overview'], [class*='Overview'], [class*='highlight'], [class*='Product-KeyFeatures'], [class*='Product-Features']"
+          }
+        }
+      },
+      {
+        "id": "ai_sitemap_domain",
+        "name": "#45 Sitemap (도메인, 1개월 내)",
+        "spec_id": "#45",
+        "points": 1,
+        "enabled": false,
+        "rule": {
+          "type": "sitemap_recent",
+          "params": {
+            "path": "/sitemap.xml",
+            "max_days": 30
           }
         }
       }
