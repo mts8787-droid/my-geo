@@ -186,7 +186,7 @@ class Gate:
 # ── 수집 ──────────────────────────────────────────────────────────────────────
 
 def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4,
-            rate_per_min=6.0, save_every=25):
+            rate_per_min=6.0, max_minutes=0, save_every=25):
     """수집. 실패는 인라인 재시도 대신 '스윕 반복'으로 회수한다.
 
     인라인 재시도(worker 안에서 sleep)는 워커 슬롯을 붙잡아 풀을 굶긴다 —
@@ -196,6 +196,8 @@ def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4,
     """
     cache = load_cache()
     gate = Gate(rate_per_min=rate_per_min)
+    # 시간 예산: 야간 분할 실행용. 예산이 끝나면 남은 URL 은 다음 실행이 이어받는다.
+    deadline = time.time() + max_minutes * 60 if max_minutes else 0
     rates = {2: 2.14, 5: 4.62, 10: 5.42, 20: 13.88, 30: 14.06}
     rate = min(rates[min(rates, key=lambda k: abs(k - concurrency))], rate_per_min)
 
@@ -209,10 +211,14 @@ def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4,
               f"{f' (이전 실패 재시도 {retry_n})' if retry_n else ''}  동시성={concurrency}"
               f"  예상 {eta/60:.1f}시간", flush=True)
 
-        done = {"n": 0, "ok": 0, "fail": 0}
+        done = {"n": 0, "ok": 0, "fail": 0, "skipped": 0}
         t0 = time.time()
 
         def worker(u):
+            if deadline and time.time() > deadline:
+                with _lock:
+                    done["skipped"] += 1
+                return
             gate.acquire()
             try:
                 rec = extract(fetch(u, key, strategy))
@@ -242,8 +248,13 @@ def collect(urls, key, strategy="mobile", concurrency=20, sweeps=4,
         save_cache(cache)
 
         el = time.time() - t0
-        print(f"[psi] 스윕 {sweep} 완료: 성공 {done['ok']} · 실패 {done['fail']} · "
-              f"{el/60:.1f}분 ({done['ok']/el*60:.2f}건/분)", flush=True)
+        held = f" · 시간예산 초과로 보류 {done['skipped']}" if done["skipped"] else ""
+        print(f"[psi] 스윕 {sweep} 완료: 성공 {done['ok']} · 실패 {done['fail']}{held}"
+              f" · {el/60:.1f}분 ({done['ok']/el*60:.2f}건/분)", flush=True)
+        if deadline and time.time() > deadline:
+            print(f"[psi] 시간 예산 {max_minutes}분 소진 — 남은 분량은 다음 실행이 이어받습니다.",
+                  flush=True)
+            break
         if done["fail"] == 0 or sweep == sweeps:
             break
         print(f"[psi] 실패 {done['fail']}건 — 5분 쿨다운 후 재스윕", flush=True)
@@ -298,6 +309,8 @@ def main():
     ap.add_argument("--url", action="append", help="단일 URL (반복 지정 가능)")
     ap.add_argument("--strategy", default="mobile", choices=["mobile", "desktop"])
     ap.add_argument("--concurrency", type=int, default=20)
+    ap.add_argument("--max-minutes", type=int, default=0,
+                    help="이 시간(분)이 지나면 새 호출을 멈추고 종료. 야간 분할 실행용. 0=무제한")
     ap.add_argument("--rate", type=float, default=6.0,
                     help="전역 호출 속도 상한(건/분). PSI 지속 부하 차단 회피용. 기본 6")
     ap.add_argument("--limit", type=int, default=0, help="처리 수 제한(시험용)")
@@ -326,7 +339,8 @@ def main():
     if not urls:
         sys.exit("수집할 URL이 없습니다.")
 
-    collect(urls, key, args.strategy, args.concurrency, rate_per_min=args.rate)
+    collect(urls, key, args.strategy, args.concurrency,
+            rate_per_min=args.rate, max_minutes=args.max_minutes)
     return 0
 
 
