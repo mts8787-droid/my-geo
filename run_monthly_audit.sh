@@ -80,10 +80,12 @@ echo "[monthly-audit] start ${STAMP}" >> "$LOG"
 # 단종품 3,253개 잔존). PLP 가 실제로 쓰는 Coveo API 에서 활성 PDP 를 받아
 # 누락분만 CSV 에 추가한다. 비활성 URL 은 지우지 않는다 — 단종 페이지도
 # #41 Status·#42 Soft 404 감사 대상이다.
-# US 전용: 다른 국가는 /plp/api/coveo 엔드포인트가 없다(전부 404).
-# 실패해도 감사에는 영향이 없으므로 best-effort.
-echo "===== plp_discover us $(date +%H:%M:%S) =====" >> "$LOG"
-"$PY" plp_discover.py --country us --merge >> "$LOG" 2>&1 \
+# 전략 10국 전체. US 와 그 외가 Coveo 조직이 달라 plp_discover 가 알아서 분기한다.
+# 딜러/교육/파트너 채널 스토어 경로는 제외한다 — 같은 제품의 채널별 사본이라
+# 소비자 사이트맵에 없는 게 정상이고 GEO 감사 대상도 아니다(DE 기준 73%).
+# 약 30분. 실패해도 감사에는 영향이 없으므로 best-effort.
+echo "===== plp_discover (10국) $(date +%H:%M:%S) =====" >> "$LOG"
+"$PY" plp_discover.py --all --merge --quiet >> "$LOG" 2>&1 \
   || echo "[monthly-audit] WARN plp_discover 실패 — 기존 URL 목록으로 진행" >> "$LOG"
 
 for c in $RENDER_COUNTRIES; do
