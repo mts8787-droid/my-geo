@@ -15,7 +15,7 @@ set -u
 cd /Users/dubaba/my-geo-project/my-geo-audit || exit 1
 
 PY=/usr/bin/python3   # httpx 포함 env (--local 은 analyzer import 필요)
-RENDER_COUNTRIES="us uk de es ca br mx vn"
+RENDER_COUNTRIES="us uk de es ca br mx vn global"   # global = lg.com/global/newsroom (Global-Site)
 LOCAL_COUNTRIES="au in"
 MAX_ATTEMPTS=3
 RETRY_GAP=1800        # 초 — 네트워크 복구 대기 (3회 × 30분 ≈ 1시간 커버)

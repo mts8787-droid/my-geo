@@ -36,7 +36,10 @@ CONFIG = os.path.join(HERE, "scoring_config.json")
 PSI_CACHE = os.path.join(HERE, "data", "psi_cache.json")
 OUT = os.path.join(HERE, "reports", "dashboard_data.json")
 
-STRATEGIC = ["us", "uk", "de", "es", "ca", "au", "br", "mx", "in", "vn"]
+STRATEGIC = ["us", "uk", "de", "es", "ca", "au", "br", "mx", "in", "vn", "global"]
+
+# 표시명. 코드와 다르게 부르는 곳만 적는다.
+COUNTRY_LABELS = {"global": "Global-Site"}
 
 # 집계 제외 page_type
 EXCLUDED_PAGE_TYPES = {"business", "promotion", "unknown", "home"}
@@ -245,7 +248,8 @@ def agentic_summary(results, psi):
 
 def pick_latest_runs():
     """국가별 최신 정식 run(국가_날짜_run_<hash>.json) 1개씩. 백업/파생 파일 무시."""
-    pat = re.compile(r"^([a-z]{2})_(\d{4}-\d{2}-\d{2})_run_[0-9a-f]+\.json$")
+    # 국가 코드가 2자 고정이 아니다 (global 등). 날짜가 뒤에 오므로 경계가 명확하다.
+    pat = re.compile(r"^([a-z][a-z_]*)_(\d{4}-\d{2}-\d{2})_run_[0-9a-f]+\.json$")
     best = {}
     for fn in os.listdir(RUNS):
         m = pat.match(fn)
@@ -273,6 +277,7 @@ def main():
             missing.append(c)
             continue
         agg["date"], agg["run_file"] = date, fn
+        agg["label"] = COUNTRY_LABELS.get(c, c.upper())
         countries[c] = agg
 
     sample_total = sum(v["sample_size"] for v in countries.values())
