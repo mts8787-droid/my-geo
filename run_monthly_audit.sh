@@ -74,6 +74,18 @@ run_country() {
 }
 
 echo "[monthly-audit] start ${STAMP}" >> "$LOG"
+
+# ── 감사 전 US PDP 목록 갱신 ──────────────────────────────────────────────────
+# 사이트맵은 신제품을 늦게 반영한다(2026-08-28 실측: 활성 제품 211개 누락, 반대로
+# 단종품 3,253개 잔존). PLP 가 실제로 쓰는 Coveo API 에서 활성 PDP 를 받아
+# 누락분만 CSV 에 추가한다. 비활성 URL 은 지우지 않는다 — 단종 페이지도
+# #41 Status·#42 Soft 404 감사 대상이다.
+# US 전용: 다른 국가는 /plp/api/coveo 엔드포인트가 없다(전부 404).
+# 실패해도 감사에는 영향이 없으므로 best-effort.
+echo "===== plp_discover us $(date +%H:%M:%S) =====" >> "$LOG"
+"$PY" plp_discover.py --country us --merge >> "$LOG" 2>&1 \
+  || echo "[monthly-audit] WARN plp_discover 실패 — 기존 URL 목록으로 진행" >> "$LOG"
+
 for c in $RENDER_COUNTRIES; do
   run_country "$c"
 done
