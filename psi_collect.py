@@ -28,6 +28,7 @@ resume: 캐시에 성공 기록이 있는 URL만 건너뛴다. 중단 후 재실
   PSI_API_KEY=... python3 psi_collect.py --url https://www.lg.com/us/
 """
 import argparse
+import collections
 import glob
 import json
 import os
@@ -278,14 +279,15 @@ def _progress(done, total, t0):
 
 # ── URL 소스 ──────────────────────────────────────────────────────────────────
 
-def urls_from_run(pattern: str, exclude_page_types=frozenset()):
+def urls_from_run(pattern: str, exclude_page_types=frozenset(), per_group=0, seed=42):
     """run_results 에서 감사 성공한 URL 추출. 제외 page_type 은 건너뛴다.
 
-    대시보드에서 빠지는 page_type(B2B/프로모션)까지 PSI를 돌리면 호출당 60초가
-    그대로 낭비된다 — 기본적으로 gen_dashboard_data 와 같은 집합을 제외한다.
+    대시보드 집계에서 빠지는 페이지에 호출당 60초를 쓸 이유가 없다 —
+    gen_dashboard_data 와 동일하게 B2B/프로모션/unknown/home 과 비-200 을 제외한다.
     """
-    out, skipped = [], 0
+    out, skipped, meta = [], 0, {}
     for path in sorted(glob.glob(pattern)):
+        code = os.path.basename(path).split("_")[0]
         doc = json.load(open(path))
         for x in doc.get("summary", []):
             r = x.get("result") or {}
@@ -294,10 +296,39 @@ def urls_from_run(pattern: str, exclude_page_types=frozenset()):
             if (r.get("page_type") or {}).get("id") in exclude_page_types:
                 skipped += 1
                 continue
+            # 비-200 페이지는 대시보드 집계에서 빠진다 — PSI 를 쓸 이유가 없다.
+            if r.get("page_error"):
+                skipped += 1
+                continue
+            st = None
+            for b in (r.get("score", {}).get("breakdown") or {}).values():
+                st = (b.get("items") or {}).get("ai_status_200") or st
+            if st and st.get("pass") is False:
+                skipped += 1
+                continue
+            meta[r["url"]] = (code, (r.get("page_type") or {}).get("id"))
             out.append(r["url"])
     uniq = list(dict.fromkeys(out))  # 순서 유지 중복 제거
     if skipped:
         print(f"[psi] page_type 제외 {skipped}건 ({', '.join(sorted(exclude_page_types))})")
+    if per_group:
+        # 전수 대신 (국가, page_type) 그룹별 무작위 N개만 측정한다.
+        # 나머지 URL 은 gen_dashboard_data 가 그룹 중앙값으로 추정 보정한다.
+        # 그룹 내 편차보다 그룹 간 편차가 커서(같은 국가에서 타입별 55~391ms)
+        # 그룹 대표값으로 근사하는 편이 전수 대비 비용 대비 효과가 크다.
+        import random
+        rnd = random.Random(seed)
+        buckets = collections.defaultdict(list)
+        for u in uniq:
+            buckets[meta.get(u, ("?", "?"))].append(u)
+        picked = []
+        for key in sorted(buckets):
+            g = buckets[key][:]
+            rnd.shuffle(g)
+            picked.extend(g[:per_group])
+        print(f"[psi] 그룹 샘플링: {len(buckets)}개 그룹 × 최대 {per_group}개 "
+              f"→ {len(picked)}건 (전수 {len(uniq)})")
+        return picked
     return uniq
 
 
@@ -314,9 +345,12 @@ def main():
     ap.add_argument("--rate", type=float, default=6.0,
                     help="전역 호출 속도 상한(건/분). PSI 지속 부하 차단 회피용. 기본 6")
     ap.add_argument("--limit", type=int, default=0, help="처리 수 제한(시험용)")
-    ap.add_argument("--exclude-page-types", default="business,promotion",
-                    help="제외할 page_type (쉼표 구분). 대시보드 제외 대상과 맞춘 기본값. "
-                         "빈 문자열이면 제외 없음")
+    ap.add_argument("--per-group", type=int, default=0,
+                    help="(국가,page_type) 그룹별 무작위 N개만 측정. 0=전수. "
+                         "나머지는 대시보드가 그룹 중앙값으로 추정 보정한다")
+    ap.add_argument("--exclude-page-types", default="business,promotion,unknown,home,about",
+                    help="제외할 page_type (쉼표 구분). gen_dashboard_data 의 제외 대상과 "
+                         "동일한 기본값. 빈 문자열이면 제외 없음")
     args = ap.parse_args()
 
     key = os.environ.get("PSI_API_KEY")
@@ -327,10 +361,11 @@ def main():
     if args.url:
         urls = args.url
     elif args.run:
-        urls = urls_from_run(args.run, excl)
+        urls = urls_from_run(args.run, excl, args.per_group)
     elif args.country and args.date:
         urls = urls_from_run(os.path.join(
-            HERE, "data", "run_results", f"{args.country}_{args.date}_run_*.json"), excl)
+            HERE, "data", "run_results", f"{args.country}_{args.date}_run_*.json"), excl,
+            args.per_group)
     else:
         sys.exit("--run / --country+--date / --url 중 하나가 필요합니다.")
 

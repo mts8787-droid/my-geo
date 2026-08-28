@@ -156,6 +156,7 @@
 - **B2B(사업자) · 프로모션/약관** — GEO 대상이 아니라 점수·통과율·URL 카운트 전부에서 제외
 - **비-200 페이지** (404 · 500 · fetch 실패) — 전 체크가 cascade-FAIL 이라 개선 대상이 아님
 - **분류불가(unknown) · 홈페이지(home)** — 측정 의미 없음
+- **회사소개(about)** — GEO 검수 대상이 아니라 감사 자체를 하지 않음 (2026-08-28 결정)
 
 ### 측정 기준이 바뀐 항목
 - **#1 TTFB** — 어딧 크롤러 자체 측정값이 동시 크롤 큐잉에 오염돼 실제보다 6~200배 크게 잡혔음
@@ -181,6 +182,14 @@
 | :-- | :-- | :-- |
 | us, uk, de, es, ca, au, br, mx, in, vn | 국가 코드 대문자 | CA는 `ca_en`(영문)만. 불어(`ca_fr`)는 제외 |
 | global | **Global-Site** | `lg.com/global/newsroom` — 전량 `newsroom` page_type |
+
+> `newsroom` 은 Global 전용이다. 국가별 보도자료는 별도 page_type **`press_media`**
+> (프레스앤미디어)로 분류한다 — 경로 명칭이 국가마다 다르다:
+> `press-and-media`(CA/AU/MX/IN) · `press-media`(UK/BR) · `press-release`(US) · `newsroom`(DE).
+>
+> `newsroom` · `press_media` · `support_troubleshoot` 세 타입은 **발행일 내림차순**으로
+> 100개를 뽑는다. 계속 새 문서가 나오는 타입이라 URL 정렬순으로 자르면 오래된 문서만
+> 반복 감사하게 된다 (`reports/page_dates.json`).
 
 감사는 **page_type별 최대 100개 샘플**이다. URL 목록은 사이트맵 + PLP 상품 API(Coveo)의
 활성 제품을 합쳐 구성한다(`build_url_csv.py` → `plp_discover.py`).

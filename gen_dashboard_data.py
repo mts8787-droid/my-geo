@@ -19,6 +19,7 @@ gen_audit_report.py 와 동일한 '국가별 최신 run 1개' 선정 로직을 �
 집계 대상에서 빠지는 페이지:
   - B2B(business) / 프로모션(promotion)  — GEO 대상이 아님
   - 분류불가(unknown) / 홈페이지(home)   — 측정 의미 없음
+  - 회사소개(about)                      — GEO 검수 대상 아님 (2026-08-28 결정)
   - 비-200 페이지(404·500·fetch 실패)    — 전 체크가 cascade-FAIL 이라 개선 대상이 아님
   전부 sample_size 에도 포함하지 않는다.
 
@@ -42,7 +43,7 @@ STRATEGIC = ["us", "uk", "de", "es", "ca", "au", "br", "mx", "in", "vn", "global
 COUNTRY_LABELS = {"global": "Global-Site"}
 
 # 집계 제외 page_type
-EXCLUDED_PAGE_TYPES = {"business", "promotion", "unknown", "home"}
+EXCLUDED_PAGE_TYPES = {"business", "promotion", "unknown", "home", "about"}
 
 _MAXAGE = re.compile(r"max-age\s*=\s*(\d+)")
 
@@ -86,7 +87,26 @@ def load_psi_cache():
         return {}
 
 
-def item_pass(iid, it, url, page_type, cr, psi):
+def psi_group_medians(results, psi, metric):
+    """(page_type) 별 실측 중앙값. 미측정 URL 의 추정 보정에 쓴다.
+
+    PSI 는 호출당 60초라 전수 측정이 비현실적이다(5,065건 = 11시간+). 그룹별
+    무작위 표본만 측정하고 나머지는 같은 그룹 중앙값으로 채운다 — 같은 국가
+    안에서도 page_type 간 중앙값이 55~391ms 로 갈리는 반면 그룹 내 편차는
+    그보다 작아, 그룹 대표값 근사가 전수 대비 비용 효율이 높다.
+    """
+    buckets = defaultdict(list)
+    for r in results:
+        rec = psi.get(r["url"])
+        if rec and not rec.get("error") and rec.get(metric) is not None:
+            buckets[(r.get("page_type") or {}).get("id")].append(float(rec[metric]))
+    med = {k: sorted(v)[len(v) // 2] for k, v in buckets.items() if v}
+    allv = [x for v in buckets.values() for x in v]
+    med["__all__"] = sorted(allv)[len(allv) // 2] if allv else None
+    return med
+
+
+def item_pass(iid, it, url, page_type, cr, psi, psi_med=None):
     """항목 pass 판정. None 이면 N/A — 집계 분모에서 빠진다."""
     applies = cr.applies.get(iid)
     if applies and page_type not in applies:
@@ -95,9 +115,17 @@ def item_pass(iid, it, url, page_type, cr, psi):
     if iid in cr.psi_rules:
         metric, max_v = cr.psi_rules[iid]
         rec = psi.get(url)
-        if not rec or rec.get("error") or rec.get(metric) is None:
-            return None
-        return float(rec[metric]) < max_v
+        if rec and not rec.get("error") and rec.get(metric) is not None:
+            return float(rec[metric]) < max_v
+        # 미측정 → 같은 page_type 실측 중앙값으로 추정 보정. 그룹 표본이 아예
+        # 없으면 전체 중앙값, 그것도 없으면 N/A.
+        if psi_med:
+            est = psi_med.get(page_type)
+            if est is None:
+                est = psi_med.get("__all__")
+            if est is not None:
+                return float(est) < max_v
+        return None
 
     if iid in cr.maxage:
         # max-age 디렉티브가 있으면(0 포함) 통과. no-cache/no-store 동반은 무관.
@@ -139,6 +167,11 @@ def aggregate_country(doc, cr, psi):
     if not n:
         return None
 
+    psi_metric = next((m for m, _ in cr.psi_rules.values()), None)
+    psi_med = psi_group_medians(results, psi, psi_metric) if psi_metric else None
+    psi_measured = sum(1 for r in results
+                       if (psi.get(r["url"]) or {}).get(psi_metric) is not None) if psi_metric else 0
+
     grade_dist = defaultdict(int)
     total_sum = 0
     cat_pts = defaultdict(float)
@@ -162,7 +195,7 @@ def aggregate_country(doc, cr, psi):
                 continue
             if it.get("pass") is None and iid not in cr.psi_rules:
                 continue             # 저장 시점에 이미 N/A
-            p = item_pass(iid, it, url, pt, cr, psi)
+            p = item_pass(iid, it, url, pt, cr, psi, psi_med)
             if p is None:
                 continue
             a = items_agg.setdefault(iid, {
@@ -217,6 +250,8 @@ def aggregate_country(doc, cr, psi):
         "breakdown": breakdown,
         "items": items,
         "agentic": agentic_summary(results, psi),
+        "psi_coverage": {"measured": psi_measured, "estimated": n - psi_measured,
+                         "rate": round(psi_measured / n, 4) if n else None},
     }
 
 
@@ -247,8 +282,13 @@ def agentic_summary(results, psi):
 
 
 def pick_latest_runs():
-    """국가별 최신 정식 run(국가_날짜_run_<hash>.json) 1개씩. 백업/파생 파일 무시."""
-    # 국가 코드가 2자 고정이 아니다 (global 등). 날짜가 뒤에 오므로 경계가 명확하다.
+    """국가별 최신 정식 run 1개씩. 백업/파생 파일 무시.
+
+    미완성 run(status != "ok")은 후보에서 제외한다. 진행 중인 감사가 더 최신 날짜라는
+    이유로 이전 완료본을 밀어내면, 표본이 절반만 찬 상태로 집계돼 점수가 왜곡된다
+    (2026-08-28 UK 를 부분 데이터로 -3.9 오판한 사례).
+    같은 날짜에 완료본이 여럿이면 성공 건수가 많은 것을 쓴다.
+    """
     pat = re.compile(r"^([a-z][a-z_]*)_(\d{4}-\d{2}-\d{2})_run_[0-9a-f]+\.json$")
     best = {}
     for fn in os.listdir(RUNS):
@@ -256,9 +296,17 @@ def pick_latest_runs():
         if not m:
             continue
         code, date = m.group(1), m.group(2)
-        if code not in best or date > best[code][0]:
-            best[code] = (date, fn)
-    return best
+        try:
+            doc = json.load(open(os.path.join(RUNS, fn)))
+        except Exception:
+            continue
+        if doc.get("status") != "ok":
+            continue                      # 진행 중/중단된 run 은 집계하지 않는다
+        ok = sum(1 for x in doc.get("summary", []) if (x.get("result") or {}).get("score"))
+        rank = (date, ok)
+        if code not in best or rank > best[code][0]:
+            best[code] = (rank, fn)
+    return {c: (v[0][0], v[1]) for c, v in best.items()}
 
 
 def main():

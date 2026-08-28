@@ -1082,6 +1082,13 @@ def _has_dotted_path(node: dict, path: str) -> bool:
 
 
 def _eval_schema_required_fields(params: dict, ctx: dict) -> dict:
+    """@type 노드에서 필수 필드 존재를 확인.
+
+    alt_types: 동등하게 인정할 대체 타입(쉼표 구분). 예) Product ↔ ProductGroup.
+      ProductGroup 은 색상/용량 변형이 있는 제품에 쓰는 schema.org 표준 타입으로,
+      실제 제품 정보가 variant_field(기본 hasVariant) 배열 안에 들어간다. 이걸
+      인정하지 않으면 정상 마크업을 '노드 없음'으로 오판한다 (LG US 액세서리 12건).
+    """
     raw = ctx.get("jsonld_raw") or []
     type_name = (params.get("type") or "").strip()
     fields_raw = params.get("fields", "")
@@ -1089,22 +1096,46 @@ def _eval_schema_required_fields(params: dict, ctx: dict) -> dict:
     if not type_name or not fields:
         return {"pass": False, "value": None, "hint": "type 또는 fields 미지정"}
 
-    type_lower = type_name.lower()
+    alt_types = [t.strip() for t in (params.get("alt_types") or "").split(",") if t.strip()]
+    variant_field = params.get("variant_field") or "hasVariant"
+
     nodes: list = []
     for d in raw:
-        _walk_jsonld(d, type_lower, nodes)
-    if not nodes:
-        return {"pass": False, "value": None, "hint": f"@type='{type_name}' 노드 없음"}
+        _walk_jsonld(d, type_name.lower(), nodes)
 
-    for node in nodes:
+    # 대체 타입 노드는 자신 + 변형(variant)을 합쳐 후보로 만든다.
+    alt_hit = []
+    for at in alt_types:
+        found: list = []
+        for d in raw:
+            _walk_jsonld(d, at.lower(), found)
+        for node in found:
+            variants = node.get(variant_field)
+            if isinstance(variants, dict):
+                variants = [variants]
+            if isinstance(variants, list) and variants:
+                for v in variants:
+                    if isinstance(v, dict):
+                        alt_hit.append({**node, **v})
+            else:
+                alt_hit.append(node)
+
+    candidates = nodes + alt_hit
+    if not candidates:
+        label = "/".join([type_name] + alt_types)
+        return {"pass": False, "value": None, "hint": f"@type='{label}' 노드 없음"}
+
+    last_missing = fields
+    for node in candidates:
         missing = [f for f in fields if not _has_dotted_path(node, f)]
         if not missing:
-            return {"pass": True, "value": f"@type={type_name} 노드 1개 모든 필드 OK", "hint": None}
+            src = type_name if node in nodes else "/".join(alt_types)
+            return {"pass": True, "value": f"@type={src} 필수 필드 OK", "hint": None}
         last_missing = missing
 
     return {
         "pass": False,
-        "value": f"@type={type_name} {len(nodes)}개 노드",
+        "value": f"@type 후보 {len(candidates)}개",
         "hint": f"필수 필드 누락: {', '.join(last_missing)}",
     }
 
