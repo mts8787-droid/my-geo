@@ -5,41 +5,83 @@
       "id": "home",
       "label": "홈페이지",
       "detection": {
-        "meta_template": ["home-page", "homepage"],
-        "body_class":    ["homepage"],
-        "url_pattern":   ["^https?://[^/]+/?$", "^https?://[^/]+/[a-z]{2}(?:[_-][a-z]{2})?/?$"]
+        "meta_template": [
+          "home-page",
+          "homepage"
+        ],
+        "body_class": [
+          "homepage"
+        ],
+        "url_pattern": [
+          "^https?://[^/]+/?$",
+          "^https?://[^/]+/[a-z]{2}(?:[_-][a-z]{2})?/?$"
+        ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "WebSite"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "WebSite"
+      ],
       "recommended_schemas": []
     },
     {
       "id": "pdp",
       "label": "제품 상세 (PDP)",
       "detection": {
-        "meta_template": ["pdp-page", "product-page"],
-        "body_class":    ["productpage", "pdp"],
-        "url_pattern":   [
+        "meta_template": [
+          "pdp-page",
+          "product-page"
+        ],
+        "body_class": [
+          "productpage",
+          "pdp"
+        ],
+        "url_pattern": [
           "/us/(?!support|business|press)[^/]+/lg-[a-zA-Z0-9]",
           "/(?!us/)[a-z]{2}(?:[_-][a-z]{2})?/(?!(?:support|soporte|suporte|tro-giup|business|about-lg|about|acerca-de-lg|sobre-a-lg|uber-lg|ueber-lg|gioi-thieu-lg|promotion|promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai|tncs|lifesgood|magazine|lg-experience|experience|discover|monthly-lg|blog|press-release|press-media|newsroom|historias-con-lg|historias-com-lg|contact-us)(?:/|\\?|$))(?!.*-vs-)(?!.*buying-guides?(?:/|$))(?!.*/(?:why|what|how|best|top|which|when|where)-)(?:[a-z0-9-]+/){1,4}[a-z0-9]*\\d[a-z0-9-]*/?(?:[?#].*)?$"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "Product", "Offer", "AggregateRating", "Review", "FAQPage", "HowTo", "ImageObject", "VideoObject"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "Product",
+        "Offer",
+        "AggregateRating",
+        "Review",
+        "FAQPage",
+        "HowTo",
+        "ImageObject",
+        "VideoObject"
+      ],
       "recommended_schemas": []
     },
     {
       "id": "plp",
       "label": "제품 카테고리 (PLP)",
       "detection": {
-        "meta_template": ["plp-page", "category-page", "product-listing-page"],
-        "body_class":    ["plppage", "categorypage", "productlistingpage"],
-        "url_pattern":   [
+        "meta_template": [
+          "plp-page",
+          "category-page",
+          "product-listing-page"
+        ],
+        "body_class": [
+          "plppage",
+          "categorypage",
+          "productlistingpage"
+        ],
+        "url_pattern": [
           "^https?://[^/]+/us/(?!(?:support|business|about-lg|about|promotion|promotions|tncs|lifesgood|magazine|lg-experience|experience|discover|monthly-lg|blog|press-release|press-media|newsroom)(?:/|\\?|$))(?!(?:why|what|how|best|top|which|when|where)-)(?!.*-vs-)(?!.*buying-guides?(?:/|$))[a-z0-9-]+/?$",
           "/us/collections/",
           "/us/[^/]+/discontinued(/|$)",
           "/(?!us/)[a-z]{2}(?:[_-][a-z]{2})?/(?!(?:support|soporte|suporte|tro-giup|business|about-lg|about|acerca-de-lg|sobre-a-lg|uber-lg|ueber-lg|gioi-thieu-lg|promotion|promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai|tncs|lifesgood|magazine|lg-experience|experience|discover|monthly-lg|blog|press-release|press-media|newsroom|historias-con-lg|historias-com-lg|contact-us)(?:/|\\?|$))(?!.*-vs-)(?!.*buying-guides?(?:/|$))(?!.*/(?:why|what|how|best|top|which|when|where)-)(?:[a-z0-9-]+/){0,3}[a-z][a-z-]*/?(?:[?#].*)?$"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "ItemList", "CollectionPage"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "ItemList",
+        "CollectionPage"
+      ],
       "recommended_schemas": []
     },
     {
@@ -49,30 +91,53 @@
       "detection": {
         "url_pattern": [
           "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)/(?:.*?/)?troubleshoot(/|$)",
-          "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)/(?:.*?/)?help-library(/|$)"
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)/(?:.*?/)?help-library(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)/(?:.*?/)?[a-z-]*troubleshoot(?:ing)?[a-z-]*(/|$)",
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)/(?:.*?/)?solucionar-problemas(/|$)"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "HowTo"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "HowTo"
+      ],
       "recommended_schemas": []
     },
     {
       "id": "support",
       "label": "지원/Support",
       "detection": {
-        "meta_template": ["support-page-template", "support-page"],
-        "body_class":    ["support"],
-        "url_pattern":   ["/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)"]
+        "meta_template": [
+          "support-page-template",
+          "support-page"
+        ],
+        "body_class": [
+          "support"
+        ],
+        "url_pattern": [
+          "/[a-z]{2}(?:[_-][a-z]{2})?/(support|soporte|suporte|tro-giup)(/|$)"
+        ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList"
+      ],
       "recommended_schemas": []
     },
     {
       "id": "business",
       "label": "B2B (사업자)",
       "detection": {
-        "url_pattern": ["/[a-z]{2}(?:[_-][a-z]{2})?/business(/|$)"]
+        "url_pattern": [
+          "/[a-z]{2}(?:[_-][a-z]{2})?/business(/|$)"
+        ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "Product", "Offer"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "Product",
+        "Offer"
+      ],
       "recommended_schemas": []
     },
     {
@@ -89,19 +154,63 @@
           "/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "Article", "Person", "ImageObject", "VideoObject"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "Article",
+        "Person",
+        "ImageObject",
+        "VideoObject"
+      ],
       "recommended_schemas": []
     },
     {
       "id": "newsroom",
-      "label": "뉴스룸/Press",
-      "_comment": "about/promotion보다 먼저 매칭 — press-media가 /sobre-a-lg/ 등 about 하위에 중첩될 때 newsroom이 우선.",
+      "label": "뉴스룸 (Global)",
+      "_comment": "lg.com/global/newsroom 전용. 국가별 프레스 페이지는 press_media 로 분리한다 — 글로벌 뉴스룸과 국가 프레스룸은 운영 주체·콘텐츠 성격이 다르다.",
       "detection": {
-        "meta_template": ["newsroom-page", "press-page"],
-        "body_class":    ["newsroom", "presspage"],
-        "url_pattern":   ["/newsroom(/|$)", "/press-media(/|$)", "/press-release(/|$)"]
+        "url_pattern": [
+          "^https?://www\\.lg\\.com/global/newsroom(/|$)"
+        ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "NewsArticle", "Person", "ImageObject", "VideoObject"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "NewsArticle",
+        "Person",
+        "ImageObject",
+        "VideoObject"
+      ],
+      "recommended_schemas": []
+    },
+    {
+      "id": "press_media",
+      "label": "프레스앤미디어",
+      "_comment": "국가별 보도자료/프레스룸. 경로 명칭이 국가마다 다르다 — press-and-media(CA/AU/MX/IN) · press-media(UK/BR) · press-release(US) · newsroom(DE). about/promotion 보다 먼저 매칭되어야 한다(about 하위에 중첩되는 국가가 있음).",
+      "detection": {
+        "meta_template": [
+          "newsroom-page",
+          "press-page"
+        ],
+        "body_class": [
+          "newsroom",
+          "presspage"
+        ],
+        "url_pattern": [
+          "/press-and-media(/|$)",
+          "/press-media(/|$)",
+          "/press-release(/|$)",
+          "/newsroom(/|$)"
+        ]
+      },
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "NewsArticle",
+        "Person",
+        "ImageObject",
+        "VideoObject"
+      ],
       "recommended_schemas": []
     },
     {
@@ -114,7 +223,12 @@
           "/[a-z]{2}(?:[_-][a-z]{2})?/(promociones|todas-las-promociones|promocoes|promotions|teilnahmebedingungen|khuyen-mai)(/|$)"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "WebPage", "Offer"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "WebPage",
+        "Offer"
+      ],
       "recommended_schemas": []
     },
     {
@@ -127,7 +241,11 @@
           "/[a-z]{2}(?:[_-][a-z]{2})?/(acerca-de-lg|sobre-a-lg|uber-lg|ueber-lg|gioi-thieu-lg)(/|$)"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "AboutPage"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "AboutPage"
+      ],
       "recommended_schemas": []
     },
     {
@@ -138,7 +256,13 @@
           "[/-]buying-guides?(/|$)"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "FAQPage", "HowTo", "Article"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "FAQPage",
+        "HowTo",
+        "Article"
+      ],
       "recommended_schemas": []
     },
     {
@@ -146,21 +270,33 @@
       "label": "마이크로사이트/캠페인",
       "_comment": "캠페인성 페이지(aidd-laundry 등) 또는 블로그성 글(why-/what-/how-/best- 슬러그). 다른 타입 미매칭일 때 매칭.",
       "detection": {
-        "meta_template": ["page-content"],
+        "meta_template": [
+          "page-content"
+        ],
         "url_pattern": [
           "/(why|what|how|best|top|which|when|where)-[a-z]",
           "-vs-[a-z]",
           "/blog(/|$)"
         ]
       },
-      "expected_schemas":    ["Organization", "BreadcrumbList", "WebPage", "FAQPage", "HowTo", "Article", "Person", "ImageObject", "VideoObject"],
+      "expected_schemas": [
+        "Organization",
+        "BreadcrumbList",
+        "WebPage",
+        "FAQPage",
+        "HowTo",
+        "Article",
+        "Person",
+        "ImageObject",
+        "VideoObject"
+      ],
       "recommended_schemas": []
     },
     {
       "id": "unknown",
       "label": "분류 불가",
       "detection": null,
-      "expected_schemas":    [],
+      "expected_schemas": [],
       "recommended_schemas": []
     }
   ]

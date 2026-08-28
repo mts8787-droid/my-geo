@@ -395,7 +395,8 @@
           "type": "schema_required_fields",
           "params": {
             "type": "Product",
-            "fields": "name,description,sku,brand,offers.price,offers.availability"
+            "fields": "name,description,sku,brand,offers.price,offers.availability",
+            "alt_types": "ProductGroup"
           }
         },
         "applies_to_page_types": [
@@ -626,7 +627,8 @@
         "points": 1,
         "enabled": false,
         "applies_to_page_types": [
-          "newsroom"
+          "newsroom",
+          "press_media"
         ],
         "rule": {
           "type": "schema_required_fields",
@@ -645,6 +647,7 @@
         "applies_to_page_types": [
           "content",
           "newsroom",
+          "press_media",
           "microsite"
         ],
         "rule": {
@@ -717,6 +720,7 @@
         },
         "applies_to_page_types": [
           "newsroom",
+          "press_media",
           "buying_guide",
           "content"
         ]
