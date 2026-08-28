@@ -1,486 +1,186 @@
-# AI Readability / GEO Audit 체크리스트 (48개)
+# GEO Agent Readability 검수 기준
 
-> **출처**: [Google Sheets — AI Readability 체크리스트 및 Pass 기준](https://docs.google.com/spreadsheets/d/15hEMMFqizFM90WpbbdYmVC0trwwDpKnJMMRcm3VHYek/edit)
-> **버전**: 2026-05-06 import
-> **용도**: 전면 재구축되는 Audit 기능의 기준 문서. 각 항목별 **PASS / FAIL 판정 기준**을 명시한다.
+> 6개 카테고리 41개 채점 항목 + 9월 감사 시행 예정 4항목.
+> 점수·통과율은 제외한 **기준 정의 문서**입니다. 실측치는 Readability 대시보드에서 확인하세요.
+> 원본: `data/readability/geo-agent-checklist.html` → `scripts/render-criteria.mjs` (별도 리포)
+> 이 사본 갱신: 2026-08-28
+
+## 카테고리
+
+| 카테고리 | 채점 항목 | 무엇을 보는가 | scoring_config 키 |
+| :-- | :-: | :-- | :-- |
+| 사이트 성능 | 6 | 서버가 페이지를 얼마나 빠르고 안전하게 전달하는가 — 전송 계층 | `performance` |
+| 웹접근성 | 4 | 사람과 기계가 문서 구조를 읽어낼 수 있는가 | `accessibility` |
+| Basic SEO | 8 | 검색엔진이 페이지를 수집하고 표시할 수 있는가 | `seo` |
+| 스키마마크업 | 10 | AI가 읽을 수 있는 구조화 데이터가 있는가 | `schema_markup` |
+| 고인용 콘텐츠 | 5 | AI가 인용할 만한 서술이 본문에 있는가 | `citable_content` |
+| AI Crawlability | 8 | AI 크롤러가 원문을 실제로 가져갈 수 있는가 | `ai_crawlability` |
+
+> 총점은 카테고리 가중치 없이 `통과항목 / 전체항목 × 100`.
 
 ---
 
-## 카테고리 요약
-
-| 카테고리 | 항목 수 | ID 범위 | PoC 추진 |
-| :-- | :-: | :-: | :-: |
-| Performance | 11 | #1 ~ #11 | 7 (Y) / 4 (N — PSI API 3 + #8 기준 제외) |
-| Accessibility | 4 | #9 ~ #12 (재시작) | 4 (Y) |
-| SEO | 7 | #13 ~ #19 | 7 (Y) |
-| AI Readiness (GEO 핵심) | 26 | #20 ~ #45 | 25 (Y) / 1 (조건부) |
-| **합계** | **48** | — | **43 / 48** |
-
-> ⚠️ **ID 중복 주의**: 원본 스프레드시트에서 Accessibility 섹션은 #9부터 다시 매김(#9 Image Alt, #10 Semantic HTML, #11 Heading Hierarchy, #12 ARIA). Performance #9 LCP, #10 CLS, #11 INP와 ID가 겹친다. 본 문서는 원본 ID를 보존하되, 코드 구현 시 카테고리 prefix(`perf_`, `a11y_`, `seo_`, `ai_`)로 구분 권장.
-
----
-
-## 1. Performance (11개)
+## 사이트 성능
 
 ### #1 — TTFB
-- **PASS**: TTFB **< 1800ms**
-- **FAIL (NON-PASS)**: TTFB ≥ 1800ms 이거나 측정 불가
-- **측정 방법**: `Server-Timing`, `X-Response-Time` 응답 헤더 확인 (없으면 fetch round-trip 시간 측정)
-- **측정 레벨**: 도메인
-- **구현**: HTTP 응답에서 헤더 우선 사용, 없으면 `performance.now()` 기반 fallback
-- **PoC**: Y
+- **정의**: 서버 요청 후 첫 번째 응답이 전달되기까지 걸리는 시간
+- **PASS**: < 600ms
+- **측정방법**: PageSpeed Insights(Lighthouse) `server-response-time`
+- **check id**: `perf_ttfb`
 
 ### #2 — Compression
-- **PASS**: `Content-Encoding`이 **gzip / br / deflate** 중 하나
-- **FAIL**: `Content-Encoding` 미설정 또는 그 외 값 (identity 등)
-- **측정 방법**: HTTP 응답 헤더 `Content-Encoding` 값 확인
-- **측정 레벨**: 페이지
-- **구현**: `response.headers.get("content-encoding")` 정규화 후 화이트리스트 매칭
-- **PoC**: Y
+- **정의**: 페이지 전송 용량을 줄이기 위한 HTTP 응답 압축 적용 여부
+- **PASS**: gzip/br/deflate · **측정방법**: Content-Encoding 헤더 · **check id**: `perf_compression`
 
 ### #3 — HTTP Protocol
-- **PASS**: HTTP/2 이상 (h2, h3)
-- **FAIL**: HTTP/1.1 이하
-- **측정 방법**: `Alt-Svc` 헤더, `:status` 의사 헤더 또는 클라이언트 protocol 정보
-- **측정 레벨**: 도메인
-- **구현**: httpx의 `response.http_version` 확인 또는 `Alt-Svc: h2`/`h3` 검출
-- **PoC**: Y
+- **정의**: 페이지 전송에 사용되는 HTTP 통신 프로토콜 버전
+- **PASS**: HTTP/2 이상 · **측정방법**: Alt-Svc, :status 헤더 · **check id**: `perf_http_protocol`
 
 ### #4 — Cache-Control
-- **PASS**: `Cache-Control` 헤더에 `max-age > 0`
-- **FAIL**: 헤더 부재, `no-store`, `max-age=0`
-- **측정 방법**: HTTP 응답 헤더 `Cache-Control` 파싱 → `max-age` 정수 추출
-- **측정 레벨**: 페이지
-- **구현**: 정규식 `max-age=(\d+)`로 추출, no-store/no-cache 디렉티브 검사
-- **PoC**: Y
-
-### #5 — HTML Size
-- **PASS**: HTML 본문 크기 **< 100KB** (102,400 bytes)
-- **FAIL**: 100KB 이상
-- **측정 방법**: HTML 다운로드 후 `len(html.encode("utf-8"))` (Buffer.byteLength 등가)
-- **측정 레벨**: 페이지
-- **구현**: 응답 본문을 utf-8 인코딩한 바이트 길이 계산
-- **PoC**: Y
+- **정의**: 브라우저가 리소스를 일정 기간 저장·재사용할 수 있도록 하는 캐시 유효기간
+- **PASS**: max-age 설정 (0 포함) · **측정방법**: Cache-Control 헤더 · **check id**: `perf_cache_control`
 
 ### #6 — Redirect Chain
-- **PASS**: 리다이렉트 **≤ 1회**
-- **FAIL**: 2회 이상
-- **측정 방법**: redirect 체인 메타데이터 (`response.history` 길이)
-- **측정 레벨**: 페이지
-- **구현**: httpx의 `len(response.history)` (Playwright는 `response.request().redirectedFrom()` 체인 추적)
-- **PoC**: Y
+- **정의**: 최종 페이지에 도달하기 전 거치는 URL 리다이렉트 횟수
+- **PASS**: ≤ 1회 · **측정방법**: redirectChain 메타데이터 · **check id**: `perf_redirect`
 
 ### #7 — Mixed Content
-- **PASS**: HTTPS 페이지 내 `http://` 리소스 **0개**
-- **FAIL**: 1개 이상
-- **측정 방법**: HTML 파싱 후 `img`, `script`, `link`, `iframe` 등의 `src`/`href` 속성에서 `http://` URL 정규식 탐지
-- **측정 레벨**: 페이지
-- **구현**: BeautifulSoup으로 해당 태그 수집 → 속성값 정규식 매칭 (페이지가 https인 경우만 적용)
-- **PoC**: Y
+- **정의**: HTTPS 페이지 내 비보안(HTTP) 리소스 포함 여부
+- **PASS**: 0개 · **측정방법**: http:// 리소스 탐지 · **check id**: `perf_mixed_content`
 
-### #8 — Render Blocking  *(기준 제외 — 채점 대상 아님)*
-- **PASS**: `<head>` 내 blocking script **0개** (defer/async 없는 외부 script)
-- **FAIL**: 1개 이상
-- **측정 방법**: `<head>` 내 `<script src>` 중 `defer`/`async` 속성 없는 것 카운트
-- **측정 레벨**: 페이지
-- **구현**: BS4로 `head > script[src]` 선택 후 속성 검사
-- **PoC**: N (기준 제외 — `enabled: false`, 점수 집계에서 빠짐)
+### (예정) LCP · CLS · INP
+- **PASS**: LCP ≤ 4,000ms / CLS ≤ 0.25 / INP ≤ 500ms
+- **측정방법**: PageSpeed Insights (INP는 CrUX 실사용자 데이터)
+- **상태**: 9월 감사부터 추가 시행 (데이터 추출 및 검증 진행중)
 
-### #9 — LCP (Largest Contentful Paint)
-- **PASS**: LCP **≤ 4,000ms**
-- **FAIL**: 4,000ms 초과 또는 측정 불가
-- **측정 방법**: PageSpeed Insights API 응답값 (필드 데이터 우선)
-- **측정 레벨**: 페이지
-- **비고**: 구글 기준 'Needs Improvement' 이상 등급. Self-healing 제외 (수동 수정 필요)
-- **구현**: PSI API 호출 (분당 25회 rate limit, API 키 필요, 배치 처리)
-- **PoC**: 조건부 (현 단계에서 N)
-
-### #10 — CLS (Cumulative Layout Shift)
-- **PASS**: CLS **≤ 0.25**
-- **FAIL**: 0.25 초과
-- **측정 방법**: PageSpeed Insights API
-- **측정 레벨**: 페이지
-- **비고**: 구글 'Needs Improvement' 이상. Self-healing 제외
-- **구현**: PSI API 호출
-- **PoC**: 조건부 (N)
-
-### #11 — INP (Interaction to Next Paint)
-- **PASS**: INP **≤ 500ms**
-- **FAIL**: 500ms 초과
-- **측정 방법**: PageSpeed Insights API
-- **측정 레벨**: 페이지
-- **비고**: 구글 'Needs Improvement' 이상. Self-healing 제외
-- **구현**: PSI API 호출
-- **PoC**: 조건부 (N)
+### (예정) Agentic Browsing
+- **정의**: AI Agent와 상호작용하기 위해 사이트가 얼마나 잘 구성되어 있는지 (구글 베타)
+- **측정방법**: CLS · llms.txt · 에이전트 접근성 항목 평가
+- **상태**: 9월 감사부터 추가 시행. WebMCP audit 3종은 대상 페이지가 Origin Trial 토큰을
+  서빙해야 평가되며, 2026-08-26 확인 시 www.lg.com 은 토큰·구현 모두 없어 N/A로 남는다.
 
 ---
 
-## 2. Accessibility (4개)
+## 웹접근성
 
-### #9 — Image Alt *(a11y)*
-- **PASS**: alt 속성 누락 `<img>` **0개**
-- **FAIL**: alt 누락 1개 이상 (빈 문자열 `alt=""`은 장식 이미지로 간주, PASS 처리)
-- **측정 방법**: `<img>` 태그의 `alt` 속성 존재 여부
-- **측정 레벨**: 페이지
-- **구현**: BS4로 `img` 전체 선택 후 `alt is None` 카운트
-- **PoC**: Y
-
-### #10 — Semantic HTML *(a11y)*
-- **PASS**: `<main>` 존재 **+** 랜드마크 태그 **3개 이상**
-- **FAIL**: `<main>` 부재 또는 랜드마크 < 3개
-- **측정 방법**: `main`, `nav`, `header`, `footer`, `article`, `section`, `aside` 카운트
-- **측정 레벨**: 페이지
-- **구현**: BS4로 각 태그 카운트 후 main 1개 + 그 외 합계 ≥ 3 검증
-- **PoC**: Y
-
-### #11 — Heading Hierarchy *(a11y)*
-- **PASS**: 헤딩 **역순 0건** — 첫 헤딩보다 상위(얕은) 레벨이 뒤에 등장하지 않음
-- **FAIL**: 역순 1건 이상 (예: 첫 헤딩 h3 → 이후 h1/h2 등장)
-- **측정 방법**: 모든 h1–h6을 문서 순서대로 추출 후, 첫 헤딩 레벨보다 얕은(번호가 작은) 레벨이 뒤에 나오는지 검사
-- **측정 레벨**: 페이지
-- **구현**: `first = levels[0]`, `inversions = Σ(lv < first for lv in levels[1:])`, `inversions == 0`이면 PASS. 레벨 건너뛰기(h1→h3 같은 깊이 점프)는 허용하고 **역순만** 위반으로 본다.
-- **PoC**: Y
-
-### #12 — ARIA Labels *(a11y)*
-- **PASS**: 인터랙티브 요소 중 접근성 텍스트 누락 비율 **< 10%**
-- **FAIL**: 누락 비율 10% 이상
-- **측정 방법**: `button`, `input`, `a` 중 `aria-label` / `aria-labelledby` / `title` / 가시 텍스트가 모두 없는 요소 비율
-- **측정 레벨**: 페이지
-- **구현**: 인터랙티브 요소 수집 후 4가지 텍스트 소스 중 어느 하나라도 있으면 PASS
-- **PoC**: Y
+| # | 항목 | PASS | 측정방법 | check id |
+| :-: | :-- | :-- | :-- | :-- |
+| #9 | Image Alt | 누락 0개 | img[alt] 체크 | `a11y_image_alt` |
+| #10 | Semantic HTML | main + 랜드마크 3개 이상 | main, nav, header, footer, article, section, aside | `a11y_semantic` |
+| #11 | Heading Hierarchy | 위반 0개 | h1 → h3 점프 등 탐지 | `a11y_heading_hier` |
+| #12 | ARIA Labels | 누락 < 10% | button, input, a 접근성 텍스트 | `a11y_aria_labels` |
 
 ---
 
-## 3. SEO (7개)
+## Basic SEO
 
-### #13 — Title
-- **PASS**: `<title>` 태그 존재 + 비어있지 않음
-- **FAIL**: 태그 부재 또는 빈 문자열
-- **측정 방법**: `<head><title>` 텍스트 추출
-- **측정 레벨**: 페이지
-- **구현**: BS4로 `head > title` 선택, `.text.strip()` 길이 > 0 체크
-- **PoC**: Y
+| # | 항목 | PASS | check id |
+| :-: | :-- | :-- | :-- |
+| #13 | Title | 존재 (30~60자) | `seo_title` |
+| #14 | Meta Description | 존재 (120~160자) | `seo_meta_desc` |
+| #15 | Canonical | self-referencing | `seo_canonical` |
+| #16 | H1 | 정확히 1개 | `seo_h1` |
+| #17 | Robots | Indexing 허용 | `seo_robots`, `seo_robots_hdr` |
+| #18 | Open Graph | og:title + og:image | `seo_open_graph` |
+| #19 | Sitemap | 1개월 내 최신화된 Sitemap XML 존재 | `seo_sitemap` |
 
-### #14 — Meta Description
-- **PASS**: `<meta name="description">` 존재 + content 비어있지 않음
-- **FAIL**: 부재 또는 빈 content
-- **측정 방법**: `meta[name="description"]` content 속성 추출
-- **측정 레벨**: 페이지
-- **구현**: BS4 `find("meta", attrs={"name": "description"})` → content 검사
-- **PoC**: Y
-
-### #15 — Canonical
-- **PASS**: `<link rel="canonical">` href가 **현재 URL과 동일** (self-referencing)
-- **FAIL**: 부재 또는 다른 URL
-- **측정 방법**: `link[rel="canonical"]` href 추출 후 현재 URL과 비교 (정규화: 프로토콜·트레일링 슬래시·쿼리 정렬)
-- **측정 레벨**: 페이지
-- **구현**: URL 정규화 함수로 양쪽 비교
-- **PoC**: Y
-
-### #16 — H1
-- **PASS**: `<h1>` 태그 **정확히 1개**
-- **FAIL**: 0개 또는 2개 이상
-- **측정 방법**: `<h1>` 카운트
-- **측정 레벨**: 페이지
-- **구현**: `len(soup.find_all("h1"))` == 1
-- **PoC**: Y
-
-### #17 — Robots
-- **PASS**: 인덱싱 허용 (meta robots / X-Robots-Tag 어디에도 `noindex` 없음)
-- **FAIL**: meta robots 또는 X-Robots-Tag 헤더에 `noindex` 포함
-- **측정 방법**: `meta[name="robots"]` content + `X-Robots-Tag` HTTP 헤더 파싱
-- **측정 레벨**: 페이지
-- **구현**: 두 출처 모두 검사하여 `noindex` 토큰 검출
-- **PoC**: Y
-
-### #18 — Open Graph
-- **PASS**: `og:title` **AND** `og:image` 둘 다 존재
-- **FAIL**: 둘 중 하나라도 부재
-- **측정 방법**: `meta[property^="og:"]` 전체 추출 후 두 속성 존재 여부
-- **측정 레벨**: 페이지
-- **구현**: dict로 og 메타 수집 후 두 키 존재 검사
-- **PoC**: Y
-
-### #19 — Sitemap
-- **PASS**: 각 국가별 `/sitemap.xml`이 존재 **AND** Last-Modified / `<lastmod>`가 **최근 1개월 이내**
-- **FAIL**: 부재 또는 1개월 이상 미갱신
-- **측정 방법**: `/sitemap.xml` HEAD/GET 후 `Last-Modified` 헤더 또는 XML 내 `<lastmod>` 파싱
-- **측정 레벨**: 페이지 (도메인 레벨 점검)
-- **구현**: 각 국가 디렉토리별 sitemap 위치 결정 → 날짜 비교
-- **PoC**: Y
+> #17은 meta robots(`seo_robots`)와 X-Robots-Tag 헤더(`seo_robots_hdr`) 2개로 채점.
 
 ---
 
-## 4. AI Readiness — GEO 핵심 (26개)
+## 스키마마크업
 
-> JSON-LD 스키마 검증은 모두 동일 패턴: 페이지의 모든 `<script type="application/ld+json">` 파싱 → `@type` 매칭 → 필수 필드 존재 여부 검증.
+> 공통 PASS 조건: JSON-LD 필수요소 모두 존재, 파싱 성공
 
-### #20 — Schema: Organization
-- **PASS**: `@type=Organization` 존재 **AND** `contactPoint`, `address`, `geo`, `hasMap` 모두 존재
-- **FAIL**: 스키마 부재 또는 4개 필드 중 하나라도 누락
-- **측정 레벨**: 페이지 (공통)
-- **구현**: JSON-LD 파싱 → Organization 노드 추출 → 4 필드 체크
-- **PoC**: Y
+| # | 스키마 | 필수 요소 | check id |
+| :-: | :-- | :-- | :-- |
+| #21 | BreadcrumbList | itemListElement, item, name, position | `ai_schema_breadcrumb` |
+| #23 | FAQPage | mainEntity | `ai_schema_faq` |
+| #24 | CollectionPage | itemList, ListItem | `ai_schema_collection` |
+| #25 | Product 풀세트 | name, description, sku, brand, offers.price, offers.availability, aggregateRating.ratingValue, Review | `ai_schema_product`, `ai_schema_offer` |
+| #26 | ImageObject | url, name, description, uploadDate | `ai_schema_image` |
+| #27 | VideoObject | url, name, description, thumbnailUrl | `ai_schema_video` |
+| #28 | HowTo | HowToSupply / HowToStep | `ai_schema_howto` |
+| #29 | Article | headline, author, publisher, articleBody | `ai_schema_article` |
+| #49 | WebSite | — (체크리스트 문서에 대응 행 없음) | `ai_schema_website` |
 
-### #21 — Schema: BreadcrumbList
-- **PASS**: `@type=BreadcrumbList` + `itemListElement` 배열 + 각 원소에 `item`, `name`, `position` 존재
-- **FAIL**: 스키마 부재 또는 필수 필드 누락
-- **측정 레벨**: 페이지 (공통)
-- **구현**: JSON-LD에서 BreadcrumbList 추출 → 배열 원소별 검사
-- **PoC**: Y
-
-### #22 — Schema: Speakable
-- **PASS**: `speakable` 객체에 `cssSelector` 또는 `xpath` 존재
-- **FAIL**: 부재
-- **측정 레벨**: 페이지 (공통)
-- **구현**: 모든 JSON-LD 노드에서 `speakable` 키 탐색 후 selector 필드 검사
-- **PoC**: Y
-
-### #23 — Schema: FAQ
-- **PASS**: `@type=FAQPage` + `mainEntity` 배열 길이 ≥ 1
-- **FAIL**: 스키마 부재 또는 mainEntity 비어있음
-- **측정 레벨**: 페이지 (공통)
-- **구현**: JSON-LD → FAQPage → mainEntity 길이 체크
-- **PoC**: Y
-
-### #24 — Schema: CollectionPage *(PLP)*
-- **PASS**: `@type=CollectionPage` + `mainEntity` 또는 `itemList` (`ListItem` 포함) 존재
-- **FAIL**: 부재
-- **측정 레벨**: 페이지 Type (본부콘텐츠 — PLP)
-- **구현**: PLP에 한해 적용. JSON-LD에서 CollectionPage → itemList 검사
-- **PoC**: Y
-
-### #25 — Schema: Product + Offer + AggregateRating + Review *(PDP)*
-- **PASS**: `@type=Product` + 다음 모두 존재 — `name`, `description`, `sku`, `brand`, `offers.price`, `offers.availability`, `aggregateRating.ratingValue`, `review`
-- **FAIL**: 하나라도 누락
-- **측정 레벨**: 페이지 Type (본부콘텐츠 — PDP)
-- **구현**: Product 스키마에서 중첩 필드까지 모두 검증
-- **PoC**: Y
-
-### #26 — Schema: ImageObject
-- **PASS**: `@type=ImageObject` + `url`, `name`, `description`, `uploadDate` 모두 존재
-- **FAIL**: 부재 또는 필드 누락
-- **측정 레벨**: 페이지 Type (본부콘텐츠 PDP/Micro Site, 고가혁 Support)
-- **구현**: JSON-LD에서 ImageObject → 4 필드 체크
-- **PoC**: Y
-
-### #27 — Schema: VideoObject
-- **PASS**: `@type=VideoObject` + `url`, `name`, `description`, `thumbnailUrl` 모두 존재
-- **FAIL**: 누락
-- **측정 레벨**: 페이지 Type (PDP/Micro Site/Support)
-- **구현**: JSON-LD → VideoObject → 4 필드 체크
-- **PoC**: Y
-
-### #28 — Schema: HowTo *(Support)*
-- **PASS**: `@type=HowTo` + `supply` (HowToSupply) **AND** `step` (HowToStep) 배열 존재
-- **FAIL**: 누락
-- **측정 레벨**: 페이지 Type (본부콘텐츠 Micro Site, 고가혁 Support)
-- **구현**: HowTo → supply / step 배열 길이 검사
-- **PoC**: Y
-
-### #29 — Schema: Article *(Newsroom/Support)*
-- **PASS**: `@type=Article` + `headline`, `author`, `publisher`, `articleBody` 모두 존재
-- **FAIL**: 누락
-- **측정 레벨**: 페이지 Type (PR Newsroom, 고가혁 Support)
-- **구현**: Article → 4 필드 체크
-- **PoC**: Y
-
-### #30 — Schema: DigitalDocument *(Support)*
-- **PASS**: `@type=DigitalDocument` + `name`, `url`, `fileFormat`, `description` 모두 존재
-- **FAIL**: 누락
-- **측정 레벨**: 페이지 Type (고가혁 Support)
-- **구현**: DigitalDocument → 4 필드 체크
-- **PoC**: Y
-
-### #31 — Schema: Recipe *(Micro Site)*
-- **PASS**: `@type=Recipe` + `name`, `description`, `image`, `author`, `datePublished`, `recipeIngredient`, `recipeInstructions` 모두 존재
-- **FAIL**: 누락
-- **측정 레벨**: 페이지 Type (본부콘텐츠 Micro Site)
-- **구현**: Recipe → 7 필드 체크
-- **PoC**: Y
-
-### #32 — FAQ Block (콘텐츠)
-- **PASS**: 페이지에 FAQ 블록 **1개 이상** — `<details>/<summary>` 또는 Q&A 패턴 (`dl>dt+dd`, `.faq-item` 등)
-- **FAIL**: 0개
-- **측정 레벨**: 페이지 Type
-- **비고**: 추후 고도화 (콘텐츠 수정 영역)
-- **구현**: BS4로 `details` 카운트 + Q&A 패턴 셀렉터 매칭
-- **PoC**: Y
-
-### #33 — Definition Paragraph
-- **PASS**: 정의문 패턴 **1개 이상** — "X는 Y이다", "X란 Y를 말한다" 정규식 또는 `<dfn>` / `<abbr>` 태그
-- **FAIL**: 0개
-- **측정 레벨**: 페이지 Type
-- **비고**: 추후 고도화
-- **구현**: 본문 텍스트 정규식 매칭 + dfn/abbr 카운트
-- **PoC**: Y
-
-### #34 — Author / Source *(Newsroom)*
-- **PASS**: 저자 정보 **OR** (출처 + 날짜) 존재 — `meta[name="author"]`, `.byline`, `datePublished` 등
-- **FAIL**: 둘 다 부재
-- **측정 레벨**: 페이지 Type (PR Newsroom)
-- **구현**: 저자 셀렉터 우선 → 없으면 출처+날짜 동시 존재 검사
-- **PoC**: Y
-
-### #35 — Summary Box
-- **PASS**: `TL;DR`, `Key Takeaways`, `Highlights`, `Abstract`, `Summary`, `요약` 등 키워드를 가진 블록 **1개 이상**
-- **FAIL**: 0개
-- **측정 레벨**: 페이지 Type
-- **비고**: 추후 고도화
-- **구현**: 텍스트/클래스/id에서 키워드 매칭
-- **PoC**: Y
-
-### #36 — Citable Sentences
-- **PASS**: 인용 가능 문장 밀도 **≥ 10%** (전체 문장 대비)
-- **FAIL**: 10% 미만
-- **측정 방법**: 정규식으로 다음 패턴 포함 문장 카운트 — `\d+%`, `\d{4}년`, `\$[\d,]+`, `\d+배`, `에 따르면` 등
-- **측정 레벨**: 페이지 Type
-- **비고**: 이미 구현됨 (배포 필요)
-- **구현**: 문장 분할 후 패턴 매칭 비율 계산
-- **PoC**: Y
-
-### #37 — JS HTML Text Ratio
-- **PASS**: JS 렌더링 후 텍스트 대비 원본 HTML 텍스트 비율 **≥ 60%** (SSR 비중)
-- **FAIL**: 60% 미만
-- **측정 방법**: Playwright로 렌더 후 `document.body.innerText` 추출 → 원본 HTML 텍스트와 길이 비교
-- **측정 레벨**: 페이지
-- **구현**: SSR 텍스트 / 렌더 후 텍스트 비율
-- **PoC**: Y
-
-### #38 — JS HTML Resource (PDP 썸네일)
-- **PASS**: PDP 썸네일 이미지 **1–3번째**가 **원본 HTML**에 `<img>` 태그로 존재 (SSR)
-- **FAIL**: 1–3번째 중 하나라도 원본 HTML 부재 (CSR로만 로드)
-- **측정 레벨**: 페이지 (PDP)
-- **구현**: 페이지 fetch로 받은 raw HTML에서 썸네일 셀렉터로 1–3번째 img 검사
-- **PoC**: Y
-
-### #39 — JS 핵심 Element 체크
-- **PASS**: PDP의 핵심 element (제품 카드 등)가 원본 HTML에 SSR로 존재
-- **FAIL**: 부재
-- **측정 레벨**: 페이지 Type (본부콘텐츠 — PDP)
-- **비고**: 핵심 element CSS selector 정의 필요 — **LG팀과 협의 후 확정**
-- **구현**: 정의 후 셀렉터 매칭. 현재는 spec 미확정
-- **PoC**: 조건부 (LG 정의 필요)
-
-### #40 — Summary Content SSR
-- **PASS**: 페이지 타입별 Summary 컴포넌트가 원본 HTML에 존재
-- **FAIL**: CSR로만 렌더 또는 부재
-- **측정 레벨**: 페이지
-- **비고**: 추후 고도화 (콘텐츠 수정 영역)
-- **구현**: 페이지 타입별 Summary selector 매핑 후 raw HTML에서 검사
-- **PoC**: Y
-
-### #41 — Image File Name
-- **PASS**: PDP 이미지 파일명에 **브랜드/제품명** 키워드 포함
-- **FAIL**: 미포함 (예: `IMG_1234.jpg`)
-- **측정 방법**: `<img src>` URL의 파일명 부분에서 LG, 제품명 등 키워드 매칭
-- **측정 레벨**: 페이지
-- **구현**: URL parsing → basename → 키워드 정규식
-- **PoC**: Y
-
-### #42 — Status Code (200)
-- **PASS**: HTTP 응답 status code **200**
-- **FAIL**: 그 외 (3xx 리다이렉트, 4xx, 5xx)
-- **측정 레벨**: 페이지
-- **구현**: `response.status_code == 200`
-- **PoC**: Y
-
-### #43 — Soft 404
-- **PASS**: status 200 **AND** HTML 텍스트 길이가 임계값 이상 (정상 페이지)
-- **FAIL**: status 200이지만 텍스트 길이 미달 (실제로는 빈 페이지/에러 메시지)
-- **측정 방법**: status code + HTML body text 길이 임계값 비교 (임계값 정의 필요)
-- **측정 레벨**: 도메인 레벨 (국가 디렉토리별)
-- **구현**: 200 응답 후 `soup.get_text()` 길이 < threshold 검출
-- **PoC**: Y
-
-### #44 — llms.txt / llms-corepage.txt
-- **PASS**: 각 국가별 `/llms.txt` (또는 `/llms-corepage.txt`) HEAD 요청 status **200**
-- **FAIL**: 부재 (404 등)
-- **측정 레벨**: 도메인 레벨 (국가 디렉토리별)
-- **구현**: 각 국가 base URL에서 HEAD 요청
-- **PoC**: Y
-
-### #45 — Sitemap XML *(도메인 레벨)*
-- **PASS**: 각 국가별 sitemap.xml 존재 **AND** `lastmod` 또는 `Last-Modified` **최근 1개월 이내**
-- **FAIL**: 부재 또는 1개월 이상 미갱신
-- **측정 레벨**: 도메인 레벨 (국가 디렉토리별)
-- **구현**: 국가별 sitemap.xml 파싱 → 날짜 검증 (#19와 유사하나 도메인 레벨)
-- **PoC**: Y
+> #25는 Product와 Offer 2개 항목으로 채점되어 스키마마크업 카테고리는 총 10개.
 
 ---
 
-## PASS / FAIL 판정 종합 매트릭스
+## 고인용 콘텐츠
 
-| # | 항목 | PASS 한 줄 요약 | 측정 레벨 | PoC |
-| :-: | :-- | :-- | :-: | :-: |
-| 1 | TTFB | < 1800ms | 도메인 | Y |
-| 2 | Compression | gzip/br/deflate | 페이지 | Y |
-| 3 | HTTP Protocol | HTTP/2+ | 도메인 | Y |
-| 4 | Cache-Control | max-age > 0 | 페이지 | Y |
-| 5 | HTML Size | < 100KB | 페이지 | Y |
-| 6 | Redirect Chain | ≤ 1회 | 페이지 | Y |
-| 7 | Mixed Content | http:// 0개 | 페이지 | Y |
-| 8 | Render Blocking | head blocking script 0 | 페이지 | N (기준 제외) |
-| 9 | LCP | ≤ 4,000ms | 페이지 | N |
-| 10 | CLS | ≤ 0.25 | 페이지 | N |
-| 11 | INP | ≤ 500ms | 페이지 | N |
-| 9 (a11y) | Image Alt | 누락 0 | 페이지 | Y |
-| 10 (a11y) | Semantic HTML | main + 랜드마크 ≥ 3 | 페이지 | Y |
-| 11 (a11y) | Heading Hierarchy | 역순 0 (첫 헤딩보다 상위 레벨 후행 없음) | 페이지 | Y |
-| 12 (a11y) | ARIA Labels | 누락 < 10% | 페이지 | Y |
-| 13 | Title | 존재 | 페이지 | Y |
-| 14 | Meta Description | 존재 | 페이지 | Y |
-| 15 | Canonical | self-referencing | 페이지 | Y |
-| 16 | H1 | 정확히 1개 | 페이지 | Y |
-| 17 | Robots | indexing 허용 | 페이지 | Y |
-| 18 | Open Graph | og:title + og:image | 페이지 | Y |
-| 19 | Sitemap (page) | 1개월 내 갱신 | 페이지 | Y |
-| 20 | Org schema | contactPoint+address+geo+hasMap | 페이지 | Y |
-| 21 | BreadcrumbList | itemListElement 모두 | 페이지 | Y |
-| 22 | Speakable | cssSelector 존재 | 페이지 | Y |
-| 23 | FAQ schema | mainEntity ≥ 1 | 페이지 | Y |
-| 24 | CollectionPage | itemList 존재 | 페이지 Type (PLP) | Y |
-| 25 | Product 풀세트 | 8 필드 모두 | 페이지 Type (PDP) | Y |
-| 26 | ImageObject | 4 필드 모두 | 페이지 Type | Y |
-| 27 | VideoObject | 4 필드 모두 | 페이지 Type | Y |
-| 28 | HowTo | supply + step | 페이지 Type | Y |
-| 29 | Article | 4 필드 모두 | 페이지 Type | Y |
-| 30 | DigitalDocument | 4 필드 모두 | 페이지 Type | Y |
-| 31 | Recipe | 7 필드 모두 | 페이지 Type | Y |
-| 32 | FAQ Block | 1개 이상 | 페이지 Type | Y |
-| 33 | Definition Paragraph | 1개 이상 | 페이지 Type | Y |
-| 34 | Author/Source | 저자 또는 출처+날짜 | 페이지 Type | Y |
-| 35 | Summary Box | 키워드 1개 이상 | 페이지 Type | Y |
-| 36 | Citable Sentences | 밀도 ≥ 10% | 페이지 Type | Y |
-| 37 | JS HTML Text Ratio | SSR ≥ 60% | 페이지 | Y |
-| 38 | JS HTML Resource | 1–3 썸네일 SSR | 페이지 | Y |
-| 39 | JS 핵심 Element | 핵심 SSR | 페이지 Type | 조건부 |
-| 40 | Summary SSR | Summary HTML 존재 | 페이지 | Y |
-| 41 | Image File Name | 브랜드 키워드 포함 | 페이지 | Y |
-| 42 | Status 200 | == 200 | 페이지 | Y |
-| 43 | Soft 404 | 200 + 텍스트 임계 이상 | 도메인 | Y |
-| 44 | llms.txt | 200 응답 | 도메인 | Y |
-| 45 | Sitemap (domain) | 1개월 내 갱신 | 도메인 | Y |
+| # | 항목 | PASS | 측정방법 | check id |
+| :-: | :-- | :-- | :-- | :-- |
+| #32 | FAQ Block | 1개 이상 | FAQPage Schema, details/summary, Q&A 패턴 | `ai_faq_block` |
+| #33 | Definition Paragraph | 1개 이상 | "X는 Y이다", dfn, abbr | `ai_definition` |
+| #34 | Author/Source | 저자 또는 (출처+날짜) | **JSON-LD** `author` 또는 (`datePublished` + `publisher`/`sourceOrganization`/`source`) | `ai_author_source` |
+| #35 | Summary Box | 1개 이상 | TL;DR, Key Takeaways, Highlights, Abstract | `ai_summary_box` |
+| #36 | Citable Sentences | 밀도 ≥ 10% | 숫자, 연도, 통계, 연구 키워드 포함 문장 | `ai_citable` |
+
+> **#34 주의**: HTML `meta author`·본문 byline은 판정에 **사용하지 않는다**. AI가 파싱 가능한
+> 구조화 데이터를 요구하는 기준이다. 따라서 통과율 0%는 "저자 표기가 없다"가 아니라
+> "JSON-LD에 author/발행정보가 없다"로 읽어야 하고, 개선 액션은 Article/NewsArticle 스키마에
+> `author`·`datePublished`·`publisher`를 추가하는 것이다.
+>
+> #34는 byline 개념이 성립하는 `newsroom`·`buying_guide`·`content` page_type에만 적용되며,
+> 그 외 페이지타입은 N/A로 분모에서 빠진다.
 
 ---
 
-## 비PoC 항목 (3개)
+## AI Crawlability
 
-PageSpeed Insights API에 의존하는 Core Web Vitals 3종은 PoC 단계에서 제외:
-- **#9 LCP**, **#10 CLS**, **#11 INP** — PSI API rate limit (분당 25회), API 키 발급/배치 처리 필요
-
-self-healing 대상에서도 제외 (수동 수정 필요).
-
-## 정의 필요 항목 (1개)
-
-- **#39 핵심 Element** — PDP의 "핵심 element" CSS selector를 LG팀과 협의하여 확정 후 구현
+| # | 항목 | PASS | 측정방법 | check id |
+| :-: | :-- | :-- | :-- | :-- |
+| #37 | (JS) HTML Text Ratio | 밀도 ≥ 60% | JS 렌더링 후 텍스트 대비 HTML Text 비중 | `ai_ssr_ratio` |
+| #38 | (JS) HTML Resource | PDP 썸네일 1-3번째 이미지가 HTML에 존재 | PDP HTML 파싱 후 SSR 확인 | `ai_pdp_thumbnails` |
+| #39 | (JS) 핵심 element | PDP 핵심 element가 HTML로 존재 | PDP HTML 파싱 후 SSR 확인 | `ai_core_element` |
+| #40 | Image File Name | 브랜드명 포함 | 이미지 파일 이름 규칙 검증 | `ai_image_filename` |
+| #41 | Status Code (200) | 200 반환 | Status Code | `ai_status_200` |
+| #42 | Status Code (Soft 404) | 200 반환 + HTML Text Count 기준 이상 | Status Code 및 본문 길이 검증 | `ai_soft_404` |
+| #43 | llms.txt | 존재 | 각 국가별 llms.txt 검증 | `ai_llms_txt` |
+| #40* | Summary Content SSR | — (체크리스트 문서에 대응 행 없음) | | `ai_summary_ssr` |
 
 ---
 
-## 다음 단계
+## 예외 처리
 
-1. ✅ 본 문서를 어드민의 audit 기준 reference로 노출
-2. 룰 엔진(`rule_engine.py`)에 새 룰 타입 정의 (헤더 검사, 스키마 필드 검증, JS 렌더링 비교 등)
-3. 카테고리별 점수 가중치 결정 (현재 `scoring_config.json`에 정의된 max 값 재조정)
-4. `analyzer.py`에서 각 항목별 데이터 수집 함수 구현
-5. 어드민 UI에서 본 문서를 기준으로 룰 활성/비활성 토글 가능하게 연결
+### 채점에서 제외된 항목
+- **#5 HTML < 100KB** — 측정은 정확하나 lg.com HTML 중앙값이 1,536KB라 실질 통과율 0.0%.
+  통과 건의 대부분이 본문 0자인 빈 404 셸이라 지표 방향이 반대였음
+- **#8 Render Blocking 0** — 통과율 2.3%로 변별력 없음
+- **#44 Sitemap XML** — #19 Sitemap과 rule이 완전히 동일한 중복 (`ai_sitemap_domain`, `enabled: false`)
+- **#20 Organization · #22 Speakable · #30 digitalDocument · #31 Recipe** — `enabled: false`
+
+### 집계 대상에서 빠지는 페이지
+- **B2B(사업자) · 프로모션/약관** — GEO 대상이 아니라 점수·통과율·URL 카운트 전부에서 제외
+- **비-200 페이지** (404 · 500 · fetch 실패) — 전 체크가 cascade-FAIL 이라 개선 대상이 아님
+- **분류불가(unknown) · 홈페이지(home)** — 측정 의미 없음
+
+### 측정 기준이 바뀐 항목
+- **#1 TTFB** — 어딧 크롤러 자체 측정값이 동시 크롤 큐잉에 오염돼 실제보다 6~200배 크게 잡혔음
+  (UK 크롤러 1,088ms vs PSI 11ms). PageSpeed Insights의 `server-response-time`을 정본으로 교체.
+  임계값 600ms (2026-08-28 실측 1,462건 기준 통과율 96.1%, 중앙값 223ms)
+- **#4 Cache-Control** — 원래 룰이 `no-cache`/`no-store`가 섞이면 `max-age` 값과 무관하게 즉시
+  FAIL 처리했음. `max-age` 디렉티브가 설정돼 있으면(0 포함) 통과로 완화
+- **#34 Author 또는 출처+날짜** — `newsroom`·`buying_guide`·`content` page_type에만 적용,
+  그 외는 N/A (분모 제외)
+
+### 문서 번호와 채점 항목이 1:1이 아닌 곳
+- **#17 Robots** — `seo_robots`(meta) + `seo_robots_hdr`(X-Robots-Tag), 두 개로 채점
+- **#25 Product 풀세트** — `ai_schema_product` + `ai_schema_offer`, 두 개로 채점
+- **#49 Schema: WebSite · #40 Summary Content SSR** — 채점은 되지만 체크리스트 문서에 대응 행 없음
+
+---
+
+## 감사 대상 국가
+
+전략 10국 + Global-Site, 총 11개.
+
+| 코드 | 표시명 | 비고 |
+| :-- | :-- | :-- |
+| us, uk, de, es, ca, au, br, mx, in, vn | 국가 코드 대문자 | CA는 `ca_en`(영문)만. 불어(`ca_fr`)는 제외 |
+| global | **Global-Site** | `lg.com/global/newsroom` — 전량 `newsroom` page_type |
+
+감사는 **page_type별 최대 100개 샘플**이다. URL 목록은 사이트맵 + PLP 상품 API(Coveo)의
+활성 제품을 합쳐 구성한다(`build_url_csv.py` → `plp_discover.py`).

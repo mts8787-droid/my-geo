@@ -34,3 +34,12 @@ data/*.log
 
 # PSI(PageSpeed Insights) API 키 — 절대 커밋 금지
 .psi_key
+
+# PSI 캐시 — Render 에 배포하지 않는다. 감사 후 로컬 gen_dashboard_data 가 읽어
+# #1 TTFB 를 채우므로 원격엔 불필요하고, 완료 시 15MB 라 매월 리포에 쌓을 이유가 없다.
+data/psi_cache.json
+
+# 백업 파일
+*.bak_*
+*.legacy_bak
+*.old_48items
