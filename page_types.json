@@ -141,17 +141,12 @@
       "recommended_schemas": []
     },
     {
-      "id": "content",
-      "label": "콘텐츠/매거진",
+      "id": "experience",
+      "label": "익스피어리언스",
       "detection": {
         "url_pattern": [
           "/[a-z]{2}(?:[_-][a-z]{2})?/lg-experience(/|$)",
-          "/[a-z]{2}(?:[_-][a-z]{2})?/experience(/|$)",
-          "/[a-z]{2}(?:[_-][a-z]{2})?/discover(/|$)",
-          "/[a-z]{2}(?:[_-][a-z]{2})?/magazine(/|$)",
-          "/[a-z]{2}(?:[_-][a-z]{2})?/lifesgood(/|$)",
-          "/[a-z]{2}(?:[_-][a-z]{2})?/monthly-lg(/|$)",
-          "/[a-z]{2}(?:[_-][a-z]{2})?/(historias-con-lg|historias-com-lg)(/|$)"
+          "/[a-z]{2}(?:[_-][a-z]{2})?/experience(/|$)"
         ]
       },
       "expected_schemas": [
@@ -162,7 +157,8 @@
         "ImageObject",
         "VideoObject"
       ],
-      "recommended_schemas": []
+      "recommended_schemas": [],
+      "_comment": "experience · lg-experience 만 집계한다. discover/magazine/lifesgood/monthly-lg 등은 성격이 달라 2026-08-30 제외했다."
     },
     {
       "id": "newsroom",

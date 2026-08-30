@@ -213,6 +213,12 @@ def process(code, merge=False, out=None, verbose=True):
     print(f"[plp] 활성 PDP {len(urls)}개 (Coveo SKU {total})", flush=True)
     if out:
         open(out, "w", encoding="utf-8").write("\n".join(sorted(urls)))
+    # PDP 판정 근거로 쓰는 정본 목록. detect_page_type 이 이 파일을 참조한다 —
+    # URL 패턴으로는 모델명 형식이 국가마다 달라 오분류가 크다
+    # (AU /au/fridge-freezers/french-door/gf-l500mwh/ 242건이 unknown 이었다).
+    os.makedirs(os.path.join(HERE, "reports", "plp"), exist_ok=True)
+    with open(os.path.join(HERE, "reports", "plp", f"{code}.txt"), "w", encoding="utf-8") as f:
+        f.write("\n".join(sorted(urls)))
 
     csv_path = os.path.join(HERE, "reports", f"lg_urls_{code}.csv")
     if not os.path.exists(csv_path):
