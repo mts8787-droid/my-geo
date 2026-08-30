@@ -522,6 +522,24 @@ def _eval_class_id_contains(params: dict, ctx: dict) -> dict:
 
     search_tags = tags if tags else True  # True = all tags
 
+    # 1패스: 헤딩/강조 텍스트에서 키워드 탐색.
+    #   LG 뉴스룸은 요약을 <p><b>News Summary</b></p> 로 쓰고 클래스는
+    #   c-detail-content__type03 같은 디자인 시스템 이름이라 class/id 매칭에
+    #   전혀 걸리지 않았다(실제로 요약이 있는데 통과율 0%).
+    if params.get("match_text", "yes") != "no":
+        for el in soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6",
+                                 "b", "strong", "dt", "summary", "caption", "legend"]):
+            txt = " ".join(el.get_text(" ", strip=True).split()).lower()
+            if not txt or len(txt) > 60:
+                continue
+            for kw in keywords:
+                if kw in txt:
+                    return {
+                        "pass": True,
+                        "value": f"<{el.name}> 텍스트: {txt[:40]}",
+                        "hint": None,
+                    }
+
     for el in soup.find_all(search_tags):
         cls = " ".join(el.get("class", [])).lower()
         el_id = (el.get("id") or "").lower()
@@ -1230,12 +1248,46 @@ def _eval_schema_for_page_type(params: dict, ctx: dict) -> dict:
     }
 
 
-def _visible_text(soup) -> str:
-    """script/style 등 비가시 태그를 제외한 본문 텍스트 (#12)."""
+# 본문 밀도 측정에서 빼는 보일러플레이트. GNB/푸터/쿠키 배너가 분모를 부풀려
+# 인용 밀도(#36)를 실제보다 낮게 만든다.
+_BOILERPLATE_TAGS = ("nav", "header", "footer")
+_BOILERPLATE_HINTS = ("gnb", "lnb", "global-nav", "site-header", "site-footer",
+                      "cookie", "skip-to", "skiptocontent", "breadcrumb")
+
+
+def _visible_text(soup, strip_boilerplate: bool = False) -> str:
+    """script/style 등 비가시 태그와 HTML 주석을 제외한 본문 텍스트 (#12).
+
+    HTML 주석은 Comment 노드라 태그 이름 필터에 걸리지 않는다 — 걸러내지 않으면
+    CSS/JS 주석과 skip-to-content 마크업이 본문으로 새어 들어와 문장 수와
+    인용 밀도를 왜곡한다.
+    """
+    from bs4 import Comment
+    skip = set()
+    if strip_boilerplate:
+        for el in soup.find_all(_BOILERPLATE_TAGS):
+            skip.add(id(el))
+        for el in soup.find_all(attrs={"class": True}):
+            blob = " ".join(el.get("class", [])).lower() + " " + (el.get("id") or "").lower()
+            if any(h in blob for h in _BOILERPLATE_HINTS):
+                skip.add(id(el))
+
     parts = []
     for s in soup.find_all(string=True):
-        if s.parent and s.parent.name in _NON_VISIBLE_TAGS:
+        if isinstance(s, Comment):
             continue
+        par = s.parent
+        if par and par.name in _NON_VISIBLE_TAGS:
+            continue
+        if skip:
+            p2, drop = par, False
+            while p2 is not None:
+                if id(p2) in skip:
+                    drop = True
+                    break
+                p2 = p2.parent
+            if drop:
+                continue
         parts.append(str(s))
     return " ".join(p.strip() for p in parts if p.strip())
 
@@ -1247,8 +1299,8 @@ def _eval_definition_pattern_min(params: dict, ctx: dict) -> dict:
     min_count = int(params.get("min_count", 1))
 
     dfn_count = len(soup.find_all(["dfn", "abbr"]))
-    text = _visible_text(soup)
-    pattern_count = len(_DEF_PATTERN.findall(text))
+    text = _visible_text(soup, strip_boilerplate=True)
+    pattern_count = sum(len(p.findall(text)) for p in _DEF_PATTERNS_MULTI)
     total = dfn_count + pattern_count
     passed = total >= min_count
     return {
@@ -1258,15 +1310,54 @@ def _eval_definition_pattern_min(params: dict, ctx: dict) -> dict:
     }
 
 
+# 인용 가능 문장 패턴 — 감사 대상이 영어·스페인어·독일어·포르투갈어·베트남어라
+# 한국어 전용 패턴(\d+년, \d+배, "에 따르면")은 어디서도 매칭되지 않았다.
+# 숫자·단위·출처 표현을 다국어로 확장한다.
 _CITABLE_PATTERNS = [
-    re.compile(r"\d+\s*%"),
-    re.compile(r"\d{4}\s*년"),
-    re.compile(r"\$\s*[\d,]+"),
-    re.compile(r"\d+\s*배"),
-    re.compile(r"에 따르면|보고서에 따르면|연구에 따르면|조사에 따르면"),
-    re.compile(r"\d+(?:[.,]\d+)?\s*(?:만|억|천만|million|billion)"),
-    re.compile(r"\d+(?:[.,]\d+)?\s*(?:kg|km|cm|mm|°C|℃|GB|MB|inches|inch|kWh)"),
+    re.compile(r"\d+(?:[.,]\d+)?\s*%"),                          # 퍼센트 (전 언어 공통)
+    re.compile(r"[$€£¥₩]\s?[\d,.]+"),                             # 통화
+    re.compile(r"\b(?:19|20)\d{2}\b"),                           # 연도 (숫자 표기)
+    re.compile(r"\d{4}\s*년"),                                    # 연도 (한국어)
+    re.compile(r"\b\d[\d.,]{2,}\b"),                             # 1,000 이상 큰 수
+    # 배수 — x2 / 2x / 2 times / veces / mal / vezes / lần
+    re.compile(r"\b\d+(?:[.,]\d+)?\s*(?:x|배|times|veces|mal|fach|vezes|vees|lần)\b", re.I),
+    # 대규모 수 — million/billion/millón/millones/Millionen/milhões/triệu/tỷ
+    re.compile(r"\d+(?:[.,]\d+)?\s*(?:만|억|천만|million|billion|mill[oó]n(?:es)?|"
+               r"Millionen|Milliarden|milh[oõ]es|bilh[oõ]es|tri[eệ]u|t[yỷ])\b", re.I),
+    # 단위 — 물리량/전기/디스플레이
+    re.compile(r"\d+(?:[.,]\d+)?\s*(?:kg|g|km|cm|mm|m²|°C|℃|°F|GB|TB|MB|kWh|W|V|Hz|"
+               r"nits|ppi|dB|inch(?:es)?|\"|L|ml|rpm|BTU)\b", re.I),
+    # 출처 표현 — according to / según / laut / segundo / theo
+    re.compile(r"(?:에 따르면|보고서에 따르면|연구에 따르면|조사에 따르면|"
+               r"according to|based on (?:a|the) (?:study|report|survey)|"
+               r"seg[uú]n|de acuerdo con|laut|zufolge|segundo (?:o|a|um|uma)|"
+               r"theo (?:báo cáo|nghiên cứu))", re.I),
+    # 순위/최초 표현 + 숫자 — world's first, No.1, top 3
+    re.compile(r"\b(?:world'?s first|first[- ]ever|no\.?\s?1|n[.º°]\s?1|top\s?\d+|"
+               r"primer[oa]?|erste[rns]?|primeiro|đầu tiên)\b", re.I),
 ]
+
+# 정의문 패턴 — "X는 Y이다" 한국어 문법만 보던 것을 다국어로 확장.
+_DEF_PATTERNS_MULTI = [
+    _DEF_PATTERN,
+    # 영어: X is/are/refers to/means/stands for a|the ...
+    re.compile(r"\b[A-Z][\w+\-]{1,30}(?:\s+[\w+\-]{1,20}){0,4}\s+"
+               r"(?:is|are|refers? to|means?|stands for|is defined as|is known as)\s+"
+               r"(?:a|an|the|one of|the process|a type)\b"),
+    # 스페인어: X es/son un|una|el|la ...
+    re.compile(r"\b[A-ZÁÉÍÓÚÑ][\w+\-áéíóúñ]{1,30}(?:\s+[\w\-áéíóúñ]{1,20}){0,4}\s+"
+               r"(?:es|son|se refiere a|significa)\s+(?:un|una|el|la|los|las)\b"),
+    # 독일어: X ist/sind ein|eine|der|die|das ...
+    re.compile(r"\b[A-ZÄÖÜ][\wäöüß\-]{1,30}(?:\s+[\wäöüß\-]{1,20}){0,4}\s+"
+               r"(?:ist|sind|bezeichnet|bedeutet)\s+(?:ein|eine|einer|der|die|das)\b"),
+    # 포르투갈어: X é/são um|uma|o|a ...
+    re.compile(r"\b[A-ZÁÂÃÉÊÍÓÔÕÚÇ][\wáâãéêíóôõúç\-]{1,30}(?:\s+[\wáâãéêíóôõúç\-]{1,20}){0,4}\s+"
+               r"(?:é|s[ãa]o|refere-se a|significa)\s+(?:um|uma|o|a|os|as)\b"),
+    # 베트남어: X là một|các ...
+    re.compile(r"\b[A-ZĐÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĨŨƠƯ][\w\-]{1,30}(?:\s+[\w\-]{1,20}){0,4}\s+"
+               r"(?:là|nghĩa là)\s+(?:một|các|kiểu|loại)\b", re.I),
+]
+
 
 def _eval_citable_density_min(params: dict, ctx: dict) -> dict:
     soup = ctx.get("soup")
@@ -1274,7 +1365,8 @@ def _eval_citable_density_min(params: dict, ctx: dict) -> dict:
         return {"pass": False, "value": None, "hint": "HTML 파싱 실패"}
     min_ratio = float(params.get("min_ratio", 0.1))
 
-    text = _visible_text(soup)
+    # GNB/푸터가 분모를 부풀려 밀도를 낮추므로 보일러플레이트를 제외한다
+    text = _visible_text(soup, strip_boilerplate=True)
     sentences = [s for s in re.split(r"(?<=[.!?。\n])\s+", text) if len(s.strip()) > 5]
     if not sentences:
         return {"pass": False, "value": "문장 없음", "hint": "분석할 문장이 없습니다."}
