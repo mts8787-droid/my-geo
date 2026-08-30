@@ -392,8 +392,8 @@ def main():
     for c in STRATEGIC:
         v = countries.get(c)
         if v:
-            print(f"  {c.upper():<3} {v['total_avg']:5.1f}  n={v['sample_size']:<4} "
-                  f"(제외 {v['excluded_count']})  {v['date']}")
+            print(f"  {v.get('label', c.upper()):<12} {v['total_avg']:5.1f}  "
+                  f"n={v['sample_size']:<5} (제외 {v['excluded_count']})  {v['date']}")
     print(f"  가중평균 {out['overall']['total_avg_weighted']}  "
           f"(표본 {sample_total}, 제외 {sum(excl.values())} {dict(excl)})")
 

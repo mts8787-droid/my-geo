@@ -90,6 +90,18 @@ FALLBACK_SITEMAPS = ["sitemap.xml", "sitemap-cs.xml", "business/sitemap.xml",
 # CA 는 lg.com/ca 가 없고 /ca_en(영문)·/ca_fr(불어)로 나뉜다 — 감사는 영문만 본다.
 SITE_PATHS = {"ca": "ca_en"}
 
+# 영구 수집 제외 경로. 감사·집계 대상이 아니므로 URL 목록 단계에서 아예 뺀다.
+#   lg-story  — 보도자료가 아닌 브랜드 스토리텔링 콘텐츠
+#   lifesgood — 캠페인 페이지
+DROP_PATH_PATTERNS = [
+    re.compile(r"/lg-story(/|$)"),
+    re.compile(r"/lifesgood(/|$)"),
+]
+
+
+def _is_dropped(url):
+    return any(p.search(url) for p in DROP_PATH_PATTERNS)
+
 
 def collect_urls(code):
     """국가 index.xml부터 사이트맵을 재귀로 펼쳐 모든 page URL을 수집.
@@ -133,7 +145,10 @@ def build_csv(code):
     urls = collect_urls(site)
     # 같은 국가 경로만 — 타국 hreflang 오염 / 외부 도메인 제거
     pat = re.compile(rf"^https?://www\.lg\.com/{re.escape(site)}(/|$)")
-    filtered = sorted(u for u in urls if pat.match(u))
+    filtered = sorted(u for u in urls if pat.match(u) and not _is_dropped(u))
+    dropped = sum(1 for u in urls if pat.match(u) and _is_dropped(u))
+    if dropped:
+        print(f"[build_url_csv]   영구 제외 {dropped}건 (lg-story/lifesgood)")
     if not filtered:
         print(f"[build_url_csv] FATAL: {code}(경로 {site}) 수집 URL 0건 — 사이트맵 확인 필요",
               file=sys.stderr)

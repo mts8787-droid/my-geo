@@ -70,6 +70,11 @@ CHANNEL_SEGMENTS = {
 }
 
 
+def _is_dropped(path):
+    """영구 제외 경로 — build_url_csv.DROP_PATH_PATTERNS 와 같은 기준."""
+    return "/lg-story/" in path or "/lifesgood/" in path
+
+
 def is_channel_store(path):
     """URL 경로가 채널 스토어면 True. path 는 /<country>/<seg>/... 형태."""
     parts = path.strip("/").split("/")
@@ -161,7 +166,7 @@ def _collect_locale(cfg, token, base_filter, path_field, verbose, code):
         for x in r.get("results", []):
             raw = x.get("raw") or {}
             p = raw.get(path_field)
-            if p and not is_channel_store(p):
+            if p and not is_channel_store(p) and not _is_dropped(p):
                 found.setdefault(p, _top_category(raw, code))
         if verbose and i % 40 == 0:
             print(f"[plp]   {i}/{len(cats)} · 누적 {len(found)}", flush=True)
@@ -180,7 +185,7 @@ def _collect_locale(cfg, token, base_filter, path_field, verbose, code):
             for x in r.get("results", []):
                 raw = x.get("raw") or {}
                 p = raw.get(path_field)
-                if p and p not in found and not is_channel_store(p):
+                if p and p not in found and not is_channel_store(p) and not _is_dropped(p):
                     found[p] = _top_category(raw, code)
                     add += 1
             if verbose and add:
