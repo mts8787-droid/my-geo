@@ -20,6 +20,8 @@ LOCAL_COUNTRIES="au in"
 MAX_ATTEMPTS=3
 RETRY_GAP=1800        # 초 — 네트워크 복구 대기 (3회 × 30분 ≈ 1시간 커버)
 STAMP=$(date +%Y%m%d_%H%M%S)
+# 배치 전체가 한 날짜로 기록되도록 고정 — 국가별 실행이 UTC 자정을 넘겨도 갈리지 않는다
+export AUDIT_RUN_DATE=$(date -u +%Y-%m-%d)
 LOG="data/monthly_audit_${STAMP}.log"
 
 # 오늘자 run 결과 품질 판정: 0=정상, 2=결과 없음, 3=파싱실패 과다

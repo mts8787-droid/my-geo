@@ -490,7 +490,7 @@
           }
         },
         "applies_to_page_types": [
-          "content",
+          "experience",
           "buying_guide",
           "microsite"
         ]
@@ -645,7 +645,7 @@
         "points": 1,
         "enabled": false,
         "applies_to_page_types": [
-          "content",
+          "experience",
           "newsroom",
           "press_media",
           "microsite"
@@ -722,7 +722,7 @@
           "newsroom",
           "press_media",
           "buying_guide",
-          "content"
+          "experience"
         ]
       },
       {

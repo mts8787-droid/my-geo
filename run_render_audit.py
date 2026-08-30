@@ -68,6 +68,10 @@ def _get(path):
 # 순서대로 자르면 오래된 문서만 반복 감사하게 된다 (reports/page_dates.json 필요).
 RECENCY_TYPES = {"newsroom", "press_media", "support_troubleshoot"}
 
+# page_type 별 표본 상한 오버라이드. PDP 는 카테고리가 수십 종이라 100개로는
+# 제품군당 몇 건씩밖에 안 잡혀 대표성이 떨어진다.
+PER_TYPE_OVERRIDE = {"pdp": 500}
+
 # 감사 자체를 하지 않는 page_type. 'unknown' 은 분류 실패라 예전부터 제외였고,
 # 'about' 은 회사 소개 페이지라 GEO 검수 대상이 아니라고 결정됐다(2026-08-28).
 SKIP_TYPES = {"unknown", "about"}
@@ -81,12 +85,14 @@ REQUIRED_PDP_CATEGORIES = {
     "audio":        ["audio", "soundbar", "speaker", "lautsprecher", "altavoz", "colunas",
                      "som", "xboom", "home-cinema", "home-theater", "loa", "am-thanh"],
     "monitor":      ["monitor", "moniteur", "man-hinh"],
-    "refrigerator": ["refriger", "fridge", "kuhlschrank", "kuehlschrank", "geladeira",
-                     "nevera", "frigorific", "tu-lanh"],
+    # 어간으로 매칭한다 — 독일어 복수형(kuehlschraenke)이 단수 키워드에 안 걸려
+    # DE 냉장고 510건이 표본에서 빠졌었다.
+    "refrigerator": ["refriger", "fridge", "kuhlschr", "kuehlschr", "kuhlger", "kuehlger",
+                     "geladeira", "nevera", "frigorific", "tu-lanh", "freezer", "gefrier"],
     "washer":       ["wash", "laundry", "wasch", "waesche", "lavadora", "lavanderia",
                      "lava-roupas", "giat", "secadora"],
-    "dishwasher":   ["dishwash", "geschirrspul", "geschirrspül", "spuelmaschine",
-                     "lavavajilla", "lava-louca", "rua-bat"],
+    "dishwasher":   ["dishwash", "geschirrsp", "spuelmaschine", "spülmaschine",
+                     "lavavajilla", "lava-louca", "rua-bat", "lavavaj"],
     # 에어컨이 없는 국가(UK 등)는 히트펌프가 같은 공조 제품군을 대표한다.
     "aircon":       ["air-condition", "aircon", "klima", "aire-acondicionado",
                      "ar-condicionado", "dieu-hoa",
@@ -94,7 +100,16 @@ REQUIRED_PDP_CATEGORIES = {
                      "bomba-de-calor", "aerotermia", "bom-nhiet", "heating-solution"],
     "aircare":      ["air-care", "air-purif", "purificador", "luftreiniger",
                      "cham-soc-khong-khi", "khong-khi", "air-solution", "air-quality"],
+    "cooking":      ["cooking", "range", "oven", "cooktop", "microwave", "herd",
+                     "backofen", "mikrowellen", "horno", "cocina", "cocción", "forno",
+                     "fogao", "micro-ondas", "lo-vi-song", "lo-nuong", "bep"],
+    "vacuum":       ["vacuum", "staubsauger", "aspirador", "aspiradora",
+                     "may-hut-bui", "hut-bui", "cordzero"],
 }
+
+# 핵심 카테고리 1종당 최소 배정 수. 10종 × 50 = 500 으로 PDP 상한과 같다.
+# 재고가 50 미만인 제품군의 잔여분은 라운드로빈으로 다른 카테고리에 돌아간다.
+REQUIRED_MIN_PER_CATEGORY = 50
 # 카테고리 균등 배분을 적용할 page_type. 알파벳순으로 자르면 US 는 76개 카테고리 중
 # 3개(에어컨 96개)만 뽑혀 TV·모니터가 통째로 빠졌다.
 BALANCED_TYPES = {"pdp", "plp"}
@@ -106,8 +121,22 @@ def _category_seg(url):
     return m.group(1).lower() if m else ""
 
 
+# 액세서리/부품 세그먼트 — 필수 제품군 대표로 쓰지 않는다. tv-audio-video-accessories
+# 가 "tv" 키워드에 먼저 걸려 TV 본체(/us/tvs/ 934건)가 표본에서 통째로 빠졌다.
+ACCESSORY_HINTS = ("accessor", "acessori", "acessorio", "zubehor", "zubehör", "accesorio",
+                   "pecas", "piezas", "parts", "phu-kien", "care-accessories")
+
+
+def _is_accessory(seg):
+    return any(w in seg for w in ACCESSORY_HINTS)
+
+
 def _balanced_pick(urls, per_type):
-    """카테고리 균등 샘플. 필수 제품군을 먼저 채우고 나머지는 라운드로빈."""
+    """카테고리 균등 샘플. 필수 제품군을 먼저 채우고 나머지는 라운드로빈.
+
+    필수 제품군 매칭 시 액세서리 세그먼트는 후순위로 민다 — 본체가 있으면 본체를
+    대표로 쓴다.
+    """
     from collections import defaultdict
     groups = defaultdict(list)
     for u in urls:
@@ -119,6 +148,11 @@ def _balanced_pick(urls, per_type):
             if any(w in seg for w in kws):
                 req_segs[key].append(seg)
                 break
+    # 본체 세그먼트가 있으면 액세서리는 그 제품군 대표에서 뺀다. tv-audio-video-
+    # accessories 가 TV 대표로 잡혀 본체(/us/tvs/ 934건)가 통째로 빠졌었다.
+    for key, segs_ in list(req_segs.items()):
+        main = [s for s in segs_ if not _is_accessory(s)]
+        req_segs[key] = sorted(main or segs_, key=lambda s: (len(s), s))
 
     picked, seen = [], set()
 
@@ -129,15 +163,22 @@ def _balanced_pick(urls, per_type):
             if u not in seen:
                 seen.add(u); picked.append(u); n -= 1
 
-    # 1) 필수 제품군 우선 — 존재하는 것만 균등 할당
     present = [k for k in REQUIRED_PDP_CATEGORIES if k in req_segs]
     if present:
-        quota = max(1, int(per_type * 0.7) // len(present))
+        # 핵심 제품군은 고정 정원(기본 50)을 우선 배정한다. 비율 배분으로는
+        # 제품군이 늘수록 각자 몫이 줄어 대표성이 떨어진다.
+        quota = min(REQUIRED_MIN_PER_CATEGORY, max(1, per_type // len(present))) \
+            if per_type < REQUIRED_MIN_PER_CATEGORY * len(present) else REQUIRED_MIN_PER_CATEGORY
         for k in present:
-            pool = [u for seg in sorted(req_segs[k]) for u in groups[seg]]
+            # 제품군 안에서도 세그먼트를 돌아가며 뽑아 한 세그먼트가 독식하지 않게 한다
+            lists = [groups[s][:] for s in req_segs[k]]
+            pool = []
+            while any(lists):
+                for L in lists:
+                    if L:
+                        pool.append(L.pop(0))
             take(pool, quota)
 
-    # 2) 남은 자리는 전 카테고리 라운드로빈
     lists = [groups[s][:] for s in sorted(groups)]
     while len(picked) < per_type and any(lists):
         for L in lists:
@@ -159,7 +200,7 @@ def _load_page_dates():
         return {}
 
 
-def _sample_by_page_type(urls, per_type):
+def _sample_by_page_type(urls, base_per_type):
     """감사 전 URL만으로 page_type 사전 분류 후 타입별 per_type개로 축소.
 
     detect_page_type(soup=None, url) 는 url_pattern 1패스만 타므로 fetch 불필요.
@@ -179,6 +220,7 @@ def _sample_by_page_type(urls, per_type):
     out, notes = [], []
     for pt in sorted(buckets):
         group = buckets[pt]
+        per_type = PER_TYPE_OVERRIDE.get(pt, base_per_type)
         if pt in RECENCY_TYPES and dates and any(u in dates for u in group):
             group = sorted(group, key=lambda u: dates.get(u, ""), reverse=True)
             sel = group[:per_type]
@@ -191,7 +233,7 @@ def _sample_by_page_type(urls, per_type):
             sel = group[:per_type]
             notes.append(f"{pt}={len(sel)}")
         out.extend(sel)
-    print(f"[render-audit] page_type 샘플(≤{per_type}/type): " + " ".join(notes))
+    print(f"[render-audit] page_type 샘플(기본 ≤{base_per_type}, PDP ≤{PER_TYPE_OVERRIDE.get('pdp')}): " + " ".join(notes))
     return out
 
 
@@ -291,7 +333,10 @@ def main():
     if args.limit:
         urls = urls[: args.limit]
 
-    date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    # 배치 전체가 한 날짜로 묶이도록 상위 스크립트가 AUDIT_RUN_DATE 를 넘긴다.
+    # 국가마다 now() 를 쓰면 UTC 자정을 넘길 때 날짜가 갈린다
+    # (2026-08-30 배치에서 US/UK/AU/IN 만 08-29 로 기록됐다).
+    date = os.environ.get("AUDIT_RUN_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
     run_hash = uuid.uuid4().hex[:12]
     out_path = os.path.join(HERE, "data", "run_results", f"{code}_{date}_run_{run_hash}.json")
 
