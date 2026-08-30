@@ -1,21 +1,338 @@
 {
   "generated_for": [
-    "ca"
+    "us",
+    "uk",
+    "de",
+    "es",
+    "ca",
+    "au",
+    "br",
+    "mx",
+    "in",
+    "vn"
   ],
   "countries": [
     {
+      "code": "us",
+      "active": 2363,
+      "new": 1,
+      "csv": 39703,
+      "by_cat": {
+        "Appliances": {
+          "active": 1320,
+          "new": 1
+        },
+        "Refrigerator Accessories": {
+          "active": 1,
+          "new": 0
+        },
+        "Computing": {
+          "active": 547,
+          "new": 0
+        },
+        "Collections": {
+          "active": 31,
+          "new": 0
+        },
+        "Smart Monitors with webOS": {
+          "active": 1,
+          "new": 0
+        },
+        "UltraWide® Widescreen Monitors": {
+          "active": 1,
+          "new": 0
+        },
+        "UltraGear™ Gaming Monitors": {
+          "active": 2,
+          "new": 0
+        },
+        "TV & Home Theater": {
+          "active": 356,
+          "new": 0
+        },
+        "TVs": {
+          "active": 1,
+          "new": 0
+        },
+        "Washers & Dryers": {
+          "active": 1,
+          "new": 0
+        },
+        "LG gram Laptops": {
+          "active": 1,
+          "new": 0
+        },
+        "Microwave Installation Kit": {
+          "active": 1,
+          "new": 0
+        },
+        "Ranges & Wall Ovens": {
+          "active": 2,
+          "new": 0
+        },
+        "Wall Ovens": {
+          "active": 1,
+          "new": 0
+        },
+        "Induction": {
+          "active": 1,
+          "new": 0
+        },
+        "Over-the-Range": {
+          "active": 1,
+          "new": 0
+        },
+        "Keyboard-Mouse Bundles": {
+          "active": 1,
+          "new": 0
+        },
+        "Audio": {
+          "active": 58,
+          "new": 0
+        },
+        "Remotes": {
+          "active": 1,
+          "new": 0
+        },
+        "Small Business": {
+          "active": 35,
+          "new": 0
+        }
+      }
+    },
+    {
+      "code": "uk",
+      "active": 1257,
+      "new": 16,
+      "csv": 26360,
+      "by_cat": {
+        "TV/Audio/Video": {
+          "active": 415,
+          "new": 0
+        },
+        "Computing": {
+          "active": 193,
+          "new": 1
+        },
+        "Appliances": {
+          "active": 174,
+          "new": 2
+        },
+        "Appliances;Accessories": {
+          "active": 63,
+          "new": 0
+        },
+        "Accessories": {
+          "active": 77,
+          "new": 1
+        },
+        "TV/Audio/Video;Accessories": {
+          "active": 14,
+          "new": 1
+        },
+        "Air Solution": {
+          "active": 37,
+          "new": 0
+        },
+        "Monitor ": {
+          "active": 59,
+          "new": 5
+        },
+        "Heating": {
+          "active": 43,
+          "new": 6
+        },
+        "Monitor ;CLOUD DEVICES": {
+          "active": 2,
+          "new": 0
+        },
+        "Air Solution;Accessories": {
+          "active": 1,
+          "new": 0
+        },
+        "Projectors": {
+          "active": 10,
+          "new": 0
+        },
+        "CLOUD DEVICES": {
+          "active": 2,
+          "new": 0
+        },
+        "HVAC": {
+          "active": 97,
+          "new": 0
+        },
+        "Information Display": {
+          "active": 1,
+          "new": 0
+        },
+        "Monitors & PCs": {
+          "active": 33,
+          "new": 0
+        },
+        "Commercial Display": {
+          "active": 36,
+          "new": 0
+        }
+      }
+    },
+    {
+      "code": "de",
+      "active": 1770,
+      "new": 29,
+      "csv": 28746,
+      "by_cat": {
+        "Home Entertainment": {
+          "active": 459,
+          "new": 0
+        },
+        "Appliances": {
+          "active": 274,
+          "new": 0
+        },
+        "HLK": {
+          "active": 242,
+          "new": 23
+        },
+        "Computing": {
+          "active": 133,
+          "new": 0
+        },
+        "Home Entertainment;Accessories": {
+          "active": 27,
+          "new": 0
+        },
+        "Appliances;Accessories": {
+          "active": 44,
+          "new": 0
+        },
+        "Accessories": {
+          "active": 19,
+          "new": 1
+        },
+        "Monitor": {
+          "active": 189,
+          "new": 0
+        },
+        "Information Display": {
+          "active": 261,
+          "new": 5
+        },
+        "Air Conditioners": {
+          "active": 49,
+          "new": 0
+        },
+        "Computing;Accessories": {
+          "active": 8,
+          "new": 0
+        },
+        "HVAC": {
+          "active": 15,
+          "new": 0
+        },
+        "Notebooks": {
+          "active": 28,
+          "new": 0
+        },
+        "Projectors": {
+          "active": 22,
+          "new": 0
+        }
+      }
+    },
+    {
+      "code": "es",
+      "active": 2060,
+      "new": 4,
+      "csv": 27781,
+      "by_cat": {
+        "TV/Audio": {
+          "active": 414,
+          "new": 0
+        },
+        "Outlet": {
+          "active": 477,
+          "new": 1
+        },
+        "Outlet;Home Appliances": {
+          "active": 5,
+          "new": 0
+        },
+        "Home Appliances": {
+          "active": 427,
+          "new": 2
+        },
+        "TV/Audio;Outlet": {
+          "active": 2,
+          "new": 0
+        },
+        "Appliances": {
+          "active": 2,
+          "new": 0
+        },
+        "Air conditioning": {
+          "active": 59,
+          "new": 0
+        },
+        "Home Appliances;Accesorios": {
+          "active": 44,
+          "new": 0
+        },
+        "Accesorios": {
+          "active": 51,
+          "new": 0
+        },
+        "Computing;Accesorios": {
+          "active": 3,
+          "new": 0
+        },
+        "Computing": {
+          "active": 169,
+          "new": 1
+        },
+        "TV/Audio;Computing": {
+          "active": 6,
+          "new": 0
+        },
+        "TV/Audio;Accesorios": {
+          "active": 16,
+          "new": 0
+        },
+        "TV/Audio/Video": {
+          "active": 2,
+          "new": 0
+        },
+        "climatizacion": {
+          "active": 241,
+          "new": 0
+        },
+        "Display profesional": {
+          "active": 23,
+          "new": 0
+        },
+        "informatica": {
+          "active": 118,
+          "new": 0
+        },
+        "Empresas": {
+          "active": 1,
+          "new": 0
+        }
+      }
+    },
+    {
       "code": "ca",
-      "active": 1295,
-      "new": 217,
+      "active": 1222,
+      "new": 17,
       "csv": 16547,
       "by_cat": {
         "Appliances;Accessories": {
           "active": 216,
-          "new": 9
+          "new": 0
         },
         "Appliances": {
-          "active": 296,
-          "new": 38
+          "active": 260,
+          "new": 0
         },
         "Shop;Appliances": {
           "active": 1,
@@ -23,35 +340,31 @@
         },
         "Computing": {
           "active": 84,
-          "new": 2
+          "new": 0
         },
         "Air Solutions": {
           "active": 51,
-          "new": 3
+          "new": 0
         },
         "TV/Audio/Video": {
           "active": 145,
-          "new": 10
+          "new": 0
         },
         "Monitors & PCs": {
-          "active": 177,
-          "new": 65
+          "active": 178,
+          "new": 7
         },
         "TV/Audio/Video;Shop": {
           "active": 1,
           "new": 0
         },
         "Commercial Display": {
-          "active": 129,
-          "new": 65
-        },
-        "Commercial Displays": {
-          "active": 77,
-          "new": 2
+          "active": 143,
+          "new": 10
         },
         "IT Products": {
-          "active": 69,
-          "new": 17
+          "active": 37,
+          "new": 0
         },
         "TV/Audio/Video;Accessories": {
           "active": 15,
@@ -59,15 +372,403 @@
         },
         "Accessories": {
           "active": 19,
-          "new": 3
+          "new": 0
         },
         "Air Solutions;Accessories": {
           "active": 4,
           "new": 0
         },
         "HVAC": {
-          "active": 11,
+          "active": 9,
+          "new": 0
+        },
+        "Commercial Displays": {
+          "active": 59,
+          "new": 0
+        }
+      }
+    },
+    {
+      "code": "au",
+      "active": 1063,
+      "new": 25,
+      "csv": 15758,
+      "by_cat": {
+        "TV/Audio/Video": {
+          "active": 157,
           "new": 3
+        },
+        "Appliance;Accessories": {
+          "active": 37,
+          "new": 0
+        },
+        "Accessories": {
+          "active": 135,
+          "new": 2
+        },
+        "Computing": {
+          "active": 128,
+          "new": 0
+        },
+        "Appliance": {
+          "active": 223,
+          "new": 1
+        },
+        "Information Display": {
+          "active": 303,
+          "new": 16
+        },
+        "Air Solutions": {
+          "active": 52,
+          "new": 1
+        },
+        "TV/Audio/Video;Accessories": {
+          "active": 16,
+          "new": 0
+        },
+        "Air Solutions;Accessories": {
+          "active": 1,
+          "new": 0
+        },
+        "Air-Solution": {
+          "active": 5,
+          "new": 1
+        },
+        "IT Products": {
+          "active": 6,
+          "new": 1
+        }
+      }
+    },
+    {
+      "code": "br",
+      "active": 3151,
+      "new": 70,
+      "csv": 20545,
+      "by_cat": {
+        "Peças e Acessórios": {
+          "active": 530,
+          "new": 8
+        },
+        "Peças e Acessórios;Air conditioning": {
+          "active": 607,
+          "new": 0
+        },
+        "Peças e Acessórios;Appliances": {
+          "active": 427,
+          "new": 0
+        },
+        "Appliances": {
+          "active": 127,
+          "new": 2
+        },
+        "Peças e Acessórios;Appliances;Accessories": {
+          "active": 26,
+          "new": 0
+        },
+        "Appliances;Accessories": {
+          "active": 1,
+          "new": 0
+        },
+        "TV/Audio/Video;Peças e Acessórios": {
+          "active": 524,
+          "new": 0
+        },
+        "Peças e Acessórios;Computing": {
+          "active": 30,
+          "new": 0
+        },
+        "TV/Audio/Video": {
+          "active": 169,
+          "new": 1
+        },
+        "Air conditioning": {
+          "active": 185,
+          "new": 38
+        },
+        "Computing": {
+          "active": 105,
+          "new": 12
+        },
+        "Mobile & Tablets": {
+          "active": 47,
+          "new": 0
+        },
+        "Peças e Acessórios;Air conditioning;Accessories": {
+          "active": 32,
+          "new": 0
+        },
+        "TV/Audio/Video;Peças e Acessórios;Accessories": {
+          "active": 6,
+          "new": 0
+        },
+        "Peças e Acessórios;Accessories": {
+          "active": 1,
+          "new": 0
+        },
+        "Paineis Profissionais": {
+          "active": 162,
+          "new": 0
+        },
+        "HVAC / AR CONDICIONADO": {
+          "active": 93,
+          "new": 0
+        },
+        "Paineis Profissionais;Monitores": {
+          "active": 1,
+          "new": 0
+        },
+        "Soluções Médicas;Monitores": {
+          "active": 14,
+          "new": 0
+        },
+        "Information Display": {
+          "active": 22,
+          "new": 2
+        },
+        "Information Display;Computing": {
+          "active": 2,
+          "new": 0
+        },
+        "Accessories": {
+          "active": 17,
+          "new": 7
+        },
+        "Monitores": {
+          "active": 8,
+          "new": 0
+        },
+        "Projetores": {
+          "active": 8,
+          "new": 0
+        },
+        "Computadores": {
+          "active": 7,
+          "new": 0
+        }
+      }
+    },
+    {
+      "code": "mx",
+      "active": 1373,
+      "new": 13,
+      "csv": 16516,
+      "by_cat": {
+        "Air Conditioning": {
+          "active": 99,
+          "new": 0
+        },
+        "Home Appliances": {
+          "active": 261,
+          "new": 0
+        },
+        "Home Appliances;ACCESSORIES": {
+          "active": 3,
+          "new": 0
+        },
+        "TV/Audio/Video": {
+          "active": 206,
+          "new": 0
+        },
+        "TV/Audio/Video;Home Appliances": {
+          "active": 10,
+          "new": 0
+        },
+        "Computing": {
+          "active": 51,
+          "new": 0
+        },
+        "ACCESSORIES": {
+          "active": 382,
+          "new": 0
+        },
+        "HVAC": {
+          "active": 71,
+          "new": 0
+        },
+        "Sistemas de Aire Acondicionado": {
+          "active": 26,
+          "new": 0
+        },
+        "TV/Audio/Video;Air Conditioning": {
+          "active": 2,
+          "new": 0
+        },
+        "TV/Audio/Video;Computing": {
+          "active": 2,
+          "new": 0
+        },
+        "Commercial Display": {
+          "active": 79,
+          "new": 0
+        },
+        "Information Display": {
+          "active": 86,
+          "new": 13
+        },
+        "Warranty & Service": {
+          "active": 14,
+          "new": 0
+        },
+        "TV/Audio/Video;Computing;Air Conditioning": {
+          "active": 1,
+          "new": 0
+        },
+        "Monitors & PCs": {
+          "active": 29,
+          "new": 0
+        },
+        "Productos IT": {
+          "active": 29,
+          "new": 0
+        },
+        "Commercial Laundry": {
+          "active": 11,
+          "new": 0
+        },
+        "Lavanderia Comercial": {
+          "active": 11,
+          "new": 0
+        }
+      }
+    },
+    {
+      "code": "in",
+      "active": 1905,
+      "new": 140,
+      "csv": 25891,
+      "by_cat": {
+        "Air Solutions": {
+          "active": 376,
+          "new": 43
+        },
+        "Home Appliances;Air Solutions": {
+          "active": 1,
+          "new": 0
+        },
+        "Home Appliances": {
+          "active": 585,
+          "new": 92
+        },
+        "TV/Audio/Video": {
+          "active": 213,
+          "new": 0
+        },
+        "Computing": {
+          "active": 195,
+          "new": 5
+        },
+        "TV/Audio/Video;Accessories": {
+          "active": 46,
+          "new": 0
+        },
+        "Information Display ": {
+          "active": 144,
+          "new": 0
+        },
+        "Accessories": {
+          "active": 15,
+          "new": 0
+        },
+        "Computing Device": {
+          "active": 141,
+          "new": 0
+        },
+        "Home Appliances;Accessories": {
+          "active": 130,
+          "new": 0
+        },
+        "HVAC": {
+          "active": 27,
+          "new": 0
+        },
+        "MEDICAL Devices": {
+          "active": 16,
+          "new": 0
+        },
+        "Commercial Laundry": {
+          "active": 8,
+          "new": 0
+        },
+        "air-conditioning": {
+          "active": 1,
+          "new": 0
+        },
+        "Warranty & Service": {
+          "active": 7,
+          "new": 0
+        }
+      }
+    },
+    {
+      "code": "vn",
+      "active": 1501,
+      "new": 1,
+      "csv": 12951,
+      "by_cat": {
+        "TV/Audio/Video": {
+          "active": 258,
+          "new": 0
+        },
+        "Appliance": {
+          "active": 238,
+          "new": 0
+        },
+        "Computing": {
+          "active": 120,
+          "new": 0
+        },
+        "HVAC": {
+          "active": 128,
+          "new": 0
+        },
+        "Giải pháp điều hòa không khí": {
+          "active": 128,
+          "new": 0
+        },
+        "Air Solutions": {
+          "active": 74,
+          "new": 1
+        },
+        "Accessories": {
+          "active": 186,
+          "new": 0
+        },
+        "Warranty & Service": {
+          "active": 36,
+          "new": 0
+        },
+        "Commercial Display": {
+          "active": 149,
+          "new": 0
+        },
+        "Information Display": {
+          "active": 137,
+          "new": 0
+        },
+        "Information Display;BUSINESS SHOP": {
+          "active": 9,
+          "new": 0
+        },
+        "Appliance;Accessories": {
+          "active": 1,
+          "new": 0
+        },
+        "TV/Audio/Video;Computing": {
+          "active": 1,
+          "new": 0
+        },
+        "Monitors & PCs": {
+          "active": 17,
+          "new": 0
+        },
+        "IT products": {
+          "active": 15,
+          "new": 0
+        },
+        "BUSINESS SHOP": {
+          "active": 4,
+          "new": 0
         }
       }
     }

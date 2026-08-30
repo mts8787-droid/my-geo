@@ -99,7 +99,7 @@ def psi_group_medians(results, psi, metric):
     for r in results:
         rec = psi.get(r["url"])
         if rec and not rec.get("error") and rec.get(metric) is not None:
-            buckets[(r.get("page_type") or {}).get("id")].append(float(rec[metric]))
+            buckets[current_page_type(r)].append(float(rec[metric]))
     med = {k: sorted(v)[len(v) // 2] for k, v in buckets.items() if v}
     allv = [x for v in buckets.values() for x in v]
     med["__all__"] = sorted(allv)[len(allv) // 2] if allv else None
@@ -135,9 +135,26 @@ def item_pass(iid, it, url, page_type, cr, psi, psi_med=None):
     return it.get("pass")
 
 
+def current_page_type(r):
+    """저장된 page_type 대신 현재 분류기로 다시 판정한다.
+
+    분류 규칙이 바뀌면(예: content → experience 로 축소, Coveo 상품목록 반영)
+    재감사 없이 집계만 다시 돌려 반영할 수 있다. 저장값을 그대로 쓰면 옛 분류에
+    묶인다.
+    """
+    url = r.get("url")
+    if url:
+        try:
+            from page_type import detect_page_type
+            return detect_page_type(None, url).get("id")
+        except Exception:
+            pass
+    return (r.get("page_type") or {}).get("id")
+
+
 def is_excluded(r):
     """집계 대상에서 빼야 할 페이지면 사유 문자열, 아니면 None."""
-    pt = (r.get("page_type") or {}).get("id")
+    pt = current_page_type(r)
     if pt in EXCLUDED_PAGE_TYPES:
         return pt
     if r.get("page_error"):
@@ -180,7 +197,7 @@ def aggregate_country(doc, cr, psi):
     items_agg = {}
 
     for r in results:
-        pt = (r.get("page_type") or {}).get("id")
+        pt = current_page_type(r)
         url = r["url"]
         # 저장된 카테고리 구조는 무시하고 항목만 모아 현재 카테고리로 재매핑한다
         stored = {}
