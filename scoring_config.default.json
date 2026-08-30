@@ -272,11 +272,26 @@
         }
       },
       {
+        "id": "seo_indexable",
+        "name": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+        "spec_id": "#17",
+        "points": 1,
+        "enabled": true,
+        "rule": {
+          "type": "noindex_absent",
+          "params": {
+            "selector": "meta[name='robots' i]",
+            "header": "x-robots-tag",
+            "token": "noindex"
+          }
+        }
+      },
+      {
         "id": "seo_robots",
         "name": "#17 indexing 허용",
         "spec_id": "#17",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "css_attr_not_contains",
           "params": {
@@ -284,21 +299,23 @@
             "attr": "content",
             "value": "noindex"
           }
-        }
+        },
+        "_disabled_reason": "seo_indexable 로 통합 — 색인 허용은 하나의 사실인데 meta/헤더를 각각 채점하면 정상 구성이 감점된다."
       },
       {
         "id": "seo_robots_hdr",
         "name": "#17 X-Robots-Tag noindex 부재",
         "spec_id": "#17h",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "header_no_value",
           "params": {
             "header": "x-robots-tag",
             "token": "noindex"
           }
-        }
+        },
+        "_disabled_reason": "seo_indexable 로 통합 — 색인 허용은 하나의 사실인데 meta/헤더를 각각 채점하면 정상 구성이 감점된다."
       },
       {
         "id": "seo_open_graph",
@@ -500,7 +517,7 @@
         "name": "#49 Schema: WebSite",
         "spec_id": "#49",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "applies_to_page_types": [
           "home"
         ],
@@ -510,7 +527,8 @@
             "type": "WebSite",
             "fields": "name,url"
           }
-        }
+        },
+        "_disabled_reason": "home 전용인데 home 은 집계 제외 대상이라 분모가 0 이 된다. 실질 점수 영향 없음 — 표시 정리."
       },
       {
         "id": "ai_schema_org",
@@ -927,13 +945,14 @@
         "name": "#40 Summary Content SSR",
         "spec_id": "#40",
         "points": 1,
-        "enabled": true,
+        "enabled": false,
         "rule": {
           "type": "css_exists",
           "params": {
             "selector": "[class*='summary'], [class*='Summary'], [id*='summary'], [class*='overview'], [class*='Overview'], [class*='highlight'], [class*='Product-KeyFeatures'], [class*='Product-Features']"
           }
-        }
+        },
+        "_disabled_reason": "#35 Summary Box 와 중복 채점. 판정이 CSS 클래스명 문자열 매칭이라 summary-banner 같은 무관 클래스도 통과시킴(오탐)."
       },
       {
         "id": "ai_sitemap_domain",

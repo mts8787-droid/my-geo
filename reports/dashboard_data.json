@@ -10,11 +10,11 @@
         "promotion": 20
       },
       "excluded_count": 157,
-      "total_avg": 77.92,
+      "total_avg": 78.12,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 458,
-        "Good": 454,
+        "Need Improvement": 593,
+        "Good": 319,
         "Poor": 8
       },
       "breakdown": {
@@ -34,17 +34,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 88.76,
+          "points_avg": 88.29,
           "max": 100,
-          "pass_rate": 0.8838,
-          "items_n": 8
+          "pass_rate": 0.8811,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 26.28,
           "max": 100,
           "pass_rate": 0.3086,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -55,10 +55,10 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 89.1,
+          "points_avg": 93.71,
           "max": 100,
-          "pass_rate": 0.8899,
-          "items_n": 8
+          "pass_rate": 0.9255,
+          "items_n": 7
         }
       },
       "items": {
@@ -144,18 +144,6 @@
           "label": "#16 H1 정확히 1개",
           "category": "seo",
           "pass_rate": 0.9859,
-          "applicable_n": 920
-        },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 0.9033,
-          "applicable_n": 920
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
           "applicable_n": 920
         },
         "seo_open_graph": {
@@ -248,10 +236,10 @@
           "pass_rate": 1.0,
           "applicable_n": 920
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 0.6761,
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
+          "pass_rate": 1.0,
           "applicable_n": 920
         },
         "ai_schema_faq": {
@@ -304,27 +292,27 @@
         }
       },
       "agentic": {
-        "measured_n": 73,
-        "score_avg": 0.639,
+        "measured_n": 115,
+        "score_avg": 0.6304,
         "audits": {
           "agent-accessibility-tree": {
-            "pass_rate": 0.0137,
-            "measured_n": 73
+            "pass_rate": 0.0087,
+            "measured_n": 115
           },
           "cumulative-layout-shift": {
-            "pass_rate": 0.5342,
-            "measured_n": 73
+            "pass_rate": 0.487,
+            "measured_n": 115
           },
           "llms-txt": {
-            "pass_rate": 1.0,
-            "measured_n": 73
+            "pass_rate": 0.9913,
+            "measured_n": 115
           }
         }
       },
       "psi_coverage": {
-        "measured": 73,
-        "estimated": 847,
-        "rate": 0.0793
+        "measured": 115,
+        "estimated": 805,
+        "rate": 0.125
       },
       "date": "2026-08-30",
       "run_file": "us_2026-08-30_run_1ca743dadba8.json",
@@ -340,19 +328,19 @@
         "promotion": 100
       },
       "excluded_count": 235,
-      "total_avg": 77.94,
+      "total_avg": 76.62,
       "max": 100,
       "grade_dist": {
-        "Good": 502,
-        "Need Improvement": 561,
+        "Good": 147,
+        "Need Improvement": 916,
         "Poor": 1
       },
       "breakdown": {
         "performance": {
           "label": "사이트 성능",
-          "points_avg": 99.84,
+          "points_avg": 99.83,
           "max": 100,
-          "pass_rate": 0.9984,
+          "pass_rate": 0.9983,
           "items_n": 6
         },
         "accessibility": {
@@ -364,17 +352,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 92.69,
+          "points_avg": 91.66,
           "max": 100,
-          "pass_rate": 0.9267,
-          "items_n": 8
+          "pass_rate": 0.9165,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 32.05,
           "max": 100,
           "pass_rate": 0.2908,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -385,17 +373,17 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 91.45,
+          "points_avg": 90.02,
           "max": 100,
-          "pass_rate": 0.9082,
-          "items_n": 8
+          "pass_rate": 0.8927,
+          "items_n": 7
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms (PSI Lab)",
           "category": "performance",
-          "pass_rate": 0.9991,
+          "pass_rate": 0.9981,
           "applicable_n": 1064
         },
         "perf_compression": {
@@ -474,18 +462,6 @@
           "label": "#16 H1 정확히 1개",
           "category": "seo",
           "pass_rate": 0.8064,
-          "applicable_n": 1064
-        },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 0.9981,
-          "applicable_n": 1064
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
           "applicable_n": 1064
         },
         "seo_open_graph": {
@@ -584,10 +560,10 @@
           "pass_rate": 1.0,
           "applicable_n": 1064
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 0.9991,
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
+          "pass_rate": 1.0,
           "applicable_n": 1064
         },
         "ai_schema_video": {
@@ -634,27 +610,27 @@
         }
       },
       "agentic": {
-        "measured_n": 62,
-        "score_avg": 0.5695,
+        "measured_n": 104,
+        "score_avg": 0.5615,
         "audits": {
           "agent-accessibility-tree": {
             "pass_rate": 0.0,
-            "measured_n": 62
+            "measured_n": 104
           },
           "cumulative-layout-shift": {
-            "pass_rate": 0.2581,
-            "measured_n": 62
+            "pass_rate": 0.2404,
+            "measured_n": 104
           },
           "llms-txt": {
             "pass_rate": 1.0,
-            "measured_n": 62
+            "measured_n": 104
           }
         }
       },
       "psi_coverage": {
-        "measured": 62,
-        "estimated": 1002,
-        "rate": 0.0583
+        "measured": 104,
+        "estimated": 960,
+        "rate": 0.0977
       },
       "date": "2026-08-30",
       "run_file": "uk_2026-08-30_run_35109956ad6f.json",
@@ -670,12 +646,12 @@
         "promotion": 100
       },
       "excluded_count": 366,
-      "total_avg": 80.76,
+      "total_avg": 79.32,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 175,
-        "Good": 636,
-        "Poor": 1
+        "Need Improvement": 399,
+        "Good": 409,
+        "Poor": 4
       },
       "breakdown": {
         "performance": {
@@ -694,17 +670,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 93.43,
+          "points_avg": 92.42,
           "max": 100,
-          "pass_rate": 0.9338,
-          "items_n": 8
+          "pass_rate": 0.9243,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 34.26,
           "max": 100,
           "pass_rate": 0.2837,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -715,10 +691,10 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 96.09,
+          "points_avg": 95.4,
           "max": 100,
-          "pass_rate": 0.9654,
-          "items_n": 8
+          "pass_rate": 0.9595,
+          "items_n": 7
         }
       },
       "items": {
@@ -806,18 +782,6 @@
           "pass_rate": 0.8473,
           "applicable_n": 812
         },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 812
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 812
-        },
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
@@ -890,12 +854,6 @@
           "pass_rate": 0.7783,
           "applicable_n": 812
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 1.0,
-          "applicable_n": 812
-        },
         "ai_image_filename": {
           "label": "#40 Image File Name 브랜드 포함",
           "category": "ai_crawlability",
@@ -917,6 +875,12 @@
         "ai_llms_txt": {
           "label": "#43 llms.txt 존재",
           "category": "ai_crawlability",
+          "pass_rate": 1.0,
+          "applicable_n": 812
+        },
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 812
         },
@@ -1000,11 +964,11 @@
         "promotion": 94
       },
       "excluded_count": 274,
-      "total_avg": 80.52,
+      "total_avg": 79.18,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 169,
-        "Good": 623,
+        "Need Improvement": 365,
+        "Good": 427,
         "Poor": 1
       },
       "breakdown": {
@@ -1024,17 +988,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 93.89,
+          "points_avg": 93.0,
           "max": 100,
-          "pass_rate": 0.9385,
-          "items_n": 8
+          "pass_rate": 0.9301,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 31.3,
           "max": 100,
           "pass_rate": 0.2611,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -1045,10 +1009,10 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 97.8,
+          "points_avg": 97.41,
           "max": 100,
-          "pass_rate": 0.9815,
-          "items_n": 8
+          "pass_rate": 0.9785,
+          "items_n": 7
         }
       },
       "items": {
@@ -1136,18 +1100,6 @@
           "pass_rate": 0.8398,
           "applicable_n": 793
         },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 0.9975,
-          "applicable_n": 793
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 793
-        },
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
@@ -1220,12 +1172,6 @@
           "pass_rate": 0.8739,
           "applicable_n": 793
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 1.0,
-          "applicable_n": 793
-        },
         "ai_image_filename": {
           "label": "#40 Image File Name 브랜드 포함",
           "category": "ai_crawlability",
@@ -1247,6 +1193,12 @@
         "ai_llms_txt": {
           "label": "#43 llms.txt 존재",
           "category": "ai_crawlability",
+          "pass_rate": 1.0,
+          "applicable_n": 793
+        },
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 793
         },
@@ -1330,11 +1282,11 @@
         "promotion": 2
       },
       "excluded_count": 197,
-      "total_avg": 79.58,
+      "total_avg": 78.28,
       "max": 100,
       "grade_dist": {
-        "Good": 661,
-        "Need Improvement": 201
+        "Good": 135,
+        "Need Improvement": 727
       },
       "breakdown": {
         "performance": {
@@ -1353,17 +1305,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 94.89,
+          "points_avg": 94.17,
           "max": 100,
-          "pass_rate": 0.9487,
-          "items_n": 8
+          "pass_rate": 0.9418,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 28.43,
           "max": 100,
           "pass_rate": 0.261,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -1374,10 +1326,10 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 91.53,
+          "points_avg": 90.1,
           "max": 100,
-          "pass_rate": 0.9069,
-          "items_n": 8
+          "pass_rate": 0.8915,
+          "items_n": 7
         }
       },
       "items": {
@@ -1465,18 +1417,6 @@
           "pass_rate": 0.8248,
           "applicable_n": 862
         },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 0.9965,
-          "applicable_n": 862
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 862
-        },
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
@@ -1555,12 +1495,6 @@
           "pass_rate": 0.3585,
           "applicable_n": 862
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 1.0,
-          "applicable_n": 862
-        },
         "ai_image_filename": {
           "label": "#40 Image File Name 브랜드 포함",
           "category": "ai_crawlability",
@@ -1582,6 +1516,12 @@
         "ai_llms_txt": {
           "label": "#43 llms.txt 존재",
           "category": "ai_crawlability",
+          "pass_rate": 1.0,
+          "applicable_n": 862
+        },
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 862
         },
@@ -1659,12 +1599,11 @@
         "promotion": 100
       },
       "excluded_count": 240,
-      "total_avg": 79.21,
+      "total_avg": 77.92,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 372,
-        "Good": 706,
-        "Poor": 2
+        "Need Improvement": 910,
+        "Good": 170
       },
       "breakdown": {
         "performance": {
@@ -1683,17 +1622,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 83.34,
+          "points_avg": 80.75,
           "max": 100,
-          "pass_rate": 0.83,
-          "items_n": 8
+          "pass_rate": 0.806,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 32.54,
           "max": 100,
           "pass_rate": 0.2984,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -1704,10 +1643,10 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 99.84,
+          "points_avg": 99.85,
           "max": 100,
-          "pass_rate": 0.9982,
-          "items_n": 8
+          "pass_rate": 0.9983,
+          "items_n": 7
         }
       },
       "items": {
@@ -1793,18 +1732,6 @@
           "label": "#16 H1 정확히 1개",
           "category": "seo",
           "pass_rate": 0.8519,
-          "applicable_n": 1080
-        },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 0.9981,
-          "applicable_n": 1080
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
           "applicable_n": 1080
         },
         "seo_open_graph": {
@@ -1903,10 +1830,10 @@
           "pass_rate": 1.0,
           "applicable_n": 1080
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 0.9981,
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
+          "pass_rate": 1.0,
           "applicable_n": 1080
         },
         "ai_schema_video": {
@@ -1989,11 +1916,12 @@
         "promotion": 100
       },
       "excluded_count": 376,
-      "total_avg": 78.79,
+      "total_avg": 77.53,
       "max": 100,
       "grade_dist": {
-        "Good": 527,
-        "Need Improvement": 343
+        "Good": 167,
+        "Need Improvement": 702,
+        "Poor": 1
       },
       "breakdown": {
         "performance": {
@@ -2012,17 +1940,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 92.8,
+          "points_avg": 91.73,
           "max": 100,
-          "pass_rate": 0.9277,
-          "items_n": 8
+          "pass_rate": 0.9174,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 34.67,
           "max": 100,
           "pass_rate": 0.2783,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -2033,10 +1961,10 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 93.6,
+          "points_avg": 92.54,
           "max": 100,
-          "pass_rate": 0.9246,
-          "items_n": 8
+          "pass_rate": 0.9121,
+          "items_n": 7
         }
       },
       "items": {
@@ -2124,18 +2052,6 @@
           "pass_rate": 0.8115,
           "applicable_n": 870
         },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 870
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 870
-        },
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
@@ -2214,12 +2130,6 @@
           "pass_rate": 0.477,
           "applicable_n": 870
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 1.0,
-          "applicable_n": 870
-        },
         "ai_image_filename": {
           "label": "#40 Image File Name 브랜드 포함",
           "category": "ai_crawlability",
@@ -2241,6 +2151,12 @@
         "ai_llms_txt": {
           "label": "#43 llms.txt 존재",
           "category": "ai_crawlability",
+          "pass_rate": 1.0,
+          "applicable_n": 870
+        },
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 870
         },
@@ -2312,11 +2228,12 @@
         "promotion": 91
       },
       "excluded_count": 282,
-      "total_avg": 77.82,
+      "total_avg": 76.47,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 469,
-        "Good": 448
+        "Need Improvement": 796,
+        "Good": 117,
+        "Poor": 4
       },
       "breakdown": {
         "performance": {
@@ -2335,17 +2252,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 92.01,
+          "points_avg": 90.8,
           "max": 100,
-          "pass_rate": 0.9198,
-          "items_n": 8
+          "pass_rate": 0.9084,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 33.69,
           "max": 100,
           "pass_rate": 0.2765,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -2356,10 +2273,10 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 97.91,
+          "points_avg": 97.54,
           "max": 100,
-          "pass_rate": 0.9816,
-          "items_n": 8
+          "pass_rate": 0.9786,
+          "items_n": 7
         }
       },
       "items": {
@@ -2447,18 +2364,6 @@
           "pass_rate": 0.747,
           "applicable_n": 917
         },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 917
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 917
-        },
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
@@ -2537,12 +2442,6 @@
           "pass_rate": 0.8909,
           "applicable_n": 917
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 1.0,
-          "applicable_n": 917
-        },
         "ai_image_filename": {
           "label": "#40 Image File Name 브랜드 포함",
           "category": "ai_crawlability",
@@ -2564,6 +2463,12 @@
         "ai_llms_txt": {
           "label": "#43 llms.txt 존재",
           "category": "ai_crawlability",
+          "pass_rate": 1.0,
+          "applicable_n": 917
+        },
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 917
         },
@@ -2605,27 +2510,27 @@
         }
       },
       "agentic": {
-        "measured_n": 32,
-        "score_avg": 0.6813,
+        "measured_n": 59,
+        "score_avg": 0.7075,
         "audits": {
           "agent-accessibility-tree": {
-            "pass_rate": 0.4688,
-            "measured_n": 32
+            "pass_rate": 0.5763,
+            "measured_n": 59
           },
           "cumulative-layout-shift": {
-            "pass_rate": 0.1875,
-            "measured_n": 32
+            "pass_rate": 0.1356,
+            "measured_n": 59
           },
           "llms-txt": {
             "pass_rate": 1.0,
-            "measured_n": 32
+            "measured_n": 59
           }
         }
       },
       "psi_coverage": {
-        "measured": 32,
-        "estimated": 885,
-        "rate": 0.0349
+        "measured": 59,
+        "estimated": 858,
+        "rate": 0.0643
       },
       "date": "2026-08-30",
       "run_file": "mx_2026-08-30_run_e54b05d6e350.json",
@@ -2641,19 +2546,19 @@
         "promotion": 56
       },
       "excluded_count": 328,
-      "total_avg": 76.56,
+      "total_avg": 75.03,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 593,
-        "Good": 259,
-        "Poor": 3
+        "Poor": 7,
+        "Need Improvement": 811,
+        "Good": 37
       },
       "breakdown": {
         "performance": {
           "label": "사이트 성능",
-          "points_avg": 100.0,
+          "points_avg": 99.98,
           "max": 100,
-          "pass_rate": 1.0,
+          "pass_rate": 0.9998,
           "items_n": 6
         },
         "accessibility": {
@@ -2665,17 +2570,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 83.32,
+          "points_avg": 80.71,
           "max": 100,
-          "pass_rate": 0.8298,
-          "items_n": 8
+          "pass_rate": 0.8057,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 35.58,
           "max": 100,
           "pass_rate": 0.3233,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -2686,17 +2591,17 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 97.53,
+          "points_avg": 97.1,
           "max": 100,
-          "pass_rate": 0.9775,
-          "items_n": 8
+          "pass_rate": 0.9738,
+          "items_n": 7
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms (PSI Lab)",
           "category": "performance",
-          "pass_rate": 1.0,
+          "pass_rate": 0.9988,
           "applicable_n": 855
         },
         "perf_compression": {
@@ -2775,18 +2680,6 @@
           "label": "#16 H1 정확히 1개",
           "category": "seo",
           "pass_rate": 0.8082,
-          "applicable_n": 855
-        },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 0.9988,
-          "applicable_n": 855
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
           "applicable_n": 855
         },
         "seo_open_graph": {
@@ -2885,9 +2778,9 @@
           "pass_rate": 1.0,
           "applicable_n": 855
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 855
         },
@@ -2935,27 +2828,27 @@
         }
       },
       "agentic": {
-        "measured_n": 70,
-        "score_avg": 0.701,
+        "measured_n": 89,
+        "score_avg": 0.7011,
         "audits": {
           "agent-accessibility-tree": {
-            "pass_rate": 0.5143,
-            "measured_n": 70
+            "pass_rate": 0.5056,
+            "measured_n": 89
           },
           "cumulative-layout-shift": {
-            "pass_rate": 0.0143,
-            "measured_n": 70
+            "pass_rate": 0.0449,
+            "measured_n": 89
           },
           "llms-txt": {
             "pass_rate": 1.0,
-            "measured_n": 70
+            "measured_n": 89
           }
         }
       },
       "psi_coverage": {
-        "measured": 70,
-        "estimated": 785,
-        "rate": 0.0819
+        "measured": 89,
+        "estimated": 766,
+        "rate": 0.1041
       },
       "date": "2026-08-30",
       "run_file": "in_2026-08-30_run_539e9093c56e.json",
@@ -2971,18 +2864,19 @@
         "promotion": 53
       },
       "excluded_count": 214,
-      "total_avg": 78.56,
+      "total_avg": 77.01,
       "max": 100,
       "grade_dist": {
-        "Need Improvement": 336,
-        "Good": 483
+        "Need Improvement": 675,
+        "Good": 140,
+        "Poor": 4
       },
       "breakdown": {
         "performance": {
           "label": "사이트 성능",
-          "points_avg": 100.0,
+          "points_avg": 99.98,
           "max": 100,
-          "pass_rate": 1.0,
+          "pass_rate": 0.9998,
           "items_n": 6
         },
         "accessibility": {
@@ -2994,17 +2888,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 93.4,
+          "points_avg": 92.43,
           "max": 100,
-          "pass_rate": 0.9336,
-          "items_n": 8
+          "pass_rate": 0.9241,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 32.28,
           "max": 100,
           "pass_rate": 0.2633,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -3015,17 +2909,17 @@
         },
         "ai_crawlability": {
           "label": "AI Crawlability",
-          "points_avg": 99.85,
+          "points_avg": 99.83,
           "max": 100,
-          "pass_rate": 0.9983,
-          "items_n": 8
+          "pass_rate": 0.998,
+          "items_n": 7
         }
       },
       "items": {
         "perf_ttfb": {
           "label": "#1 TTFB < 600ms (PSI Lab)",
           "category": "performance",
-          "pass_rate": 1.0,
+          "pass_rate": 0.9988,
           "applicable_n": 819
         },
         "perf_compression": {
@@ -3106,18 +3000,6 @@
           "pass_rate": 0.8437,
           "applicable_n": 819
         },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 819
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 819
-        },
         "seo_open_graph": {
           "label": "#18 Open Graph (title+image)",
           "category": "seo",
@@ -3190,12 +3072,6 @@
           "pass_rate": 1.0,
           "applicable_n": 819
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
-          "pass_rate": 1.0,
-          "applicable_n": 819
-        },
         "ai_image_filename": {
           "label": "#40 Image File Name 브랜드 포함",
           "category": "ai_crawlability",
@@ -3217,6 +3093,12 @@
         "ai_llms_txt": {
           "label": "#43 llms.txt 존재",
           "category": "ai_crawlability",
+          "pass_rate": 1.0,
+          "applicable_n": 819
+        },
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 819
         },
@@ -3264,27 +3146,27 @@
         }
       },
       "agentic": {
-        "measured_n": 25,
-        "score_avg": 0.4716,
+        "measured_n": 59,
+        "score_avg": 0.4732,
         "audits": {
           "agent-accessibility-tree": {
             "pass_rate": 0.0,
-            "measured_n": 25
+            "measured_n": 59
           },
           "cumulative-layout-shift": {
             "pass_rate": 0.0,
-            "measured_n": 25
+            "measured_n": 59
           },
           "llms-txt": {
             "pass_rate": 1.0,
-            "measured_n": 25
+            "measured_n": 59
           }
         }
       },
       "psi_coverage": {
-        "measured": 25,
-        "estimated": 794,
-        "rate": 0.0305
+        "measured": 59,
+        "estimated": 760,
+        "rate": 0.072
       },
       "date": "2026-08-30",
       "run_file": "vn_2026-08-30_run_136c5db7dc23.json",
@@ -3294,11 +3176,11 @@
       "sample_size": 100,
       "excluded": {},
       "excluded_count": 0,
-      "total_avg": 81.5,
+      "total_avg": 79.76,
       "max": 100,
       "grade_dist": {
-        "Good": 96,
-        "Need Improvement": 4
+        "Need Improvement": 76,
+        "Good": 24
       },
       "breakdown": {
         "performance": {
@@ -3317,17 +3199,17 @@
         },
         "seo": {
           "label": "Basic SEO",
-          "points_avg": 89.98,
+          "points_avg": 88.34,
           "max": 100,
-          "pass_rate": 0.8962,
-          "items_n": 8
+          "pass_rate": 0.8814,
+          "items_n": 7
         },
         "schema_markup": {
           "label": "스키마마크업",
           "points_avg": 50.0,
           "max": 100,
           "pass_rate": 0.5,
-          "items_n": 10
+          "items_n": 9
         },
         "citable_content": {
           "label": "고인용 콘텐츠",
@@ -3341,7 +3223,7 @@
           "points_avg": 100.0,
           "max": 100,
           "pass_rate": 1.0,
-          "items_n": 8
+          "items_n": 7
         }
       },
       "items": {
@@ -3425,18 +3307,6 @@
         },
         "seo_h1": {
           "label": "#16 H1 정확히 1개",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 100
-        },
-        "seo_robots": {
-          "label": "#17 indexing 허용",
-          "category": "seo",
-          "pass_rate": 1.0,
-          "applicable_n": 100
-        },
-        "seo_robots_hdr": {
-          "label": "#17 X-Robots-Tag noindex 부재",
           "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 100
@@ -3525,9 +3395,9 @@
           "pass_rate": 1.0,
           "applicable_n": 100
         },
-        "ai_summary_ssr": {
-          "label": "#40 Summary Content SSR",
-          "category": "ai_crawlability",
+        "seo_indexable": {
+          "label": "#17 Indexing 허용 (meta robots 또는 X-Robots-Tag)",
+          "category": "seo",
           "pass_rate": 1.0,
           "applicable_n": 100
         }
@@ -3572,11 +3442,11 @@
       },
       "seo": {
         "label": "Basic SEO",
-        "items_n": 8
+        "items_n": 7
       },
       "schema_markup": {
         "label": "스키마마크업",
-        "items_n": 10
+        "items_n": 9
       },
       "citable_content": {
         "label": "고인용 콘텐츠",
@@ -3584,10 +3454,10 @@
       },
       "ai_crawlability": {
         "label": "AI Crawlability",
-        "items_n": 8
+        "items_n": 7
       }
     },
-    "scored_items": 41
+    "scored_items": 38
   },
   "overall": {
     "countries": 11,
@@ -3600,7 +3470,7 @@
       "non_200": 669,
       "promotion": 716
     },
-    "total_avg_weighted": 78.76,
+    "total_avg_weighted": 77.54,
     "missing": []
   }
 }

@@ -96,12 +96,28 @@ done
 for c in $LOCAL_COUNTRIES; do
   run_country "$c" --local
 done
-# ── PSI(Lighthouse) 측정값 ────────────────────────────────────────────────────
-# 여기서 수집하지 않는다. 전수 5,700여 건을 6건/분(PSI 지속 부하 한계)으로 받으면
-# 약 16시간이라 월간 감사를 블로킹한다. 별도 야간 잡이 예산만큼씩 나눠 채운다:
-#   run_psi_nightly.sh · launchd com.geoaudit.psi (매일 01:00, 기본 6시간 예산)
-# 야간 잡은 캐시에 없는 URL 만 집으므로, 이번 감사에서 새로 생긴 URL 이 자동으로
-# 다음 밤부터 채워진다. 미수집 구간은 #1 이 N/A 로 빠질 뿐 집계는 정상 동작한다.
+# ── PSI(Lighthouse) 측정값 수집 ───────────────────────────────────────────────
+# 감사 직후 이어서 수집한다. 크롤러 자체 TTFB 는 동시 크롤 큐잉에 오염돼 실측 대비
+# 6~200배 부풀려졌고(1,536 URL 대조: 크롤러 통과 12.4% vs PSI 97.7%),
+# PSI 미수집이면 #1 이 전 페이지 na 로 빠진다.
+#
+# 전수는 호출당 60초라 비현실적이라 (국가, page_type) 그룹별 표본만 실측하고
+# 나머지는 gen_dashboard_data 가 그룹 중앙값으로 보정한다.
+# 속도는 5건/분 — 더 올리면 Google 네트워크 단위 차단을 맞는다(2026-08-26 경험).
+if [ -z "${PSI_API_KEY:-}" ] && [ -f .psi_key ]; then
+  PSI_API_KEY=$(tr -d '[:space:]' < .psi_key)
+fi
+if [ -n "${PSI_API_KEY:-}" ]; then
+  echo "===== psi collect ${AUDIT_RUN_DATE} $(date +%H:%M:%S) =====" >> "$LOG"
+  PSI_API_KEY="$PSI_API_KEY" "$PY" psi_collect.py \
+    --run "data/run_results/*_${AUDIT_RUN_DATE}_run_*.json" \
+    --per-group "${PSI_PER_GROUP:-8}" --rate "${PSI_RATE:-5}" --concurrency 4 >> "$LOG" 2>&1 \
+    || echo "[monthly-audit] WARN psi_collect 실패 — #1 은 그룹 중앙값 추정으로 대체" >> "$LOG"
+  "$PY" gen_dashboard_data.py >> "$LOG" 2>&1 \
+    || echo "[monthly-audit] WARN 대시보드 재집계 실패" >> "$LOG"
+else
+  echo "[monthly-audit] WARN .psi_key 없음 — PSI 건너뜀 (#1 은 직전 캐시로 추정)" >> "$LOG"
+fi
 
 # 갱신된 대시보드 집계를 Render로 반영(원격 /mcp 엔드포인트가 최신 데이터 서빙).
 # best-effort: 변경 없거나 push 실패해도 감사 결과엔 영향 없음.

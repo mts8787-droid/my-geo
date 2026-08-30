@@ -204,6 +204,19 @@ def aggregate_country(doc, cr, psi):
         for b in (r["score"].get("breakdown") or {}).values():
             stored.update(b.get("items") or {})
 
+        # #17 통합 백필 — seo_indexable 은 신규 id 라 과거 run 에 없다.
+        # 저장된 meta/헤더 판정을 OR 로 합성해 재감사 없이 채운다.
+        if "seo_indexable" in cr.category and "seo_indexable" not in stored:
+            parts = [stored.get("seo_robots"), stored.get("seo_robots_hdr")]
+            parts = [x for x in parts if x and x.get("pass") is not None]
+            if parts:
+                stored["seo_indexable"] = {
+                    "label": cr.label["seo_indexable"],
+                    "pass": any(x.get("pass") for x in parts),
+                    "value": " · ".join(str(x.get("value"))[:24] for x in parts),
+                    "hint": None,
+                }
+
         c_passed = defaultdict(int)
         c_total = defaultdict(int)
         for iid, it in stored.items():

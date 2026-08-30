@@ -145,6 +145,18 @@ RULE_TYPES = {
             "max_ms": {"label": "최대 TTFB (ms)", "type": "number", "placeholder": "600"},
         },
     },
+    "noindex_absent": {
+        "label": "색인 허용 (meta robots / X-Robots-Tag 통합)",
+        "description": ("meta robots 와 X-Robots-Tag 를 함께 보고 색인 허용 여부를 "
+                        "한 항목으로 판정합니다. 둘 다에 noindex 가 없어야 통과. "
+                        "meta 로만 선언하고 헤더를 안 쓰는 정상 구성이 감점되지 않습니다."),
+        "params": {
+            "selector": {"label": "meta 선택자", "type": "text",
+                         "placeholder": "meta[name='robots' i]"},
+            "header": {"label": "헤더명", "type": "text", "placeholder": "x-robots-tag"},
+            "token": {"label": "금지 토큰", "type": "text", "placeholder": "noindex"},
+        },
+    },
     "psi_metric": {
         "label": "PSI(Lighthouse) 지표 임계값",
         "description": ("psi_collect.py 가 적재한 PageSpeed Insights 캐시에서 지표를 읽어 "
@@ -735,6 +747,44 @@ def _eval_ttfb_under_ms(params: dict, ctx: dict) -> dict:
         "value": f"{ttfb}ms",
         "hint": None if passed else f"TTFB {ttfb}ms — {max_ms}ms 미만 필요",
     }
+
+
+def _eval_noindex_absent(params: dict, ctx: dict) -> dict:
+    """#17 — 색인 허용. meta robots 와 X-Robots-Tag 중 어느 쪽에도 noindex 가 없어야 통과.
+
+    색인 허용 여부는 하나의 사실인데 예전에는 meta/헤더를 각각 채점해, meta 로만
+    선언한 정상 구성이 헤더 항목에서 감점됐다(같은 것을 두 번 세는 문제).
+    """
+    token = (params.get("token") or "noindex").strip().lower()
+    selector = params.get("selector") or "meta[name='robots' i]"
+    header = params.get("header") or "x-robots-tag"
+
+    found = []
+    soup = ctx.get("soup")
+    meta_val = ""
+    if soup:
+        try:
+            el = soup.select_one(selector)
+        except Exception:
+            el = soup.find("meta", attrs={"name": re.compile(r"^robots$", re.I)})
+        if el:
+            meta_val = (el.get("content") or "").lower()
+            if token in meta_val:
+                found.append(f"meta robots: {meta_val[:40]}")
+
+    hdr_val = _get_header(ctx, header).lower()
+    if token in hdr_val:
+        found.append(f"{header}: {hdr_val[:40]}")
+
+    if found:
+        return {"pass": False, "value": " · ".join(found),
+                "hint": f"'{token}' 선언으로 색인이 차단됩니다."}
+    shown = []
+    if meta_val:
+        shown.append(f"meta={meta_val[:24]}")
+    if hdr_val:
+        shown.append(f"hdr={hdr_val[:24]}")
+    return {"pass": True, "value": " · ".join(shown) or "선언 없음(기본 허용)", "hint": None}
 
 
 def _eval_psi_metric(params: dict, ctx: dict) -> dict:
@@ -1545,6 +1595,7 @@ _HANDLERS = {
     "header_max_age_min":     _eval_header_max_age_min,
     "header_no_value":        _eval_header_no_value,
     "ttfb_under_ms":          _eval_ttfb_under_ms,
+    "noindex_absent":         _eval_noindex_absent,
     "psi_metric":             _eval_psi_metric,
     "psi_agentic_audit":      _eval_psi_agentic_audit,
     "http_protocol_min":      _eval_http_protocol_min,
