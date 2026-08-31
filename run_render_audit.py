@@ -191,6 +191,21 @@ def _balanced_pick(urls, per_type):
     return picked[:per_type]
 
 
+def _load_must_audit(code):
+    """필수 감사 URL — 표본 추출과 무관하게 항상 감사한다.
+
+    reports/must_audit/<국가>.csv 에 사업부가 지정한 핵심 페이지를 둔다.
+    무작위/균등 배분만으로는 특정 모델·마이크로사이트가 빠지고, unknown 으로
+    분류되는 페이지(예: /us/webos/about)는 아예 표본에 들어오지 못한다.
+    """
+    path = os.path.join(HERE, "reports", "must_audit", f"{code}.csv")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return [r["url"].strip() for r in csv.DictReader(f) if r.get("url", "").strip()]
+    except Exception:
+        return []
+
+
 def _load_page_dates():
     path = os.path.join(HERE, "reports", "page_dates.json")
     try:
@@ -235,6 +250,22 @@ def _sample_by_page_type(urls, base_per_type):
         out.extend(sel)
     print(f"[render-audit] page_type 샘플(기본 ≤{base_per_type}, PDP ≤{PER_TYPE_OVERRIDE.get('pdp')}): " + " ".join(notes))
     return out
+
+
+def _apply_must_audit(sample, urls, code):
+    """필수 감사 URL 을 표본에 강제 편입. 이미 있으면 그대로 둔다."""
+    must = _load_must_audit(code)
+    if not must:
+        return sample
+    have = set(sample)
+    known = set(urls)
+    add = [u for u in must if u not in have]
+    unknown_src = [u for u in add if u not in known]
+    if add:
+        sample = sample + add
+        print(f"[render-audit] 필수 감사 {len(must)}건 중 {len(add)}건 추가 편입"
+              + (f" (URL 목록에 없던 것 {len(unknown_src)}건 포함)" if unknown_src else ""))
+    return sample
 
 
 def _load_prior_results(code, today):
@@ -329,7 +360,7 @@ def main():
         print(f"[render-audit] invalid URL {len(bad)}건 제외 (공백/형식 오류). 예: {bad[0]}")
         urls = [u for u in urls if u not in set(bad)]
     if not args.full:
-        urls = _sample_by_page_type(urls, args.per_type)
+        urls = _apply_must_audit(_sample_by_page_type(urls, args.per_type), urls, code)
     if args.limit:
         urls = urls[: args.limit]
 
