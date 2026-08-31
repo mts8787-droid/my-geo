@@ -215,6 +215,10 @@ POST /analyze { "url": "...", "scope": "all" }
   "base_url": "...",
   "scope": "all",
   "pdp": { "is_pdp": bool, "path_segments": [...], "pattern": "...", "segment_count": int },
+  // 리다이렉트는 따라간 뒤 최종 도착지 콘텐츠로 채점한다. 아래는 원본 기록용.
+  // permanent=true(301/308)면 URL 목록을 final_url 로 교체해야 한다. 302/307 은 임시라 그대로 둔다.
+  "redirect":   { "count": int, "final_url": "...", "permanent": bool, "types": [301, ...],
+                  "chain": [{ "status": 301, "from": "...", "to": "..." }] },
   "robots_txt": { "status": "found|not_found|error", "bots": {...}, "raw": "..." },
   "json_ld":    { "status": "found|not_found", "count": int, "schemas": [...], "all_types": [...], "raw_sources": [...], "raw": [...] },
   "csr_ratio":  { "status": "ok|skipped|unavailable", "ssr_chars": int, "csr_chars": int, "ratio": float|null },

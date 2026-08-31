@@ -170,6 +170,7 @@ def is_excluded(r):
 def aggregate_country(doc, cr, psi):
     excluded = defaultdict(int)
     results = []
+    seen_dest = {}
     for x in doc.get("summary", []):
         r = x.get("result") or {}
         if not r.get("score"):
@@ -177,8 +178,16 @@ def aggregate_country(doc, cr, psi):
         why = is_excluded(r)
         if why:
             excluded[why] += 1
-        else:
-            results.append(r)
+            continue
+        # 리다이렉트는 도착지 콘텐츠로 채점된다. 구 URL 여러 개가 같은 페이지로
+        # 몰리면(2026-08 US: 구 URL 3개 → /us/tvs/tv-buying-guide 1개) 같은 페이지가
+        # 중복 채점돼 그 페이지에만 가중치가 붙는다. 도착지 기준으로 1건만 남긴다.
+        dest = (r.get("redirect") or {}).get("final_url") or r["url"]
+        if dest in seen_dest:
+            excluded["redirect_dup"] += 1
+            continue
+        seen_dest[dest] = r["url"]
+        results.append(r)
 
     n = len(results)
     if not n:

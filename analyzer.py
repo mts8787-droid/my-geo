@@ -333,11 +333,23 @@ async def analyze_url(url: str, lightweight: bool = False, scope: str = "all") -
     # soup 참조 해제 — 메모리 즉시 회수
     page_data["soup"] = None
 
+    # 리다이렉트 원본 데이터. 채점은 최종 도착지 기준(final_url)이고, 여기에는
+    # 어떤 URL 이 어떤 상태코드로 어디로 갔는지를 그대로 남긴다.
+    chain = page_data.get("redirect_chain") or []
+    redirect = {
+        "count":       len(chain),
+        "final_url":   page_data.get("final_url") or url,
+        "permanent":   bool(chain) and all(h["status"] in (301, 308) for h in chain),
+        "types":       [h["status"] for h in chain],
+        "chain":       chain,
+    }
+
     return {
         "url":               url,
         "base_url":          base_url,
         "scope":             "all",
         "page_type":         page_type,
+        "redirect":          redirect,
         "robots_txt":        robots,
         "json_ld":           jsonld,
         "csr_ratio":         csr_ratio,
@@ -428,10 +440,21 @@ async def _fetch_page(url: str) -> dict:
                                     truncated = True
                                     del buf[MAX_FETCH_BYTES:]
                                     break
+                        # 리다이렉트 이력. 채점은 최종 도착지 기준이지만 301(영구)/
+                        # 302(임시) 구분은 원본 데이터에 남긴다 — 301 이면 URL 목록을
+                        # 도착지로 교체해야 하고, 302 는 그대로 두는 게 맞다.
+                        hist = list(r.history)
+                        redirect_chain = [
+                            {"status": h.status_code,
+                             "from":   str(h.url),
+                             "to":     str(hist[i + 1].url) if i + 1 < len(hist) else str(r.url)}
+                            for i, h in enumerate(hist)
+                        ]
                         meta = {
                             "status_code":    r.status_code,
                             "final_url":      str(r.url),
                             "redirect_count": len(r.history),
+                            "redirect_chain": redirect_chain,
                             "headers":        {k: v for k, v in r.headers.items()},
                             "http_version":   getattr(r, "http_version", "") or "",
                             "content_type":   content_type,
@@ -454,6 +477,7 @@ async def _fetch_page(url: str) -> dict:
         html_bytes = len(meta["body"])
 
         common = {
+            "redirect_chain": meta["redirect_chain"],
             "headers":       meta["headers"],
             "http_version":  meta["http_version"],
             "html_bytes":    html_bytes,
@@ -475,13 +499,13 @@ async def _fetch_page(url: str) -> dict:
         return {"status": "error", "http_status": meta["status_code"],
                 "soup": None, "redirect_count": meta["redirect_count"], **common}
     except httpx.TimeoutException:
-        return {"status": "error", "error": "요청 시간 초과 (15초)", "soup": None, "redirect_count": 0}
+        return {"status": "error", "error": "요청 시간 초과 (15초)", "soup": None, "redirect_count": 0, "redirect_chain": []}
     except httpx.ConnectError:
-        return {"status": "error", "error": "서버에 연결할 수 없습니다", "soup": None, "redirect_count": 0}
+        return {"status": "error", "error": "서버에 연결할 수 없습니다", "soup": None, "redirect_count": 0, "redirect_chain": []}
     except httpx.TooManyRedirects:
-        return {"status": "error", "error": "리다이렉트가 너무 많습니다", "soup": None, "redirect_count": 0}
+        return {"status": "error", "error": "리다이렉트가 너무 많습니다", "soup": None, "redirect_count": 0, "redirect_chain": []}
     except Exception as e:
-        return {"status": "error", "error": str(e), "soup": None, "redirect_count": 0}
+        return {"status": "error", "error": str(e), "soup": None, "redirect_count": 0, "redirect_chain": []}
 
 
 # ── 도메인 캐시 (Thundering Herd 방지) ──────────────────────────────────────────
